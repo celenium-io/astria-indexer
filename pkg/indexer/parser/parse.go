@@ -53,8 +53,7 @@ func (p *Module) parse(ctx context.Context, b types.BlockData) error {
 		RollupAddress: decodeCtx.RollupAddress,
 		ActionTypes:   decodeCtx.ActionTypes,
 
-		Txs:             txs,
-		BlockSignatures: make([]storage.BlockSignature, len(b.Block.LastCommit.Signatures)),
+		Txs: txs,
 		Stats: &storage.BlockStats{
 			Height:       b.Height,
 			Time:         b.Block.Time,
@@ -68,7 +67,7 @@ func (p *Module) parse(ctx context.Context, b types.BlockData) error {
 		},
 	}
 
-	p.parseBlockSignatures(b.Block.LastCommit, block.BlockSignatures)
+	block.BlockSignatures = p.parseBlockSignatures(b.Block.LastCommit)
 
 	p.Log.Info().
 		Uint64("height", uint64(block.Height)).
@@ -80,12 +79,19 @@ func (p *Module) parse(ctx context.Context, b types.BlockData) error {
 	return nil
 }
 
-func (p *Module) parseBlockSignatures(commit *types.Commit, signs []storage.BlockSignature) {
+func (p *Module) parseBlockSignatures(commit *types.Commit) []storage.BlockSignature {
+	signs := make([]storage.BlockSignature, 0)
 	for i := range commit.Signatures {
-		signs[i].Height = types.Level(commit.Height)
-		signs[i].Time = commit.Signatures[i].Timestamp
-		signs[i].Validator = &storage.Validator{
-			Address: strings.ToUpper(hex.EncodeToString(commit.Signatures[i].ValidatorAddress)),
+		if commit.Signatures[i].BlockIDFlag != 2 {
+			continue
 		}
+		signs = append(signs, storage.BlockSignature{
+			Height: types.Level(commit.Height),
+			Time:   commit.Signatures[i].Timestamp,
+			Validator: &storage.Validator{
+				Address: strings.ToUpper(hex.EncodeToString(commit.Signatures[i].ValidatorAddress)),
+			},
+		})
 	}
+	return signs
 }
