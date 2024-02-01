@@ -7,8 +7,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/aopoltorzhicky/astria/internal/profiler"
-	"github.com/aopoltorzhicky/astria/pkg/indexer/config"
+	"github.com/celenium-io/astria-indexer/internal/profiler"
+	"github.com/celenium-io/astria-indexer/pkg/indexer/config"
 	goLibConfig "github.com/dipdup-net/go-lib/config"
 	"github.com/grafana/pyroscope-go"
 	"github.com/rs/zerolog"

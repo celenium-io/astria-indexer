@@ -7,10 +7,10 @@ import (
 	"encoding/hex"
 	"time"
 
-	pkgTypes "github.com/aopoltorzhicky/astria/pkg/types"
+	pkgTypes "github.com/celenium-io/astria-indexer/pkg/types"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	"github.com/aopoltorzhicky/astria/internal/storage/types"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/types"
 )
 
 type Tx struct {

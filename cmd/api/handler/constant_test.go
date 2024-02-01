@@ -10,9 +10,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/aopoltorzhicky/astria/cmd/api/handler/responses"
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	"github.com/aopoltorzhicky/astria/internal/storage/mock"
+	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/mock"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"

@@ -6,10 +6,10 @@ package parser
 import (
 	"testing"
 
-	storageTypes "github.com/aopoltorzhicky/astria/internal/storage/types"
-	testsuite "github.com/aopoltorzhicky/astria/internal/test_suite"
-	"github.com/aopoltorzhicky/astria/pkg/indexer/decode"
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
+	testsuite "github.com/celenium-io/astria-indexer/internal/test_suite"
+	"github.com/celenium-io/astria-indexer/pkg/indexer/decode"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/stretchr/testify/assert"
 )
 

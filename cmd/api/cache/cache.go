@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/aopoltorzhicky/astria/cmd/api/bus"
+	"github.com/celenium-io/astria-indexer/cmd/api/bus"
 	"github.com/dipdup-io/workerpool"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"

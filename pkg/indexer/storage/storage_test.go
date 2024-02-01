@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	"github.com/aopoltorzhicky/astria/internal/storage/postgres"
-	indexerCfg "github.com/aopoltorzhicky/astria/pkg/indexer/config"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
+	indexerCfg "github.com/celenium-io/astria-indexer/pkg/indexer/config"
 	"github.com/dipdup-net/go-lib/config"
 	"github.com/dipdup-net/go-lib/database"
 	"github.com/go-testfixtures/testfixtures/v3"

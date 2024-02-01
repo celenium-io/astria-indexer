@@ -11,7 +11,7 @@ import (
 
 	"github.com/dipdup-net/indexer-sdk/pkg/modules/stopper"
 
-	"github.com/aopoltorzhicky/astria/pkg/indexer"
+	"github.com/celenium-io/astria-indexer/pkg/indexer"
 
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"

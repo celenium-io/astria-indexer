@@ -15,8 +15,8 @@ import (
 	context "context"
 	reflect "reflect"
 
-	types "github.com/aopoltorzhicky/astria/pkg/node/types"
-	types0 "github.com/aopoltorzhicky/astria/pkg/types"
+	types "github.com/celenium-io/astria-indexer/pkg/node/types"
+	types0 "github.com/celenium-io/astria-indexer/pkg/types"
 	gomock "go.uber.org/mock/gomock"
 )
 

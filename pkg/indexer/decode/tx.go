@@ -5,9 +5,9 @@ package decode
 
 import (
 	astria "buf.build/gen/go/astria/astria/protocolbuffers/go/astria/sequencer/v1alpha1"
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	storageTypes "github.com/aopoltorzhicky/astria/internal/storage/types"
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/pkg/errors"
 	"github.com/shopspring/decimal"
 	"google.golang.org/protobuf/proto"

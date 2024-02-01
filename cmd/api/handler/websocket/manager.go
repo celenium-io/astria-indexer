@@ -11,9 +11,9 @@ import (
 	"github.com/dipdup-io/workerpool"
 	sdkSync "github.com/dipdup-net/indexer-sdk/pkg/sync"
 
-	"github.com/aopoltorzhicky/astria/cmd/api/bus"
-	"github.com/aopoltorzhicky/astria/cmd/api/handler/responses"
-	"github.com/aopoltorzhicky/astria/internal/storage"
+	"github.com/celenium-io/astria-indexer/cmd/api/bus"
+	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
+	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"

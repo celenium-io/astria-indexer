@@ -15,7 +15,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	storage "github.com/aopoltorzhicky/astria/internal/storage"
+	storage "github.com/celenium-io/astria-indexer/internal/storage"
 	gomock "go.uber.org/mock/gomock"
 )
 

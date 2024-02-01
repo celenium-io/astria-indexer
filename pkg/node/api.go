@@ -6,9 +6,9 @@ package node
 import (
 	"context"
 
-	pkgTypes "github.com/aopoltorzhicky/astria/pkg/types"
+	pkgTypes "github.com/celenium-io/astria-indexer/pkg/types"
 
-	"github.com/aopoltorzhicky/astria/pkg/node/types"
+	"github.com/celenium-io/astria-indexer/pkg/node/types"
 )
 
 //go:generate mockgen -source=$GOFILE -destination=mock/$GOFILE -package=mock -typed

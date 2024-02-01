@@ -6,7 +6,7 @@ package responses
 import (
 	"time"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage"
 )
 
 type SeriesItem struct {

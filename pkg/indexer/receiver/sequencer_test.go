@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	// "github.com/aopoltorzhicky/astria/pkg/indexer/rollback"
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	// "github.com/celenium-io/astria-indexer/pkg/indexer/rollback"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/dipdup-net/indexer-sdk/pkg/modules"
 	"github.com/dipdup-net/indexer-sdk/pkg/modules/stopper"
 	"github.com/stretchr/testify/assert"

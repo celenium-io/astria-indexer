@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-io/workerpool"
 	"github.com/lib/pq"
 	"github.com/pkg/errors"

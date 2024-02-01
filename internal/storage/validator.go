@@ -4,7 +4,7 @@
 package storage
 
 import (
-	pkgTypes "github.com/aopoltorzhicky/astria/pkg/types"
+	pkgTypes "github.com/celenium-io/astria-indexer/pkg/types"
 
 	"github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/shopspring/decimal"

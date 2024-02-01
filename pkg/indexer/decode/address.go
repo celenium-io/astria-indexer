@@ -4,9 +4,9 @@
 package decode
 
 import (
-	"github.com/aopoltorzhicky/astria/internal/currency"
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/internal/currency"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/cometbft/cometbft/libs/bytes"
 	"github.com/shopspring/decimal"
 )

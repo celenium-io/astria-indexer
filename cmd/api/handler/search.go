@@ -6,8 +6,8 @@ package handler
 import (
 	"encoding/hex"
 
-	"github.com/aopoltorzhicky/astria/cmd/api/handler/responses"
-	"github.com/aopoltorzhicky/astria/internal/storage"
+	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
+	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/labstack/echo/v4"
 )
 

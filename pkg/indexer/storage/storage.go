@@ -9,11 +9,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/aopoltorzhicky/astria/pkg/indexer/config"
+	"github.com/celenium-io/astria-indexer/pkg/indexer/config"
 	"github.com/pkg/errors"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	"github.com/aopoltorzhicky/astria/internal/storage/postgres"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
 	"github.com/dipdup-net/indexer-sdk/pkg/modules"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 )

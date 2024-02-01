@@ -7,13 +7,13 @@ import (
 	"bytes"
 	"context"
 
-	"github.com/aopoltorzhicky/astria/pkg/node"
+	"github.com/celenium-io/astria-indexer/pkg/node"
 
-	"github.com/aopoltorzhicky/astria/pkg/indexer/config"
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/pkg/indexer/config"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	"github.com/aopoltorzhicky/astria/internal/storage/postgres"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
 	"github.com/dipdup-net/indexer-sdk/pkg/modules"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/pkg/errors"

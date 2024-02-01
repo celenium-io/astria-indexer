@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/aopoltorzhicky/astria/cmd/api/handler/responses"
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	"github.com/aopoltorzhicky/astria/internal/storage/types"
-	storageTypes "github.com/aopoltorzhicky/astria/internal/storage/types"
+	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/types"
+	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/labstack/echo/v4"
 )
 

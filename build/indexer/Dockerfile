@@ -10,17 +10,17 @@ ENV GOOS=linux
 RUN apk --no-cache add ca-certificates
 RUN apk add --update git musl-dev gcc build-base
 
-RUN mkdir -p $GOPATH/src/github.com/aopoltorzhicky/astria/
+RUN mkdir -p $GOPATH/src/github.com/celenium-io/astria-indexer/
 
-COPY ./go.* $GOPATH/src/github.com/aopoltorzhicky/astria/
-WORKDIR $GOPATH/src/github.com/aopoltorzhicky/astria
+COPY ./go.* $GOPATH/src/github.com/celenium-io/astria-indexer/
+WORKDIR $GOPATH/src/github.com/celenium-io/astria-indexer
 RUN go mod download
 
 COPY cmd/indexer cmd/indexer
 COPY internal internal
 COPY pkg pkg
 
-WORKDIR $GOPATH/src/github.com/aopoltorzhicky/astria/cmd/indexer/
+WORKDIR $GOPATH/src/github.com/celenium-io/astria-indexer/cmd/indexer/
 RUN go build -a -o /go/bin/indexer .
 
 # ---------------------------------------------------------------------

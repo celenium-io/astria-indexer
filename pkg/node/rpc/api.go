@@ -11,7 +11,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/aopoltorzhicky/astria/pkg/node/types"
+	"github.com/celenium-io/astria-indexer/pkg/node/types"
 	jsoniter "github.com/json-iterator/go"
 
 	"github.com/pkg/errors"

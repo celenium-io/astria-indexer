@@ -6,8 +6,8 @@ package decode
 import (
 	"encoding/hex"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 )
 
 type Rollups map[string]*storage.Rollup

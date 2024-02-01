@@ -6,9 +6,9 @@ package genesis
 import (
 	"context"
 
-	"github.com/aopoltorzhicky/astria/internal/storage/postgres"
-	"github.com/aopoltorzhicky/astria/pkg/indexer/config"
-	"github.com/aopoltorzhicky/astria/pkg/node/types"
+	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
+	"github.com/celenium-io/astria-indexer/pkg/indexer/config"
+	"github.com/celenium-io/astria-indexer/pkg/node/types"
 	"github.com/dipdup-net/indexer-sdk/pkg/modules"
 )
 

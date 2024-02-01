@@ -7,7 +7,7 @@ import (
 	"encoding/base64"
 	"time"
 
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 	tmTypes "github.com/cometbft/cometbft/types"
 )
 

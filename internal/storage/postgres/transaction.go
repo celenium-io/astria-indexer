@@ -6,10 +6,10 @@ package postgres
 import (
 	"context"
 
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/uptrace/bun"
 
-	models "github.com/aopoltorzhicky/astria/internal/storage"
+	models "github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage"
 )
 

@@ -1,4 +1,4 @@
-module github.com/aopoltorzhicky/astria
+module github.com/celenium-io/astria-indexer
 
 go 1.21.2
 

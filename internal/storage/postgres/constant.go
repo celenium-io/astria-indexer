@@ -8,8 +8,8 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	"github.com/aopoltorzhicky/astria/internal/storage/types"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/dipdup-net/go-lib/database"
 )
 

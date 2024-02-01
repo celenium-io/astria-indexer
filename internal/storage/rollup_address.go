@@ -6,7 +6,7 @@ package storage
 import (
 	"fmt"
 
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/uptrace/bun"
 )
 

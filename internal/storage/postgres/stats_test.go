@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-net/go-lib/config"
 	"github.com/dipdup-net/go-lib/database"
 	"github.com/go-testfixtures/testfixtures/v3"

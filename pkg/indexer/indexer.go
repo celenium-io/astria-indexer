@@ -11,18 +11,18 @@ import (
 
 	"github.com/dipdup-net/indexer-sdk/pkg/modules"
 
-	internalStorage "github.com/aopoltorzhicky/astria/internal/storage"
-	"github.com/aopoltorzhicky/astria/pkg/indexer/genesis"
-	"github.com/aopoltorzhicky/astria/pkg/indexer/parser"
-	"github.com/aopoltorzhicky/astria/pkg/indexer/rollback"
-	"github.com/aopoltorzhicky/astria/pkg/indexer/storage"
-	"github.com/aopoltorzhicky/astria/pkg/node"
-	"github.com/aopoltorzhicky/astria/pkg/node/rpc"
+	internalStorage "github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/pkg/indexer/genesis"
+	"github.com/celenium-io/astria-indexer/pkg/indexer/parser"
+	"github.com/celenium-io/astria-indexer/pkg/indexer/rollback"
+	"github.com/celenium-io/astria-indexer/pkg/indexer/storage"
+	"github.com/celenium-io/astria-indexer/pkg/node"
+	"github.com/celenium-io/astria-indexer/pkg/node/rpc"
 	"github.com/pkg/errors"
 
-	"github.com/aopoltorzhicky/astria/internal/storage/postgres"
-	"github.com/aopoltorzhicky/astria/pkg/indexer/config"
-	"github.com/aopoltorzhicky/astria/pkg/indexer/receiver"
+	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
+	"github.com/celenium-io/astria-indexer/pkg/indexer/config"
+	"github.com/celenium-io/astria-indexer/pkg/indexer/receiver"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )

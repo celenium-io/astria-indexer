@@ -4,7 +4,7 @@
 package config
 
 import (
-	"github.com/aopoltorzhicky/astria/internal/profiler"
+	"github.com/celenium-io/astria-indexer/internal/profiler"
 	"github.com/dipdup-net/go-lib/config"
 )
 

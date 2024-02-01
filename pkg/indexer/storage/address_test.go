@@ -7,9 +7,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	"github.com/aopoltorzhicky/astria/internal/storage/mock"
-	testsuite "github.com/aopoltorzhicky/astria/internal/test_suite"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/mock"
+	testsuite "github.com/celenium-io/astria-indexer/internal/test_suite"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"

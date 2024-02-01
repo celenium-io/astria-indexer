@@ -7,8 +7,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	"github.com/aopoltorzhicky/astria/internal/storage/postgres"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
 )
 
 func (module *Module) save(ctx context.Context, data parsedData) error {

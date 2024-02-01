@@ -3,7 +3,7 @@
 
 package responses
 
-import "github.com/aopoltorzhicky/astria/internal/storage"
+import "github.com/celenium-io/astria-indexer/internal/storage"
 
 type RollupAction struct {
 	Action

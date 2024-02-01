@@ -4,8 +4,8 @@
 package websocket
 
 import (
-	"github.com/aopoltorzhicky/astria/cmd/api/handler/responses"
-	"github.com/aopoltorzhicky/astria/internal/storage"
+	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
+	"github.com/celenium-io/astria-indexer/internal/storage"
 )
 
 func headProcessor(state storage.State) *responses.State {

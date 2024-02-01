@@ -4,10 +4,10 @@
 package parser
 
 import (
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	storageTypes "github.com/aopoltorzhicky/astria/internal/storage/types"
-	"github.com/aopoltorzhicky/astria/pkg/indexer/decode"
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
+	"github.com/celenium-io/astria-indexer/pkg/indexer/decode"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/pkg/errors"
 )
 

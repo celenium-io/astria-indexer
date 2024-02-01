@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	storageTypes "github.com/aopoltorzhicky/astria/internal/storage/types"
-	nodeTypes "github.com/aopoltorzhicky/astria/pkg/node/types"
-	pkgTypes "github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
+	nodeTypes "github.com/celenium-io/astria-indexer/pkg/node/types"
+	pkgTypes "github.com/celenium-io/astria-indexer/pkg/types"
 )
 
 func (module *Module) parseConstants(appState nodeTypes.AppState, consensus pkgTypes.ConsensusParams, data *parsedData) {

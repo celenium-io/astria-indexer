@@ -7,7 +7,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-net/go-lib/database"
 )
 

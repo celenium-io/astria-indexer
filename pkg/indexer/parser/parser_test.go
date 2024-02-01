@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 	cometTypes "github.com/cometbft/cometbft/types"
 	"github.com/dipdup-net/indexer-sdk/pkg/modules"
 	"github.com/shopspring/decimal"

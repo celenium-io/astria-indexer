@@ -6,7 +6,7 @@ package storage
 import (
 	"context"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage"
 )
 
 func (module *Module) saveRollup(

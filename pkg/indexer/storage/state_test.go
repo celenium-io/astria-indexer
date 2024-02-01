@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/shopspring/decimal"
 )
 

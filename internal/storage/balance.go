@@ -4,7 +4,7 @@
 package storage
 
 import (
-	"github.com/aopoltorzhicky/astria/internal/currency"
+	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/shopspring/decimal"
 	"github.com/uptrace/bun"

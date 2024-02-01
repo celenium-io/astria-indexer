@@ -8,9 +8,9 @@ import (
 	"sort"
 	"time"
 
-	ic "github.com/aopoltorzhicky/astria/pkg/indexer/config"
-	nodeTypes "github.com/aopoltorzhicky/astria/pkg/node/types"
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	ic "github.com/celenium-io/astria-indexer/pkg/indexer/config"
+	nodeTypes "github.com/celenium-io/astria-indexer/pkg/node/types"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/dipdup-net/indexer-sdk/pkg/modules/stopper"
 	"github.com/pkg/errors"
 	"go.uber.org/mock/gomock"

@@ -6,7 +6,7 @@ package types
 import (
 	"time"
 
-	pkgTypes "github.com/aopoltorzhicky/astria/pkg/types"
+	pkgTypes "github.com/celenium-io/astria-indexer/pkg/types"
 )
 
 type Status struct {

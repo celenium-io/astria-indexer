@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	ic "github.com/aopoltorzhicky/astria/pkg/indexer/config"
-	"github.com/aopoltorzhicky/astria/pkg/node/mock"
-	nodeTypes "github.com/aopoltorzhicky/astria/pkg/node/types"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	ic "github.com/celenium-io/astria-indexer/pkg/indexer/config"
+	"github.com/celenium-io/astria-indexer/pkg/node/mock"
+	nodeTypes "github.com/celenium-io/astria-indexer/pkg/node/types"
 	"github.com/dipdup-net/indexer-sdk/pkg/modules/stopper"
 	"go.uber.org/mock/gomock"
 

@@ -7,7 +7,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 )
 
 func (s *StorageTestSuite) TestBlockSignatureLevels() {

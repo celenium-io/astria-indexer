@@ -6,7 +6,7 @@ package responses
 import (
 	"testing"
 
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/stretchr/testify/require"
 )
 

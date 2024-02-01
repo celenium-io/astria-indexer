@@ -6,7 +6,7 @@ package postgres
 import (
 	"context"
 
-	models "github.com/aopoltorzhicky/astria/internal/storage"
+	models "github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-net/go-lib/config"
 	"github.com/dipdup-net/go-lib/database"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage"

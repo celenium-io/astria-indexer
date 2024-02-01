@@ -8,8 +8,8 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	"github.com/aopoltorzhicky/astria/internal/storage/types"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/types"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 )
 

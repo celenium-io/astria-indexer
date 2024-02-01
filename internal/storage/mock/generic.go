@@ -15,8 +15,8 @@ import (
 	context "context"
 	reflect "reflect"
 
-	storage "github.com/aopoltorzhicky/astria/internal/storage"
-	types "github.com/aopoltorzhicky/astria/pkg/types"
+	storage "github.com/celenium-io/astria-indexer/internal/storage"
+	types "github.com/celenium-io/astria-indexer/pkg/types"
 	storage0 "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	pq "github.com/lib/pq"
 	bun "github.com/uptrace/bun"

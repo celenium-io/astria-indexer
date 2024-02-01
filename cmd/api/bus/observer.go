@@ -4,7 +4,7 @@
 package bus
 
 import (
-	"github.com/aopoltorzhicky/astria/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-io/workerpool"
 )
 

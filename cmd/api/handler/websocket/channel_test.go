@@ -8,9 +8,9 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/aopoltorzhicky/astria/cmd/api/handler/responses"
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/require"

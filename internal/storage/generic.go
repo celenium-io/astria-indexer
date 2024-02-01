@@ -7,7 +7,7 @@ import (
 	"context"
 	"io"
 
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/lib/pq"
 )

@@ -7,9 +7,9 @@ import (
 	"context"
 	"strconv"
 
-	pkgTypes "github.com/aopoltorzhicky/astria/pkg/types"
+	pkgTypes "github.com/celenium-io/astria-indexer/pkg/types"
 
-	"github.com/aopoltorzhicky/astria/pkg/node/types"
+	"github.com/celenium-io/astria-indexer/pkg/node/types"
 	"github.com/pkg/errors"
 )
 

@@ -7,7 +7,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/aopoltorzhicky/astria/pkg/node/types"
+	"github.com/celenium-io/astria-indexer/pkg/node/types"
 	"github.com/pkg/errors"
 )
 

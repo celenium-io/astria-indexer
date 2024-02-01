@@ -8,7 +8,7 @@ import (
 	"context"
 	"encoding/hex"
 
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 )
 
 func (r *Module) sequencer(ctx context.Context) {

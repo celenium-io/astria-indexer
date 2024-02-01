@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/aopoltorzhicky/astria/internal/storage/types"
+	"github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 )

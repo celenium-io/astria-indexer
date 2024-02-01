@@ -10,7 +10,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	_ "github.com/aopoltorzhicky/astria/cmd/api/docs"
+	_ "github.com/celenium-io/astria-indexer/cmd/api/docs"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )

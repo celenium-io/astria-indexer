@@ -6,7 +6,7 @@ package parser
 import (
 	"context"
 
-	"github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 )
 
 func (p *Module) listen(ctx context.Context) {

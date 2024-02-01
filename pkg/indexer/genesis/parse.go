@@ -4,10 +4,10 @@
 package genesis
 
 import (
-	"github.com/aopoltorzhicky/astria/internal/currency"
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	"github.com/aopoltorzhicky/astria/pkg/node/types"
-	pkgTypes "github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/internal/currency"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/pkg/node/types"
+	pkgTypes "github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/pkg/errors"
 	"github.com/shopspring/decimal"
 )

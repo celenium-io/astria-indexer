@@ -6,8 +6,8 @@ package responses
 import (
 	"encoding/hex"
 
-	"github.com/aopoltorzhicky/astria/internal/storage"
-	pkgTypes "github.com/aopoltorzhicky/astria/pkg/types"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	pkgTypes "github.com/celenium-io/astria-indexer/pkg/types"
 )
 
 // Address model info

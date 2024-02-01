@@ -4,7 +4,7 @@
 package websocket
 
 import (
-	"github.com/aopoltorzhicky/astria/cmd/api/handler/responses"
+	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 )
 
 type Filterable[M any] interface {
