@@ -1,0 +1,57 @@
+version: "3.6"
+
+services:
+  indexer:
+    image: ghcr.io/aopoltorzhicky/astria:${TAG:-master}
+    build:
+        dockerfile: build/indexer/Dockerfile
+        context: .
+    env_file:
+      - .env
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    depends_on:
+      - db
+    logging: &astria-logging
+      options:
+        max-size: 10m
+        max-file: "5"
+
+  api:
+    restart: always
+    image: ghcr.io/aopoltorzhicky/astria-api:${TAG:-master}
+    build:
+      context: .
+      dockerfile: build/api/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - db
+    ports:
+      - "127.0.0.1:9876:9876"
+    logging: *astria-logging
+
+  db:
+    command:
+      - -cshared_preload_libraries=timescaledb,pg_stat_statements
+      - -cpg_stat_statements.track=all
+    image: timescale/timescaledb-ha:pg15-latest
+    restart: always
+    volumes:
+      - db:/home/postgres/pgdata/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      - POSTGRES_HOST=${POSTGRES_HOST:-db}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB:-astria}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d astria"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: *astria-logging
+volumes:
+  db:

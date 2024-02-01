@@ -1,0 +1,39 @@
+version: 0.0.1
+
+log_level: ${LOG_LEVEL:-info}
+
+indexer:
+  name: ${INDEXER_NAME:-dipdup_astria_indexer}
+  threads_count: ${INDEXER_THREADS_COUNT:-1}
+  block_period: ${INDEXER_BLOCK_PERIOD:-15} # seconds
+  scripts_dir: ${INDEXER_SCRIPTS_DIR:-./database}
+
+database:
+  kind: postgres
+  host: ${POSTGRES_HOST:-db}
+  port: ${POSTGRES_PORT:-5432}
+  user: ${POSTGRES_USER}
+  password: ${POSTGRES_PASSWORD}
+  database: ${POSTGRES_DB:-astria}
+
+datasources:
+  sequencer_rpc:
+    kind: node_rpc
+    url: ${SEQUENCER_RPC_URL}
+    rps: ${SEQUENCER_RPC_RPS:-5}
+    timeout: ${SEQUENCER_RPC_TIMEOUT:-10}
+
+api:
+  bind: ${API_HOST:-0.0.0.0}:${API_PORT:-9876}
+  rate_limit: ${API_RATE_LIMIT:-0}
+  prometheus: ${API_PROMETHEUS_ENABLED:-true}
+  request_timeout: ${API_REQUEST_TIMEOUT:-30}
+  blob_receiver: dal_api
+  sentry_dsn: ${SENTRY_DSN}
+  websocket: ${API_WEBSOCKET_ENABLED:-true}
+
+environment: ${ASTRIA_ENV:-production}
+
+profiler:
+  server: ${PROFILER_SERVER}
+  project: astria

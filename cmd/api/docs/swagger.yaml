@@ -1,0 +1,1891 @@
+definitions:
+  handler.Error:
+    properties:
+      message:
+        type: string
+    type: object
+  responses.Action:
+    properties:
+      data:
+        additionalProperties: {}
+        type: object
+      height:
+        example: 1000
+        format: int64
+        type: integer
+      id:
+        example: 1
+        format: int64
+        type: integer
+      position:
+        example: 1
+        format: int64
+        type: integer
+      time:
+        example: "2023-07-04T03:10:57+00:00"
+        format: date-time
+        type: string
+      tx_hash:
+        example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
+        format: binary
+        type: string
+      tx_id:
+        example: 10
+        format: int64
+        type: integer
+      type:
+        example: sequence
+        format: string
+        type: string
+    type: object
+  responses.Address:
+    description: address information
+    properties:
+      actions_count:
+        example: 10
+        type: integer
+      balance:
+        $ref: '#/definitions/responses.Balance'
+      first_height:
+        example: 100
+        type: integer
+      hash:
+        example: 115F94D8C98FFD73FE65182611140F0EDC7C3C94
+        type: string
+      id:
+        example: 321
+        type: integer
+      nonce:
+        example: 10
+        type: integer
+      signed_tx_count:
+        example: 10
+        type: integer
+    type: object
+  responses.Balance:
+    description: Balance of address information
+    properties:
+      currency:
+        example: nria
+        type: string
+      value:
+        example: "10000000000"
+        type: string
+    type: object
+  responses.Block:
+    properties:
+      action_types:
+        example: sequence,transfer
+        type: string
+      app_hash:
+        example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
+        type: string
+      consensus_hash:
+        example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
+        type: string
+      data_hash:
+        example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
+        type: string
+      evidence_hash:
+        example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
+        type: string
+      hash:
+        example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
+        type: string
+      height:
+        example: 100
+        type: integer
+      id:
+        example: 321
+        type: integer
+      last_commit_hash:
+        example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
+        type: string
+      last_results_hash:
+        example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
+        type: string
+      next_validators_hash:
+        example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
+        type: string
+      parent_hash:
+        example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
+        type: string
+      proposer:
+        $ref: '#/definitions/responses.Validator'
+      stats:
+        $ref: '#/definitions/responses.BlockStats'
+      time:
+        example: "2023-07-04T03:10:57+00:00"
+        type: string
+      validators_hash:
+        example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
+        type: string
+      version_app:
+        example: "1"
+        type: string
+      version_block:
+        example: "11"
+        type: string
+    type: object
+  responses.BlockStats:
+    properties:
+      block_time:
+        example: 12354
+        type: integer
+      bytes_in_block:
+        example: 1234
+        type: integer
+      fee:
+        example: "28347628346"
+        type: string
+      gas_used:
+        example: 1234
+        type: integer
+      gas_wanted:
+        example: 1234
+        type: integer
+      supply_change:
+        example: "8635234"
+        type: string
+      tx_count:
+        example: 12
+        type: integer
+    type: object
+  responses.Constants:
+    properties:
+      module:
+        additionalProperties:
+          $ref: '#/definitions/responses.Params'
+        type: object
+    type: object
+  responses.Enums:
+    properties:
+      action_type:
+        items:
+          type: string
+        type: array
+      status:
+        items:
+          type: string
+        type: array
+    type: object
+  responses.NetworkSummary:
+    properties:
+      block_time:
+        example: 2345
+        format: number
+        type: number
+      bps:
+        example: 0.17632
+        format: number
+        type: number
+      bytes_in_block:
+        example: 1024
+        format: integer
+        type: integer
+      data_size:
+        example: 1000000
+        format: integer
+        type: integer
+      fee:
+        example: "1012012"
+        format: string
+        type: string
+      rbps:
+        example: 0.17632
+        format: number
+        type: number
+      supply:
+        example: "1029129"
+        format: string
+        type: string
+      tps:
+        example: 0.17632
+        format: number
+        type: number
+      tx_count:
+        example: 100
+        format: integer
+        type: integer
+    type: object
+  responses.Params:
+    additionalProperties:
+      type: string
+    type: object
+  responses.Rollup:
+    properties:
+      actions_count:
+        example: 100
+        type: integer
+      first_height:
+        example: 100
+        type: integer
+      hash:
+        example: 19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539
+        type: string
+      id:
+        example: 321
+        type: integer
+      size:
+        example: 100
+        type: integer
+    type: object
+  responses.RollupAction:
+    properties:
+      data:
+        additionalProperties: {}
+        type: object
+      height:
+        example: 1000
+        format: int64
+        type: integer
+      id:
+        example: 1
+        format: int64
+        type: integer
+      position:
+        example: 1
+        format: int64
+        type: integer
+      rollup:
+        $ref: '#/definitions/responses.Rollup'
+      time:
+        example: "2023-07-04T03:10:57+00:00"
+        format: date-time
+        type: string
+      tx_hash:
+        example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
+        format: binary
+        type: string
+      tx_id:
+        example: 10
+        format: int64
+        type: integer
+      type:
+        example: sequence
+        format: string
+        type: string
+    type: object
+  responses.RollupSeriesItem:
+    properties:
+      time:
+        example: "2023-07-04T03:10:57+00:00"
+        format: date-time
+        type: string
+      value:
+        example: "0.17632"
+        format: string
+        type: string
+    type: object
+  responses.SearchResult:
+    properties:
+      body: {}
+      type:
+        type: string
+      value:
+        type: string
+    type: object
+  responses.SeriesItem:
+    properties:
+      max:
+        example: "0.17632"
+        format: string
+        type: string
+      min:
+        example: "0.17632"
+        format: string
+        type: string
+      time:
+        example: "2023-07-04T03:10:57+00:00"
+        format: date-time
+        type: string
+      value:
+        example: "0.17632"
+        format: string
+        type: string
+    type: object
+  responses.SignedBlocks:
+    properties:
+      height:
+        example: 100
+        type: integer
+      signed:
+        example: true
+        type: boolean
+    type: object
+  responses.State:
+    properties:
+      hash:
+        example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
+        format: string
+        type: string
+      id:
+        example: 321
+        format: int64
+        type: integer
+      last_height:
+        example: 100
+        format: int64
+        type: integer
+      last_time:
+        example: "2023-07-04T03:10:57+00:00"
+        format: date-time
+        type: string
+      name:
+        example: indexer
+        format: string
+        type: string
+      synced:
+        example: true
+        format: boolean
+        type: boolean
+      total_accounts:
+        example: 43
+        format: int64
+        type: integer
+      total_fee:
+        example: "312"
+        format: string
+        type: string
+      total_rollups:
+        example: 312
+        format: int64
+        type: integer
+      total_supply:
+        example: "312"
+        format: string
+        type: string
+      total_tx:
+        example: 23456
+        format: int64
+        type: integer
+    type: object
+  responses.Tx:
+    properties:
+      action_types:
+        example: sequence,transfer
+        format: string
+        type: string
+      actions:
+        items:
+          $ref: '#/definitions/responses.Action'
+        type: array
+      actions_count:
+        example: 1
+        format: int64
+        type: integer
+      codespace:
+        example: sdk
+        format: string
+        type: string
+      error:
+        example: some error text
+        format: string
+        type: string
+      gas_used:
+        example: 4253
+        format: int64
+        type: integer
+      gas_wanted:
+        example: 9348
+        format: int64
+        type: integer
+      hash:
+        example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
+        format: binary
+        type: string
+      height:
+        example: 100
+        format: int64
+        type: integer
+      id:
+        example: 321
+        format: int64
+        type: integer
+      nonce:
+        example: 1
+        format: int64
+        type: integer
+      position:
+        example: 11
+        format: int64
+        type: integer
+      signature:
+        example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
+        format: string
+        type: string
+      signer:
+        example: 115F94D8C98FFD73FE65182611140F0EDC7C3C94
+        format: string
+        type: string
+      status:
+        example: success
+        format: string
+        type: string
+      time:
+        example: "2023-07-04T03:10:57+00:00"
+        format: date-time
+        type: string
+    type: object
+  responses.Validator:
+    properties:
+      address:
+        example: E641C7A2C964833E556AEF934FBF166B712874B6
+        type: string
+      id:
+        example: 321
+        type: integer
+      name:
+        example: Node0
+        type: string
+    type: object
+  responses.ValidatorUptime:
+    properties:
+      blocks:
+        items:
+          $ref: '#/definitions/responses.SignedBlocks'
+        type: array
+      uptime:
+        example: "0.97"
+        type: string
+    type: object
+host: api.astrium.io
+info:
+  contact: {}
+  description: This is docs of Astria Explorer API.
+  title: Swagger Astria Explorer API
+  version: "1.0"
+paths:
+  /v1/address:
+    get:
+      description: List address info
+      operationId: list-address
+      parameters:
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Sort order
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Address'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: List address info
+      tags:
+      - address
+  /v1/address/{hash}:
+    get:
+      description: Get address info
+      operationId: get-address
+      parameters:
+      - description: Hash
+        in: path
+        maxLength: 48
+        minLength: 48
+        name: hash
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Address'
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get address info
+      tags:
+      - address
+  /v1/address/{hash}/actions:
+    get:
+      description: Get address actions
+      operationId: address-actions
+      parameters:
+      - description: Hash
+        in: path
+        maxLength: 48
+        minLength: 48
+        name: hash
+        required: true
+        type: string
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        minimum: 1
+        name: offset
+        type: integer
+      - description: Sort order
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - description: Comma-separated action types list
+        enum:
+        - transfer
+        - sequence
+        - validator_update
+        - sudo_address_change
+        - mint
+        - ibc_relay
+        - ics20_withdrawal
+        in: query
+        name: action_types
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Action'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get address actions
+      tags:
+      - address
+  /v1/address/{hash}/rollups:
+    get:
+      description: Get rollups in which the address pushed something
+      operationId: address-rollups
+      parameters:
+      - description: Hash
+        in: path
+        maxLength: 48
+        minLength: 48
+        name: hash
+        required: true
+        type: string
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        minimum: 1
+        name: offset
+        type: integer
+      - description: Sort order
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Rollup'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get rollups in which the address pushed something
+      tags:
+      - address
+  /v1/address/{hash}/txs:
+    get:
+      description: Get address transactions
+      operationId: address-transactions
+      parameters:
+      - description: Hash
+        in: path
+        maxLength: 48
+        minLength: 48
+        name: hash
+        required: true
+        type: string
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        minimum: 1
+        name: offset
+        type: integer
+      - description: Sort order
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - description: Comma-separated status list
+        enum:
+        - success
+        - failed
+        in: query
+        name: status
+        type: string
+      - description: Comma-separated message types list
+        enum:
+        - transfer
+        - sequence
+        - validator_update
+        - sudo_address_change
+        - mint
+        - ibc_relay
+        - ics20_withdrawal
+        in: query
+        name: msg_type
+        type: string
+      - description: Time from in unix timestamp
+        in: query
+        minimum: 1
+        name: from
+        type: integer
+      - description: Time to in unix timestamp
+        in: query
+        minimum: 1
+        name: to
+        type: integer
+      - description: Block number
+        in: query
+        minimum: 1
+        name: height
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Tx'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get address transactions
+      tags:
+      - address
+  /v1/address/count:
+    get:
+      description: Get count of addresses in network
+      operationId: get-address-count
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get count of addresses in network
+      tags:
+      - address
+  /v1/block:
+    get:
+      description: List blocks info
+      operationId: list-block
+      parameters:
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Sort order
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - description: Need join stats for block
+        in: query
+        name: stats
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Block'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: List blocks info
+      tags:
+      - block
+  /v1/block/{height}:
+    get:
+      description: Get block info
+      operationId: get-block
+      parameters:
+      - description: Block height
+        in: path
+        minimum: 1
+        name: height
+        required: true
+        type: integer
+      - description: Need join stats for block
+        in: query
+        name: stats
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Block'
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get block info
+      tags:
+      - block
+  /v1/block/{height}/actions:
+    get:
+      description: Get actions from begin and end of block
+      operationId: get-block-actions
+      parameters:
+      - description: Block height
+        in: path
+        minimum: 1
+        name: height
+        required: true
+        type: integer
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Action'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get actions from begin and end of block
+      tags:
+      - block
+  /v1/block/{height}/rollup_actions:
+    get:
+      description: Get rollup actions in the block
+      operationId: get-block-rollup-actions
+      parameters:
+      - description: Block height
+        in: path
+        minimum: 1
+        name: height
+        required: true
+        type: integer
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.RollupAction'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get rollup actions in the block
+      tags:
+      - block
+  /v1/block/{height}/rollup_actions/count:
+    get:
+      description: Get count of rollup actions
+      operationId: get-block-rollup-actions-count
+      parameters:
+      - description: Block height
+        in: path
+        minimum: 1
+        name: height
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get count of rollup actions
+      tags:
+      - block
+  /v1/block/{height}/stats:
+    get:
+      description: Get block stats by height
+      operationId: get-block-stats
+      parameters:
+      - description: Block height
+        in: path
+        minimum: 1
+        name: height
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.BlockStats'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get block stats by height
+      tags:
+      - block
+  /v1/block/{height}/txs:
+    get:
+      description: Get transactions are contained in the block
+      operationId: get-block-transactions
+      parameters:
+      - description: Block height
+        in: path
+        minimum: 1
+        name: height
+        required: true
+        type: integer
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Tx'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get transactions are contained in the block
+      tags:
+      - block
+  /v1/block/count:
+    get:
+      description: Get count of blocks in network
+      operationId: get-block-count
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get count of blocks in network
+      tags:
+      - block
+  /v1/constants:
+    get:
+      description: Get network constants
+      operationId: get-constants
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Constants'
+        "204":
+          description: No Content
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get network constants
+      tags:
+      - general
+  /v1/enums:
+    get:
+      description: Get astria explorer enumerators
+      operationId: get-enums
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Enums'
+      summary: Get astria explorer enumerators
+      tags:
+      - general
+  /v1/head:
+    get:
+      description: Get current indexer head
+      operationId: head
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.State'
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get current indexer head
+      tags:
+      - general
+  /v1/rollup:
+    get:
+      description: List rollups info
+      operationId: list-rollups
+      parameters:
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Sort order
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Rollup'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: List rollups info
+      tags:
+      - rollup
+  /v1/rollup/{hash}:
+    get:
+      description: Get rollup info
+      operationId: get-rollup
+      parameters:
+      - description: Hash
+        in: path
+        maxLength: 64
+        minLength: 64
+        name: hash
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Rollup'
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get rollup info
+      tags:
+      - rollup
+  /v1/rollup/{hash}/actions:
+    get:
+      description: Get rollup actions
+      operationId: rollup-actions
+      parameters:
+      - description: Hash
+        in: path
+        maxLength: 48
+        minLength: 48
+        name: hash
+        required: true
+        type: string
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        minimum: 1
+        name: offset
+        type: integer
+      - description: Sort order
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.RollupAction'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get rollup actions
+      tags:
+      - rollup
+  /v1/rollup/{hash}/addresses:
+    get:
+      description: List addresses which pushed something in the rollup
+      operationId: get-rollup-addresses
+      parameters:
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Sort order
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Address'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: List addresses which pushed something in the rollup
+      tags:
+      - rollup
+  /v1/rollup/count:
+    get:
+      description: Get count of rollups in network
+      operationId: get-rollup-count
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get count of rollups in network
+      tags:
+      - rollup
+  /v1/search:
+    get:
+      operationId: search
+      parameters:
+      - description: Search string
+        in: query
+        name: query
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.SearchResult'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Search by hash or text
+      tags:
+      - search
+  /v1/stats/rollup/series/{hash}/{name}/{timeframe}:
+    get:
+      description: Get histogram with precomputed rollup by series name and timeframe
+      operationId: stats-rollup-series
+      parameters:
+      - description: Hash
+        in: path
+        maxLength: 48
+        minLength: 48
+        name: hash
+        required: true
+        type: string
+      - description: Timeframe
+        enum:
+        - hour
+        - day
+        - month
+        in: path
+        name: timeframe
+        required: true
+        type: string
+      - description: Series name
+        enum:
+        - size
+        - avg_size
+        - min_size
+        - max_size
+        - actions_count
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Time from in unix timestamp
+        in: query
+        name: from
+        type: integer
+      - description: Time to in unix timestamp
+        in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.RollupSeriesItem'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get histogram with precomputed rollup stats
+      tags:
+      - stats
+  /v1/stats/series/{name}/{timeframe}:
+    get:
+      description: Get histogram with precomputed stats by series name and timeframe
+      operationId: stats-series
+      parameters:
+      - description: Timeframe
+        enum:
+        - hour
+        - day
+        - month
+        in: path
+        name: timeframe
+        required: true
+        type: string
+      - description: Series name
+        enum:
+        - data_size
+        - tps
+        - bps
+        - rbps
+        - fee
+        - supply_change
+        - block_time
+        - tx_count
+        - bytes_in_block
+        - gas_price
+        - gas_efficiency
+        - gas_used
+        - gas_wanted
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Time from in unix timestamp
+        in: query
+        name: from
+        type: integer
+      - description: Time to in unix timestamp
+        in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.SeriesItem'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get histogram with precomputed stats
+      tags:
+      - stats
+  /v1/stats/summary:
+    get:
+      description: Get network summary
+      operationId: stats-summary
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.NetworkSummary'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get network summary
+      tags:
+      - stats
+  /v1/tx:
+    get:
+      description: List transactions info
+      operationId: list-transactions
+      parameters:
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Sort order
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - description: Comma-separated status list
+        enum:
+        - success
+        - failed
+        in: query
+        name: status
+        type: string
+      - description: Comma-separated action types list
+        enum:
+        - transfer
+        - sequence
+        - validator_update
+        - sudo_address_change
+        - mint
+        - ibc_relay
+        - ics20_withdrawal
+        in: query
+        name: action_types
+        type: string
+      - description: Time from in unix timestamp
+        in: query
+        name: from
+        type: integer
+      - description: Time to in unix timestamp
+        in: query
+        name: to
+        type: integer
+      - description: Block number
+        in: query
+        name: height
+        type: integer
+      - description: If true join actions
+        in: query
+        name: messages
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Tx'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: List transactions info
+      tags:
+      - transactions
+  /v1/tx/{hash}:
+    get:
+      description: Get transaction by hash
+      operationId: get-transaction
+      parameters:
+      - description: Transaction hash in hexadecimal
+        in: path
+        maxLength: 64
+        minLength: 64
+        name: hash
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Tx'
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get transaction by hash
+      tags:
+      - transactions
+  /v1/tx/{hash}/actions:
+    get:
+      description: Get transaction actions
+      operationId: get-transaction-actions
+      parameters:
+      - description: Transaction hash in hexadecimal
+        in: path
+        maxLength: 64
+        minLength: 64
+        name: hash
+        required: true
+        type: string
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Action'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get transaction actions
+      tags:
+      - transactions
+  /v1/tx/{hash}/rollup_actions:
+    get:
+      description: List transaction's rollup actions
+      operationId: list-transactions-rollup-actions
+      parameters:
+      - description: Transaction hash in hexadecimal
+        in: path
+        maxLength: 64
+        minLength: 64
+        name: hash
+        required: true
+        type: string
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.RollupAction'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: List transaction's rollup actions
+      tags:
+      - transactions
+  /v1/tx/{hash}/rollup_actions/count:
+    get:
+      description: Count of rollup actions
+      operationId: list-transactions-rollup-actions-count
+      parameters:
+      - description: Transaction hash in hexadecimal
+        in: path
+        maxLength: 64
+        minLength: 64
+        name: hash
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Count of rollup actions
+      tags:
+      - transactions
+  /v1/tx/count:
+    get:
+      description: Get count of transactions in network
+      operationId: get-transactions-count
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get count of transactions in network
+      tags:
+      - transactions
+  /v1/validators:
+    get:
+      description: List validators
+      operationId: list-validator
+      parameters:
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Sort order
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Validator'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: List validators
+      tags:
+      - validator
+  /v1/validators/{id}:
+    get:
+      description: Get validator info
+      operationId: get-validator
+      parameters:
+      - description: Internal validator id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Validator'
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get validator info
+      tags:
+      - validator
+  /v1/validators/{id}/blocks:
+    get:
+      description: List blocks which was proposed by validator
+      operationId: get-validator-blocks
+      parameters:
+      - description: Internal validator id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Sort order
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Block'
+            type: array
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: List blocks which was proposed by validator
+      tags:
+      - validator
+  /v1/validators/{id}/uptime:
+    get:
+      description: Get validator's uptime and history of signed block
+      operationId: get-validator-uptime
+      parameters:
+      - description: Internal validator id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Count of requested blocks
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ValidatorUptime'
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get validator's uptime and history of signed block
+      tags:
+      - validator
+  /v1/ws:
+    get:
+      description: |
+        ## Documentation for websocket API
+
+        ### Subscribe
+
+        To receive updates from websocket API send `subscribe` request to server.
+
+        ```json
+        {
+            "method": "subscribe",
+            "body": {
+                "channel": "<CHANNEL_NAME>",
+                "filters": {
+                    // pass channel filters
+                }
+            }
+        }
+        ```
+
+        Now 2 channels are supported:
+
+        * `head` - receive information about indexer state update. Channel does not have any filters. Subscribe message should looks like:
+
+        ```json
+        {
+            "method": "subscribe",
+            "body": {
+                "channel": "head"
+            }
+        }
+        ```
+
+        In that channel messages of `responses.State` type will be sent.
+
+        * `blocks` - receive information about new blocks. Channel does not have any filters. Subscribe message should looks like:
+
+        ```json
+        {
+            "method": "subscribe",
+            "body": {
+                "channel": "blocks"
+            }
+        }
+        ```
+
+        In that channel messages of `responses.Block` type will be sent.
+
+
+        ### Unsubscribe
+
+        To unsubscribe send `unsubscribe` message containing one of channel name describing above.
+
+
+        ```json
+        {
+            "method": "unsubscribe",
+            "body": {
+                "channel": "<CHANNEL_NAME>",
+            }
+        }
+        ```
+      operationId: websocket
+      produces:
+      - application/json
+      responses: {}
+      summary: Websocket API
+      tags:
+      - websocket
+swagger: "2.0"

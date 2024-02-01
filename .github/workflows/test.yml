@@ -1,0 +1,56 @@
+on:
+  push:
+
+name: Tests
+jobs:
+  golangci:
+    name: Linter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21.2'
+          cache: false
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.54.1
+          args: --timeout=5m
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21.x
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Golang tests
+        env:
+          GO111MODULE: on
+        run: |
+          go mod download
+          go test -p 8 ./...
+
+      - name: Update coverage report
+        uses: ncruces/go-coverage-report@v0.2.5
+        with:
+          report: 'true'
+          chart: 'true'
+          amend: 'true'
+          reuse-go: 'true'
+        continue-on-error: true

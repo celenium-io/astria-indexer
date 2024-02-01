@@ -1,0 +1,11 @@
+- id: 1
+  name: dipdup_astria_indexer
+  last_height: 7965
+  last_hash: 0xB15D072AFC508558B3E962060C701A695AF5D6A041D4A25C63240BBFF5064B3B
+  last_time: '2023-12-01 01:18:07.575'
+  chain_id: astria-dusk-2-final
+  total_tx: 2
+  total_accounts: 6
+  total_rollups: 1
+  total_supply: 1000000000000000000000
+  total_fee: 0
