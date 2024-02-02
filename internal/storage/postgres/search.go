@@ -5,7 +5,6 @@ package postgres
 
 import (
 	"context"
-	"strings"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-net/go-lib/database"
@@ -49,11 +48,11 @@ func (s *Search) Search(ctx context.Context, query []byte) (results []storage.Se
 }
 
 func (s *Search) SearchText(ctx context.Context, text string) (results []storage.SearchResult, err error) {
-	text = strings.ToUpper(text)
+	text = "%" + text + "%"
 	err = s.db.DB().NewSelect().
 		Model((*storage.Validator)(nil)).
 		ColumnExpr("id, name as value, 'validator' as type").
-		Where("UPPER(name) LIKE ?", text+"%").
+		Where("name ILIKE ?", text).
 		Scan(ctx, &results)
 	return
 }

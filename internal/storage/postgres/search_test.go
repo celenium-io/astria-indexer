@@ -61,7 +61,7 @@ func (s *StorageTestSuite) TestSearchTextValidator() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	results, err := s.storage.Search.SearchText(ctx, "node")
+	results, err := s.storage.Search.SearchText(ctx, "NODE")
 	s.Require().NoError(err)
 	s.Require().Len(results, 3)
 

@@ -74,6 +74,10 @@ func Create(ctx context.Context, cfg config.Database, scriptsDir string) (Storag
 }
 
 func initDatabase(ctx context.Context, conn *database.Bun) error {
+	if err := createExtensions(ctx, conn); err != nil {
+		return errors.Wrap(err, "create extensions")
+	}
+
 	if err := createTypes(ctx, conn); err != nil {
 		return errors.Wrap(err, "creating custom types")
 	}
@@ -127,6 +131,13 @@ func createHypertables(ctx context.Context, conn *database.Bun) error {
 			}
 		}
 		return nil
+	})
+}
+
+func createExtensions(ctx context.Context, conn *database.Bun) error {
+	return conn.DB().RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
+		_, err := tx.ExecContext(ctx, "CREATE EXTENSION IF NOT EXISTS pg_trgm;")
+		return err
 	})
 }
 
