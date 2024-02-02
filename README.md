@@ -22,4 +22,4 @@ cd astria-indexer
 docker-compose up -d --build
 ```
 
-You can set environment variables for customizing instances and indexing logic. Example of environment file can be found [here](.env.example).
+You have to set environment variables for customizing instances and indexing logic. Example of environment file can be found [here](.env.example).
