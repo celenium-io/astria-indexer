@@ -8,12 +8,12 @@ import (
 	"github.com/celenium-io/astria-indexer/internal/storage"
 )
 
-func headProcessor(state storage.State) *responses.State {
-	response := responses.NewState(state)
-	return &response
+func blockProcessor(block storage.Block) Notification[*responses.Block] {
+	response := responses.NewBlock(block)
+	return NewBlockNotification(response)
 }
 
-func blockProcessor(block storage.Block) *responses.Block {
-	response := responses.NewBlock(block)
-	return &response
+func headProcessor(state storage.State) Notification[*responses.State] {
+	response := responses.NewState(state)
+	return NewStateNotification(response)
 }
