@@ -31,4 +31,7 @@ ga:
 license-header:
 	update-license -path=./ -license=./HEADER
 
-.PHONY: indexer api generate test lint cover api-docs ga license-header
+build:
+	docker-compose up -d --build
+
+.PHONY: indexer api generate test lint cover api-docs ga license-header build
