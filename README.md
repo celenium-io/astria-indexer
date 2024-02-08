@@ -1,5 +1,5 @@
 # Astria Indexer
-[![Build Status](https://github.com/celenium-io/astria-indexer/workflows/Build/badge.svg)](https://github.com/celenium-io/astria-indexer/actions?query=branch%3Amaster+workflow%3A%22Build%22)
+[![Build Status](https://github.com/celenium-io/astria-indexer/workflows/Build/badge.svg)](https://github.com/celenium-io/astria-indexer/actions?query=branch%main+workflow%3A%22Build%22)
 [![made_with golang](https://img.shields.io/badge/made_with-golang-blue.svg)](https://golang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
