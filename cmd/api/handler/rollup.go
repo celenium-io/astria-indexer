@@ -111,7 +111,7 @@ func (handler *RollupHandler) List(c echo.Context) error {
 		Limit:     req.Limit,
 		Offset:    req.Offset,
 		SortOrder: pgSort(req.Sort),
-		SortField: req.Sort,
+		SortField: req.SortField,
 	}
 	rollups, err := handler.rollups.ListExt(c.Request().Context(), fltrs)
 	if err != nil {
