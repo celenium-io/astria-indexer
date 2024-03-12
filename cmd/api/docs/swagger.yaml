@@ -441,7 +441,7 @@ definitions:
         example: "0.97"
         type: string
     type: object
-host: api.astrium.io
+host: api-dusk-3.astrotrek.io
 info:
   contact: {}
   description: This is docs of Astria Explorer API.
