@@ -339,7 +339,6 @@ func (s *TxTestSuite) TestGetActions() {
 	s.Require().EqualValues(100, actions[0].Height)
 	s.Require().EqualValues(1, actions[0].Position)
 	s.Require().Equal(testTime, actions[0].Time)
-	s.Require().EqualValues(1, actions[0].TxId)
 	s.Require().EqualValues(string(types.ActionTypeSequence), actions[0].Type)
 }
 

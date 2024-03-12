@@ -3,7 +3,11 @@
 
 package responses
 
-import "github.com/celenium-io/astria-indexer/internal/storage"
+import (
+	"encoding/hex"
+
+	"github.com/celenium-io/astria-indexer/internal/storage"
+)
 
 type RollupAction struct {
 	Action
@@ -14,6 +18,10 @@ type RollupAction struct {
 func NewRollupAction(action storage.RollupAction) RollupAction {
 	result := RollupAction{
 		Action: NewAction(*action.Action),
+	}
+
+	if action.Tx != nil {
+		result.TxHash = hex.EncodeToString(action.Tx.Hash)
 	}
 
 	if action.Rollup != nil {
