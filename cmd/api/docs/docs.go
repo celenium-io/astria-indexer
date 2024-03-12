@@ -2065,11 +2065,6 @@ const docTemplate = `{
                     "format": "binary",
                     "example": "652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF"
                 },
-                "tx_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 10
-                },
                 "type": {
                     "type": "string",
                     "format": "string",
@@ -2375,11 +2370,6 @@ const docTemplate = `{
                     "type": "string",
                     "format": "binary",
                     "example": "652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF"
-                },
-                "tx_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 10
                 },
                 "type": {
                     "type": "string",

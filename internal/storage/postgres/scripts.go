@@ -43,12 +43,12 @@ func (s Storage) createScripts(ctx context.Context, conn *database.Bun, subFolde
 				if len(query) == 0 {
 					continue
 				}
-				if _, err := s.Connection().DB().NewRaw(string(query)).Exec(ctx); err != nil {
+				if _, err := conn.DB().NewRaw(string(query)).Exec(ctx); err != nil {
 					return errors.Wrapf(err, "creating %s '%s'", subFolder, files[i].Name())
 				}
 			}
 		} else {
-			if _, err := s.Connection().DB().NewRaw(string(raw)).Exec(ctx); err != nil {
+			if _, err := conn.DB().NewRaw(string(raw)).Exec(ctx); err != nil {
 				return errors.Wrapf(err, "creating %s '%s'", subFolder, files[i].Name())
 			}
 		}

@@ -29,10 +29,6 @@ definitions:
         example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
         format: binary
         type: string
-      tx_id:
-        example: 10
-        format: int64
-        type: integer
       type:
         example: sequence
         format: string
@@ -257,10 +253,6 @@ definitions:
         example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
         format: binary
         type: string
-      tx_id:
-        example: 10
-        format: int64
-        type: integer
       type:
         example: sequence
         format: string
