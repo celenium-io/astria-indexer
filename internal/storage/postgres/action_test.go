@@ -70,3 +70,22 @@ func (s *StorageTestSuite) TestActionByAddress() {
 	s.Require().EqualValues(types.ActionTypeSequence, action.Action.Type)
 	s.Require().NotNil(action.Action.Data)
 }
+
+func (s *StorageTestSuite) TestActionByRollup() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	actions, err := s.storage.Action.ByRollup(ctx, 1, 1, 0, sdk.SortOrderDesc)
+	s.Require().NoError(err)
+	s.Require().Len(actions, 1)
+
+	action := actions[0]
+	s.Require().EqualValues(7316, action.Height)
+	s.Require().EqualValues(1, action.ActionId)
+	s.Require().EqualValues(1, action.ActionId)
+	s.Require().NotNil(action.Tx)
+	s.Require().NotNil(action.Action)
+	s.Require().EqualValues(1, action.Action.TxId)
+	s.Require().EqualValues(types.ActionTypeSequence, action.Action.Type)
+	s.Require().NotNil(action.Action.Data)
+}
