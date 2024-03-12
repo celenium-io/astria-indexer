@@ -28,18 +28,26 @@ func NewBlocks(db *database.Bun) *Blocks {
 
 // ByHeight -
 func (b *Blocks) ByHeight(ctx context.Context, height types.Level, withStats bool) (block storage.Block, err error) {
-	query := b.DB().NewSelect().Model(&block).
-		Where("block.height = ?", height).
-		Relation("Proposer", func(sq *bun.SelectQuery) *bun.SelectQuery {
-			return sq.Column("id", "address", "name")
-		}).
+	subQuery := b.DB().NewSelect().
+		Model((*storage.Block)(nil)).
+		Where("height = ?", height).
 		Limit(1)
 
+	query := b.DB().NewSelect().
+		TableExpr("(?) as block", subQuery).
+		ColumnExpr("block.*").
+		ColumnExpr("validator.id as proposer__id, validator.address as proposer__address, validator.name as proposer__name").
+		Join("left join validator on block.proposer_id = validator.id")
+
 	if withStats {
-		query = query.Relation("Stats")
+		query = query.
+			ColumnExpr("stats.id AS stats__id, stats.height AS stats__height, stats.time AS stats__time, stats.tx_count AS stats__tx_count").
+			ColumnExpr("stats.block_time AS stats__block_time, stats.bytes_in_block AS stats__bytes_in_block").
+			ColumnExpr("stats.supply_change AS stats__supply_change, stats.fee AS stats__fee, stats.gas_used AS stats__gas_used, stats.gas_wanted AS stats__gas_wanted").
+			Join("left join block_stats as stats ON stats.height = block.height")
 	}
 
-	err = query.Scan(ctx)
+	err = query.Scan(ctx, &block)
 	return
 }
 
@@ -57,15 +65,21 @@ func (b *Blocks) Last(ctx context.Context) (block storage.Block, err error) {
 
 // ByHash -
 func (b *Blocks) ByHash(ctx context.Context, hash []byte) (block storage.Block, err error) {
-	err = b.DB().NewSelect().
-		Model(&block).
+	subQuery := b.DB().NewSelect().
+		Model((*storage.Block)(nil)).
 		Where("hash = ?", hash).
-		Relation("Stats").
-		Relation("Proposer", func(sq *bun.SelectQuery) *bun.SelectQuery {
-			return sq.Column("id", "address", "name")
-		}).
-		Limit(1).
-		Scan(ctx)
+		Limit(1)
+
+	err = b.DB().NewSelect().
+		TableExpr("(?) as block", subQuery).
+		ColumnExpr("block.*").
+		ColumnExpr("validator.id as proposer__id, validator.address as proposer__address, validator.name as proposer__name").
+		ColumnExpr("stats.id AS stats__id, stats.height AS stats__height, stats.time AS stats__time, stats.tx_count AS stats__tx_count").
+		ColumnExpr("stats.block_time AS stats__block_time, stats.bytes_in_block AS stats__bytes_in_block").
+		ColumnExpr("stats.supply_change AS stats__supply_change, stats.fee AS stats__fee, stats.gas_used AS stats__gas_used, stats.gas_wanted AS stats__gas_wanted").
+		Join("left join validator on block.proposer_id = validator.id").
+		Join("left join block_stats as stats ON stats.height = block.height").
+		Scan(ctx, &block)
 	return
 }
 
@@ -103,11 +117,21 @@ func (b *Blocks) ByProposer(ctx context.Context, proposerId uint64, limit, offse
 }
 
 func (b *Blocks) ByIdWithRelations(ctx context.Context, id uint64) (block storage.Block, err error) {
-	err = b.DB().NewSelect().Model(&block).
-		Where("block.id = ?", id).
-		Limit(1).
-		Relation("Stats").
-		Relation("Proposer").
-		Scan(ctx)
+	query := b.DB().NewSelect().
+		Model((*storage.Block)(nil)).
+		Where("id = ?", id).
+		Limit(1)
+
+	err = b.DB().NewSelect().
+		TableExpr("(?) as block", query).
+		ColumnExpr("block.*").
+		ColumnExpr("validator.id as proposer__id, validator.address as proposer__address, validator.name as proposer__name, validator.pubkey as proposer__pubkey, validator.pubkey_type as proposer__pubkey_type, validator.power as proposer__power, validator.height as proposer__height").
+		ColumnExpr("stats.id AS stats__id, stats.height AS stats__height, stats.time AS stats__time, stats.tx_count AS stats__tx_count").
+		ColumnExpr("stats.block_time AS stats__block_time, stats.bytes_in_block AS stats__bytes_in_block").
+		ColumnExpr("stats.supply_change AS stats__supply_change, stats.fee AS stats__fee, stats.gas_used AS stats__gas_used, stats.gas_wanted AS stats__gas_wanted").
+		Join("left join validator on block.proposer_id = validator.id").
+		Join("left join block_stats as stats ON stats.height = block.height").
+		Scan(ctx, &block)
+
 	return
 }
