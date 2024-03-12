@@ -103,9 +103,14 @@ func (s *RollupTestSuite) TestList() {
 	c.SetPath("/rollup")
 
 	s.rollups.EXPECT().
-		List(gomock.Any(), uint64(10), uint64(0), pgSort("asc")).
-		Return([]*storage.Rollup{
-			&testRollup,
+		ListExt(gomock.Any(), storage.RollupListFilter{
+			Limit:     10,
+			Offset:    0,
+			SortField: "",
+			SortOrder: sdk.SortOrderDesc,
+		}).
+		Return([]storage.Rollup{
+			testRollup,
 		}, nil).
 		Times(1)
 

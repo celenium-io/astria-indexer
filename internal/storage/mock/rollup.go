@@ -472,6 +472,45 @@ func (c *IRollupListCall) DoAndReturn(f func(context.Context, uint64, uint64, st
 	return c
 }
 
+// ListExt mocks base method.
+func (m *MockIRollup) ListExt(ctx context.Context, fltrs storage.RollupListFilter) ([]storage.Rollup, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListExt", ctx, fltrs)
+	ret0, _ := ret[0].([]storage.Rollup)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListExt indicates an expected call of ListExt.
+func (mr *MockIRollupMockRecorder) ListExt(ctx, fltrs any) *IRollupListExtCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListExt", reflect.TypeOf((*MockIRollup)(nil).ListExt), ctx, fltrs)
+	return &IRollupListExtCall{Call: call}
+}
+
+// IRollupListExtCall wrap *gomock.Call
+type IRollupListExtCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *IRollupListExtCall) Return(arg0 []storage.Rollup, arg1 error) *IRollupListExtCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *IRollupListExtCall) Do(f func(context.Context, storage.RollupListFilter) ([]storage.Rollup, error)) *IRollupListExtCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *IRollupListExtCall) DoAndReturn(f func(context.Context, storage.RollupListFilter) ([]storage.Rollup, error)) *IRollupListExtCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // ListRollupsByAddress mocks base method.
 func (m *MockIRollup) ListRollupsByAddress(ctx context.Context, addressId uint64, limit, offset int, sort storage0.SortOrder) ([]storage.RollupAddress, error) {
 	m.ctrl.T.Helper()

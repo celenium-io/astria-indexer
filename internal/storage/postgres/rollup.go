@@ -97,3 +97,19 @@ func (r *Rollup) ListRollupsByAddress(ctx context.Context, addressId uint64, lim
 	err = query.Scan(ctx)
 	return
 }
+
+func (r *Rollup) ListExt(ctx context.Context, fltrs storage.RollupListFilter) (rollups []storage.Rollup, err error) {
+	query := r.DB().NewSelect().Model(&rollups)
+
+	query = limitScope(query, fltrs.Limit)
+	switch fltrs.SortField {
+	case "size":
+		query = sortScope(query, "size", fltrs.SortOrder)
+	default:
+		query = sortScope(query, "id", fltrs.SortOrder)
+	}
+	query = offsetScope(query, fltrs.Offset)
+
+	err = query.Scan(ctx)
+	return
+}

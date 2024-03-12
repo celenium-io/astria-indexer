@@ -1086,6 +1086,13 @@ paths:
         in: query
         name: sort
         type: string
+      - description: 'Field using for sorting. Default: id'
+        enum:
+        - id
+        - size
+        in: query
+        name: sort_by
+        type: string
       produces:
       - application/json
       responses:

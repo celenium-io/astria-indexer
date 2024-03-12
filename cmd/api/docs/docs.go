@@ -954,6 +954,16 @@ const docTemplate = `{
                         "description": "Sort order",
                         "name": "sort",
                         "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "id",
+                            "size"
+                        ],
+                        "type": "string",
+                        "description": "Field using for sorting. Default: id",
+                        "name": "sort_by",
+                        "in": "query"
                     }
                 ],
                 "responses": {
