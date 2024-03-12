@@ -69,35 +69,58 @@ func (handler *RollupHandler) Get(c echo.Context) error {
 	return c.JSON(http.StatusOK, responses.NewRollup(&rollup))
 }
 
+type listRollupsRequest struct {
+	Limit     int    `query:"limit"   validate:"omitempty,min=1,max=100"`
+	Offset    int    `query:"offset"  validate:"omitempty,min=0"`
+	Sort      string `query:"sort"    validate:"omitempty,oneof=asc desc"`
+	SortField string `query:"sort_by" validate:"omitempty,oneof=size id"`
+}
+
+func (p *listRollupsRequest) SetDefault() {
+	if p.Limit == 0 {
+		p.Limit = 10
+	}
+	if p.Sort == "" {
+		p.Sort = desc
+	}
+}
+
 // List godoc
 //
 //	@Summary		List rollups info
 //	@Description	List rollups info
 //	@Tags			rollup
 //	@ID				list-rollups
-//	@Param			limit		query	integer	false	"Count of requested entities"		mininum(1)	maximum(100)
-//	@Param			offset		query	integer	false	"Offset"							mininum(1)
-//	@Param			sort		query	string	false	"Sort order"						Enums(asc, desc)
+//	@Param			limit		query	integer	false	"Count of requested entities"			mininum(1)	maximum(100)
+//	@Param			offset		query	integer	false	"Offset"								mininum(1)
+//	@Param			sort		query	string	false	"Sort order"							Enums(asc, desc)
+//	@Param			sort_by		query	string	false	"Field using for sorting. Default: id"	Enums(id, size)
 //	@Produce		json
 //	@Success		200	{array}		responses.Rollup
 //	@Failure		400	{object}	Error
 //	@Failure		500	{object}	Error
 //	@Router			/v1/rollup [get]
 func (handler *RollupHandler) List(c echo.Context) error {
-	req, err := bindAndValidate[listRequest](c)
+	req, err := bindAndValidate[listRollupsRequest](c)
 	if err != nil {
 		return badRequestError(c, err)
 	}
 	req.SetDefault()
 
-	rollups, err := handler.rollups.List(c.Request().Context(), req.Limit, req.Offset, pgSort(req.Sort))
+	fltrs := storage.RollupListFilter{
+		Limit:     req.Limit,
+		Offset:    req.Offset,
+		SortOrder: pgSort(req.Sort),
+		SortField: req.Sort,
+	}
+	rollups, err := handler.rollups.ListExt(c.Request().Context(), fltrs)
 	if err != nil {
 		return handleError(c, err, handler.rollups)
 	}
 
 	response := make([]responses.Rollup, len(rollups))
 	for i := range rollups {
-		response[i] = responses.NewRollup(rollups[i])
+		response[i] = responses.NewRollup(&rollups[i])
 	}
 
 	return returnArray(c, response)

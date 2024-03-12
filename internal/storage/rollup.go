@@ -24,6 +24,7 @@ type IRollup interface {
 	ByHash(ctx context.Context, hash []byte) (Rollup, error)
 	Addresses(ctx context.Context, rollupId uint64, limit, offset int, sort sdk.SortOrder) ([]RollupAddress, error)
 	ListRollupsByAddress(ctx context.Context, addressId uint64, limit, offset int, sort sdk.SortOrder) ([]RollupAddress, error)
+	ListExt(ctx context.Context, fltrs RollupListFilter) ([]Rollup, error)
 }
 
 type Rollup struct {
@@ -43,4 +44,11 @@ func (Rollup) TableName() string {
 
 func (r Rollup) String() string {
 	return hex.EncodeToString(r.AstriaId)
+}
+
+type RollupListFilter struct {
+	Limit     int
+	Offset    int
+	SortField string
+	SortOrder sdk.SortOrder
 }

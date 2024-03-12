@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"time"
 
+	models "github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage"
 )
 
@@ -105,4 +106,41 @@ func (s *StorageTestSuite) TestListRollupsByAddress() {
 	s.Require().EqualValues(1, rollup.RollupId)
 	s.Require().NotNil(rollup.Rollup)
 	s.Require().EqualValues(1, rollup.Rollup.Id)
+}
+
+func (s *StorageTestSuite) TestListExt() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	for _, order := range []storage.SortOrder{
+		storage.SortOrderAsc,
+		storage.SortOrderDesc,
+	} {
+		for _, field := range []string{
+			"size",
+			"id",
+			"",
+		} {
+			rollups, err := s.storage.Rollup.ListExt(ctx, models.RollupListFilter{
+				Limit:     1,
+				Offset:    0,
+				SortField: field,
+				SortOrder: order,
+			})
+			s.Require().NoError(err)
+			s.Require().Len(rollups, 1)
+
+			rollup := rollups[0]
+
+			hash, err := hex.DecodeString("19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539")
+			s.Require().NoError(err)
+
+			s.Require().EqualValues(1, rollup.Id)
+			s.Require().EqualValues(hash, rollup.AstriaId)
+			s.Require().EqualValues(112, rollup.Size)
+			s.Require().EqualValues(1, rollup.ActionsCount)
+			s.Require().EqualValues(7316, rollup.FirstHeight)
+		}
+	}
+
 }
