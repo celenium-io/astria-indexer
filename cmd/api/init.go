@@ -347,7 +347,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 	v1.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	if cfg.ApiConfig.Websocket {
-		initWebsocket(ctx, db, v1)
+		initWebsocket(ctx, v1)
 	}
 
 	log.Info().Msg("API routes:")
@@ -381,7 +381,7 @@ var (
 	endpointCache *cache.Cache
 )
 
-func initWebsocket(ctx context.Context, db postgres.Storage, group *echo.Group) {
+func initWebsocket(ctx context.Context, group *echo.Group) {
 	observer := dispatcher.Observe(storage.ChannelHead, storage.ChannelBlock)
 	wsManager = websocket.NewManager(observer)
 	wsManager.Start(ctx)

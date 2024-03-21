@@ -8,6 +8,7 @@
   supply_change: 0
   fee: 0
   bytes_in_block: 64
+  data_size: 0
 - id: 7966
   height: 7965
   time: '2023-12-01T00:18:07.575Z'
@@ -18,3 +19,4 @@
   supply_change: 0
   fee: 0
   bytes_in_block: 266
+  data_size: 202

@@ -25,9 +25,16 @@ func NewTx(db *database.Bun) *Tx {
 }
 
 func (tx *Tx) ByHash(ctx context.Context, hash []byte) (transaction storage.Tx, err error) {
-	err = tx.DB().NewSelect().Model(&transaction).
+	query := tx.DB().NewSelect().Model((*storage.Tx)(nil)).
 		Where("hash = ?", hash).
-		Scan(ctx)
+		Limit(1)
+
+	err = tx.DB().NewSelect().
+		TableExpr("(?) as tx", query).
+		ColumnExpr("tx.*").
+		ColumnExpr("address.hash as signer__hash").
+		Join("left join address on address.id = tx.signer_id").
+		Scan(ctx, &transaction)
 	return
 }
 

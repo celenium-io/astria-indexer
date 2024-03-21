@@ -31,6 +31,8 @@ func (s *StorageTestSuite) TestTxByHash() {
 	s.Require().EqualValues(1, tx.SignerId)
 	s.Require().EqualValues(types.StatusSuccess, tx.Status)
 	s.Require().EqualValues(hash, tx.Hash)
+	s.Require().NotNil(tx.Signer)
+	s.Require().Equal("3fff1c39b9d163bfb9bcbf9dfea78675f1b4bc2c", hex.EncodeToString(tx.Signer.Hash))
 }
 
 func (s *StorageTestSuite) TestTxByHeight() {
