@@ -118,9 +118,9 @@ func (s *StatsTestSuite) TestSummary() {
 	s.Require().EqualValues(0.0038194444444444443, summary.BPS)
 	s.Require().EqualValues(2327, summary.BlockTime)
 	s.Require().EqualValues(330, summary.BytesInBlock)
-	s.Require().EqualValues(0, summary.DataSize)
+	s.Require().EqualValues(202, summary.DataSize)
 	s.Require().EqualValues("0", summary.Fee.String())
-	s.Require().EqualValues(0, summary.RBPS)
+	s.Require().EqualValues(0.002337962962962963, summary.RBPS)
 	s.Require().EqualValues("0", summary.Supply.String())
 	s.Require().EqualValues(1, summary.TxCount)
 }
