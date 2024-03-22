@@ -63,6 +63,11 @@ func TestDecodeActions(t *testing.T) {
 				DestinationChainAddress: "celestia1lx7dfjp20shd6y5f4tauvy8cv4pjhvszfrh9ah",
 				ReturnAddress:           address,
 				SourceChannel:           "channel-12",
+				TimeoutHeight: &astria.IbcHeight{
+					RevisionNumber: 1000,
+					RevisionHeight: 1001,
+				},
+				TimeoutTime: 1000,
 			},
 		}
 
@@ -75,6 +80,11 @@ func TestDecodeActions(t *testing.T) {
 				"destination_address": "celestia1lx7dfjp20shd6y5f4tauvy8cv4pjhvszfrh9ah",
 				"return_address":      hex.EncodeToString(address),
 				"source_channel":      "channel-12",
+				"timeout_height": map[string]any{
+					"revision_number": uint64(1000),
+					"revision_height": uint64(1001),
+				},
+				"timeout_time": uint64(1000),
 			},
 			Addresses: []*storage.AddressAction{},
 			BalanceUpdates: []storage.BalanceUpdate{

@@ -101,7 +101,10 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, height types.Leve
 		action.Data["source_channel"] = body.Ics20Withdrawal.SourceChannel
 
 		if body.Ics20Withdrawal.TimeoutHeight != nil {
-			action.Data["timeout_height"] = body.Ics20Withdrawal.TimeoutHeight
+			action.Data["timeout_height"] = map[string]any{
+				"revision_number": body.Ics20Withdrawal.TimeoutHeight.RevisionNumber,
+				"revision_height": body.Ics20Withdrawal.TimeoutHeight.RevisionHeight,
+			}
 		}
 		if body.Ics20Withdrawal.TimeoutTime > 0 {
 			action.Data["timeout_time"] = body.Ics20Withdrawal.TimeoutTime
