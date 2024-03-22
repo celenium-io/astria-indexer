@@ -3,9 +3,7 @@ module github.com/celenium-io/astria-indexer
 go 1.22.1
 
 require (
-	buf.build/gen/go/astria/astria/protocolbuffers/go v1.32.0-20240102174805-d9fa6929f260.1
-	buf.build/gen/go/cosmos/cosmos-sdk/protocolbuffers/go v1.32.0-20230719110346-aa25660f4ff7.1
-	buf.build/gen/go/penumbra-zone/penumbra/protocolbuffers/go v1.32.0-20231120132728-bc443669626d.1
+	buf.build/gen/go/astria/astria/protocolbuffers/go v1.33.0-20240312180723-51f595462a36.1
 	github.com/cometbft/cometbft v0.38.2
 	github.com/dipdup-io/workerpool v0.0.4
 	github.com/dipdup-net/go-lib v0.3.6
@@ -30,13 +28,10 @@ require (
 	github.com/uptrace/bun v1.1.14
 	go.uber.org/mock v0.4.0
 	golang.org/x/time v0.5.0
-	google.golang.org/protobuf v1.32.0
+	google.golang.org/protobuf v1.33.0
 )
 
 require (
-	buf.build/gen/go/cosmos/cosmos-proto/protocolbuffers/go v1.32.0-20211202220400-1935555c206d.1 // indirect
-	buf.build/gen/go/cosmos/gogo-proto/protocolbuffers/go v1.32.0-20230509103710-5e5b9fdd0180.1 // indirect
-	buf.build/gen/go/cosmos/ibc/protocolbuffers/go v1.32.0-20230913112312-7ab44ae956a0.1 // indirect
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/ClickHouse/ch-go v0.58.0 // indirect

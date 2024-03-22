@@ -560,6 +560,10 @@ paths:
         - mint
         - ibc_relay
         - ics20_withdrawal
+        - ibc_relayer_change
+        - fee_asset_change
+        - init_bridge_account
+        - bridge_lock
         in: query
         name: action_types
         type: string
@@ -679,6 +683,10 @@ paths:
         - mint
         - ibc_relay
         - ics20_withdrawal
+        - ibc_relayer_change
+        - fee_asset_change
+        - init_bridge_account
+        - bridge_lock
         in: query
         name: msg_type
         type: string
@@ -1461,6 +1469,10 @@ paths:
         - mint
         - ibc_relay
         - ics20_withdrawal
+        - ibc_relayer_change
+        - fee_asset_change
+        - init_bridge_account
+        - bridge_lock
         in: query
         name: action_types
         type: string
