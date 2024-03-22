@@ -39,6 +39,7 @@ func addressListFilter(query *bun.SelectQuery, fltrs storage.AddressListFilter) 
 func txFilter(query *bun.SelectQuery, fltrs storage.TxFilter) *bun.SelectQuery {
 	query = limitScope(query, fltrs.Limit)
 	query = sortScope(query, "tx.id", fltrs.Sort)
+	query = offsetScope(query, fltrs.Offset)
 
 	if !fltrs.ActionTypes.Empty() {
 		query = query.Where("action_types & ? > 0", fltrs.ActionTypes.Bits)

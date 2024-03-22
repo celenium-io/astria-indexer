@@ -39,21 +39,25 @@ func (tx *Tx) ByHash(ctx context.Context, hash []byte) (transaction storage.Tx, 
 }
 
 func (tx *Tx) ByHeight(ctx context.Context, height types.Level, limit, offset int) (txs []storage.Tx, err error) {
-	query := tx.DB().NewSelect().Model(&txs).
-		Where("tx.height = ?", height).
-		Relation("Signer")
+	query := tx.DB().NewSelect().Model((*storage.Tx)(nil)).
+		Where("tx.height = ?", height)
 
 	query = limitScope(query, limit)
 	if offset > 0 {
 		query = query.Offset(offset)
 	}
 
-	err = query.Scan(ctx)
+	err = tx.DB().NewSelect().
+		TableExpr("(?) as tx", query).
+		ColumnExpr("tx.*").
+		ColumnExpr("address.hash as signer__hash").
+		Join("left join address on address.id = tx.signer_id").
+		Scan(ctx, &txs)
 	return
 }
 
 func (tx *Tx) Filter(ctx context.Context, fltrs storage.TxFilter) (txs []storage.Tx, err error) {
-	query := tx.DB().NewSelect().Model(&txs).Offset(fltrs.Offset).Relation("Signer")
+	query := tx.DB().NewSelect().Model(&txs).Relation("Signer")
 	query = txFilter(query, fltrs)
 
 	err = query.Scan(ctx)
@@ -64,8 +68,7 @@ func (tx *Tx) ByAddress(ctx context.Context, addressId uint64, fltrs storage.TxF
 	query := tx.DB().NewSelect().
 		Model(&txs).
 		Where("signer_id = ?", addressId).
-		Relation("Signer").
-		Offset(fltrs.Offset)
+		Relation("Signer")
 
 	query = txFilter(query, fltrs)
 
