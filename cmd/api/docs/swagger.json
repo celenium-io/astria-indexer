@@ -197,7 +197,11 @@
                             "sudo_address_change",
                             "mint",
                             "ibc_relay",
-                            "ics20_withdrawal"
+                            "ics20_withdrawal",
+                            "ibc_relayer_change",
+                            "fee_asset_change",
+                            "init_bridge_account",
+                            "bridge_lock"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -366,7 +370,11 @@
                             "sudo_address_change",
                             "mint",
                             "ibc_relay",
-                            "ics20_withdrawal"
+                            "ics20_withdrawal",
+                            "ibc_relayer_change",
+                            "fee_asset_change",
+                            "init_bridge_account",
+                            "bridge_lock"
                         ],
                         "type": "string",
                         "description": "Comma-separated message types list",
@@ -1484,7 +1492,11 @@
                             "sudo_address_change",
                             "mint",
                             "ibc_relay",
-                            "ics20_withdrawal"
+                            "ics20_withdrawal",
+                            "ibc_relayer_change",
+                            "fee_asset_change",
+                            "init_bridge_account",
+                            "bridge_lock"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",

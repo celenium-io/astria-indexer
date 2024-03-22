@@ -31,6 +31,14 @@ const (
 	ActionTypeIbcRelay ActionType = "ibc_relay"
 	// ActionTypeIcs20Withdrawal is a ActionType of type ics20_withdrawal.
 	ActionTypeIcs20Withdrawal ActionType = "ics20_withdrawal"
+	// ActionTypeIbcRelayerChange is a ActionType of type ibc_relayer_change.
+	ActionTypeIbcRelayerChange ActionType = "ibc_relayer_change"
+	// ActionTypeFeeAssetChange is a ActionType of type fee_asset_change.
+	ActionTypeFeeAssetChange ActionType = "fee_asset_change"
+	// ActionTypeInitBridgeAccount is a ActionType of type init_bridge_account.
+	ActionTypeInitBridgeAccount ActionType = "init_bridge_account"
+	// ActionTypeBridgeLock is a ActionType of type bridge_lock.
+	ActionTypeBridgeLock ActionType = "bridge_lock"
 )
 
 var ErrInvalidActionType = fmt.Errorf("not a valid ActionType, try [%s]", strings.Join(_ActionTypeNames, ", "))
@@ -43,6 +51,10 @@ var _ActionTypeNames = []string{
 	string(ActionTypeMint),
 	string(ActionTypeIbcRelay),
 	string(ActionTypeIcs20Withdrawal),
+	string(ActionTypeIbcRelayerChange),
+	string(ActionTypeFeeAssetChange),
+	string(ActionTypeInitBridgeAccount),
+	string(ActionTypeBridgeLock),
 }
 
 // ActionTypeNames returns a list of possible string values of ActionType.
@@ -62,6 +74,10 @@ func ActionTypeValues() []ActionType {
 		ActionTypeMint,
 		ActionTypeIbcRelay,
 		ActionTypeIcs20Withdrawal,
+		ActionTypeIbcRelayerChange,
+		ActionTypeFeeAssetChange,
+		ActionTypeInitBridgeAccount,
+		ActionTypeBridgeLock,
 	}
 }
 
@@ -85,6 +101,10 @@ var _ActionTypeValue = map[string]ActionType{
 	"mint":                ActionTypeMint,
 	"ibc_relay":           ActionTypeIbcRelay,
 	"ics20_withdrawal":    ActionTypeIcs20Withdrawal,
+	"ibc_relayer_change":  ActionTypeIbcRelayerChange,
+	"fee_asset_change":    ActionTypeFeeAssetChange,
+	"init_bridge_account": ActionTypeInitBridgeAccount,
+	"bridge_lock":         ActionTypeBridgeLock,
 }
 
 // ParseActionType attempts to convert a string to a ActionType.

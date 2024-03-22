@@ -11,6 +11,10 @@ const (
 	ActionTypeMintBits
 	ActionTypeIbcRelayBits
 	ActionTypeIcs20WithdrawalBits
+	ActionTypeIbcRelayerChangeBits
+	ActionTypeFeeAssetChangeBits
+	ActionTypeInitBridgeAccountBits
+	ActionTypeBridgeLockBits
 )
 
 var (
@@ -22,6 +26,10 @@ var (
 		ActionTypeSudoAddressChange: ActionTypeSudoAddressChangeBits,
 		ActionTypeTransfer:          ActionTypeTransferBits,
 		ActionTypeValidatorUpdate:   ActionTypeValidatorUpdateBits,
+		ActionTypeBridgeLock:        ActionTypeBridgeLockBits,
+		ActionTypeFeeAssetChange:    ActionTypeFeeAssetChangeBits,
+		ActionTypeInitBridgeAccount: ActionTypeInitBridgeAccountBits,
+		ActionTypeIbcRelayerChange:  ActionTypeIbcRelayerChangeBits,
 	}
 )
 
@@ -47,6 +55,14 @@ func NewActionTypeMask(vals ...string) ActionTypeMask {
 			mask.Set(ActionTypeTransferBits)
 		case string(ActionTypeValidatorUpdate):
 			mask.Set(ActionTypeValidatorUpdateBits)
+		case string(ActionTypeBridgeLock):
+			mask.Set(ActionTypeBridgeLockBits)
+		case string(ActionTypeFeeAssetChange):
+			mask.Set(ActionTypeFeeAssetChangeBits)
+		case string(ActionTypeIbcRelayerChange):
+			mask.Set(ActionTypeIbcRelayerChangeBits)
+		case string(ActionTypeInitBridgeAccount):
+			mask.Set(ActionTypeInitBridgeAccountBits)
 		}
 	}
 
@@ -63,7 +79,7 @@ func (mask ActionTypeMask) Strings() []string {
 	}
 
 	vals := make([]string, 0)
-	for val := ActionTypeTransferBits; val <= ActionTypeIcs20WithdrawalBits; val <<= 1 {
+	for val := ActionTypeTransferBits; val <= ActionTypeBridgeLockBits; val <<= 1 {
 		if !mask.Has(val) {
 			continue
 		}
@@ -82,6 +98,14 @@ func (mask ActionTypeMask) Strings() []string {
 			vals = append(vals, string(ActionTypeTransfer))
 		case ActionTypeValidatorUpdateBits:
 			vals = append(vals, string(ActionTypeValidatorUpdate))
+		case ActionTypeBridgeLockBits:
+			vals = append(vals, string(ActionTypeBridgeLock))
+		case ActionTypeFeeAssetChangeBits:
+			vals = append(vals, string(ActionTypeFeeAssetChange))
+		case ActionTypeIbcRelayerChangeBits:
+			vals = append(vals, string(ActionTypeIbcRelayerChange))
+		case ActionTypeInitBridgeAccountBits:
+			vals = append(vals, string(ActionTypeInitBridgeAccount))
 		}
 	}
 

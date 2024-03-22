@@ -12,7 +12,11 @@ package types
 		sudo_address_change,
 		mint,
 		ibc_relay,
-		ics20_withdrawal
+		ics20_withdrawal,
+		ibc_relayer_change,
+		fee_asset_change,
+		init_bridge_account,
+		bridge_lock
 	)
 */
 //go:generate go-enum --marshal --sql --values --names
