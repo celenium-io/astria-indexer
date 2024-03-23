@@ -23,10 +23,12 @@ func (module *Module) saveRollup(
 
 	data := make([]*storage.Rollup, 0)
 	for _, value := range rollups {
-		if id, ok := addrToId[value.BridgeAddress.String()]; ok {
-			value.BridgeAddressId = id
-		} else {
-			return 0, errors.Errorf("unknown bridge address id: %s", value.BridgeAddress.String())
+		if value.BridgeAddress != nil {
+			if id, ok := addrToId[value.BridgeAddress.String()]; ok {
+				value.BridgeAddressId = id
+			} else {
+				return 0, errors.Errorf("unknown bridge address id: %s", value.BridgeAddress.String())
+			}
 		}
 		data = append(data, value)
 	}
