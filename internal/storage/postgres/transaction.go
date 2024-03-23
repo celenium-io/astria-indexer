@@ -131,14 +131,14 @@ func (tx Transaction) SaveRollups(ctx context.Context, rollups ...*models.Rollup
 		rs[i].Rollup = rollups[i]
 	}
 
-	_, err := tx.Tx().NewInsert().Model(&rs).
-		Column("first_height", "astria_id", "actions_count", "size").
+	query := tx.Tx().NewInsert().Model(&rs).
+		Column("first_height", "astria_id", "actions_count", "size", "bridge_address_id").
 		On("CONFLICT ON CONSTRAINT rollup_id DO UPDATE").
 		Set("actions_count = added_rollup.actions_count + EXCLUDED.actions_count").
 		Set("size = added_rollup.size + EXCLUDED.size").
-		Returning("xmax, id").
-		Exec(ctx)
-	if err != nil {
+		Set("bridge_address_id = case when EXCLUDED.bridge_address_id is not null then EXCLUDED.bridge_address_id else added_rollup.bridge_address_id end")
+
+	if _, err := query.Returning("xmax, id").Exec(ctx); err != nil {
 		return 0, err
 	}
 
@@ -149,7 +149,7 @@ func (tx Transaction) SaveRollups(ctx context.Context, rollups ...*models.Rollup
 		}
 	}
 
-	return count, err
+	return count, nil
 }
 
 func (tx Transaction) SaveRollupActions(ctx context.Context, actions ...*models.RollupAction) error {

@@ -13,7 +13,6 @@ func saveAction(
 	ctx context.Context,
 	tx storage.Transaction,
 	actions []*storage.Action,
-	addrToId map[string]uint64,
 ) error {
 	if len(actions) == 0 {
 		return nil

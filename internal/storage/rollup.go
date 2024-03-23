@@ -25,16 +25,20 @@ type IRollup interface {
 	Addresses(ctx context.Context, rollupId uint64, limit, offset int, sort sdk.SortOrder) ([]RollupAddress, error)
 	ListRollupsByAddress(ctx context.Context, addressId uint64, limit, offset int, sort sdk.SortOrder) ([]RollupAddress, error)
 	ListExt(ctx context.Context, fltrs RollupListFilter) ([]Rollup, error)
+	ByBridgeAddress(ctx context.Context, id uint64) (Rollup, error)
 }
 
 type Rollup struct {
 	bun.BaseModel `bun:"rollup" comment:"Table with rollups"`
 
-	Id           uint64      `bun:"id,pk,notnull,autoincrement" comment:"Unique internal identity"`
-	AstriaId     []byte      `bun:"astria_id,unique:rollup_id"  comment:"Astria rollup identity"`
-	FirstHeight  types.Level `bun:"first_height"                comment:"Block number of the first rollup occurance"`
-	ActionsCount int64       `bun:"actions_count"               comment:"Count of actions in which the rollup was involved"`
-	Size         int64       `bun:"size"                        comment:"Count bytes which was saved in the rollup"`
+	Id              uint64      `bun:"id,pk,notnull,autoincrement" comment:"Unique internal identity"`
+	AstriaId        []byte      `bun:"astria_id,unique:rollup_id"  comment:"Astria rollup identity"`
+	FirstHeight     types.Level `bun:"first_height"                comment:"Block number of the first rollup occurance"`
+	ActionsCount    int64       `bun:"actions_count"               comment:"Count of actions in which the rollup was involved"`
+	Size            int64       `bun:"size"                        comment:"Count bytes which was saved in the rollup"`
+	BridgeAddressId uint64      `bun:"bridge_address_id"           comment:"Address id associated with rollup"`
+
+	BridgeAddress *Address `bun:"rel:has-one,join:bridge_address_id=id"`
 }
 
 // TableName -

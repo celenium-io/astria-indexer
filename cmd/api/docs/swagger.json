@@ -2095,6 +2095,9 @@
                 "balance": {
                     "$ref": "#/definitions/responses.Balance"
                 },
+                "bridged_rollup": {
+                    "type": "string"
+                },
                 "first_height": {
                     "type": "integer",
                     "example": 100
@@ -2329,6 +2332,10 @@
                 "actions_count": {
                     "type": "integer",
                     "example": 100
+                },
+                "bridge_address": {
+                    "type": "string",
+                    "example": "115F94D8C98FFD73FE65182611140F0EDC7C3C94"
                 },
                 "first_height": {
                     "type": "integer",

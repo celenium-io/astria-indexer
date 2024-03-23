@@ -149,6 +149,15 @@ func createIndices(ctx context.Context, conn *database.Bun) error {
 			Exec(ctx); err != nil {
 			return err
 		}
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Rollup)(nil)).
+			Index("rollup_bridge_address_id_idx").
+			Column("bridge_address_id").
+			Where("bridge_address_id is not null").
+			Exec(ctx); err != nil {
+			return err
+		}
 
 		// Rollup actions
 		if _, err := tx.NewCreateIndex().

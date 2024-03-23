@@ -65,7 +65,7 @@ func parseActions(height types.Level, blockTime time.Time, from bytes.HexBytes, 
 			err = parseIbcRelayerChange(val, height, ctx, &actions[i])
 		case *astria.Action_InitBridgeAccountAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeInitBridgeAccountBits)
-			err = parseInitBridgeAccount(val, height, ctx, &actions[i])
+			err = parseInitBridgeAccount(val, from, height, ctx, &actions[i])
 		default:
 			return nil, errors.Errorf(
 				"unknown action type | position = %d | block = %d: %##v",
@@ -341,7 +341,7 @@ func parseIbcRelayerChange(body *astria.Action_IbcRelayerChangeAction, height ty
 	return nil
 }
 
-func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, height types.Level, ctx *Context, action *storage.Action) error {
+func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from bytes.HexBytes, height types.Level, ctx *Context, action *storage.Action) error {
 	action.Type = storageTypes.ActionTypeInitBridgeAccount
 	action.Data = make(map[string]any)
 	if body.InitBridgeAccountAction != nil {
@@ -356,6 +356,12 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, height 
 			Action: action,
 			Rollup: rollup,
 		}
+
+		fromAddress, ok := ctx.Addresses.Get(from)
+		if !ok {
+			return errors.Errorf("unknown from address: %s", from.String())
+		}
+		rollup.BridgeAddress = fromAddress
 	}
 	return nil
 }

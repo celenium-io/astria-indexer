@@ -42,6 +42,8 @@ definitions:
         type: integer
       balance:
         $ref: '#/definitions/responses.Balance'
+      bridged_rollup:
+        type: string
       first_height:
         example: 100
         type: integer
@@ -213,6 +215,9 @@ definitions:
       actions_count:
         example: 100
         type: integer
+      bridge_address:
+        example: 115F94D8C98FFD73FE65182611140F0EDC7C3C94
+        type: string
       first_height:
         example: 100
         type: integer

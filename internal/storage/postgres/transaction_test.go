@@ -248,6 +248,9 @@ func (s *TransactionTestSuite) TestSaveRollups() {
 			ActionsCount: 1,
 			Size:         10,
 		}
+		if i%2 == 1 {
+			rollups[i].BridgeAddressId = uint64(i)
+		}
 	}
 
 	count, err := tx.SaveRollups(ctx, rollups...)
@@ -256,6 +259,10 @@ func (s *TransactionTestSuite) TestSaveRollups() {
 
 	s.Require().NoError(tx.Flush(ctx))
 	s.Require().NoError(tx.Close(ctx))
+
+	ret, err := s.storage.Rollup.List(ctx, 10, 0, sdk.SortOrderAsc)
+	s.Require().NoError(err)
+	s.Require().Len(ret, 7)
 }
 
 func (s *TransactionTestSuite) TestSaveRollupActions() {

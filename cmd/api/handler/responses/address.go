@@ -4,8 +4,6 @@
 package responses
 
 import (
-	"encoding/hex"
-
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	pkgTypes "github.com/celenium-io/astria-indexer/pkg/types"
 )
@@ -21,16 +19,17 @@ type Address struct {
 	Nonce         uint32         `example:"10"                                       json:"nonce"           swaggertype:"integer"`
 	Hash          string         `example:"115F94D8C98FFD73FE65182611140F0EDC7C3C94" json:"hash"            swaggertype:"string"`
 	Balance       *Balance       `json:"balance,omitempty"`
+	BridgedRollup string         `json:"bridged_rollup,omitempty"`
 }
 
-func NewAddress(addr storage.Address) Address {
+func NewAddress(addr storage.Address, bridgedRollup *storage.Rollup) Address {
 	result := Address{
 		Id:            addr.Id,
 		Height:        addr.Height,
 		ActionsCount:  addr.ActionsCount,
 		SignedTxCount: addr.SignedTxCount,
 		Nonce:         addr.Nonce,
-		Hash:          hex.EncodeToString(addr.Hash),
+		Hash:          addr.String(),
 	}
 
 	if addr.Balance != nil {
@@ -38,6 +37,9 @@ func NewAddress(addr storage.Address) Address {
 			Currency: addr.Balance.Currency,
 			Value:    addr.Balance.Total.String(),
 		}
+	}
+	if bridgedRollup != nil {
+		result.BridgedRollup = bridgedRollup.String()
 	}
 
 	return result

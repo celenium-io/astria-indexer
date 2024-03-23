@@ -69,7 +69,7 @@ func (s *SearchHandler) Search(c echo.Context) error {
 			return internalServerError(c, err)
 		}
 		results := []responses.SearchResult{
-			responses.NewSearchResult(address.String(), "address", responses.NewAddress(address)),
+			responses.NewSearchResult(address.String(), "address", responses.NewAddress(address, nil)),
 		}
 		return returnArray(c, results)
 	}

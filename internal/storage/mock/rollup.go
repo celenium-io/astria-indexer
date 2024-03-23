@@ -161,6 +161,45 @@ func (c *IRollupAddressesCall) DoAndReturn(f func(context.Context, uint64, int, 
 	return c
 }
 
+// ByBridgeAddress mocks base method.
+func (m *MockIRollup) ByBridgeAddress(ctx context.Context, id uint64) (storage.Rollup, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ByBridgeAddress", ctx, id)
+	ret0, _ := ret[0].(storage.Rollup)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ByBridgeAddress indicates an expected call of ByBridgeAddress.
+func (mr *MockIRollupMockRecorder) ByBridgeAddress(ctx, id any) *IRollupByBridgeAddressCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ByBridgeAddress", reflect.TypeOf((*MockIRollup)(nil).ByBridgeAddress), ctx, id)
+	return &IRollupByBridgeAddressCall{Call: call}
+}
+
+// IRollupByBridgeAddressCall wrap *gomock.Call
+type IRollupByBridgeAddressCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *IRollupByBridgeAddressCall) Return(arg0 storage.Rollup, arg1 error) *IRollupByBridgeAddressCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *IRollupByBridgeAddressCall) Do(f func(context.Context, uint64) (storage.Rollup, error)) *IRollupByBridgeAddressCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *IRollupByBridgeAddressCall) DoAndReturn(f func(context.Context, uint64) (storage.Rollup, error)) *IRollupByBridgeAddressCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // ByHash mocks base method.
 func (m *MockIRollup) ByHash(ctx context.Context, hash []byte) (storage.Rollup, error) {
 	m.ctrl.T.Helper()
