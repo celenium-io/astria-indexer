@@ -586,6 +586,8 @@ func TestDecodeActions(t *testing.T) {
 		assetId := testsuite.RandomHash(32)
 		rollupId := testsuite.RandomHash(10)
 		feAssetId := testsuite.RandomHash(32)
+		from := testsuite.RandomHash(20)
+		fromAddr := decodeContext.Addresses.Set(from, 1000, decimal.Zero, 0, 1)
 
 		message := &astria.Action_InitBridgeAccountAction{
 			InitBridgeAccountAction: &astria.InitBridgeAccountAction{
@@ -606,9 +608,10 @@ func TestDecodeActions(t *testing.T) {
 			RollupAction: &storage.RollupAction{
 				Height: 1000,
 				Rollup: &storage.Rollup{
-					AstriaId:     message.InitBridgeAccountAction.RollupId,
-					FirstHeight:  1000,
-					ActionsCount: 1,
+					AstriaId:      message.InitBridgeAccountAction.RollupId,
+					FirstHeight:   1000,
+					ActionsCount:  1,
+					BridgeAddress: fromAddr,
 				},
 			},
 		}
@@ -617,7 +620,7 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		err := parseInitBridgeAccount(message, 1000, &decodeContext, &action)
+		err := parseInitBridgeAccount(message, from, 1000, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})

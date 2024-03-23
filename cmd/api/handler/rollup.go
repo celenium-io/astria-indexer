@@ -244,7 +244,7 @@ func (handler *RollupHandler) Addresses(c echo.Context) error {
 	response := make([]responses.Address, len(addresses))
 	for i := range addresses {
 		if addresses[i].Address != nil {
-			response[i] = responses.NewAddress(*addresses[i].Address)
+			response[i] = responses.NewAddress(*addresses[i].Address, nil)
 		}
 	}
 

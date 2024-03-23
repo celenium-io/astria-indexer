@@ -74,7 +74,12 @@ func (handler *AddressHandler) Get(c echo.Context) error {
 		return handleError(c, err, handler.address)
 	}
 
-	return c.JSON(http.StatusOK, responses.NewAddress(address))
+	rollup, err := handler.rollups.ByBridgeAddress(c.Request().Context(), address.Id)
+	if err != nil {
+		return handleError(c, err, handler.address)
+	}
+
+	return c.JSON(http.StatusOK, responses.NewAddress(address, &rollup))
 }
 
 // List godoc
@@ -111,7 +116,7 @@ func (handler *AddressHandler) List(c echo.Context) error {
 
 	response := make([]responses.Address, len(address))
 	for i := range address {
-		response[i] = responses.NewAddress(address[i])
+		response[i] = responses.NewAddress(address[i], nil)
 	}
 
 	return returnArray(c, response)

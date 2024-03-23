@@ -70,6 +70,11 @@ func (s *AddressTestSuite) TestGet() {
 		Return(testAddress, nil).
 		Times(1)
 
+	s.rollups.EXPECT().
+		ByBridgeAddress(gomock.Any(), testAddress.Id).
+		Return(testRollup, nil).
+		Times(1)
+
 	s.Require().NoError(s.handler.Get(c))
 	s.Require().Equal(http.StatusOK, rec.Code)
 
@@ -82,6 +87,7 @@ func (s *AddressTestSuite) TestGet() {
 	s.Require().EqualValues(0, address.Height)
 	s.Require().EqualValues(10, address.Nonce)
 	s.Require().Equal(testAddressHash, address.Hash)
+	s.Require().Equal(testRollup.String(), address.BridgedRollup)
 }
 
 func (s *AddressTestSuite) TestGetInvalidAddress() {

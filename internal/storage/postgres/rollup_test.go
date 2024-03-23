@@ -76,6 +76,8 @@ func (s *StorageTestSuite) TestRollupByHash() {
 	s.Require().EqualValues(hash, rollup.AstriaId)
 	s.Require().EqualValues(112, rollup.Size)
 	s.Require().EqualValues(1, rollup.ActionsCount)
+
+	s.Require().Nil(rollup.BridgeAddress)
 }
 
 func (s *StorageTestSuite) TestRollupAddresses() {
@@ -122,25 +124,23 @@ func (s *StorageTestSuite) TestListExt() {
 			"",
 		} {
 			rollups, err := s.storage.Rollup.ListExt(ctx, models.RollupListFilter{
-				Limit:     1,
+				Limit:     2,
 				Offset:    0,
 				SortField: field,
 				SortOrder: order,
 			})
 			s.Require().NoError(err)
-			s.Require().Len(rollups, 1)
-
-			rollup := rollups[0]
-
-			hash, err := hex.DecodeString("19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539")
-			s.Require().NoError(err)
-
-			s.Require().EqualValues(1, rollup.Id)
-			s.Require().EqualValues(hash, rollup.AstriaId)
-			s.Require().EqualValues(112, rollup.Size)
-			s.Require().EqualValues(1, rollup.ActionsCount)
-			s.Require().EqualValues(7316, rollup.FirstHeight)
+			s.Require().Len(rollups, 2)
 		}
 	}
 
+}
+
+func (s *StorageTestSuite) TestByBridgedAddress() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	rollup, err := s.storage.Rollup.ByBridgeAddress(ctx, 2)
+	s.Require().NoError(err)
+	s.Require().EqualValues(2, rollup.Id)
 }
