@@ -75,7 +75,7 @@ func (handler *AddressHandler) Get(c echo.Context) error {
 	}
 
 	rollup, err := handler.rollups.ByBridgeAddress(c.Request().Context(), address.Id)
-	if err != nil {
+	if err != nil && !handler.address.IsNoRows(err) {
 		return handleError(c, err, handler.address)
 	}
 

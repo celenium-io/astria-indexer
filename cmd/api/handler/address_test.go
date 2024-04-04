@@ -5,6 +5,7 @@ package handler
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -88,6 +89,44 @@ func (s *AddressTestSuite) TestGet() {
 	s.Require().EqualValues(10, address.Nonce)
 	s.Require().Equal(testAddressHash, address.Hash)
 	s.Require().Equal(testRollup.String(), address.BridgedRollup)
+}
+
+func (s *AddressTestSuite) TestGetWithoutBridge() {
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/address/:hash")
+	c.SetParamNames("hash")
+	c.SetParamValues(testAddressHash)
+
+	s.address.EXPECT().
+		ByHash(gomock.Any(), testAddress.Hash).
+		Return(testAddress, nil).
+		Times(1)
+
+	s.rollups.EXPECT().
+		ByBridgeAddress(gomock.Any(), testAddress.Id).
+		Return(storage.Rollup{}, sql.ErrNoRows).
+		Times(1)
+
+	s.address.EXPECT().
+		IsNoRows(gomock.Any()).
+		Return(true).
+		Times(1)
+
+	s.Require().NoError(s.handler.Get(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var address responses.Address
+	err := json.NewDecoder(rec.Body).Decode(&address)
+	s.Require().NoError(err)
+	s.Require().EqualValues(1, address.Id)
+	s.Require().EqualValues(1, address.ActionsCount)
+	s.Require().EqualValues(1, address.SignedTxCount)
+	s.Require().EqualValues(0, address.Height)
+	s.Require().EqualValues(10, address.Nonce)
+	s.Require().Equal(testAddressHash, address.Hash)
+	s.Require().Equal("", address.BridgedRollup)
 }
 
 func (s *AddressTestSuite) TestGetInvalidAddress() {
