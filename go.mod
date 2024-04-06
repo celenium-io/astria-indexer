@@ -8,7 +8,8 @@ require (
 	github.com/dipdup-io/workerpool v0.0.4
 	github.com/dipdup-net/go-lib v0.3.6
 	github.com/dipdup-net/indexer-sdk v0.0.5
-	github.com/getsentry/sentry-go v0.26.0
+	github.com/getsentry/sentry-go v0.27.0
+	github.com/getsentry/sentry-go/otel v0.27.0
 	github.com/go-playground/validator/v10 v10.15.0
 	github.com/go-testfixtures/testfixtures/v3 v3.9.0
 	github.com/goccy/go-json v0.10.2
@@ -26,6 +27,9 @@ require (
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.1
 	github.com/uptrace/bun v1.1.14
+	go.opentelemetry.io/otel v1.19.0
+	go.opentelemetry.io/otel/sdk v1.19.0
+	go.opentelemetry.io/otel/trace v1.19.0
 	go.uber.org/mock v0.4.0
 	golang.org/x/time v0.5.0
 	google.golang.org/protobuf v1.33.0
@@ -62,6 +66,8 @@ require (
 	github.com/go-faster/errors v0.6.1 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
+	github.com/go-logr/logr v1.2.4 // indirect
+	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.6 // indirect
 	github.com/go-openapi/spec v0.20.4 // indirect
@@ -129,8 +135,7 @@ require (
 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
 	github.com/vmihailenco/tagparser v0.1.2 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
-	go.opentelemetry.io/otel v1.19.0 // indirect
-	go.opentelemetry.io/otel/trace v1.19.0 // indirect
+	go.opentelemetry.io/otel/metric v1.19.0 // indirect
 	golang.org/x/crypto v0.17.0 // indirect
 	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa // indirect
 	golang.org/x/mod v0.14.0 // indirect

@@ -13,6 +13,7 @@ import (
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/pkg/errors"
 	"github.com/uptrace/bun"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // Storage -
@@ -143,4 +144,14 @@ func createExtensions(ctx context.Context, conn *database.Bun) error {
 
 func (s Storage) CreateListener() models.Listener {
 	return NewNotificator(s.cfg, s.Notificator.db)
+}
+
+func (s Storage) SetTracer(tp trace.TracerProvider) {
+	s.Connection().DB().AddQueryHook(
+		NewSentryHook(
+			s.cfg.Database,
+			tp.Tracer("db"),
+			true,
+		),
+	)
 }
