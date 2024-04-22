@@ -21,6 +21,7 @@ func (a Addresses) Set(address bytes.HexBytes, height types.Level, change decima
 	if addr, ok := a[address.String()]; ok {
 		addr.Balance.Total = addr.Balance.Total.Add(change)
 		addr.ActionsCount += int64(actionCount)
+		addr.SignedTxCount += int64(signedTxCount)
 		return addr
 	}
 	addr := &storage.Address{

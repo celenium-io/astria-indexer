@@ -171,10 +171,7 @@ func parseSequenceAction(body *astria.Action_SequenceAction, from bytes.HexBytes
 		dataSize := len(body.SequenceAction.Data)
 
 		rollup := ctx.Rollups.Set(body.SequenceAction.RollupId, height, dataSize)
-		fromAddress, ok := ctx.Addresses.Get(from)
-		if !ok {
-			return errors.Errorf("unknown from rollup address: %s", from.String())
-		}
+		fromAddress := ctx.Addresses.Set(from, height, decimal.Zero, 1, 0)
 
 		rollupAddress := &storage.RollupAddress{
 			Rollup:  rollup,
@@ -357,10 +354,7 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from by
 			Rollup: rollup,
 		}
 
-		fromAddress, ok := ctx.Addresses.Get(from)
-		if !ok {
-			return errors.Errorf("unknown from address: %s", from.String())
-		}
+		fromAddress := ctx.Addresses.Set(from, height, decimal.Zero, 1, 0)
 		rollup.BridgeAddress = fromAddress
 	}
 	return nil

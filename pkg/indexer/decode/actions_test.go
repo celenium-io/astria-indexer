@@ -193,7 +193,7 @@ func TestDecodeActions(t *testing.T) {
 		addressModel := &storage.Address{
 			Height:        1000,
 			Hash:          from,
-			ActionsCount:  0,
+			ActionsCount:  1,
 			SignedTxCount: 1,
 			Balance: &storage.Balance{
 				Currency: currency.DefaultCurrency,
