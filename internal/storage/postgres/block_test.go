@@ -130,6 +130,7 @@ func (s *StorageTestSuite) TestBlockByProposer() {
 	s.Require().EqualValues(appHash, block.AppHash)
 
 	s.Require().NotNil(block.Stats)
+	s.Require().NotNil(block.Proposer)
 }
 
 func (s *StorageTestSuite) TestByIdWithRelations() {
