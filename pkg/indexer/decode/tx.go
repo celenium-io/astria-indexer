@@ -57,7 +57,7 @@ func Tx(b types.BlockData, index int, ctx *Context) (d DecodedTx, err error) {
 	}
 
 	address := AddressFromPubKey(d.Tx.PublicKey)
-	d.Signer = ctx.Addresses.Set(address, b.Height, decimal.Zero, 0, 1)
+	d.Signer = ctx.Addresses.Set(address, b.Height, decimal.Zero, 1, 1)
 	ctx.Addresses.UpdateNonce(address, d.Tx.Transaction.Nonce)
 
 	d.Actions, err = parseActions(b.Height, b.Block.Time, address, &d, ctx)

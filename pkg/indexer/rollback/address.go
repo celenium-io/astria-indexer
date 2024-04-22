@@ -46,10 +46,12 @@ func rollbackAddress(
 	for i := range txs {
 		if addr, ok := addresses[txs[i].SignerId]; ok {
 			addr.SignedTxCount -= 1
+			addr.ActionsCount -= 1
 		} else {
 			addresses[addressActions[i].AddressId] = &storage.Address{
 				Id:            txs[i].SignerId,
 				SignedTxCount: -1,
+				ActionsCount:  -1,
 			}
 		}
 	}
