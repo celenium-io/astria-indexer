@@ -5,6 +5,8 @@ package postgres
 
 import (
 	"context"
+	"encoding/hex"
+	"strings"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-net/go-lib/database"
@@ -22,37 +24,48 @@ func NewSearch(db *database.Bun) *Search {
 	}
 }
 
-func (s *Search) Search(ctx context.Context, query []byte) (results []storage.SearchResult, err error) {
-	blockQuery := s.db.DB().NewSelect().
-		Model((*storage.Block)(nil)).
-		ColumnExpr("id, encode(hash, 'hex') as value, 'block' as type").
-		Where("hash = ?", query)
-	txQuery := s.db.DB().NewSelect().
-		Model((*storage.Tx)(nil)).
-		ColumnExpr("id, encode(hash, 'hex') as value, 'tx' as type").
-		Where("hash = ?", query)
-	rollupQuery := s.db.DB().NewSelect().
-		Model((*storage.Rollup)(nil)).
-		ColumnExpr("id, encode(astria_id, 'hex') as value, 'rollup' as type").
-		Where("astria_id = ?", query)
+func (s *Search) Search(ctx context.Context, query string) (results []storage.SearchResult, err error) {
+	text := "%" + query + "%"
+	searchQuery := s.db.DB().NewSelect().
+		Model((*storage.Validator)(nil)).
+		ColumnExpr("id, name as value, 'validator' as type").
+		Where("name ILIKE ?", text)
 
-	union := blockQuery.UnionAll(txQuery).UnionAll(rollupQuery)
+	if hash, err := hex.DecodeString(query); err == nil {
+		addressQuery := s.db.DB().NewSelect().
+			Model((*storage.Address)(nil)).
+			ColumnExpr("id, encode(hash, 'hex') as value, 'address' as type").
+			Where("hash = ?", hash)
+		blockQuery := s.db.DB().NewSelect().
+			Model((*storage.Block)(nil)).
+			ColumnExpr("id, encode(hash, 'hex') as value, 'block' as type").
+			Where("hash = ?", hash)
+		txQuery := s.db.DB().NewSelect().
+			Model((*storage.Tx)(nil)).
+			ColumnExpr("id, encode(hash, 'hex') as value, 'tx' as type").
+			Where("hash = ?", hash)
+		rollupQuery := s.db.DB().NewSelect().
+			Model((*storage.Rollup)(nil)).
+			ColumnExpr("id, encode(astria_id, 'hex') as value, 'rollup' as type").
+			Where("astria_id = ?", hash)
+		validatorQuery := s.db.DB().NewSelect().
+			Model((*storage.Validator)(nil)).
+			ColumnExpr("id, name as value, 'validator' as type").
+			Where("address = ?", strings.ToUpper(query))
+
+		searchQuery = searchQuery.
+			UnionAll(addressQuery).
+			UnionAll(blockQuery).
+			UnionAll(txQuery).
+			UnionAll(rollupQuery).
+			UnionAll(validatorQuery)
+	}
 
 	err = s.db.DB().NewSelect().
-		TableExpr("(?) as search", union).
+		TableExpr("(?) as search", searchQuery).
 		Limit(10).
 		Offset(0).
 		Scan(ctx, &results)
 
-	return
-}
-
-func (s *Search) SearchText(ctx context.Context, text string) (results []storage.SearchResult, err error) {
-	text = "%" + text + "%"
-	err = s.db.DB().NewSelect().
-		Model((*storage.Validator)(nil)).
-		ColumnExpr("id, name as value, 'validator' as type").
-		Where("name ILIKE ?", text).
-		Scan(ctx, &results)
 	return
 }
