@@ -66,9 +66,20 @@ func (s *SearchTestSuite) TestSearchAddress() {
 	c := s.echo.NewContext(req, rec)
 	c.SetPath("/search")
 
+	s.search.EXPECT().
+		Search(gomock.Any(), testAddressHash).
+		Return([]storage.SearchResult{
+			{
+				Id:    testAddress.Id,
+				Type:  "address",
+				Value: testAddressHash,
+			},
+		}, nil).
+		Times(1)
+
 	s.address.EXPECT().
-		ByHash(gomock.Any(), testAddress.Hash).
-		Return(testAddress, nil).
+		GetByID(gomock.Any(), uint64(1)).
+		Return(&testAddress, nil).
 		Times(1)
 
 	s.Require().NoError(s.handler.Search(c))
@@ -95,7 +106,7 @@ func (s *SearchTestSuite) TestSearchBlock() {
 	c.SetPath("/search")
 
 	s.search.EXPECT().
-		Search(gomock.Any(), testBlock.Hash).
+		Search(gomock.Any(), testBlockHash).
 		Return([]storage.SearchResult{
 			{
 				Type:  "block",
@@ -134,7 +145,7 @@ func (s *SearchTestSuite) TestSearchTx() {
 	c.SetPath("/search")
 
 	s.search.EXPECT().
-		Search(gomock.Any(), testTx.Hash).
+		Search(gomock.Any(), testTxHash).
 		Return([]storage.SearchResult{
 			{
 				Type:  "tx",
@@ -173,7 +184,7 @@ func (s *SearchTestSuite) TestSearchRollup() {
 	c.SetPath("/search")
 
 	s.search.EXPECT().
-		Search(gomock.Any(), testRollup.AstriaId).
+		Search(gomock.Any(), testRollupHash).
 		Return([]storage.SearchResult{
 			{
 				Type:  "rollup",
@@ -212,7 +223,7 @@ func (s *SearchTestSuite) TestSearchValidator() {
 	c.SetPath("/search")
 
 	s.search.EXPECT().
-		SearchText(gomock.Any(), "nam").
+		Search(gomock.Any(), "nam").
 		Return([]storage.SearchResult{
 			{
 				Type:  "validator",

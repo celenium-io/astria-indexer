@@ -4,8 +4,6 @@
 package handler
 
 import (
-	"encoding/hex"
-
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/labstack/echo/v4"
@@ -59,69 +57,41 @@ func (s *SearchHandler) Search(c echo.Context) error {
 		return badRequestError(c, err)
 	}
 
-	if isAddress(req.Search) {
-		hash, err := hex.DecodeString(req.Search)
-		if err != nil {
-			return badRequestError(c, err)
-		}
-		address, err := s.address.ByHash(c.Request().Context(), hash)
-		if err != nil {
-			return internalServerError(c, err)
-		}
-		results := []responses.SearchResult{
-			responses.NewSearchResult(address.String(), "address", responses.NewAddress(address, nil)),
-		}
-		return returnArray(c, results)
-	}
-
-	if isHash(req.Search) {
-		hash, err := hex.DecodeString(req.Search)
-		if err != nil {
-			return badRequestError(c, err)
-		}
-		results, err := s.search.Search(c.Request().Context(), hash)
-		if err != nil {
-			return internalServerError(c, err)
-		}
-
-		response := make([]responses.SearchResult, len(results))
-		for i := range results {
-
-			var body any
-			switch results[i].Type {
-			case "block":
-				block, err := s.blocks.GetByID(c.Request().Context(), results[i].Id)
-				if err != nil {
-					return internalServerError(c, err)
-				}
-				body = responses.NewBlock(*block)
-			case "tx":
-				tx, err := s.txs.GetByID(c.Request().Context(), results[i].Id)
-				if err != nil {
-					return internalServerError(c, err)
-				}
-				body = responses.NewTx(*tx)
-			case "rollup":
-				rollup, err := s.rollups.GetByID(c.Request().Context(), results[i].Id)
-				if err != nil {
-					return internalServerError(c, err)
-				}
-				body = responses.NewRollup(rollup)
-			}
-
-			response[i] = responses.NewSearchResult(results[i].Value, results[i].Type, body)
-		}
-		return returnArray(c, response)
-	}
-
-	results, err := s.search.SearchText(c.Request().Context(), req.Search)
+	results, err := s.search.Search(c.Request().Context(), req.Search)
 	if err != nil {
 		return internalServerError(c, err)
 	}
+
 	response := make([]responses.SearchResult, len(results))
 	for i := range results {
+
 		var body any
-		if results[i].Type == "validator" {
+		switch results[i].Type {
+		case "block":
+			block, err := s.blocks.GetByID(c.Request().Context(), results[i].Id)
+			if err != nil {
+				return internalServerError(c, err)
+			}
+			body = responses.NewBlock(*block)
+		case "tx":
+			tx, err := s.txs.GetByID(c.Request().Context(), results[i].Id)
+			if err != nil {
+				return internalServerError(c, err)
+			}
+			body = responses.NewTx(*tx)
+		case "rollup":
+			rollup, err := s.rollups.GetByID(c.Request().Context(), results[i].Id)
+			if err != nil {
+				return internalServerError(c, err)
+			}
+			body = responses.NewRollup(rollup)
+		case "address":
+			address, err := s.address.GetByID(c.Request().Context(), results[i].Id)
+			if err != nil {
+				return internalServerError(c, err)
+			}
+			body = responses.NewAddress(*address, nil)
+		case "validator":
 			validator, err := s.validators.GetByID(c.Request().Context(), results[i].Id)
 			if err != nil {
 				return internalServerError(c, err)
