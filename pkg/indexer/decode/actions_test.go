@@ -541,6 +541,18 @@ func TestDecodeActions(t *testing.T) {
 			SignedTxCount: 0,
 			Balance: &storage.Balance{
 				Currency: currency.DefaultCurrency,
+				Total:    decimal.RequireFromString("10"),
+			},
+		}
+
+		from := testsuite.RandomHash(20)
+		fromModel := &storage.Address{
+			Height:        1000,
+			Hash:          from,
+			ActionsCount:  1,
+			SignedTxCount: 0,
+			Balance: &storage.Balance{
+				Currency: currency.DefaultCurrency,
 				Total:    decimal.RequireFromString("-10"),
 			},
 		}
@@ -563,19 +575,33 @@ func TestDecodeActions(t *testing.T) {
 					Currency: toModel.Balance.Currency,
 					Height:   1000,
 				},
+				{
+					Address:  fromModel,
+					Update:   fromModel.Balance.Total,
+					Currency: fromModel.Balance.Currency,
+					Height:   1000,
+				},
 			},
 		}
-		wantAction.Addresses = append(wantAction.Addresses, &storage.AddressAction{
-			Height:     1000,
-			Address:    toModel,
-			ActionType: types.ActionTypeBridgeLock,
-			Action:     &wantAction,
-		})
+		wantAction.Addresses = append(wantAction.Addresses,
+			&storage.AddressAction{
+				Height:     1000,
+				Address:    toModel,
+				ActionType: types.ActionTypeBridgeLock,
+				Action:     &wantAction,
+			},
+			&storage.AddressAction{
+				Height:     1000,
+				Address:    fromModel,
+				ActionType: types.ActionTypeBridgeLock,
+				Action:     &wantAction,
+			},
+		)
 
 		action := storage.Action{
 			Height: 1000,
 		}
-		err := parseBridgeLock(message, 1000, &decodeContext, &action)
+		err := parseBridgeLock(message, from, 1000, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
