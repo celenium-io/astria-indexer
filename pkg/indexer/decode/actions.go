@@ -374,41 +374,54 @@ func parseBridgeLock(body *astria.Action_BridgeLockAction, from bytes.HexBytes, 
 
 		toAddress := bytes.HexBytes(body.BridgeLockAction.To)
 		decAmount := decimal.RequireFromString(amount)
-
-		fromAddr := ctx.Addresses.Set(from, height, decAmount.Neg(), 1, 0)
 		toAddr := ctx.Addresses.Set(toAddress, height, decAmount, 1, 0)
 
-		action.Addresses = append(action.Addresses,
-			&storage.AddressAction{
-				Address:    toAddr,
-				Action:     action,
-				Time:       action.Time,
-				Height:     action.Height,
-				ActionType: action.Type,
-			},
-			&storage.AddressAction{
-				Address:    fromAddr,
-				Action:     action,
-				Time:       action.Time,
-				Height:     action.Height,
-				ActionType: action.Type,
-			},
-		)
+		if stdBytes.Equal(from, toAddress) {
+			action.Addresses = append(action.Addresses,
+				&storage.AddressAction{
+					Address:    toAddr,
+					Action:     action,
+					Time:       action.Time,
+					Height:     action.Height,
+					ActionType: action.Type,
+				},
+			)
+		} else {
+			fromAddr := ctx.Addresses.Set(from, height, decAmount.Neg(), 1, 0)
 
-		action.BalanceUpdates = append(action.BalanceUpdates,
-			storage.BalanceUpdate{
-				Address:  toAddr,
-				Height:   action.Height,
-				Currency: toAddr.Balance.Currency,
-				Update:   decAmount,
-			},
-			storage.BalanceUpdate{
-				Address:  fromAddr,
-				Height:   action.Height,
-				Currency: fromAddr.Balance.Currency,
-				Update:   decAmount.Neg(),
-			},
-		)
+			action.Addresses = append(action.Addresses,
+				&storage.AddressAction{
+					Address:    toAddr,
+					Action:     action,
+					Time:       action.Time,
+					Height:     action.Height,
+					ActionType: action.Type,
+				},
+				&storage.AddressAction{
+					Address:    fromAddr,
+					Action:     action,
+					Time:       action.Time,
+					Height:     action.Height,
+					ActionType: action.Type,
+				},
+			)
+
+			action.BalanceUpdates = append(action.BalanceUpdates,
+				storage.BalanceUpdate{
+					Address:  toAddr,
+					Height:   action.Height,
+					Currency: toAddr.Balance.Currency,
+					Update:   decAmount,
+				},
+				storage.BalanceUpdate{
+					Address:  fromAddr,
+					Height:   action.Height,
+					Currency: fromAddr.Balance.Currency,
+					Update:   decAmount.Neg(),
+				},
+			)
+
+		}
 	}
 	return nil
 }

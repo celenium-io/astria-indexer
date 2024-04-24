@@ -606,6 +606,67 @@ func TestDecodeActions(t *testing.T) {
 		require.Equal(t, wantAction, action)
 	})
 
+	t.Run("bridge lock the same address", func(t *testing.T) {
+		decodeContext := NewContext()
+
+		assetId := testsuite.RandomHash(32)
+		feeAssetId := testsuite.RandomHash(32)
+		to := testsuite.RandomHash(20)
+		dest := "random_address"
+
+		message := &astria.Action_BridgeLockAction{
+			BridgeLockAction: &astria.BridgeLockAction{
+				FeeAssetId:              feeAssetId,
+				AssetId:                 assetId,
+				To:                      to,
+				DestinationChainAddress: dest,
+				Amount: &primitivev1.Uint128{
+					Lo: 10,
+					Hi: 0,
+				},
+			},
+		}
+
+		toModel := &storage.Address{
+			Height:        1000,
+			Hash:          to,
+			ActionsCount:  1,
+			SignedTxCount: 0,
+			Balance: &storage.Balance{
+				Currency: currency.DefaultCurrency,
+				Total:    decimal.RequireFromString("10"),
+			},
+		}
+
+		wantAction := storage.Action{
+			Height: 1000,
+			Type:   types.ActionTypeBridgeLock,
+			Data: map[string]any{
+				"asset_id":                  assetId,
+				"fee_asset_id":              feeAssetId,
+				"to":                        hex.EncodeToString(to),
+				"destination_chain_address": dest,
+				"amount":                    "10",
+			},
+			Addresses: make([]*storage.AddressAction, 0),
+		}
+		wantAction.Addresses = append(wantAction.Addresses,
+			&storage.AddressAction{
+				Height:     1000,
+				Address:    toModel,
+				ActionType: types.ActionTypeBridgeLock,
+				Action:     &wantAction,
+			},
+		)
+
+		action := storage.Action{
+			Height: 1000,
+		}
+		err := parseBridgeLock(message, to, 1000, &decodeContext, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+	})
+
 	t.Run("init bridge account", func(t *testing.T) {
 		decodeContext := NewContext()
 
