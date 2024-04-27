@@ -3,7 +3,8 @@ module github.com/celenium-io/astria-indexer
 go 1.22.1
 
 require (
-	buf.build/gen/go/astria/astria/protocolbuffers/go v1.33.0-20240312180723-51f595462a36.1
+	buf.build/gen/go/astria/primitives/protocolbuffers/go v1.33.0-20240422195039-812e347acd6b.1
+	buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.33.0-20240423053324-d198e0ffaebe.1
 	github.com/cometbft/cometbft v0.38.6
 	github.com/dipdup-io/workerpool v0.0.4
 	github.com/dipdup-net/go-lib v0.3.6
@@ -145,8 +146,6 @@ require (
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.15.0 // indirect
-	google.golang.org/genproto v0.0.0-20231106174013-bbf56f31fb17 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20231030173426-d783a09b4405 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231120223509-83a465c0220f // indirect
 	google.golang.org/grpc v1.60.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

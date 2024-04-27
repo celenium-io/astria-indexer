@@ -9,7 +9,7 @@ import (
 	"encoding/hex"
 	"time"
 
-	astria "buf.build/gen/go/astria/astria/protocolbuffers/go/astria/sequencer/v1alpha1"
+	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transactions/v1alpha1"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/celenium-io/astria-indexer/pkg/types"
@@ -137,9 +137,9 @@ func parseMintAction(body *astria.Action_MintAction, height types.Level, ctx *Co
 	if body.MintAction != nil {
 		amount := uint128ToString(body.MintAction.Amount)
 		action.Data["amount"] = amount
-		action.Data["to"] = hex.EncodeToString(body.MintAction.To)
+		action.Data["to"] = hex.EncodeToString(body.MintAction.To.GetInner())
 
-		toAddress := bytes.HexBytes(body.MintAction.To)
+		toAddress := bytes.HexBytes(body.MintAction.To.GetInner())
 		decAmount := decimal.RequireFromString(amount)
 		addr := ctx.Addresses.Set(toAddress, height, decAmount, 1, 0)
 		action.Addresses = append(action.Addresses, &storage.AddressAction{
@@ -170,7 +170,7 @@ func parseSequenceAction(body *astria.Action_SequenceAction, from bytes.HexBytes
 		action.Data["data"] = body.SequenceAction.Data
 		dataSize := len(body.SequenceAction.Data)
 
-		rollup := ctx.Rollups.Set(body.SequenceAction.RollupId, height, dataSize)
+		rollup := ctx.Rollups.Set(body.SequenceAction.RollupId.GetInner(), height, dataSize)
 		fromAddress := ctx.Addresses.Set(from, height, decimal.Zero, 1, 0)
 
 		rollupAddress := &storage.RollupAddress{
@@ -210,9 +210,9 @@ func parseSudoAddressChangeAction(body *astria.Action_SudoAddressChangeAction, h
 	action.Type = storageTypes.ActionTypeSudoAddressChange
 	action.Data = make(map[string]any)
 	if body.SudoAddressChangeAction != nil {
-		action.Data["address"] = hex.EncodeToString(body.SudoAddressChangeAction.NewAddress)
+		action.Data["address"] = hex.EncodeToString(body.SudoAddressChangeAction.NewAddress.GetInner())
 
-		newAddress := bytes.HexBytes(body.SudoAddressChangeAction.NewAddress)
+		newAddress := bytes.HexBytes(body.SudoAddressChangeAction.NewAddress.GetInner())
 		addr := ctx.Addresses.Set(newAddress, height, decimal.Zero, 1, 0)
 		action.Addresses = append(action.Addresses, &storage.AddressAction{
 			Address:    addr,
@@ -232,9 +232,9 @@ func parseTransferAction(body *astria.Action_TransferAction, from bytes.HexBytes
 		amount := uint128ToString(body.TransferAction.Amount)
 		action.Data["amount"] = uint128ToString(body.TransferAction.Amount)
 		action.Data["asset_id"] = body.TransferAction.AssetId
-		action.Data["to"] = hex.EncodeToString(body.TransferAction.To)
+		action.Data["to"] = hex.EncodeToString(body.TransferAction.To.GetInner())
 
-		toAddress := bytes.HexBytes(body.TransferAction.To)
+		toAddress := bytes.HexBytes(body.TransferAction.To.GetInner())
 		decAmount := decimal.RequireFromString(amount)
 
 		if stdBytes.Equal(from, toAddress) {
@@ -307,10 +307,10 @@ func parseIbcRelayerChange(body *astria.Action_IbcRelayerChangeAction, height ty
 	action.Type = storageTypes.ActionTypeIbcRelayerChange
 	action.Data = make(map[string]any)
 	if body.IbcRelayerChangeAction != nil {
-		if addition := body.IbcRelayerChangeAction.GetAddition(); len(addition) > 0 {
-			action.Data["addition"] = hex.EncodeToString(addition)
+		if addition := body.IbcRelayerChangeAction.GetAddition(); len(addition.GetInner()) > 0 {
+			action.Data["addition"] = hex.EncodeToString(addition.GetInner())
 
-			addrBytes := bytes.HexBytes(addition)
+			addrBytes := bytes.HexBytes(addition.GetInner())
 			addr := ctx.Addresses.Set(addrBytes, height, decimal.Zero, 1, 0)
 			action.Addresses = append(action.Addresses, &storage.AddressAction{
 				Address:    addr,
@@ -321,10 +321,10 @@ func parseIbcRelayerChange(body *astria.Action_IbcRelayerChangeAction, height ty
 			})
 		}
 
-		if removal := body.IbcRelayerChangeAction.GetRemoval(); len(removal) > 0 {
-			action.Data["removal"] = hex.EncodeToString(removal)
+		if removal := body.IbcRelayerChangeAction.GetRemoval(); len(removal.GetInner()) > 0 {
+			action.Data["removal"] = hex.EncodeToString(removal.GetInner())
 
-			addrBytes := bytes.HexBytes(removal)
+			addrBytes := bytes.HexBytes(removal.GetInner())
 			addr := ctx.Addresses.Set(addrBytes, height, decimal.Zero, 1, 0)
 			action.Addresses = append(action.Addresses, &storage.AddressAction{
 				Address:    addr,
@@ -342,11 +342,11 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from by
 	action.Type = storageTypes.ActionTypeInitBridgeAccount
 	action.Data = make(map[string]any)
 	if body.InitBridgeAccountAction != nil {
-		action.Data["rollup_id"] = body.InitBridgeAccountAction.GetRollupId()
+		action.Data["rollup_id"] = body.InitBridgeAccountAction.GetRollupId().GetInner()
 		action.Data["fee_asset_id"] = body.InitBridgeAccountAction.GetFeeAssetId()
-		action.Data["asset_ids"] = body.InitBridgeAccountAction.GetAssetIds()
+		action.Data["asset_id"] = body.InitBridgeAccountAction.GetAssetId()
 
-		rollup := ctx.Rollups.Set(body.InitBridgeAccountAction.RollupId, height, 0)
+		rollup := ctx.Rollups.Set(body.InitBridgeAccountAction.RollupId.GetInner(), height, 0)
 		action.RollupAction = &storage.RollupAction{
 			Time:   action.Time,
 			Height: action.Height,
@@ -366,13 +366,13 @@ func parseBridgeLock(body *astria.Action_BridgeLockAction, from bytes.HexBytes, 
 	if body.BridgeLockAction != nil {
 		amount := uint128ToString(body.BridgeLockAction.Amount)
 
-		action.Data["to"] = hex.EncodeToString(body.BridgeLockAction.To)
+		action.Data["to"] = hex.EncodeToString(body.BridgeLockAction.To.GetInner())
 		action.Data["destination_chain_address"] = body.BridgeLockAction.DestinationChainAddress
 		action.Data["asset_id"] = body.BridgeLockAction.GetAssetId()
 		action.Data["fee_asset_id"] = body.BridgeLockAction.GetFeeAssetId()
 		action.Data["amount"] = amount
 
-		toAddress := bytes.HexBytes(body.BridgeLockAction.To)
+		toAddress := bytes.HexBytes(body.BridgeLockAction.To.GetInner())
 		decAmount := decimal.RequireFromString(amount)
 		toAddr := ctx.Addresses.Set(toAddress, height, decAmount, 1, 0)
 

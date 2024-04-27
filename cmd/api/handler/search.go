@@ -96,7 +96,7 @@ func (s *SearchHandler) Search(c echo.Context) error {
 			if err != nil {
 				return internalServerError(c, err)
 			}
-			body = responses.NewValidator(validator)
+			body = responses.NewShortValidator(validator)
 		}
 
 		response[i] = responses.NewSearchResult(results[i].Value, results[i].Type, body)

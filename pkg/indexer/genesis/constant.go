@@ -68,4 +68,9 @@ func (module *Module) parseConstants(appState nodeTypes.AppState, consensus pkgT
 		Name:   "native_asset_base_denomination",
 		Value:  appState.NativeAssetBaseDenomination,
 	})
+	data.constants = append(data.constants, storage.Constant{
+		Module: storageTypes.ModuleNameGeneric,
+		Name:   "ibc_sudo_address",
+		Value:  appState.IbcSudoAddress,
+	})
 }

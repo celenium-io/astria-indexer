@@ -31,6 +31,7 @@ type AppState struct {
 	Accounts                    []Account `json:"accounts"`
 	AuthoritySudoKey            string    `json:"authority_sudo_key"`
 	NativeAssetBaseDenomination string    `json:"native_asset_base_denomination"`
+	IbcSudoAddress              string    `json:"ibc_sudo_address"`
 }
 
 type Account struct {

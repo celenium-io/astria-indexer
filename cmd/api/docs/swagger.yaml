@@ -109,7 +109,7 @@ definitions:
         example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
         type: string
       proposer:
-        $ref: '#/definitions/responses.Validator'
+        $ref: '#/definitions/responses.ShortValidator'
       stats:
         $ref: '#/definitions/responses.BlockStats'
       time:
@@ -301,6 +301,18 @@ definitions:
         format: string
         type: string
     type: object
+  responses.ShortValidator:
+    properties:
+      address:
+        example: E641C7A2C964833E556AEF934FBF166B712874B6
+        type: string
+      id:
+        example: 321
+        type: integer
+      name:
+        example: Node0
+        type: string
+    type: object
   responses.SignedBlocks:
     properties:
       height:
@@ -434,6 +446,15 @@ definitions:
         type: integer
       name:
         example: Node0
+        type: string
+      power:
+        example: "100"
+        type: string
+      pubkey:
+        example: a497aa4a22ca8232876082920b110678988c86194b0c2e12a04dcf6f53688bb2
+        type: string
+      pubkey_type:
+        example: tendermint/PubKeyEd25519
         type: string
     type: object
   responses.ValidatorUptime:

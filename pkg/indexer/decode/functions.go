@@ -6,7 +6,7 @@ package decode
 import (
 	"math/big"
 
-	v1 "buf.build/gen/go/astria/astria/protocolbuffers/go/astria/primitive/v1"
+	v1 "buf.build/gen/go/astria/primitives/protocolbuffers/go/astria/primitive/v1"
 	"github.com/cometbft/cometbft/crypto/ed25519"
 	"github.com/cometbft/cometbft/libs/bytes"
 )

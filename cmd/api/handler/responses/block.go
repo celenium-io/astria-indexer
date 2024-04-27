@@ -13,23 +13,23 @@ import (
 )
 
 type Block struct {
-	Id                 uint64       `example:"321"                                                              json:"id"                   swaggertype:"integer"`
-	Height             uint64       `example:"100"                                                              json:"height"               swaggertype:"integer"`
-	Time               time.Time    `example:"2023-07-04T03:10:57+00:00"                                        json:"time"                 swaggertype:"string"`
-	VersionBlock       string       `example:"11"                                                               json:"version_block"        swaggertype:"string"`
-	VersionApp         string       `example:"1"                                                                json:"version_app"          swaggertype:"string"`
-	Hash               pkgTypes.Hex `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"hash"                 swaggertype:"string"`
-	ParentHash         pkgTypes.Hex `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"parent_hash"          swaggertype:"string"`
-	LastCommitHash     pkgTypes.Hex `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"last_commit_hash"     swaggertype:"string"`
-	DataHash           pkgTypes.Hex `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"data_hash"            swaggertype:"string"`
-	ValidatorsHash     pkgTypes.Hex `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"validators_hash"      swaggertype:"string"`
-	NextValidatorsHash pkgTypes.Hex `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"next_validators_hash" swaggertype:"string"`
-	ConsensusHash      pkgTypes.Hex `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"consensus_hash"       swaggertype:"string"`
-	AppHash            pkgTypes.Hex `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"app_hash"             swaggertype:"string"`
-	LastResultsHash    pkgTypes.Hex `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"last_results_hash"    swaggertype:"string"`
-	EvidenceHash       pkgTypes.Hex `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"evidence_hash"        swaggertype:"string"`
-	ActionTypes        []string     `example:"sequence,transfer"                                                json:"action_types"         swaggertype:"string"`
-	Proposer           *Validator   `json:"proposer,omitempty"`
+	Id                 uint64          `example:"321"                                                              json:"id"                   swaggertype:"integer"`
+	Height             uint64          `example:"100"                                                              json:"height"               swaggertype:"integer"`
+	Time               time.Time       `example:"2023-07-04T03:10:57+00:00"                                        json:"time"                 swaggertype:"string"`
+	VersionBlock       string          `example:"11"                                                               json:"version_block"        swaggertype:"string"`
+	VersionApp         string          `example:"1"                                                                json:"version_app"          swaggertype:"string"`
+	Hash               pkgTypes.Hex    `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"hash"                 swaggertype:"string"`
+	ParentHash         pkgTypes.Hex    `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"parent_hash"          swaggertype:"string"`
+	LastCommitHash     pkgTypes.Hex    `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"last_commit_hash"     swaggertype:"string"`
+	DataHash           pkgTypes.Hex    `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"data_hash"            swaggertype:"string"`
+	ValidatorsHash     pkgTypes.Hex    `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"validators_hash"      swaggertype:"string"`
+	NextValidatorsHash pkgTypes.Hex    `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"next_validators_hash" swaggertype:"string"`
+	ConsensusHash      pkgTypes.Hex    `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"consensus_hash"       swaggertype:"string"`
+	AppHash            pkgTypes.Hex    `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"app_hash"             swaggertype:"string"`
+	LastResultsHash    pkgTypes.Hex    `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"last_results_hash"    swaggertype:"string"`
+	EvidenceHash       pkgTypes.Hex    `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"evidence_hash"        swaggertype:"string"`
+	ActionTypes        []string        `example:"sequence,transfer"                                                json:"action_types"         swaggertype:"string"`
+	Proposer           *ShortValidator `json:"proposer,omitempty"`
 
 	Stats *BlockStats `json:"stats,omitempty"`
 }
@@ -53,7 +53,7 @@ func NewBlock(block storage.Block) Block {
 		EvidenceHash:       block.EvidenceHash,
 		ActionTypes:        types.NewActionTypeMaskBits(block.ActionTypes).Strings(),
 	}
-	result.Proposer = NewValidator(block.Proposer)
+	result.Proposer = NewShortValidator(block.Proposer)
 
 	if block.Stats != nil {
 		result.Stats = NewBlockStats(block.Stats)

@@ -70,7 +70,7 @@ func (s *ValidatorTestSuite) TestGet() {
 	s.Require().NoError(s.handler.Get(c))
 	s.Require().Equal(http.StatusOK, rec.Code)
 
-	var validator responses.Validator
+	var validator responses.ShortValidator
 	err := json.NewDecoder(rec.Body).Decode(&validator)
 	s.Require().NoError(err)
 	s.Require().EqualValues(1, validator.Id)
@@ -93,7 +93,7 @@ func (s *ValidatorTestSuite) TestList() {
 	s.Require().NoError(s.handler.List(c))
 	s.Require().Equal(http.StatusOK, rec.Code)
 
-	var validators []responses.Validator
+	var validators []responses.ShortValidator
 	err := json.NewDecoder(rec.Body).Decode(&validators)
 	s.Require().NoError(err)
 	s.Require().Len(validators, 1)

@@ -4,16 +4,37 @@
 package responses
 
 import (
+	"encoding/hex"
 	"fmt"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/pkg/types"
 )
 
-type Validator struct {
+type ShortValidator struct {
 	Id          uint64 `example:"321"                                      json:"id"      swaggertype:"integer"`
 	ConsAddress string `example:"E641C7A2C964833E556AEF934FBF166B712874B6" json:"address" swaggertype:"string"`
 	Name        string `example:"Node0"                                    json:"name"    swaggertype:"string"`
+}
+
+func NewShortValidator(val *storage.Validator) *ShortValidator {
+	if val == nil || val.Id == 0 { // for genesis block
+		return nil
+	}
+	return &ShortValidator{
+		Id:          val.Id,
+		ConsAddress: val.Address,
+		Name:        val.Name,
+	}
+}
+
+type Validator struct {
+	Id          uint64 `example:"321"                                                              json:"id"          swaggertype:"integer"`
+	ConsAddress string `example:"E641C7A2C964833E556AEF934FBF166B712874B6"                         json:"address"     swaggertype:"string"`
+	Name        string `example:"Node0"                                                            json:"name"        swaggertype:"string"`
+	PubkeyType  string `example:"tendermint/PubKeyEd25519"                                         json:"pubkey_type" swaggertype:"string"`
+	Pubkey      string `example:"a497aa4a22ca8232876082920b110678988c86194b0c2e12a04dcf6f53688bb2" json:"pubkey"      swaggertype:"string"`
+	Power       string `example:"100"                                                              json:"power"       swaggertype:"string"`
 }
 
 func NewValidator(val *storage.Validator) *Validator {
@@ -24,6 +45,9 @@ func NewValidator(val *storage.Validator) *Validator {
 		Id:          val.Id,
 		ConsAddress: val.Address,
 		Name:        val.Name,
+		PubkeyType:  val.PubkeyType,
+		Pubkey:      hex.EncodeToString(val.PubKey),
+		Power:       val.Power.String(),
 	}
 }
 

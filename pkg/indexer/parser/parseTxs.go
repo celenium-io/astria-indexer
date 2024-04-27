@@ -57,7 +57,7 @@ func parseTx(b types.BlockData, index int, txRes *types.ResponseDeliverTx, ctx *
 		Codespace:    txRes.Codespace,
 		Hash:         b.Block.Txs[index].Hash(),
 		Signature:    d.Tx.Signature,
-		Nonce:        d.Tx.Transaction.Nonce,
+		Nonce:        d.Tx.Transaction.Params.Nonce,
 		Signer:       d.Signer,
 		ActionTypes:  d.ActionTypes,
 

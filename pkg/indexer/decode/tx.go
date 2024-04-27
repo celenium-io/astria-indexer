@@ -4,7 +4,7 @@
 package decode
 
 import (
-	astria "buf.build/gen/go/astria/astria/protocolbuffers/go/astria/sequencer/v1alpha1"
+	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transactions/v1alpha1"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/celenium-io/astria-indexer/pkg/types"
@@ -58,7 +58,7 @@ func Tx(b types.BlockData, index int, ctx *Context) (d DecodedTx, err error) {
 
 	address := AddressFromPubKey(d.Tx.PublicKey)
 	d.Signer = ctx.Addresses.Set(address, b.Height, decimal.Zero, 0, 1)
-	ctx.Addresses.UpdateNonce(address, d.Tx.Transaction.Nonce)
+	ctx.Addresses.UpdateNonce(address, d.Tx.Transaction.Params.Nonce)
 
 	d.Actions, err = parseActions(b.Height, b.Block.Time, address, &d, ctx)
 	if err != nil {

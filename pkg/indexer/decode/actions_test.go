@@ -7,11 +7,11 @@ import (
 	"encoding/hex"
 	"testing"
 
-	primitivev1 "buf.build/gen/go/astria/astria/protocolbuffers/go/astria/primitive/v1"
-	astria "buf.build/gen/go/astria/astria/protocolbuffers/go/astria/sequencer/v1alpha1"
-	v1 "buf.build/gen/go/astria/astria/protocolbuffers/go/astria_vendored/penumbra/core/component/ibc/v1"
-	abci "buf.build/gen/go/astria/astria/protocolbuffers/go/astria_vendored/tendermint/abci"
-	crypto "buf.build/gen/go/astria/astria/protocolbuffers/go/astria_vendored/tendermint/crypto"
+	primitivev1 "buf.build/gen/go/astria/primitives/protocolbuffers/go/astria/primitive/v1"
+	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transactions/v1alpha1"
+	v1 "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria_vendored/penumbra/core/component/ibc/v1"
+	abci "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria_vendored/tendermint/abci"
+	crypto "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria_vendored/tendermint/crypto"
 	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
@@ -147,7 +147,7 @@ func TestDecodeActions(t *testing.T) {
 				Amount: &primitivev1.Uint128{
 					Lo: 10,
 				},
-				To: address,
+				To: &primitivev1.Address{Inner: address},
 			},
 		}
 
@@ -203,7 +203,7 @@ func TestDecodeActions(t *testing.T) {
 
 		message := &astria.Action_SequenceAction{
 			SequenceAction: &astria.SequenceAction{
-				RollupId: testsuite.RandomHash(10),
+				RollupId: &primitivev1.RollupId{Inner: testsuite.RandomHash(10)},
 				Data:     testsuite.RandomHash(10),
 			},
 		}
@@ -220,7 +220,7 @@ func TestDecodeActions(t *testing.T) {
 				Size:   10,
 				Height: 1000,
 				Rollup: &storage.Rollup{
-					AstriaId:     message.SequenceAction.RollupId,
+					AstriaId:     message.SequenceAction.RollupId.Inner,
 					FirstHeight:  1000,
 					ActionsCount: 1,
 					Size:         10,
@@ -250,7 +250,7 @@ func TestDecodeActions(t *testing.T) {
 		newAddress := testsuite.RandomHash(20)
 		message := &astria.Action_SudoAddressChangeAction{
 			SudoAddressChangeAction: &astria.SudoAddressChangeAction{
-				NewAddress: newAddress,
+				NewAddress: &primitivev1.Address{Inner: newAddress},
 			},
 		}
 
@@ -313,7 +313,7 @@ func TestDecodeActions(t *testing.T) {
 
 		message := &astria.Action_TransferAction{
 			TransferAction: &astria.TransferAction{
-				To: to,
+				To: &primitivev1.Address{Inner: to},
 				Amount: &primitivev1.Uint128{
 					Lo: 10,
 				},
@@ -382,7 +382,7 @@ func TestDecodeActions(t *testing.T) {
 
 		message := &astria.Action_TransferAction{
 			TransferAction: &astria.TransferAction{
-				To: from,
+				To: &primitivev1.Address{Inner: from},
 				Amount: &primitivev1.Uint128{
 					Lo: 10,
 				},
@@ -525,7 +525,7 @@ func TestDecodeActions(t *testing.T) {
 			BridgeLockAction: &astria.BridgeLockAction{
 				FeeAssetId:              feeAssetId,
 				AssetId:                 assetId,
-				To:                      to,
+				To:                      &primitivev1.Address{Inner: to},
 				DestinationChainAddress: dest,
 				Amount: &primitivev1.Uint128{
 					Lo: 10,
@@ -618,7 +618,7 @@ func TestDecodeActions(t *testing.T) {
 			BridgeLockAction: &astria.BridgeLockAction{
 				FeeAssetId:              feeAssetId,
 				AssetId:                 assetId,
-				To:                      to,
+				To:                      &primitivev1.Address{Inner: to},
 				DestinationChainAddress: dest,
 				Amount: &primitivev1.Uint128{
 					Lo: 10,
@@ -678,9 +678,9 @@ func TestDecodeActions(t *testing.T) {
 
 		message := &astria.Action_InitBridgeAccountAction{
 			InitBridgeAccountAction: &astria.InitBridgeAccountAction{
-				RollupId:   rollupId,
+				RollupId:   &primitivev1.RollupId{Inner: rollupId},
 				FeeAssetId: feAssetId,
-				AssetIds:   [][]byte{assetId},
+				AssetId:    assetId,
 			},
 		}
 
@@ -689,13 +689,13 @@ func TestDecodeActions(t *testing.T) {
 			Type:   types.ActionTypeInitBridgeAccount,
 			Data: map[string]any{
 				"rollup_id":    rollupId,
-				"asset_ids":    [][]byte{assetId},
+				"asset_id":     assetId,
 				"fee_asset_id": feAssetId,
 			},
 			RollupAction: &storage.RollupAction{
 				Height: 1000,
 				Rollup: &storage.Rollup{
-					AstriaId:      message.InitBridgeAccountAction.RollupId,
+					AstriaId:      message.InitBridgeAccountAction.RollupId.Inner,
 					FirstHeight:   1000,
 					ActionsCount:  1,
 					BridgeAddress: fromAddr,
@@ -719,7 +719,7 @@ func TestDecodeActions(t *testing.T) {
 		message := &astria.Action_IbcRelayerChangeAction{
 			IbcRelayerChangeAction: &astria.IbcRelayerChangeAction{
 				Value: &astria.IbcRelayerChangeAction_Addition{
-					Addition: address,
+					Addition: &primitivev1.Address{Inner: address},
 				},
 			},
 		}
@@ -765,7 +765,7 @@ func TestDecodeActions(t *testing.T) {
 		message := &astria.Action_IbcRelayerChangeAction{
 			IbcRelayerChangeAction: &astria.IbcRelayerChangeAction{
 				Value: &astria.IbcRelayerChangeAction_Removal{
-					Removal: address,
+					Removal: &primitivev1.Address{Inner: address},
 				},
 			},
 		}

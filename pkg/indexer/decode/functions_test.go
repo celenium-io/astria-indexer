@@ -7,7 +7,7 @@ import (
 	"encoding/hex"
 	"testing"
 
-	v1 "buf.build/gen/go/astria/astria/protocolbuffers/go/astria/primitive/v1"
+	v1 "buf.build/gen/go/astria/primitives/protocolbuffers/go/astria/primitive/v1"
 	"github.com/stretchr/testify/require"
 )
 

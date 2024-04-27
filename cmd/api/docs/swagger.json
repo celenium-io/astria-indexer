@@ -2186,7 +2186,7 @@
                     "example": "652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF"
                 },
                 "proposer": {
-                    "$ref": "#/definitions/responses.Validator"
+                    "$ref": "#/definitions/responses.ShortValidator"
                 },
                 "stats": {
                     "$ref": "#/definitions/responses.BlockStats"
@@ -2449,6 +2449,23 @@
                 }
             }
         },
+        "responses.ShortValidator": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string",
+                    "example": "E641C7A2C964833E556AEF934FBF166B712874B6"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 321
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Node0"
+                }
+            }
+        },
         "responses.SignedBlocks": {
             "type": "object",
             "properties": {
@@ -2622,6 +2639,18 @@
                 "name": {
                     "type": "string",
                     "example": "Node0"
+                },
+                "power": {
+                    "type": "string",
+                    "example": "100"
+                },
+                "pubkey": {
+                    "type": "string",
+                    "example": "a497aa4a22ca8232876082920b110678988c86194b0c2e12a04dcf6f53688bb2"
+                },
+                "pubkey_type": {
+                    "type": "string",
+                    "example": "tendermint/PubKeyEd25519"
                 }
             }
         },
