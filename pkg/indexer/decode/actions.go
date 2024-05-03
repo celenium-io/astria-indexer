@@ -166,7 +166,7 @@ func parseSequenceAction(body *astria.Action_SequenceAction, from bytes.HexBytes
 	action.Type = storageTypes.ActionTypeSequence
 	action.Data = make(map[string]any)
 	if body.SequenceAction != nil {
-		action.Data["rollup_id"] = body.SequenceAction.RollupId
+		action.Data["rollup_id"] = body.SequenceAction.RollupId.GetInner()
 		action.Data["data"] = body.SequenceAction.Data
 		dataSize := len(body.SequenceAction.Data)
 

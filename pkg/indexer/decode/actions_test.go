@@ -212,7 +212,7 @@ func TestDecodeActions(t *testing.T) {
 			Height: 1000,
 			Type:   types.ActionTypeSequence,
 			Data: map[string]any{
-				"rollup_id": message.SequenceAction.RollupId,
+				"rollup_id": message.SequenceAction.RollupId.Inner,
 				"data":      message.SequenceAction.Data,
 			},
 			Addresses: make([]*storage.AddressAction, 0),
