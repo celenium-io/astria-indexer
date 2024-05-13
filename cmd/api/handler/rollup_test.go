@@ -59,7 +59,7 @@ func (s *RollupTestSuite) TestGet() {
 	c := s.echo.NewContext(req, rec)
 	c.SetPath("/rollup/:hash")
 	c.SetParamNames("hash")
-	c.SetParamValues(testRollupHash)
+	c.SetParamValues(testRollupURLHash)
 
 	s.rollups.EXPECT().
 		ByHash(gomock.Any(), testRollup.AstriaId).
@@ -76,7 +76,7 @@ func (s *RollupTestSuite) TestGet() {
 	s.Require().EqualValues(1, rollup.ActionsCount)
 	s.Require().EqualValues(100, rollup.FirstHeight)
 	s.Require().EqualValues(10, rollup.Size)
-	s.Require().Equal(testRollupHash, rollup.AstriaId)
+	s.Require().Equal(testRollup.AstriaId, rollup.AstriaId)
 }
 
 func (s *RollupTestSuite) TestGetInvalidAddress() {
@@ -126,7 +126,7 @@ func (s *RollupTestSuite) TestList() {
 	s.Require().EqualValues(1, rollup.ActionsCount)
 	s.Require().EqualValues(100, rollup.FirstHeight)
 	s.Require().EqualValues(10, rollup.Size)
-	s.Require().Equal(testRollupHash, rollup.AstriaId)
+	s.Require().Equal(testRollup.AstriaId, rollup.AstriaId)
 }
 
 func (s *RollupTestSuite) TestActions() {
@@ -140,7 +140,7 @@ func (s *RollupTestSuite) TestActions() {
 	c := s.echo.NewContext(req, rec)
 	c.SetPath("/rollup/:hash/actions")
 	c.SetParamNames("hash")
-	c.SetParamValues(testRollupHash)
+	c.SetParamValues(testRollupURLHash)
 
 	s.rollups.EXPECT().
 		ByHash(gomock.Any(), testRollup.AstriaId).
@@ -215,7 +215,7 @@ func (s *RollupTestSuite) TestAddresses() {
 	c := s.echo.NewContext(req, rec)
 	c.SetPath("/rollup/:hash/addresses")
 	c.SetParamNames("hash")
-	c.SetParamValues(testRollupHash)
+	c.SetParamValues(testRollupURLHash)
 
 	s.rollups.EXPECT().
 		ByHash(gomock.Any(), testRollup.AstriaId).

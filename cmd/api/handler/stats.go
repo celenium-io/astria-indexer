@@ -4,7 +4,7 @@
 package handler
 
 import (
-	"encoding/hex"
+	"encoding/base64"
 	"net/http"
 
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
@@ -88,11 +88,11 @@ func (sh StatsHandler) Series(c echo.Context) error {
 }
 
 type rollupSeriesRequest struct {
-	Hash       string `example:"00112233"   param:"hash"      swaggertype:"string"  validate:"required,rollup_id"`
-	Timeframe  string `example:"hour"       param:"timeframe" swaggertype:"string"  validate:"required,oneof=hour day month"`
-	SeriesName string `example:"size"       param:"name"      swaggertype:"string"  validate:"required,oneof=size avg_size min_size max_size actions_count"`
-	From       int64  `example:"1692892095" query:"from"      swaggertype:"integer" validate:"omitempty,min=1"`
-	To         int64  `example:"1692892095" query:"to"        swaggertype:"integer" validate:"omitempty,min=1"`
+	Hash       string `example:"O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc=" param:"hash"      swaggertype:"string"  validate:"required,base64url"`
+	Timeframe  string `example:"hour"                                         param:"timeframe" swaggertype:"string"  validate:"required,oneof=hour day month"`
+	SeriesName string `example:"size"                                         param:"name"      swaggertype:"string"  validate:"required,oneof=size avg_size min_size max_size actions_count"`
+	From       int64  `example:"1692892095"                                   query:"from"      swaggertype:"integer" validate:"omitempty,min=1"`
+	To         int64  `example:"1692892095"                                   query:"to"        swaggertype:"integer" validate:"omitempty,min=1"`
 }
 
 // RollupSeries godoc
@@ -101,7 +101,7 @@ type rollupSeriesRequest struct {
 //	@Description	Get histogram with precomputed rollup by series name and timeframe
 //	@Tags			stats
 //	@ID				stats-rollup-series
-//	@Param			hash		path	string	true	"Hash"							minlength(48)	maxlength(48)
+//	@Param			hash		path	string	true	"Base64Url encoded rollup id"
 //	@Param			timeframe	path	string	true	"Timeframe"						Enums(hour, day, month)
 //	@Param			name		path	string	true	"Series name"					Enums(size, avg_size, min_size, max_size, actions_count)
 //	@Param			from		query	integer	false	"Time from in unix timestamp"	mininum(1)
@@ -117,7 +117,7 @@ func (sh StatsHandler) RollupSeries(c echo.Context) error {
 		return badRequestError(c, err)
 	}
 
-	hash, err := hex.DecodeString(req.Hash)
+	hash, err := base64.URLEncoding.DecodeString(req.Hash)
 	if err != nil {
 		return badRequestError(c, err)
 	}

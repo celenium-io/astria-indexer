@@ -27,9 +27,6 @@ func NewApiValidator() *ApiValidator {
 	if err := v.RegisterValidation("action_type", actionTypeValidator()); err != nil {
 		panic(err)
 	}
-	if err := v.RegisterValidation("rollup_id", rollupIdValidator()); err != nil {
-		panic(err)
-	}
 	return &ApiValidator{validator: v}
 }
 
@@ -66,20 +63,5 @@ func actionTypeValidator() validator.Func {
 	return func(fl validator.FieldLevel) bool {
 		_, err := types.ParseActionType(fl.Field().String())
 		return err == nil
-	}
-}
-
-var regexHash = regexp.MustCompile("[0-9A-Fa-f]{64}")
-
-func isHash(s string) bool {
-	if len(s) != 64 {
-		return false
-	}
-	return regexHash.MatchString(s)
-}
-
-func rollupIdValidator() validator.Func {
-	return func(fl validator.FieldLevel) bool {
-		return isHash(fl.Field().String())
 	}
 }

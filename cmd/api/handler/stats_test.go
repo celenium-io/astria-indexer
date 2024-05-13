@@ -123,7 +123,7 @@ func (s *StatsTestSuite) TestRollupStatsHistogram() {
 			c := s.echo.NewContext(req, rec)
 			c.SetPath("/v1/stats/rollup/series/:hash/:name/:timeframe")
 			c.SetParamNames("hash", "name", "timeframe")
-			c.SetParamValues(testRollupHash, name, string(tf))
+			c.SetParamValues(testRollupURLHash, name, string(tf))
 
 			s.rollups.EXPECT().
 				ByHash(gomock.Any(), testRollup.AstriaId).

@@ -213,7 +213,7 @@ definitions:
   responses.Rollup:
     properties:
       actions_count:
-        example: 100
+        example: 101
         type: integer
       bridge_address:
         example: 115F94D8C98FFD73FE65182611140F0EDC7C3C94
@@ -222,7 +222,7 @@ definitions:
         example: 100
         type: integer
       hash:
-        example: 19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539
+        example: O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc=
         type: string
       id:
         example: 321
@@ -467,7 +467,7 @@ definitions:
         example: "0.97"
         type: string
     type: object
-host: api-dusk-3.astrotrek.io
+host: api-dusk-5.astrotrek.io
 info:
   contact: {}
   description: This is docs of Astria Explorer API.
@@ -1152,10 +1152,8 @@ paths:
       description: Get rollup info
       operationId: get-rollup
       parameters:
-      - description: Hash
+      - description: Base64Url encoded rollup id
         in: path
-        maxLength: 64
-        minLength: 64
         name: hash
         required: true
         type: string
@@ -1184,10 +1182,8 @@ paths:
       description: Get rollup actions
       operationId: rollup-actions
       parameters:
-      - description: Hash
+      - description: Base64Url encoded rollup id
         in: path
-        maxLength: 48
-        minLength: 48
         name: hash
         required: true
         type: string
@@ -1322,10 +1318,8 @@ paths:
       description: Get histogram with precomputed rollup by series name and timeframe
       operationId: stats-rollup-series
       parameters:
-      - description: Hash
+      - description: Base64Url encoded rollup id
         in: path
-        maxLength: 48
-        minLength: 48
         name: hash
         required: true
         type: string
