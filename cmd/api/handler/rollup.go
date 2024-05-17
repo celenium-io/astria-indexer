@@ -4,7 +4,7 @@
 package handler
 
 import (
-	"encoding/hex"
+	"encoding/base64"
 	"net/http"
 
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
@@ -34,7 +34,7 @@ func NewRollupHandler(
 }
 
 type getRollupRequest struct {
-	Hash string `param:"hash" validate:"required,rollup_id"`
+	Hash string `param:"hash" validate:"required,base64url"`
 }
 
 // Get godoc
@@ -43,7 +43,7 @@ type getRollupRequest struct {
 //	@Description	Get rollup info
 //	@Tags			rollup
 //	@ID				get-rollup
-//	@Param			hash	path	string	true	"Hash"	minlength(64)	maxlength(64)
+//	@Param			hash	path	string	true	"Base64Url encoded rollup id"
 //	@Produce		json
 //	@Success		200	{object}	responses.Rollup
 //	@Success		204
@@ -56,9 +56,9 @@ func (handler *RollupHandler) Get(c echo.Context) error {
 		return badRequestError(c, err)
 	}
 
-	hash, err := hex.DecodeString(req.Hash)
+	hash, err := base64.URLEncoding.DecodeString(req.Hash)
 	if err != nil {
-		return badRequestError(c, err)
+		return handleError(c, err, handler.rollups)
 	}
 
 	rollup, err := handler.rollups.ByHash(c.Request().Context(), hash)
@@ -127,7 +127,7 @@ func (handler *RollupHandler) List(c echo.Context) error {
 }
 
 type getRollupList struct {
-	Hash   string `param:"hash"   validate:"required,rollup_id"`
+	Hash   string `param:"hash"   validate:"required,base64url"`
 	Limit  int    `query:"limit"  validate:"omitempty,min=1,max=100"`
 	Offset int    `query:"offset" validate:"omitempty,min=0"`
 	Sort   string `query:"sort"   validate:"omitempty,oneof=asc desc"`
@@ -148,7 +148,7 @@ func (p *getRollupList) SetDefault() {
 //	@Description	Get rollup actions
 //	@Tags			rollup
 //	@ID				rollup-actions
-//	@Param			hash			path	string					true	"Hash"									minlength(48)	maxlength(48)
+//	@Param			hash			path	string					true	"Base64Url encoded rollup id"
 //	@Param			limit			query	integer					false	"Count of requested entities"			minimum(1)		maximum(100)
 //	@Param			offset			query	integer					false	"Offset"								minimum(1)
 //	@Param			sort			query	string					false	"Sort order"							Enums(asc, desc)
@@ -164,7 +164,7 @@ func (handler *RollupHandler) Actions(c echo.Context) error {
 	}
 	req.SetDefault()
 
-	hash, err := hex.DecodeString(req.Hash)
+	hash, err := base64.URLEncoding.DecodeString(req.Hash)
 	if err != nil {
 		return badRequestError(c, err)
 	}
@@ -226,7 +226,7 @@ func (handler *RollupHandler) Addresses(c echo.Context) error {
 	}
 	req.SetDefault()
 
-	hash, err := hex.DecodeString(req.Hash)
+	hash, err := base64.URLEncoding.DecodeString(req.Hash)
 	if err != nil {
 		return badRequestError(c, err)
 	}

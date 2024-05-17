@@ -348,5 +348,5 @@ func (s *AddressTestSuite) TestRollups() {
 	s.Require().EqualValues(1, rollup.ActionsCount)
 	s.Require().EqualValues(100, rollup.FirstHeight)
 	s.Require().EqualValues(10, rollup.Size)
-	s.Require().Equal(testRollupHash, rollup.AstriaId)
+	s.Require().Equal(testRollup.AstriaId, rollup.AstriaId)
 }

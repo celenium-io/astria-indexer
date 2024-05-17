@@ -6,6 +6,7 @@ package handler
 import (
 	"context"
 	"database/sql"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"net/http"
@@ -80,7 +81,8 @@ var (
 		ActionsCount: 1,
 		Size:         10,
 	}
-	testRollupHash = hex.EncodeToString(testRollup.AstriaId)
+	testRollupURLHash = base64.URLEncoding.EncodeToString(testRollup.AstriaId)
+	testRollupHash    = base64.StdEncoding.EncodeToString(testRollup.AstriaId)
 
 	testRollupAction = storage.RollupAction{
 		Action: &storage.Action{

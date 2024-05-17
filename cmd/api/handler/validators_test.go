@@ -40,12 +40,3 @@ func Test_isAddress(t *testing.T) {
 		})
 	}
 }
-
-func TestRollupIdValidate(t *testing.T) {
-	t.Run("validate rollup id", func(t *testing.T) {
-		require.True(t, isHash("19BA8ABB3E4B56A309DF6756C47B97E298E3A72D88449D36A0FADB1CA7366539"))
-		require.False(t, isHash("LLBA8ABB3E4B56A309DF6756C47B97E298E3A72D88449D36A0FADB1CA7366539"))
-		require.False(t, isHash("invalid"))
-		require.False(t, isHash(""))
-	})
-}

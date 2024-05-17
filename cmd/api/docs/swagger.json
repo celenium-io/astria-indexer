@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "api-dusk-3.astrotrek.io",
+    "host": "api-dusk-5.astrotrek.io",
     "paths": {
         "/v1/address": {
             "get": {
@@ -1029,10 +1029,8 @@
                 "operationId": "get-rollup",
                 "parameters": [
                     {
-                        "maxLength": 64,
-                        "minLength": 64,
                         "type": "string",
-                        "description": "Hash",
+                        "description": "Base64Url encoded rollup id",
                         "name": "hash",
                         "in": "path",
                         "required": true
@@ -1076,10 +1074,8 @@
                 "operationId": "rollup-actions",
                 "parameters": [
                     {
-                        "maxLength": 48,
-                        "minLength": 48,
                         "type": "string",
-                        "description": "Hash",
+                        "description": "Base64Url encoded rollup id",
                         "name": "hash",
                         "in": "path",
                         "required": true
@@ -1253,10 +1249,8 @@
                 "operationId": "stats-rollup-series",
                 "parameters": [
                     {
-                        "maxLength": 48,
-                        "minLength": 48,
                         "type": "string",
-                        "description": "Hash",
+                        "description": "Base64Url encoded rollup id",
                         "name": "hash",
                         "in": "path",
                         "required": true
@@ -2331,7 +2325,7 @@
             "properties": {
                 "actions_count": {
                     "type": "integer",
-                    "example": 100
+                    "example": 101
                 },
                 "bridge_address": {
                     "type": "string",
@@ -2343,7 +2337,7 @@
                 },
                 "hash": {
                     "type": "string",
-                    "example": "19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539"
+                    "example": "O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc="
                 },
                 "id": {
                     "type": "integer",
