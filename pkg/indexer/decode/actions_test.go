@@ -212,15 +212,15 @@ func TestDecodeActions(t *testing.T) {
 			Height: 1000,
 			Type:   types.ActionTypeSequence,
 			Data: map[string]any{
-				"rollup_id": message.SequenceAction.RollupId.Inner,
-				"data":      message.SequenceAction.Data,
+				"rollup_id": message.SequenceAction.GetRollupId().GetInner(),
+				"data":      message.SequenceAction.GetData(),
 			},
 			Addresses: make([]*storage.AddressAction, 0),
 			RollupAction: &storage.RollupAction{
 				Size:   10,
 				Height: 1000,
 				Rollup: &storage.Rollup{
-					AstriaId:     message.SequenceAction.RollupId.Inner,
+					AstriaId:     message.SequenceAction.GetRollupId().GetInner(),
 					FirstHeight:  1000,
 					ActionsCount: 1,
 					Size:         10,
@@ -327,7 +327,7 @@ func TestDecodeActions(t *testing.T) {
 			Data: map[string]any{
 				"to":       hex.EncodeToString(to),
 				"amount":   "10",
-				"asset_id": message.TransferAction.AssetId,
+				"asset_id": message.TransferAction.GetAssetId(),
 			},
 			Addresses: make([]*storage.AddressAction, 0),
 			BalanceUpdates: []storage.BalanceUpdate{
@@ -396,7 +396,7 @@ func TestDecodeActions(t *testing.T) {
 			Data: map[string]any{
 				"to":       hex.EncodeToString(from),
 				"amount":   "10",
-				"asset_id": message.TransferAction.AssetId,
+				"asset_id": message.TransferAction.GetAssetId(),
 			},
 			Addresses: make([]*storage.AddressAction, 0),
 		}
@@ -434,11 +434,11 @@ func TestDecodeActions(t *testing.T) {
 			Type:   types.ActionTypeValidatorUpdate,
 			Data: map[string]any{
 				"power":  int64(10),
-				"pubkey": message.ValidatorUpdateAction.PubKey.GetEd25519(),
+				"pubkey": message.ValidatorUpdateAction.GetPubKey().GetEd25519(),
 			},
 			Addresses: make([]*storage.AddressAction, 0),
 		}
-		address := AddressFromPubKey(message.ValidatorUpdateAction.PubKey.GetEd25519())
+		address := AddressFromPubKey(message.ValidatorUpdateAction.GetPubKey().GetEd25519())
 		balance := storage.EmptyBalance()
 		addressAction := storage.AddressAction{
 			Height: 1000,
@@ -695,7 +695,7 @@ func TestDecodeActions(t *testing.T) {
 			RollupAction: &storage.RollupAction{
 				Height: 1000,
 				Rollup: &storage.Rollup{
-					AstriaId:      message.InitBridgeAccountAction.RollupId.Inner,
+					AstriaId:      message.InitBridgeAccountAction.GetRollupId().GetInner(),
 					FirstHeight:   1000,
 					ActionsCount:  1,
 					BridgeAddress: fromAddr,
