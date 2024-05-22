@@ -37,6 +37,7 @@ func NewContext() Context {
 
 type DecodedTx struct {
 	Tx          *astria.SignedTransaction
+	UnsignedTx  *astria.UnsignedTransaction
 	Actions     []storage.Action
 	Signer      *storage.Address
 	ActionTypes storageTypes.Bits
@@ -52,13 +53,18 @@ func Tx(b types.BlockData, index int, ctx *Context) (d DecodedTx, err error) {
 		return d, errors.Wrap(err, "tx decoding")
 	}
 
-	if d.Tx.Transaction == nil {
+	if d.Tx.GetTransaction() == nil {
 		return d, errors.Wrap(err, "nil decoded tx")
 	}
 
-	address := AddressFromPubKey(d.Tx.PublicKey)
+	d.UnsignedTx = new(astria.UnsignedTransaction)
+	if err := proto.Unmarshal(d.Tx.GetTransaction().GetValue(), d.UnsignedTx); err != nil {
+		return d, errors.Wrap(err, "tx decoding")
+	}
+
+	address := AddressFromPubKey(d.Tx.GetPublicKey())
 	d.Signer = ctx.Addresses.Set(address, b.Height, decimal.Zero, 0, 1)
-	ctx.Addresses.UpdateNonce(address, d.Tx.Transaction.Params.Nonce)
+	ctx.Addresses.UpdateNonce(address, d.UnsignedTx.GetParams().GetNonce())
 
 	d.Actions, err = parseActions(b.Height, b.Block.Time, address, &d, ctx)
 	if err != nil {

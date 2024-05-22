@@ -19,9 +19,10 @@ import (
 )
 
 func parseActions(height types.Level, blockTime time.Time, from bytes.HexBytes, tx *DecodedTx, ctx *Context) ([]storage.Action, error) {
-	actions := make([]storage.Action, len(tx.Tx.Transaction.Actions))
-	for i := range tx.Tx.Transaction.Actions {
-		if tx.Tx.Transaction.Actions[i].Value == nil {
+	rawActions := tx.UnsignedTx.GetActions()
+	actions := make([]storage.Action, len(rawActions))
+	for i := range rawActions {
+		if tx.UnsignedTx.Actions[i].Value == nil {
 			return nil, errors.Errorf("nil action")
 		}
 		actions[i].Height = height
@@ -32,7 +33,7 @@ func parseActions(height types.Level, blockTime time.Time, from bytes.HexBytes, 
 
 		var err error
 
-		switch val := tx.Tx.Transaction.Actions[i].Value.(type) {
+		switch val := rawActions[i].GetValue().(type) {
 		case *astria.Action_IbcAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeIbcRelayBits)
 			err = parseIbcAction(val, &actions[i])
@@ -83,8 +84,9 @@ func parseActions(height types.Level, blockTime time.Time, from bytes.HexBytes, 
 func parseIbcAction(body *astria.Action_IbcAction, action *storage.Action) error {
 	action.Type = storageTypes.ActionTypeIbcRelay
 	action.Data = make(map[string]any)
-	if body.IbcAction != nil && body.IbcAction.RawAction != nil {
-		action.Data["raw"] = base64.StdEncoding.EncodeToString(body.IbcAction.RawAction.Value)
+
+	if body.IbcAction != nil && body.IbcAction.GetRawAction() != nil {
+		action.Data["raw"] = base64.StdEncoding.EncodeToString(body.IbcAction.GetRawAction().GetValue())
 	}
 	return nil
 }
@@ -93,25 +95,25 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, height types.Leve
 	action.Type = storageTypes.ActionTypeIcs20Withdrawal
 	action.Data = make(map[string]any)
 	if body.Ics20Withdrawal != nil {
-		amount := uint128ToString(body.Ics20Withdrawal.Amount)
+		amount := uint128ToString(body.Ics20Withdrawal.GetAmount())
 		action.Data["amount"] = amount
-		action.Data["denom"] = body.Ics20Withdrawal.Denom
-		action.Data["destination_address"] = body.Ics20Withdrawal.DestinationChainAddress
-		action.Data["return_address"] = hex.EncodeToString(body.Ics20Withdrawal.ReturnAddress)
-		action.Data["source_channel"] = body.Ics20Withdrawal.SourceChannel
+		action.Data["denom"] = body.Ics20Withdrawal.GetDenom()
+		action.Data["destination_address"] = body.Ics20Withdrawal.GetDestinationChainAddress()
+		action.Data["return_address"] = hex.EncodeToString(body.Ics20Withdrawal.GetReturnAddress())
+		action.Data["source_channel"] = body.Ics20Withdrawal.GetSourceChannel()
 
-		if body.Ics20Withdrawal.TimeoutHeight != nil {
+		if th := body.Ics20Withdrawal.GetTimeoutHeight(); th != nil {
 			action.Data["timeout_height"] = map[string]any{
-				"revision_number": body.Ics20Withdrawal.TimeoutHeight.RevisionNumber,
-				"revision_height": body.Ics20Withdrawal.TimeoutHeight.RevisionHeight,
+				"revision_number": th.GetRevisionNumber(),
+				"revision_height": th.GetRevisionHeight(),
 			}
 		}
-		if body.Ics20Withdrawal.TimeoutTime > 0 {
-			action.Data["timeout_time"] = body.Ics20Withdrawal.TimeoutTime
+		if body.Ics20Withdrawal.GetTimeoutTime() > 0 {
+			action.Data["timeout_time"] = body.Ics20Withdrawal.GetTimeoutTime()
 		}
 
 		decAmount := decimal.RequireFromString(amount)
-		returnAddress := bytes.HexBytes(body.Ics20Withdrawal.ReturnAddress)
+		returnAddress := bytes.HexBytes(body.Ics20Withdrawal.GetReturnAddress())
 		addr := ctx.Addresses.Set(returnAddress, height, decAmount, 1, 0)
 		action.Addresses = append(action.Addresses, &storage.AddressAction{
 			Address:    addr,
@@ -124,7 +126,7 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, height types.Leve
 		action.BalanceUpdates = append(action.BalanceUpdates, storage.BalanceUpdate{
 			Address:  addr,
 			Height:   action.Height,
-			Currency: body.Ics20Withdrawal.Denom,
+			Currency: body.Ics20Withdrawal.GetDenom(),
 			Update:   decAmount,
 		})
 	}
@@ -135,11 +137,12 @@ func parseMintAction(body *astria.Action_MintAction, height types.Level, ctx *Co
 	action.Type = storageTypes.ActionTypeMint
 	action.Data = make(map[string]any)
 	if body.MintAction != nil {
-		amount := uint128ToString(body.MintAction.Amount)
+		to := body.MintAction.GetTo().GetInner()
+		amount := uint128ToString(body.MintAction.GetAmount())
 		action.Data["amount"] = amount
-		action.Data["to"] = hex.EncodeToString(body.MintAction.To.GetInner())
+		action.Data["to"] = hex.EncodeToString(to)
 
-		toAddress := bytes.HexBytes(body.MintAction.To.GetInner())
+		toAddress := bytes.HexBytes(to)
 		decAmount := decimal.RequireFromString(amount)
 		addr := ctx.Addresses.Set(toAddress, height, decAmount, 1, 0)
 		action.Addresses = append(action.Addresses, &storage.AddressAction{
@@ -166,11 +169,12 @@ func parseSequenceAction(body *astria.Action_SequenceAction, from bytes.HexBytes
 	action.Type = storageTypes.ActionTypeSequence
 	action.Data = make(map[string]any)
 	if body.SequenceAction != nil {
-		action.Data["rollup_id"] = body.SequenceAction.RollupId.GetInner()
-		action.Data["data"] = body.SequenceAction.Data
-		dataSize := len(body.SequenceAction.Data)
+		rollupId := body.SequenceAction.GetRollupId().GetInner()
+		action.Data["rollup_id"] = rollupId
+		action.Data["data"] = body.SequenceAction.GetData()
+		dataSize := len(body.SequenceAction.GetData())
 
-		rollup := ctx.Rollups.Set(body.SequenceAction.RollupId.GetInner(), height, dataSize)
+		rollup := ctx.Rollups.Set(rollupId, height, dataSize)
 		fromAddress := ctx.Addresses.Set(from, height, decimal.Zero, 1, 0)
 
 		rollupAddress := &storage.RollupAddress{
@@ -210,9 +214,10 @@ func parseSudoAddressChangeAction(body *astria.Action_SudoAddressChangeAction, h
 	action.Type = storageTypes.ActionTypeSudoAddressChange
 	action.Data = make(map[string]any)
 	if body.SudoAddressChangeAction != nil {
-		action.Data["address"] = hex.EncodeToString(body.SudoAddressChangeAction.NewAddress.GetInner())
+		address := body.SudoAddressChangeAction.GetNewAddress().GetInner()
+		action.Data["address"] = hex.EncodeToString(address)
 
-		newAddress := bytes.HexBytes(body.SudoAddressChangeAction.NewAddress.GetInner())
+		newAddress := bytes.HexBytes(address)
 		addr := ctx.Addresses.Set(newAddress, height, decimal.Zero, 1, 0)
 		action.Addresses = append(action.Addresses, &storage.AddressAction{
 			Address:    addr,
@@ -229,12 +234,13 @@ func parseTransferAction(body *astria.Action_TransferAction, from bytes.HexBytes
 	action.Type = storageTypes.ActionTypeTransfer
 	action.Data = make(map[string]any)
 	if body.TransferAction != nil {
-		amount := uint128ToString(body.TransferAction.Amount)
-		action.Data["amount"] = uint128ToString(body.TransferAction.Amount)
-		action.Data["asset_id"] = body.TransferAction.AssetId
-		action.Data["to"] = hex.EncodeToString(body.TransferAction.To.GetInner())
+		amount := uint128ToString(body.TransferAction.GetAmount())
+		to := body.TransferAction.GetTo().GetInner()
+		action.Data["amount"] = amount
+		action.Data["asset_id"] = body.TransferAction.GetAssetId()
+		action.Data["to"] = hex.EncodeToString(to)
 
-		toAddress := bytes.HexBytes(body.TransferAction.To.GetInner())
+		toAddress := bytes.HexBytes(to)
 		decAmount := decimal.RequireFromString(amount)
 
 		if stdBytes.Equal(from, toAddress) {
@@ -287,10 +293,10 @@ func parseValidatorUpdateAction(body *astria.Action_ValidatorUpdateAction, heigh
 	action.Type = storageTypes.ActionTypeValidatorUpdate
 	action.Data = make(map[string]any)
 	if body.ValidatorUpdateAction != nil {
-		action.Data["power"] = body.ValidatorUpdateAction.Power
-		action.Data["pubkey"] = body.ValidatorUpdateAction.PubKey.GetEd25519()
+		action.Data["power"] = body.ValidatorUpdateAction.GetPower()
+		action.Data["pubkey"] = body.ValidatorUpdateAction.GetPubKey().GetEd25519()
 
-		address := AddressFromPubKey(body.ValidatorUpdateAction.PubKey.GetEd25519())
+		address := AddressFromPubKey(body.ValidatorUpdateAction.GetPubKey().GetEd25519())
 		addr := ctx.Addresses.Set(address, height, decimal.Zero, 1, 0)
 		action.Addresses = append(action.Addresses, &storage.AddressAction{
 			Address:    addr,
@@ -346,7 +352,7 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from by
 		action.Data["fee_asset_id"] = body.InitBridgeAccountAction.GetFeeAssetId()
 		action.Data["asset_id"] = body.InitBridgeAccountAction.GetAssetId()
 
-		rollup := ctx.Rollups.Set(body.InitBridgeAccountAction.RollupId.GetInner(), height, 0)
+		rollup := ctx.Rollups.Set(body.InitBridgeAccountAction.GetRollupId().GetInner(), height, 0)
 		action.RollupAction = &storage.RollupAction{
 			Time:   action.Time,
 			Height: action.Height,
@@ -364,15 +370,15 @@ func parseBridgeLock(body *astria.Action_BridgeLockAction, from bytes.HexBytes, 
 	action.Type = storageTypes.ActionTypeBridgeLock
 	action.Data = make(map[string]any)
 	if body.BridgeLockAction != nil {
-		amount := uint128ToString(body.BridgeLockAction.Amount)
+		amount := uint128ToString(body.BridgeLockAction.GetAmount())
 
-		action.Data["to"] = hex.EncodeToString(body.BridgeLockAction.To.GetInner())
-		action.Data["destination_chain_address"] = body.BridgeLockAction.DestinationChainAddress
+		action.Data["to"] = hex.EncodeToString(body.BridgeLockAction.GetTo().GetInner())
+		action.Data["destination_chain_address"] = body.BridgeLockAction.GetDestinationChainAddress()
 		action.Data["asset_id"] = body.BridgeLockAction.GetAssetId()
 		action.Data["fee_asset_id"] = body.BridgeLockAction.GetFeeAssetId()
 		action.Data["amount"] = amount
 
-		toAddress := bytes.HexBytes(body.BridgeLockAction.To.GetInner())
+		toAddress := bytes.HexBytes(body.BridgeLockAction.GetTo().GetInner())
 		decAmount := decimal.RequireFromString(amount)
 		toAddr := ctx.Addresses.Set(toAddress, height, decAmount, 1, 0)
 

@@ -5,7 +5,8 @@ package receiver
 
 import (
 	"context"
-	"math/rand"
+	"crypto/rand"
+	"math/big"
 	"sort"
 	"testing"
 	"time"
@@ -60,8 +61,11 @@ func createBlocks(order int, data ...blockConciseData) []types.BlockData {
 	}
 
 	if order == random {
-		r := rand.New(rand.NewSource(time.Now().UnixNano()))
-		r.Shuffle(len(res), func(i, j int) { res[i], res[j] = res[j], res[i] })
+		for i := range res {
+			bJ, _ := rand.Int(rand.Reader, big.NewInt(int64(i+1)))
+			j := bJ.Int64()
+			res[i], res[j] = res[j], res[i]
+		}
 	}
 
 	return res
