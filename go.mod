@@ -3,8 +3,8 @@ module github.com/celenium-io/astria-indexer
 go 1.22.1
 
 require (
-	buf.build/gen/go/astria/primitives/protocolbuffers/go v1.33.0-20240422195039-812e347acd6b.1
-	buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.33.0-20240423053324-d198e0ffaebe.1
+	buf.build/gen/go/astria/primitives/protocolbuffers/go v1.34.1-20240522171750-37ae32102c04.1
+	buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.34.1-20240522171751-290c92691985.1
 	github.com/cometbft/cometbft v0.38.6
 	github.com/dipdup-io/workerpool v0.0.4
 	github.com/dipdup-net/go-lib v0.3.6
@@ -33,7 +33,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.19.0
 	go.uber.org/mock v0.4.0
 	golang.org/x/time v0.5.0
-	google.golang.org/protobuf v1.33.0
+	google.golang.org/protobuf v1.34.1
 )
 
 require (

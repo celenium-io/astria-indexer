@@ -19,9 +19,9 @@ import (
 )
 
 func parseActions(height types.Level, blockTime time.Time, from bytes.HexBytes, tx *DecodedTx, ctx *Context) ([]storage.Action, error) {
-	actions := make([]storage.Action, len(tx.Tx.Transaction.Actions))
-	for i := range tx.Tx.Transaction.Actions {
-		if tx.Tx.Transaction.Actions[i].Value == nil {
+	actions := make([]storage.Action, len(tx.Tx.Actions))
+	for i := range tx.Tx.Actions {
+		if tx.Tx.Actions[i].Value == nil {
 			return nil, errors.Errorf("nil action")
 		}
 		actions[i].Height = height
@@ -32,7 +32,7 @@ func parseActions(height types.Level, blockTime time.Time, from bytes.HexBytes, 
 
 		var err error
 
-		switch val := tx.Tx.Transaction.Actions[i].Value.(type) {
+		switch val := tx.Tx.Actions[i].Value.(type) {
 		case *astria.Action_IbcAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeIbcRelayBits)
 			err = parseIbcAction(val, &actions[i])
@@ -99,6 +99,7 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, height types.Leve
 		action.Data["destination_address"] = body.Ics20Withdrawal.DestinationChainAddress
 		action.Data["return_address"] = hex.EncodeToString(body.Ics20Withdrawal.ReturnAddress)
 		action.Data["source_channel"] = body.Ics20Withdrawal.SourceChannel
+		action.Data["memo"] = body.Ics20Withdrawal.Memo
 
 		if body.Ics20Withdrawal.TimeoutHeight != nil {
 			action.Data["timeout_height"] = map[string]any{

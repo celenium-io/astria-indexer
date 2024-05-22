@@ -36,7 +36,8 @@ func NewContext() Context {
 }
 
 type DecodedTx struct {
-	Tx          *astria.SignedTransaction
+	SignedTx    *astria.SignedTransaction
+	Tx          *astria.UnsignedTransaction
 	Actions     []storage.Action
 	Signer      *storage.Address
 	ActionTypes storageTypes.Bits
@@ -47,18 +48,22 @@ func Tx(b types.BlockData, index int, ctx *Context) (d DecodedTx, err error) {
 
 	ctx.BytesInBlock += int64(len(raw))
 
-	d.Tx = new(astria.SignedTransaction)
+	d.SignedTx = new(astria.SignedTransaction)
 	if err := proto.Unmarshal(raw, d.Tx); err != nil {
-		return d, errors.Wrap(err, "tx decoding")
+		return d, errors.Wrap(err, "signed tx decoding")
 	}
-
-	if d.Tx.Transaction == nil {
+	if d.SignedTx.Transaction == nil {
 		return d, errors.Wrap(err, "nil decoded tx")
 	}
 
-	address := AddressFromPubKey(d.Tx.PublicKey)
+	d.Tx = new(astria.UnsignedTransaction)
+	if err := d.SignedTx.Transaction.UnmarshalTo(d.Tx); err != nil {
+		return d, errors.Wrap(err, "tx decoding")
+	}
+
+	address := AddressFromPubKey(d.SignedTx.PublicKey)
 	d.Signer = ctx.Addresses.Set(address, b.Height, decimal.Zero, 0, 1)
-	ctx.Addresses.UpdateNonce(address, d.Tx.Transaction.Params.Nonce)
+	ctx.Addresses.UpdateNonce(address, d.Tx.Params.Nonce)
 
 	d.Actions, err = parseActions(b.Height, b.Block.Time, address, &d, ctx)
 	if err != nil {
