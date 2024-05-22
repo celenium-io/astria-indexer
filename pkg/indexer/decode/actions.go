@@ -101,6 +101,9 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, height types.Leve
 		action.Data["destination_address"] = body.Ics20Withdrawal.GetDestinationChainAddress()
 		action.Data["return_address"] = hex.EncodeToString(body.Ics20Withdrawal.GetReturnAddress())
 		action.Data["source_channel"] = body.Ics20Withdrawal.GetSourceChannel()
+		if memo := body.Ics20Withdrawal.GetMemo(); memo != "" {
+			action.Data["memo"] = memo
+		}
 
 		if th := body.Ics20Withdrawal.GetTimeoutHeight(); th != nil {
 			action.Data["timeout_height"] = map[string]any{
