@@ -26,6 +26,7 @@ var (
 	testState       = storage.State{
 		Id:            1,
 		Name:          "test",
+		ChainId:       "chain-id",
 		LastHeight:    100,
 		LastTime:      testTime,
 		TotalTx:       1234,
@@ -83,6 +84,7 @@ func (s *StateTestSuite) TestHead() {
 	s.Require().NoError(err)
 	s.Require().EqualValues(1, state.Id)
 	s.Require().EqualValues("test", state.Name)
+	s.Require().EqualValues("chain-id", state.ChainID)
 	s.Require().EqualValues(100, state.LastHeight)
 	s.Require().EqualValues(1234, state.TotalTx)
 	s.Require().EqualValues(123, state.TotalAccounts)
