@@ -37,7 +37,7 @@ func NewStateHandler(state storage.IState) *StateHandler {
 func (sh *StateHandler) Head(c echo.Context) error {
 	state, err := sh.state.List(c.Request().Context(), 1, 0, sdk.SortOrderAsc)
 	if err != nil {
-		return internalServerError(c, err)
+		return handleError(c, err, sh.state)
 	}
 	if len(state) == 0 {
 		return c.NoContent(http.StatusNoContent)
