@@ -23,7 +23,7 @@ var rootCmd = &cobra.Command{
 // @title					Swagger Astria Explorer API
 // @version					1.0
 // @description				This is docs of Astria Explorer API.
-// @host					api-dusk-5.astrotrek.io
+// @host					api-dusk.astrotrek.io
 //
 // @query.collection.format	multi
 func main() {

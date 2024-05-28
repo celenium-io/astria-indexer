@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "api-dusk-5.astrotrek.io",
+    "host": "api-dusk.astrotrek.io",
     "paths": {
         "/v1/address": {
             "get": {
