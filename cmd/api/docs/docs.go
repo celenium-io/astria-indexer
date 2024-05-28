@@ -2681,7 +2681,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "api-dusk-5.astrotrek.io",
+	Host:             "api-dusk.astrotrek.io",
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Swagger Astria Explorer API",
