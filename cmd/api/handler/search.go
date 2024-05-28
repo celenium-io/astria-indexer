@@ -59,7 +59,7 @@ func (s *SearchHandler) Search(c echo.Context) error {
 
 	results, err := s.search.Search(c.Request().Context(), req.Search)
 	if err != nil {
-		return internalServerError(c, err)
+		return handleError(c, err, s.address)
 	}
 
 	response := make([]responses.SearchResult, len(results))
@@ -70,31 +70,31 @@ func (s *SearchHandler) Search(c echo.Context) error {
 		case "block":
 			block, err := s.blocks.GetByID(c.Request().Context(), results[i].Id)
 			if err != nil {
-				return internalServerError(c, err)
+				return handleError(c, err, s.address)
 			}
 			body = responses.NewBlock(*block)
 		case "tx":
 			tx, err := s.txs.GetByID(c.Request().Context(), results[i].Id)
 			if err != nil {
-				return internalServerError(c, err)
+				return handleError(c, err, s.address)
 			}
 			body = responses.NewTx(*tx)
 		case "rollup":
 			rollup, err := s.rollups.GetByID(c.Request().Context(), results[i].Id)
 			if err != nil {
-				return internalServerError(c, err)
+				return handleError(c, err, s.address)
 			}
 			body = responses.NewRollup(rollup)
 		case "address":
 			address, err := s.address.GetByID(c.Request().Context(), results[i].Id)
 			if err != nil {
-				return internalServerError(c, err)
+				return handleError(c, err, s.address)
 			}
 			body = responses.NewAddress(*address, nil)
 		case "validator":
 			validator, err := s.validators.GetByID(c.Request().Context(), results[i].Id)
 			if err != nil {
-				return internalServerError(c, err)
+				return handleError(c, err, s.address)
 			}
 			body = responses.NewShortValidator(validator)
 		}

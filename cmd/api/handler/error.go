@@ -4,6 +4,7 @@
 package handler
 
 import (
+	"context"
 	"net/http"
 
 	sentryecho "github.com/getsentry/sentry-go/echo"
@@ -13,6 +14,7 @@ import (
 
 var (
 	errInvalidAddress = errors.New("invalid address")
+	errCancelRequest  = "pq: canceling statement due to user request"
 )
 
 type NoRows interface {
@@ -41,6 +43,14 @@ func internalServerError(c echo.Context, err error) error {
 func handleError(c echo.Context, err error, noRows NoRows) error {
 	if err == nil {
 		return nil
+	}
+	if err.Error() == errCancelRequest {
+		return nil
+	}
+	if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+		return c.JSON(http.StatusBadGateway, Error{
+			Message: err.Error(),
+		})
 	}
 	if noRows.IsNoRows(err) {
 		return c.NoContent(http.StatusNoContent)

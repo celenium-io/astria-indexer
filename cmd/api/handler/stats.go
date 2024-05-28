@@ -37,7 +37,7 @@ func NewStatsHandler(repo storage.IStats, rollups storage.IRollup) StatsHandler 
 func (sh StatsHandler) Summary(c echo.Context) error {
 	summary, err := sh.repo.Summary(c.Request().Context())
 	if err != nil {
-		return internalServerError(c, err)
+		return handleError(c, err, sh.rollups)
 	}
 	return c.JSON(http.StatusOK, responses.NewNetworkSummary(summary))
 }
@@ -77,7 +77,7 @@ func (sh StatsHandler) Series(c echo.Context) error {
 		storage.NewSeriesRequest(req.From, req.To),
 	)
 	if err != nil {
-		return internalServerError(c, err)
+		return handleError(c, err, sh.rollups)
 	}
 
 	response := make([]responses.SeriesItem, len(histogram))
@@ -135,7 +135,7 @@ func (sh StatsHandler) RollupSeries(c echo.Context) error {
 		storage.NewSeriesRequest(req.From, req.To),
 	)
 	if err != nil {
-		return internalServerError(c, err)
+		return handleError(c, err, sh.rollups)
 	}
 
 	response := make([]responses.RollupSeriesItem, len(histogram))
