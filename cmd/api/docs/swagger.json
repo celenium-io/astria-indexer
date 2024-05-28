@@ -2476,6 +2476,11 @@
         "responses.State": {
             "type": "object",
             "properties": {
+                "chain_id": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "astria-dusk-7"
+                },
                 "hash": {
                     "type": "string",
                     "format": "string",
