@@ -732,3 +732,27 @@ func (s *TransactionTestSuite) TestRetentionBlockSignatures() {
 	s.Require().NoError(err)
 	s.Require().Len(signs, 3)
 }
+
+func (s *TransactionTestSuite) TestUpdateValidators() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	pk, err := hex.DecodeString("32415f09dbee4297cc9a841c2c2312bf903fc53c48860d788ae66097355a585f")
+	s.Require().NoError(err)
+
+	err = tx.UpdateValidators(ctx, &storage.Validator{
+		PubKey: pk,
+		Power:  decimal.NewFromInt(10000),
+	})
+	s.Require().NoError(err)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
+
+	validator, err := s.storage.Validator.GetByID(ctx, 1)
+	s.Require().NoError(err)
+	s.Require().EqualValues("10000", validator.Power.String())
+}

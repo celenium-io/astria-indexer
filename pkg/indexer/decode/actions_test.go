@@ -459,6 +459,12 @@ func TestDecodeActions(t *testing.T) {
 		err := parseValidatorUpdateAction(message, 1000, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
+
+		require.Len(t, decodeContext.Validators, 1)
+		pk := hex.EncodeToString(message.ValidatorUpdateAction.GetPubKey().GetEd25519())
+		v, ok := decodeContext.Validators[pk]
+		require.True(t, ok)
+		require.EqualValues(t, "10", v.Power.String())
 	})
 
 	t.Run("fee asset change: addition", func(t *testing.T) {

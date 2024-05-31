@@ -61,6 +61,7 @@ func getExpectedBlock() storage.Block {
 		Addresses:       make(map[string]*storage.Address),
 		Rollups:         make(map[string]*storage.Rollup),
 		RollupAddress:   make(map[string]*storage.RollupAddress),
+		Validators:      make(map[string]*storage.Validator),
 		BlockSignatures: []storage.BlockSignature{},
 	}
 }

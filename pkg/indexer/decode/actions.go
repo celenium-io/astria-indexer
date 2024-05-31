@@ -296,8 +296,10 @@ func parseValidatorUpdateAction(body *astria.Action_ValidatorUpdateAction, heigh
 	action.Type = storageTypes.ActionTypeValidatorUpdate
 	action.Data = make(map[string]any)
 	if body.ValidatorUpdateAction != nil {
-		action.Data["power"] = body.ValidatorUpdateAction.GetPower()
-		action.Data["pubkey"] = body.ValidatorUpdateAction.GetPubKey().GetEd25519()
+		power := body.ValidatorUpdateAction.GetPower()
+		action.Data["power"] = power
+		pubKey := body.ValidatorUpdateAction.GetPubKey().GetEd25519()
+		action.Data["pubkey"] = pubKey
 
 		address := AddressFromPubKey(body.ValidatorUpdateAction.GetPubKey().GetEd25519())
 		addr := ctx.Addresses.Set(address, height, decimal.Zero, 1, 0)
@@ -308,6 +310,7 @@ func parseValidatorUpdateAction(body *astria.Action_ValidatorUpdateAction, heigh
 			Height:     action.Height,
 			ActionType: action.Type,
 		})
+		ctx.Validators.Set(pubKey, power)
 	}
 	return nil
 }
