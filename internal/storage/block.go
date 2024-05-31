@@ -54,6 +54,7 @@ type Block struct {
 	Addresses       map[string]*Address       `bun:"-"` // internal field for saving address
 	Rollups         map[string]*Rollup        `bun:"-"` // internal field for saving rollups
 	RollupAddress   map[string]*RollupAddress `bun:"-"` // internal field for saving rollup address
+	Validators      map[string]*Validator     `bun:"-"` // internal field for update validators
 	BlockSignatures []BlockSignature          `bun:"-"` // internal field for saving block signatures
 
 	Txs      []*Tx       `bun:"rel:has-many"`

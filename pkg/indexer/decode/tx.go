@@ -16,6 +16,7 @@ import (
 type Context struct {
 	Addresses      Addresses
 	Rollups        Rollups
+	Validators     Validators
 	RollupAddress  map[string]*storage.RollupAddress
 	AddressActions map[string]*storage.AddressAction
 	SupplyChange   decimal.Decimal
@@ -32,6 +33,7 @@ func NewContext() Context {
 		Rollups:       NewRollups(),
 		RollupAddress: make(map[string]*storage.RollupAddress),
 		SupplyChange:  decimal.Zero,
+		Validators:    NewValidators(),
 	}
 }
 

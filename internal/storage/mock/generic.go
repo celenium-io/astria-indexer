@@ -1732,6 +1732,49 @@ func (c *TransactionUpdateRollupsCall) DoAndReturn(f func(context.Context, ...*s
 	return c
 }
 
+// UpdateValidators mocks base method.
+func (m *MockTransaction) UpdateValidators(ctx context.Context, validators ...*storage.Validator) error {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx}
+	for _, a := range validators {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdateValidators", varargs...)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateValidators indicates an expected call of UpdateValidators.
+func (mr *MockTransactionMockRecorder) UpdateValidators(ctx any, validators ...any) *TransactionUpdateValidatorsCall {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx}, validators...)
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateValidators", reflect.TypeOf((*MockTransaction)(nil).UpdateValidators), varargs...)
+	return &TransactionUpdateValidatorsCall{Call: call}
+}
+
+// TransactionUpdateValidatorsCall wrap *gomock.Call
+type TransactionUpdateValidatorsCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *TransactionUpdateValidatorsCall) Return(arg0 error) *TransactionUpdateValidatorsCall {
+	c.Call = c.Call.Return(arg0)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *TransactionUpdateValidatorsCall) Do(f func(context.Context, ...*storage.Validator) error) *TransactionUpdateValidatorsCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *TransactionUpdateValidatorsCall) DoAndReturn(f func(context.Context, ...*storage.Validator) error) *TransactionUpdateValidatorsCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // Validators mocks base method.
 func (m *MockTransaction) Validators(ctx context.Context) ([]storage.Validator, error) {
 	m.ctrl.T.Helper()

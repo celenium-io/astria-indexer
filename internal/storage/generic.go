@@ -69,6 +69,7 @@ type Transaction interface {
 	RollbackValidators(ctx context.Context, height types.Level) (err error)
 	UpdateAddresses(ctx context.Context, address ...*Address) error
 	UpdateRollups(ctx context.Context, rollups ...*Rollup) error
+	UpdateValidators(ctx context.Context, validators ...*Validator) error
 
 	LastBlock(ctx context.Context) (block Block, err error)
 	State(ctx context.Context, name string) (state State, err error)

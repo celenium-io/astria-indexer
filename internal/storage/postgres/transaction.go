@@ -360,3 +360,21 @@ func (tx Transaction) RetentionBlockSignatures(ctx context.Context, height types
 		Exec(ctx)
 	return err
 }
+
+func (tx Transaction) UpdateValidators(ctx context.Context, validators ...*models.Validator) error {
+	if len(validators) == 0 {
+		return nil
+	}
+
+	for _, val := range validators {
+		_, err := tx.Tx().NewUpdate().
+			Model(val).
+			Where("pubkey = ?", val.PubKey).
+			Set("power = ?", val.Power).
+			Exec(ctx)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
