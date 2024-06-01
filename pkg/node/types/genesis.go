@@ -29,12 +29,22 @@ type Validator struct {
 
 type AppState struct {
 	Accounts                    []Account `json:"accounts"`
-	AuthoritySudoKey            string    `json:"authority_sudo_key"`
+	AuthoritySudoAddress        string    `json:"authority_sudo_address"`
 	NativeAssetBaseDenomination string    `json:"native_asset_base_denomination"`
 	IbcSudoAddress              string    `json:"ibc_sudo_address"`
+	Fees                        Fees      `json:"fees"`
 }
 
 type Account struct {
 	Address string      `json:"address"`
 	Balance json.Number `json:"balance"`
+}
+
+type Fees struct {
+	TransferBaseFee              int64 `json:"transfer_base_fee"`
+	SequenceBaseFee              int64 `json:"sequence_base_fee"`
+	SequenceByteCostMultiplier   int64 `json:"sequence_byte_cost_multiplier"`
+	InitBridgeAccountBaseFee     int64 `json:"init_bridge_account_base_fee"`
+	BridgeLockByteCostMultiplier int64 `json:"bridge_lock_byte_cost_multiplier"`
+	Ics20WithdrawalBaseFee       int64 `json:"ics20_withdrawal_base_fee"`
 }
