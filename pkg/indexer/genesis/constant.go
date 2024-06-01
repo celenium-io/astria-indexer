@@ -60,8 +60,8 @@ func (module *Module) parseConstants(appState nodeTypes.AppState, consensus pkgT
 	// generic
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "authority_sudo_key",
-		Value:  appState.AuthoritySudoKey,
+		Name:   "authority_sudo_address",
+		Value:  appState.AuthoritySudoAddress,
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
@@ -72,5 +72,35 @@ func (module *Module) parseConstants(appState nodeTypes.AppState, consensus pkgT
 		Module: storageTypes.ModuleNameGeneric,
 		Name:   "ibc_sudo_address",
 		Value:  appState.IbcSudoAddress,
+	})
+	data.constants = append(data.constants, storage.Constant{
+		Module: storageTypes.ModuleNameGeneric,
+		Name:   "bridge_lock_byte_cost_multiplier",
+		Value:  strconv.FormatInt(appState.Fees.BridgeLockByteCostMultiplier, 10),
+	})
+	data.constants = append(data.constants, storage.Constant{
+		Module: storageTypes.ModuleNameGeneric,
+		Name:   "ics20_withdrawal_base_fee",
+		Value:  strconv.FormatInt(appState.Fees.Ics20WithdrawalBaseFee, 10),
+	})
+	data.constants = append(data.constants, storage.Constant{
+		Module: storageTypes.ModuleNameGeneric,
+		Name:   "init_bridge_account_base_fee",
+		Value:  strconv.FormatInt(appState.Fees.InitBridgeAccountBaseFee, 10),
+	})
+	data.constants = append(data.constants, storage.Constant{
+		Module: storageTypes.ModuleNameGeneric,
+		Name:   "sequence_base_fee",
+		Value:  strconv.FormatInt(appState.Fees.SequenceBaseFee, 10),
+	})
+	data.constants = append(data.constants, storage.Constant{
+		Module: storageTypes.ModuleNameGeneric,
+		Name:   "sequence_byte_cost_multiplier",
+		Value:  strconv.FormatInt(appState.Fees.SequenceByteCostMultiplier, 10),
+	})
+	data.constants = append(data.constants, storage.Constant{
+		Module: storageTypes.ModuleNameGeneric,
+		Name:   "transfer_base_fee",
+		Value:  strconv.FormatInt(appState.Fees.TransferBaseFee, 10),
 	})
 }
