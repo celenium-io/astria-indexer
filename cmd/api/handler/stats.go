@@ -42,6 +42,35 @@ func (sh StatsHandler) Summary(c echo.Context) error {
 	return c.JSON(http.StatusOK, responses.NewNetworkSummary(summary))
 }
 
+type summaryTimeframeRequest struct {
+	Timeframe storage.Timeframe `example:"day" param:"timeframe" swaggertype:"string" validate:"required,oneof=day week month"`
+}
+
+// SummaryTimeframe godoc
+//
+//	@Summary		Get network summary for the last period
+//	@Description	Get network summary for the last period
+//	@Tags			stats
+//	@ID				stats-summary-timeframe
+//	@Param			timeframe	path	string	true "Timeframe" Enums(day, week, month)
+//	@Produce		json
+//	@Success		200	{array}		responses.NetworkSummaryWithChange
+//	@Failure		400	{object}	Error
+//	@Failure		500	{object}	Error
+//	@Router			/v1/stats/summary/{timeframe} [get]
+func (sh StatsHandler) SummaryTimeframe(c echo.Context) error {
+	req, err := bindAndValidate[summaryTimeframeRequest](c)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+
+	summary, err := sh.repo.SummaryTimeframe(c.Request().Context(), req.Timeframe)
+	if err != nil {
+		return handleError(c, err, sh.rollups)
+	}
+	return c.JSON(http.StatusOK, responses.NewNetworkSummaryWithChange(summary))
+}
+
 type seriesRequest struct {
 	Timeframe  string `example:"hour"       param:"timeframe" swaggertype:"string"  validate:"required,oneof=hour day month"`
 	SeriesName string `example:"tps"        param:"name"      swaggertype:"string"  validate:"required,oneof=data_size tps bps rbps fee supply_change block_time tx_count bytes_in_block gas_price gas_efficiency gas_used gas_wanted"`

@@ -158,3 +158,42 @@ func (c *IStatsSummaryCall) DoAndReturn(f func(context.Context) (storage.Network
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }
+
+// SummaryTimeframe mocks base method.
+func (m *MockIStats) SummaryTimeframe(ctx context.Context, timeframe storage.Timeframe) (storage.NetworkSummaryWithChange, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SummaryTimeframe", ctx, timeframe)
+	ret0, _ := ret[0].(storage.NetworkSummaryWithChange)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SummaryTimeframe indicates an expected call of SummaryTimeframe.
+func (mr *MockIStatsMockRecorder) SummaryTimeframe(ctx, timeframe any) *IStatsSummaryTimeframeCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SummaryTimeframe", reflect.TypeOf((*MockIStats)(nil).SummaryTimeframe), ctx, timeframe)
+	return &IStatsSummaryTimeframeCall{Call: call}
+}
+
+// IStatsSummaryTimeframeCall wrap *gomock.Call
+type IStatsSummaryTimeframeCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *IStatsSummaryTimeframeCall) Return(arg0 storage.NetworkSummaryWithChange, arg1 error) *IStatsSummaryTimeframeCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *IStatsSummaryTimeframeCall) Do(f func(context.Context, storage.Timeframe) (storage.NetworkSummaryWithChange, error)) *IStatsSummaryTimeframeCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *IStatsSummaryTimeframeCall) DoAndReturn(f func(context.Context, storage.Timeframe) (storage.NetworkSummaryWithChange, error)) *IStatsSummaryTimeframeCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}

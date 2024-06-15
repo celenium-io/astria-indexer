@@ -125,6 +125,20 @@ func (s *StatsTestSuite) TestSummary() {
 	s.Require().EqualValues(1, summary.TxCount)
 }
 
+func (s *StatsTestSuite) TestSummaryTimeframe() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	for _, tf := range []storage.Timeframe{
+		storage.TimeframeDay,
+		storage.TimeframeWeek,
+		storage.TimeframeMonth,
+	} {
+		_, err := s.storage.Stats.SummaryTimeframe(ctx, tf)
+		s.Require().NoError(err)
+	}
+}
+
 func TestSuiteStats_Run(t *testing.T) {
 	suite.Run(t, new(StatsTestSuite))
 }

@@ -1433,6 +1433,56 @@
                 }
             }
         },
+        "/v1/stats/summary/{timeframe}": {
+            "get": {
+                "description": "Get network summary for the last period",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stats"
+                ],
+                "summary": "Get network summary for the last period",
+                "operationId": "stats-summary-timeframe",
+                "parameters": [
+                    {
+                        "enum": [
+                            "day",
+                            "week",
+                            "month"
+                        ],
+                        "type": "string",
+                        "description": "Timeframe",
+                        "name": "timeframe",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.NetworkSummaryWithChange"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/tx": {
             "get": {
                 "description": "List transactions info",
@@ -2311,6 +2361,81 @@
                     "type": "integer",
                     "format": "integer",
                     "example": 100
+                }
+            }
+        },
+        "responses.NetworkSummaryWithChange": {
+            "type": "object",
+            "properties": {
+                "block_time": {
+                    "type": "number",
+                    "format": "number",
+                    "example": 2345
+                },
+                "block_time_pct": {
+                    "type": "number",
+                    "format": "number",
+                    "example": 17.632
+                },
+                "bps": {
+                    "type": "number",
+                    "format": "number",
+                    "example": 0.17632
+                },
+                "bps_pct": {
+                    "type": "number",
+                    "format": "number",
+                    "example": 17.632
+                },
+                "bytes_in_block": {
+                    "type": "integer",
+                    "format": "integer",
+                    "example": 1024
+                },
+                "bytes_in_block_pct": {
+                    "type": "number",
+                    "format": "number",
+                    "example": 17.632
+                },
+                "data_size": {
+                    "type": "integer",
+                    "format": "integer",
+                    "example": 1000000
+                },
+                "data_size_pct": {
+                    "type": "number",
+                    "format": "number",
+                    "example": 17.632
+                },
+                "rbps": {
+                    "type": "number",
+                    "format": "number",
+                    "example": 0.17632
+                },
+                "rbps_pct": {
+                    "type": "number",
+                    "format": "number",
+                    "example": 17.632
+                },
+                "tps": {
+                    "type": "number",
+                    "format": "number",
+                    "example": 0.17632
+                },
+                "tps_pct": {
+                    "type": "number",
+                    "format": "number",
+                    "example": 17.632
+                },
+                "tx_count": {
+                    "type": "integer",
+                    "format": "integer",
+                    "example": 100
+                },
+                "tx_count_pct": {
+                    "type": "number",
+                    "format": "number",
+                    "example": 17.632
                 }
             }
         },
