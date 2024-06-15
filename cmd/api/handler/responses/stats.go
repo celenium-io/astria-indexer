@@ -62,3 +62,39 @@ func NewNetworkSummary(summary storage.NetworkSummary) NetworkSummary {
 		Supply:       summary.Supply.String(),
 	}
 }
+
+type NetworkSummaryWithChange struct {
+	DataSize        int64   `example:"1000000" format:"integer" json:"data_size"`
+	DataSizePct     float64 `example:"17.632"  format:"number"  json:"data_size_pct"`
+	TxCount         int64   `example:"100"     format:"integer" json:"tx_count"`
+	TxCountPct      float64 `example:"17.632"  format:"number"  json:"tx_count_pct"`
+	BytesInBlock    int64   `example:"1024"    format:"integer" json:"bytes_in_block"`
+	BytesInBlockPct float64 `example:"17.632"  format:"number"  json:"bytes_in_block_pct"`
+	TPS             float64 `example:"0.17632" format:"number"  json:"tps"`
+	TPSPct          float64 `example:"17.632"  format:"number"  json:"tps_pct"`
+	BPS             float64 `example:"0.17632" format:"number"  json:"bps"`
+	BPSPct          float64 `example:"17.632"  format:"number"  json:"bps_pct"`
+	RBPS            float64 `example:"0.17632" format:"number"  json:"rbps"`
+	RBPSPct         float64 `example:"17.632"  format:"number"  json:"rbps_pct"`
+	BlockTime       float64 `example:"2345"    format:"number"  json:"block_time"`
+	BlockTimePct    float64 `example:"17.632"  format:"number"  json:"block_time_pct"`
+}
+
+func NewNetworkSummaryWithChange(summary storage.NetworkSummaryWithChange) NetworkSummaryWithChange {
+	return NetworkSummaryWithChange{
+		DataSize:        summary.DataSize,
+		DataSizePct:     summary.DataSizePct,
+		TxCount:         summary.TxCount,
+		TxCountPct:      summary.TxCountPct,
+		BytesInBlock:    summary.BytesInBlock,
+		BytesInBlockPct: summary.BytesInBlockPct,
+		TPS:             summary.TPS,
+		TPSPct:          summary.TPSPct,
+		BPS:             summary.BPS,
+		BPSPct:          summary.BPSPct,
+		RBPS:            summary.RBPS,
+		RBPSPct:         summary.RBPSPct,
+		BlockTime:       summary.BlockTime,
+		BlockTimePct:    summary.BlockTimePct,
+	}
+}

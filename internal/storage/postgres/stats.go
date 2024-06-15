@@ -5,10 +5,12 @@ package postgres
 
 import (
 	"context"
+	"time"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-net/go-lib/database"
 	"github.com/pkg/errors"
+	"github.com/uptrace/bun"
 )
 
 type Stats struct {
@@ -123,5 +125,67 @@ func (s Stats) Summary(ctx context.Context) (summary storage.NetworkSummary, err
 		ColumnExpr("sum(data_size) as data_size, sum(fee) as fee, sum(supply_change) as supply, sum(tx_count) as tx_count, sum(bytes_in_block) as bytes_in_block").
 		ColumnExpr("avg(tps) as tps, avg(bps) as bps, avg(rbps) as rbps, avg(block_time) as block_time").
 		Scan(ctx, &summary)
+	return
+}
+
+func (s Stats) buildSummaryQuery(table string, prevDate, currDate time.Time) (*bun.SelectQuery, *bun.SelectQuery) {
+	curr := s.db.DB().NewSelect().
+		Table(table).
+		Where("ts >= ?", currDate).
+		ColumnExpr("sum(data_size) as data_size, sum(tx_count) as tx_count, sum(bytes_in_block) as bytes_in_block").
+		ColumnExpr("avg(tps) as tps, avg(bps) as bps, avg(rbps) as rbps, avg(block_time) as block_time")
+
+	prev := s.db.DB().NewSelect().
+		Table(table).
+		Where("ts < ?", currDate).
+		Where("ts >= ?", prevDate).
+		ColumnExpr("sum(data_size) as data_size, sum(tx_count) as tx_count, sum(bytes_in_block) as bytes_in_block").
+		ColumnExpr("avg(tps) as tps, avg(bps) as bps, avg(rbps) as rbps, avg(block_time) as block_time")
+
+	return curr, prev
+}
+
+func (s Stats) SummaryTimeframe(ctx context.Context, timeframe storage.Timeframe) (summary storage.NetworkSummaryWithChange, err error) {
+	var (
+		currDate, prevDate time.Time
+		table              string
+	)
+
+	switch timeframe {
+	case storage.TimeframeDay:
+		currDate = time.Now().AddDate(0, 0, -1).UTC()
+		prevDate = currDate.AddDate(0, 0, -1).UTC()
+		table = storage.ViewBlockStatsByHour
+
+	case storage.TimeframeWeek:
+		currDate = time.Now().AddDate(0, 0, -7).UTC()
+		prevDate = currDate.AddDate(0, 0, -7).UTC()
+		table = storage.ViewBlockStatsByHour
+
+	case storage.TimeframeMonth:
+		currDate = time.Now().AddDate(0, -1, 0).UTC()
+		prevDate = currDate.AddDate(0, -1, 0).UTC()
+		table = storage.ViewBlockStatsByMonth
+
+	default:
+		return summary, errors.Errorf("unknown timeframe: %s", timeframe)
+	}
+
+	curr, prev := s.buildSummaryQuery(table, prevDate, currDate)
+
+	err = s.db.DB().NewSelect().
+		With("curr", curr).
+		With("prev", prev).
+		Table("curr", "prev").
+		ColumnExpr("curr.data_size as data_size, curr.tx_count as tx_count, curr.bytes_in_block as bytes_in_block, curr.tps as tps, curr.bps as bps, curr.rbps as rbps, curr.block_time as block_time").
+		ColumnExpr("case when prev.data_size = 0 then 1 else (curr.data_size - prev.data_size) * 100 / prev.data_size end as data_size_pct").
+		ColumnExpr("case when prev.tx_count = 0 then 1 else (curr.tx_count - prev.tx_count)* 100 / prev.tx_count end as tx_count_pct").
+		ColumnExpr("case when prev.bytes_in_block = 0 then 1 else (curr.bytes_in_block - prev.bytes_in_block)* 100 / prev.bytes_in_block end as bytes_in_block_pct").
+		ColumnExpr("case when prev.tps = 0 then 1 else (curr.tps - prev.tps)* 100 / prev.tps end as tps_pct").
+		ColumnExpr("case when prev.bps = 0 then 1 else (curr.bps - prev.bps)* 100 / prev.bps end as bps_pct").
+		ColumnExpr("case when prev.rbps = 0 then 1 else (curr.rbps - prev.rbps)* 100 / prev.rbps end as rbps_pct").
+		ColumnExpr("case when prev.block_time = 0 then 1 else (curr.block_time - prev.block_time)* 100 / prev.block_time end as block_time_pct").
+		Scan(ctx, &summary)
+
 	return
 }

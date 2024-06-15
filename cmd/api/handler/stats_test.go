@@ -189,3 +189,57 @@ func (s *StatsTestSuite) TestSummary() {
 	s.Require().EqualValues("10000", summary.Supply)
 	s.Require().EqualValues(10, summary.TxCount)
 }
+
+func (s *StatsTestSuite) TestSummaryTimeframe() {
+	for _, tf := range []storage.Timeframe{
+		storage.TimeframeDay, storage.TimeframeWeek, storage.TimeframeMonth,
+	} {
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		rec := httptest.NewRecorder()
+		c := s.echo.NewContext(req, rec)
+		c.SetPath("/v1/stats/summary/:timeframe")
+		c.SetParamNames("timeframe")
+		c.SetParamValues(string(tf))
+
+		s.stats.EXPECT().
+			SummaryTimeframe(gomock.Any(), tf).
+			Return(storage.NetworkSummaryWithChange{
+				BlockTime:       1000,
+				BlockTimePct:    1,
+				TPS:             0.1,
+				TPSPct:          2,
+				BPS:             0.2,
+				BPSPct:          3,
+				RBPS:            0.15,
+				RBPSPct:         4,
+				DataSize:        10,
+				DataSizePct:     5,
+				TxCount:         10,
+				TxCountPct:      6,
+				BytesInBlock:    1000,
+				BytesInBlockPct: 7,
+			}, nil)
+
+		s.Require().NoError(s.handler.SummaryTimeframe(c))
+		s.Require().Equal(http.StatusOK, rec.Code)
+
+		var summary responses.NetworkSummaryWithChange
+		err := json.NewDecoder(rec.Body).Decode(&summary)
+		s.Require().NoError(err)
+		s.Require().EqualValues(0.2, summary.BPS)
+		s.Require().EqualValues(1000, summary.BlockTime)
+		s.Require().EqualValues(1000, summary.BytesInBlock)
+		s.Require().EqualValues(10, summary.DataSize)
+		s.Require().EqualValues(0.15, summary.RBPS)
+		s.Require().EqualValues(0.1, summary.TPS)
+		s.Require().EqualValues(10, summary.TxCount)
+
+		s.Require().EqualValues(1, summary.BlockTimePct)
+		s.Require().EqualValues(2, summary.TPSPct)
+		s.Require().EqualValues(3, summary.BPSPct)
+		s.Require().EqualValues(4, summary.RBPSPct)
+		s.Require().EqualValues(5, summary.DataSizePct)
+		s.Require().EqualValues(6, summary.TxCountPct)
+		s.Require().EqualValues(7, summary.BytesInBlockPct)
+	}
+}

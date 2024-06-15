@@ -206,6 +206,65 @@ definitions:
         format: integer
         type: integer
     type: object
+  responses.NetworkSummaryWithChange:
+    properties:
+      block_time:
+        example: 2345
+        format: number
+        type: number
+      block_time_pct:
+        example: 17.632
+        format: number
+        type: number
+      bps:
+        example: 0.17632
+        format: number
+        type: number
+      bps_pct:
+        example: 17.632
+        format: number
+        type: number
+      bytes_in_block:
+        example: 1024
+        format: integer
+        type: integer
+      bytes_in_block_pct:
+        example: 17.632
+        format: number
+        type: number
+      data_size:
+        example: 1000000
+        format: integer
+        type: integer
+      data_size_pct:
+        example: 17.632
+        format: number
+        type: number
+      rbps:
+        example: 0.17632
+        format: number
+        type: number
+      rbps_pct:
+        example: 17.632
+        format: number
+        type: number
+      tps:
+        example: 0.17632
+        format: number
+        type: number
+      tps_pct:
+        example: 17.632
+        format: number
+        type: number
+      tx_count:
+        example: 100
+        format: integer
+        type: integer
+      tx_count_pct:
+        example: 17.632
+        format: number
+        type: number
+    type: object
   responses.Params:
     additionalProperties:
       type: string
@@ -1454,6 +1513,40 @@ paths:
           schema:
             $ref: '#/definitions/handler.Error'
       summary: Get network summary
+      tags:
+      - stats
+  /v1/stats/summary/{timeframe}:
+    get:
+      description: Get network summary for the last period
+      operationId: stats-summary-timeframe
+      parameters:
+      - description: Timeframe
+        enum:
+        - day
+        - week
+        - month
+        in: path
+        name: timeframe
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.NetworkSummaryWithChange'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get network summary for the last period
       tags:
       - stats
   /v1/tx:

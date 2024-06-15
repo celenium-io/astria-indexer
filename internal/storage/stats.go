@@ -15,6 +15,7 @@ type Timeframe string
 const (
 	TimeframeHour  Timeframe = "hour"
 	TimeframeDay   Timeframe = "day"
+	TimeframeWeek  Timeframe = "week"
 	TimeframeMonth Timeframe = "month"
 )
 
@@ -87,6 +88,23 @@ type NetworkSummary struct {
 	BytesInBlock int64           `bun:"bytes_in_block"`
 }
 
+type NetworkSummaryWithChange struct {
+	DataSize        int64   `bun:"data_size"`
+	DataSizePct     float64 `bun:"data_size_pct"`
+	TPS             float64 `bun:"tps"`
+	TPSPct          float64 `bun:"tps_pct"`
+	BPS             float64 `bun:"bps"`
+	BPSPct          float64 `bun:"bps_pct"`
+	RBPS            float64 `bun:"rbps"`
+	RBPSPct         float64 `bun:"rbps_pct"`
+	BlockTime       float64 `bun:"block_time"`
+	BlockTimePct    float64 `bun:"block_time_pct"`
+	TxCount         int64   `bun:"tx_count"`
+	TxCountPct      float64 `bun:"tx_count_pct"`
+	BytesInBlock    int64   `bun:"bytes_in_block"`
+	BytesInBlockPct float64 `bun:"bytes_in_block_pct"`
+}
+
 type RollupSummary struct {
 	ActionsCount int64 `bun:"actions_count"`
 	Size         int64 `bun:"size"`
@@ -98,6 +116,7 @@ type RollupSummary struct {
 //go:generate mockgen -source=$GOFILE -destination=mock/$GOFILE -package=mock -typed
 type IStats interface {
 	Summary(ctx context.Context) (NetworkSummary, error)
+	SummaryTimeframe(ctx context.Context, timeframe Timeframe) (NetworkSummaryWithChange, error)
 	Series(ctx context.Context, timeframe Timeframe, name string, req SeriesRequest) ([]SeriesItem, error)
 	RollupSeries(ctx context.Context, rollupId uint64, timeframe Timeframe, name string, req SeriesRequest) ([]SeriesItem, error)
 }
