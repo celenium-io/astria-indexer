@@ -51,12 +51,12 @@ func (s *StorageTestSuite) TestSearchAddress() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	results, err := s.storage.Search.Search(ctx, "b385e68e3a3a2d250c7c4024972576d698b9e748")
+	results, err := s.storage.Search.Search(ctx, "astria1e9q7egqgz8rz6aej8nr57swqgaeujhz04vd9q5")
 	s.Require().NoError(err)
 	s.Require().Len(results, 1)
 
 	result := results[0]
-	s.Require().EqualValues("b385e68e3a3a2d250c7c4024972576d698b9e748", result.Value)
+	s.Require().EqualValues("astria1e9q7egqgz8rz6aej8nr57swqgaeujhz04vd9q5", result.Value)
 	s.Require().EqualValues("address", result.Type)
 	s.Require().EqualValues(8, result.Id)
 }
@@ -79,12 +79,12 @@ func (s *StorageTestSuite) TestSearchValidatorByAddress() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	results, err := s.storage.Search.Search(ctx, "230592632006db2733444bb6de11db3f4b2f9ae4")
+	results, err := s.storage.Search.Search(ctx, "astria16rgmx2s86kk2r69rhjnvs9y44ujfhadc7yav9a")
 	s.Require().NoError(err)
 	s.Require().Len(results, 2)
 
 	result := results[0]
-	s.Require().EqualValues("230592632006db2733444bb6de11db3f4b2f9ae4", result.Value)
+	s.Require().EqualValues("astria16rgmx2s86kk2r69rhjnvs9y44ujfhadc7yav9a", result.Value)
 	s.Require().EqualValues("address", result.Type)
 	s.Require().EqualValues(3, result.Id)
 

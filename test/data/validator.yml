@@ -1,19 +1,19 @@
 - id: 1
-  address: 230592632006DB2733444BB6DE11DB3F4B2F9AE4
+  address: astria16rgmx2s86kk2r69rhjnvs9y44ujfhadc7yav9a
   pubkey_type: tendermint/PubKeyEd25519
   pubkey: 0x32415f09dbee4297cc9a841c2c2312bf903fc53c48860d788ae66097355a585f
   name: node0
   power: 1
   height: 0
 - id: 2
-  address: 6F35496BCC8CF0EF9E2AC090FAEF578152549518
+  address: astria1475jkpuvznd44szgfz8wwdf9w6xh5dx9jwqgvz
   pubkey_type: tendermint/PubKeyEd25519
   pubkey: 0x09e29331b2fad4cbd367986803484a2f544441485e8e736112d2ad49b83656ca
   name: node1
   power: 1
   height: 0
 - id: 3
-  address: 115F94D8C98FFD73FE65182611140F0EDC7C3C94
+  address: astria1c220qfmjrwqlk939ca5a5z2rjxryyr9m3ah8gl
   pubkey_type: tendermint/PubKeyEd25519
   pubkey: 0x96f43a8448928f1e580864d69fe44e093c5a82a1d4a80c59086d7e67976cda45
   name: node2

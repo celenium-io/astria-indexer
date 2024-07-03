@@ -15,7 +15,7 @@ func (s *StorageTestSuite) TestAddressByHash() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	hash := "3fff1c39b9d163bfb9bcbf9dfea78675f1b4bc2c"
+	hash := "astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p"
 
 	address, err := s.storage.Address.ByHash(ctx, hash)
 	s.Require().NoError(err)
@@ -46,5 +46,5 @@ func (s *StorageTestSuite) TestAddressListWithBalances() {
 	s.Require().EqualValues(1, address.ActionsCount)
 	s.Require().EqualValues(2, address.SignedTxCount)
 
-	s.Require().EqualValues("3fff1c39b9d163bfb9bcbf9dfea78675f1b4bc2c", address.Hash)
+	s.Require().EqualValues("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", address.Hash)
 }

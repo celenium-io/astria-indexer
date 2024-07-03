@@ -5,8 +5,8 @@ package handler
 
 import (
 	"net/http"
-	"regexp"
 
+	"github.com/celenium-io/astria-indexer/internal/astria"
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -37,13 +37,8 @@ func (v *ApiValidator) Validate(i interface{}) error {
 	return nil
 }
 
-var regexAddressHash = regexp.MustCompile("[0-9A-Fa-f]{40}")
-
 func isAddress(address string) bool {
-	if len(address) != 40 {
-		return false
-	}
-	return regexAddressHash.MatchString(address)
+	return astria.IsAddress(address)
 }
 
 func addressValidator() validator.Func {

@@ -405,7 +405,7 @@ func (s *TransactionTestSuite) TestGetProposerId() {
 	tx, err := BeginTransaction(ctx, s.storage.Transactable)
 	s.Require().NoError(err)
 
-	id, err := tx.GetProposerId(ctx, "115F94D8C98FFD73FE65182611140F0EDC7C3C94")
+	id, err := tx.GetProposerId(ctx, "astria1c220qfmjrwqlk939ca5a5z2rjxryyr9m3ah8gl")
 	s.Require().NoError(err)
 	s.Require().EqualValues(3, id)
 
