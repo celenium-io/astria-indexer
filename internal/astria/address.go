@@ -4,6 +4,8 @@
 package astria
 
 import (
+	"encoding/hex"
+
 	"github.com/pactus-project/pactus/util/bech32m"
 )
 
@@ -29,4 +31,12 @@ func EncodeAddress(b []byte) (string, error) {
 func DecodeAddress(s string) ([]byte, error) {
 	_, b, err := bech32m.DecodeToBase256(s)
 	return b, err
+}
+
+func EncodeFromHex(s string) (string, error) {
+	hash, err := hex.DecodeString(s)
+	if err != nil {
+		return "", err
+	}
+	return EncodeAddress(hash)
 }

@@ -6,6 +6,7 @@ package storage
 import (
 	"context"
 
+	"github.com/celenium-io/astria-indexer/internal/astria"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/pkg/errors"
@@ -48,10 +49,15 @@ func (module *Module) saveBlockSignatures(
 			return errors.New("nil validator of block signature")
 		}
 
-		if id, ok := module.validators[signs[i].Validator.Address]; ok {
+		val, err := astria.EncodeFromHex(signs[i].Validator.Address)
+		if err != nil {
+			return err
+		}
+
+		if id, ok := module.validators[val]; ok {
 			signs[i].ValidatorId = id
 		} else {
-			return errors.Errorf("unknown validator: %s", signs[i].Validator.Address)
+			return errors.Errorf("unknown validator: %s", val)
 		}
 	}
 

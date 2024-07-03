@@ -89,8 +89,13 @@ func (module *Module) parseAccounts(accounts []types.Account, height pkgTypes.Le
 
 func (module *Module) parseValidators(validators []types.Validator, height pkgTypes.Level, data *parsedData) error {
 	for i := range validators {
+		addr, err := astria.EncodeFromHex(validators[i].Address)
+		if err != nil {
+			return err
+		}
+
 		data.validators = append(data.validators, &storage.Validator{
-			Address:    validators[i].Address,
+			Address:    addr,
 			PubkeyType: validators[i].PubKey.Type,
 			PubKey:     validators[i].PubKey.Value,
 			Name:       validators[i].Name,
@@ -106,14 +111,6 @@ func (module *Module) parseValidators(validators []types.Validator, height pkgTy
 				},
 			}
 
-			hash, err := pkgTypes.HexFromString(validators[i].Address)
-			if err != nil {
-				return err
-			}
-			address.Hash, err = astria.EncodeAddress(hash)
-			if err != nil {
-				return err
-			}
 			data.addresses[address.String()] = &address
 		}
 	}

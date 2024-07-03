@@ -48,3 +48,24 @@ func TestIsAddress(t *testing.T) {
 		})
 	}
 }
+
+func TestEncodeFromHex(t *testing.T) {
+	tests := []struct {
+		name string
+		s    string
+		want string
+	}{
+		{
+			name: "test 1",
+			s:    "0DC9BAF2CB94F4897F2A569EF2A33EE1D4E7B50B",
+			want: "astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := EncodeFromHex(tt.s)
+			require.NoError(t, err)
+			require.Equal(t, tt.want, got)
+		})
+	}
+}
