@@ -12,17 +12,18 @@ import (
 //
 //	@Description	address information
 type Address struct {
-	Id            uint64         `example:"321"                                      json:"id"              swaggertype:"integer"`
-	Height        pkgTypes.Level `example:"100"                                      json:"first_height"    swaggertype:"integer"`
-	ActionsCount  int64          `example:"10"                                       json:"actions_count"   swaggertype:"integer"`
-	SignedTxCount int64          `example:"10"                                       json:"signed_tx_count" swaggertype:"integer"`
-	Nonce         uint32         `example:"10"                                       json:"nonce"           swaggertype:"integer"`
-	Hash          string         `example:"115F94D8C98FFD73FE65182611140F0EDC7C3C94" json:"hash"            swaggertype:"string"`
-	Balance       *Balance       `json:"balance,omitempty"`
-	BridgedRollup string         `json:"bridged_rollup,omitempty"`
+	Id            uint64         `example:"321"                                           json:"id"              swaggertype:"integer"`
+	Height        pkgTypes.Level `example:"100"                                           json:"first_height"    swaggertype:"integer"`
+	ActionsCount  int64          `example:"10"                                            json:"actions_count"   swaggertype:"integer"`
+	SignedTxCount int64          `example:"10"                                            json:"signed_tx_count" swaggertype:"integer"`
+	Nonce         uint32         `example:"10"                                            json:"nonce"           swaggertype:"integer"`
+	Hash          string         `example:"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2" json:"hash"            swaggertype:"string"`
+
+	Balance *Balance `json:"balance,omitempty"`
+	Bridge  *Bridge  `json:"bridge,omitempty"`
 }
 
-func NewAddress(addr storage.Address, bridgedRollup *storage.Rollup) Address {
+func NewAddress(addr storage.Address, bridge *storage.Bridge) Address {
 	result := Address{
 		Id:            addr.Id,
 		Height:        addr.Height,
@@ -38,8 +39,10 @@ func NewAddress(addr storage.Address, bridgedRollup *storage.Rollup) Address {
 			Value:    addr.Balance.Total.String(),
 		}
 	}
-	if bridgedRollup != nil {
-		result.BridgedRollup = bridgedRollup.String()
+
+	if bridge != nil {
+		b := NewBridge(*bridge)
+		result.Bridge = &b
 	}
 
 	return result

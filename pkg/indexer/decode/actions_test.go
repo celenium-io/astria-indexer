@@ -57,6 +57,7 @@ func TestDecodeActions(t *testing.T) {
 		decodeContext := NewContext()
 
 		address := testsuite.RandomAddress()
+		from := testsuite.RandomAddress()
 
 		message := &astria.Action_Ics20Withdrawal{
 			Ics20Withdrawal: &astria.Ics20Withdrawal{
@@ -77,6 +78,9 @@ func TestDecodeActions(t *testing.T) {
 				TimeoutTime: 1000,
 				FeeAsset:    feeAssetId,
 				Memo:        "memo",
+				BridgeAddress: &primitivev1.Address{
+					Bech32M: from,
+				},
 			},
 		}
 
@@ -96,6 +100,7 @@ func TestDecodeActions(t *testing.T) {
 				"timeout_time": uint64(1000),
 				"fee_asset":    feeAssetId,
 				"memo":         "memo",
+				"bridge":       from,
 			},
 			Addresses: []*storage.AddressAction{},
 			BalanceUpdates: []storage.BalanceUpdate{
@@ -129,12 +134,26 @@ func TestDecodeActions(t *testing.T) {
 			ActionType: types.ActionTypeIcs20Withdrawal,
 			Action:     &wantAction,
 		}
-		wantAction.Addresses = append(wantAction.Addresses, &addressAction)
+		addressActionFrom := storage.AddressAction{
+			Height: 1000,
+			Address: &storage.Address{
+				Height:       1000,
+				Hash:         from,
+				ActionsCount: 1,
+				Balance: &storage.Balance{
+					Currency: currency.DefaultCurrency,
+					Total:    decimal.RequireFromString("-1"),
+				},
+			},
+			ActionType: types.ActionTypeIcs20Withdrawal,
+			Action:     &wantAction,
+		}
+		wantAction.Addresses = append(wantAction.Addresses, &addressActionFrom, &addressAction)
 
 		action := storage.Action{
 			Height: 1000,
 		}
-		err := parseIcs20Withdrawal(message, 1000, &decodeContext, &action)
+		err := parseIcs20Withdrawal(message, from, 1000, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
@@ -727,7 +746,6 @@ func TestDecodeActions(t *testing.T) {
 		sudo := testsuite.RandomAddress()
 		withdrawer := testsuite.RandomAddress()
 
-		fromAddr := decodeContext.Addresses.Set(from, 1000, decimal.Zero, 0, 1)
 		sudoAddr := decodeContext.Addresses.Set(sudo, 1000, decimal.Zero, 1, 0)
 		wdwAddr := decodeContext.Addresses.Set(withdrawer, 1000, decimal.Zero, 1, 0)
 
@@ -754,10 +772,9 @@ func TestDecodeActions(t *testing.T) {
 			RollupAction: &storage.RollupAction{
 				Height: 1000,
 				Rollup: &storage.Rollup{
-					AstriaId:      message.InitBridgeAccountAction.GetRollupId().GetInner(),
-					FirstHeight:   1000,
-					ActionsCount:  1,
-					BridgeAddress: fromAddr,
+					AstriaId:     message.InitBridgeAccountAction.GetRollupId().GetInner(),
+					FirstHeight:  1000,
+					ActionsCount: 1,
 				},
 			},
 			Addresses: make([]*storage.AddressAction, 0),

@@ -34,6 +34,7 @@ var Models = []any{
 	&RollupAddress{},
 	&AddressAction{},
 	&BlockSignature{},
+	&Bridge{},
 }
 
 //go:generate mockgen -source=$GOFILE -destination=mock/$GOFILE -package=mock -typed
@@ -46,6 +47,7 @@ type Transaction interface {
 	SaveBalances(ctx context.Context, balances ...Balance) error
 	SaveBalanceUpdates(ctx context.Context, updates ...BalanceUpdate) error
 	SaveBlockSignatures(ctx context.Context, signs ...BlockSignature) error
+	SaveBridges(ctx context.Context, bridges ...*Bridge) error
 	SaveConstants(ctx context.Context, constants ...Constant) error
 	SaveRollupActions(ctx context.Context, actions ...*RollupAction) error
 	SaveRollupAddresses(ctx context.Context, addresses ...*RollupAddress) error
@@ -62,6 +64,7 @@ type Transaction interface {
 	RollbackBlockSignatures(ctx context.Context, height types.Level) (err error)
 	RollbackBlockStats(ctx context.Context, height types.Level) (stats BlockStats, err error)
 	RollbackBlock(ctx context.Context, height types.Level) error
+	RollbackBridges(ctx context.Context, height types.Level) error
 	RollbackRollupActions(ctx context.Context, height types.Level) (rollupActions []RollupAction, err error)
 	RollbackRollupAddresses(ctx context.Context, height types.Level) (err error)
 	RollbackRollups(ctx context.Context, height types.Level) ([]Rollup, error)
@@ -76,6 +79,7 @@ type Transaction interface {
 	State(ctx context.Context, name string) (state State, err error)
 	LastNonce(ctx context.Context, id uint64) (uint32, error)
 	GetProposerId(ctx context.Context, address string) (uint64, error)
+	GetRollup(ctx context.Context, rollupId []byte) (Rollup, error)
 	Validators(ctx context.Context) ([]Validator, error)
 }
 

@@ -36,7 +36,7 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 			err = parseIbcAction(val, &actions[i])
 		case *astria.Action_Ics20Withdrawal:
 			tx.ActionTypes.Set(storageTypes.ActionTypeIcs20WithdrawalBits)
-			err = parseIcs20Withdrawal(val, height, ctx, &actions[i])
+			err = parseIcs20Withdrawal(val, from, height, ctx, &actions[i])
 		case *astria.Action_SequenceAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeSequenceBits)
 			err = parseSequenceAction(val, from, height, ctx, &actions[i])
@@ -95,7 +95,7 @@ func parseIbcAction(body *astria.Action_IbcAction, action *storage.Action) error
 	return nil
 }
 
-func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, height types.Level, ctx *Context, action *storage.Action) error {
+func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, from string, height types.Level, ctx *Context, action *storage.Action) error {
 	action.Type = storageTypes.ActionTypeIcs20Withdrawal
 	action.Data = make(map[string]any)
 	if body.Ics20Withdrawal != nil {
@@ -106,6 +106,9 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, height types.Leve
 		action.Data["destination_address"] = body.Ics20Withdrawal.GetDestinationChainAddress()
 		action.Data["return_address"] = body.Ics20Withdrawal.GetReturnAddress().GetBech32M()
 		action.Data["source_channel"] = body.Ics20Withdrawal.GetSourceChannel()
+
+		decAmount := decimal.RequireFromString(amount)
+
 		if memo := body.Ics20Withdrawal.GetMemo(); memo != "" {
 			action.Data["memo"] = memo
 		}
@@ -121,7 +124,16 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, height types.Leve
 		}
 		if bridge := body.Ics20Withdrawal.GetBridgeAddress().GetBech32M(); bridge != "" {
 			action.Data["bridge"] = bridge
-			addr := ctx.Addresses.Set(bridge, height, decimal.Zero, 1, 0)
+			addr := ctx.Addresses.Set(bridge, height, decAmount.Copy().Neg(), 1, 0)
+			action.Addresses = append(action.Addresses, &storage.AddressAction{
+				Address:    addr,
+				Action:     action,
+				Time:       action.Time,
+				Height:     action.Height,
+				ActionType: action.Type,
+			})
+		} else {
+			addr := ctx.Addresses.Set(from, height, decAmount.Copy().Neg(), 1, 0)
 			action.Addresses = append(action.Addresses, &storage.AddressAction{
 				Address:    addr,
 				Action:     action,
@@ -131,7 +143,6 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, height types.Leve
 			})
 		}
 
-		decAmount := decimal.RequireFromString(amount)
 		returnAddress := body.Ics20Withdrawal.GetReturnAddress().GetBech32M()
 		addr := ctx.Addresses.Set(returnAddress, height, decAmount, 1, 0)
 		action.Addresses = append(action.Addresses, &storage.AddressAction{
@@ -341,9 +352,20 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from st
 	action.Type = storageTypes.ActionTypeInitBridgeAccount
 	action.Data = make(map[string]any)
 	if body.InitBridgeAccountAction != nil {
-		action.Data["rollup_id"] = body.InitBridgeAccountAction.GetRollupId().GetInner()
-		action.Data["fee_asset"] = body.InitBridgeAccountAction.GetFeeAsset()
-		action.Data["asset"] = body.InitBridgeAccountAction.GetAsset()
+		rollupId := body.InitBridgeAccountAction.GetRollupId().GetInner()
+		rollup := ctx.Rollups.Set(rollupId, height, 0)
+
+		bridge := storage.Bridge{
+			InitHeight: height,
+			Asset:      body.InitBridgeAccountAction.GetAsset(),
+			FeeAsset:   body.InitBridgeAccountAction.GetFeeAsset(),
+			Address:    ctx.Addresses.Set(from, height, decimal.Zero, 1, 0),
+			Rollup:     rollup,
+		}
+
+		action.Data["rollup_id"] = rollupId
+		action.Data["fee_asset"] = bridge.FeeAsset
+		action.Data["asset"] = bridge.Asset
 
 		if sudo := body.InitBridgeAccountAction.GetSudoAddress().GetBech32M(); sudo != "" {
 			action.Data["sudo"] = sudo
@@ -356,7 +378,10 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from st
 					Height:     action.Height,
 					ActionType: action.Type,
 				})
+				bridge.Sudo = addr
 			}
+		} else {
+			bridge.Sudo = bridge.Address
 		}
 
 		if withdrawer := body.InitBridgeAccountAction.GetWithdrawerAddress().GetBech32M(); withdrawer != "" {
@@ -370,19 +395,19 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from st
 					Height:     action.Height,
 					ActionType: action.Type,
 				})
+				bridge.Withdrawer = addr
 			}
+		} else {
+			bridge.Withdrawer = bridge.Address
 		}
 
-		rollup := ctx.Rollups.Set(body.InitBridgeAccountAction.GetRollupId().GetInner(), height, 0)
 		action.RollupAction = &storage.RollupAction{
 			Time:   action.Time,
 			Height: action.Height,
 			Action: action,
 			Rollup: rollup,
 		}
-
-		fromAddress := ctx.Addresses.Set(from, height, decimal.Zero, 1, 0)
-		rollup.BridgeAddress = fromAddress
+		ctx.AddBridge(&bridge)
 	}
 	return nil
 }
@@ -391,12 +416,13 @@ func parseBridgeSudoChange(body *astria.Action_BridgeSudoChangeAction, height ty
 	action.Type = storageTypes.ActionTypeBridgeSudoChangeAction
 	action.Data = make(map[string]any)
 	if body.BridgeSudoChangeAction != nil {
-		bridge := body.BridgeSudoChangeAction.GetBridgeAddress().GetBech32M()
+		bridgeAddress := body.BridgeSudoChangeAction.GetBridgeAddress().GetBech32M()
 		sudo := body.BridgeSudoChangeAction.GetNewSudoAddress().GetBech32M()
 		withdrawer := body.BridgeSudoChangeAction.GetNewWithdrawerAddress().GetBech32M()
+		feeAsset := body.BridgeSudoChangeAction.GetFeeAsset()
 
-		action.Data["bridge"] = bridge
-		bridgeAddr := ctx.Addresses.Set(bridge, height, decimal.Zero, 1, 0)
+		action.Data["bridge"] = bridgeAddress
+		bridgeAddr := ctx.Addresses.Set(bridgeAddress, height, decimal.Zero, 1, 0)
 		action.Addresses = append(action.Addresses, &storage.AddressAction{
 			Address:    bridgeAddr,
 			Action:     action,
@@ -404,6 +430,10 @@ func parseBridgeSudoChange(body *astria.Action_BridgeSudoChangeAction, height ty
 			Height:     action.Height,
 			ActionType: action.Type,
 		})
+
+		bridge := storage.Bridge{
+			Address: bridgeAddr,
+		}
 
 		if sudo != "" {
 			action.Data["sudo"] = sudo
@@ -415,6 +445,7 @@ func parseBridgeSudoChange(body *astria.Action_BridgeSudoChangeAction, height ty
 				Height:     action.Height,
 				ActionType: action.Type,
 			})
+			bridge.Sudo = addr
 		}
 		if withdrawer != "" {
 			action.Data["withdrawer"] = withdrawer
@@ -426,9 +457,15 @@ func parseBridgeSudoChange(body *astria.Action_BridgeSudoChangeAction, height ty
 				Height:     action.Height,
 				ActionType: action.Type,
 			})
+			bridge.Withdrawer = addr
 		}
-		action.Data["fee_asset"] = body.BridgeSudoChangeAction.GetFeeAsset()
 
+		if feeAsset != "" {
+			action.Data["fee_asset"] = feeAsset
+			bridge.FeeAsset = feeAsset
+		}
+
+		ctx.AddBridge(&bridge)
 	}
 	return nil
 }
@@ -522,10 +559,9 @@ func parseBridgeUnlock(body *astria.Action_BridgeUnlockAction, from string, heig
 		toAddr := ctx.Addresses.Set(toAddress, height, decAmount, 1, 0)
 
 		var fromAddr *storage.Address
-		switch bridge {
-		case "", from:
+		if bridge == "" {
 			fromAddr = ctx.Addresses.Set(from, height, decAmount.Neg(), 1, 0)
-		default:
+		} else {
 			fromAddr = ctx.Addresses.Set(bridge, height, decAmount.Neg(), 1, 0)
 		}
 

@@ -13,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
+	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/mock"
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
@@ -29,6 +30,7 @@ type AddressTestSuite struct {
 	txs     *mock.MockITx
 	actions *mock.MockIAction
 	rollups *mock.MockIRollup
+	bridge  *mock.MockIBridge
 	state   *mock.MockIState
 	echo    *echo.Echo
 	handler *AddressHandler
@@ -44,8 +46,9 @@ func (s *AddressTestSuite) SetupSuite() {
 	s.txs = mock.NewMockITx(s.ctrl)
 	s.actions = mock.NewMockIAction(s.ctrl)
 	s.rollups = mock.NewMockIRollup(s.ctrl)
+	s.bridge = mock.NewMockIBridge(s.ctrl)
 	s.state = mock.NewMockIState(s.ctrl)
-	s.handler = NewAddressHandler(s.address, s.txs, s.actions, s.rollups, s.state, testIndexerName)
+	s.handler = NewAddressHandler(s.address, s.txs, s.actions, s.rollups, s.bridge, s.state, testIndexerName)
 }
 
 // TearDownSuite -
@@ -71,9 +74,13 @@ func (s *AddressTestSuite) TestGet() {
 		Return(testAddress, nil).
 		Times(1)
 
-	s.rollups.EXPECT().
-		ByBridgeAddress(gomock.Any(), testAddress.Id).
-		Return(testRollup, nil).
+	s.bridge.EXPECT().
+		ByAddress(gomock.Any(), testAddress.Id).
+		Return(storage.Bridge{
+			Asset:    currency.DefaultCurrency,
+			FeeAsset: currency.DefaultCurrency,
+			Address:  &testAddress,
+		}, nil).
 		Times(1)
 
 	s.Require().NoError(s.handler.Get(c))
@@ -88,7 +95,10 @@ func (s *AddressTestSuite) TestGet() {
 	s.Require().EqualValues(0, address.Height)
 	s.Require().EqualValues(10, address.Nonce)
 	s.Require().Equal(testAddressHash, address.Hash)
-	s.Require().Equal(testRollup.String(), address.BridgedRollup)
+	s.Require().NotNil(address.Bridge)
+	s.Require().Equal(testAddressHash, address.Bridge.Address)
+	s.Require().Equal("nria", address.Bridge.Asset)
+	s.Require().Equal("nria", address.Bridge.FeeAsset)
 }
 
 func (s *AddressTestSuite) TestGetWithoutBridge() {
@@ -104,12 +114,12 @@ func (s *AddressTestSuite) TestGetWithoutBridge() {
 		Return(testAddress, nil).
 		Times(1)
 
-	s.rollups.EXPECT().
-		ByBridgeAddress(gomock.Any(), testAddress.Id).
-		Return(storage.Rollup{}, sql.ErrNoRows).
+	s.bridge.EXPECT().
+		ByAddress(gomock.Any(), testAddress.Id).
+		Return(storage.Bridge{}, sql.ErrNoRows).
 		Times(1)
 
-	s.address.EXPECT().
+	s.bridge.EXPECT().
 		IsNoRows(gomock.Any()).
 		Return(true).
 		Times(1)
@@ -126,7 +136,6 @@ func (s *AddressTestSuite) TestGetWithoutBridge() {
 	s.Require().EqualValues(0, address.Height)
 	s.Require().EqualValues(10, address.Nonce)
 	s.Require().Equal(testAddressHash, address.Hash)
-	s.Require().Equal("", address.BridgedRollup)
 }
 
 func (s *AddressTestSuite) TestGetInvalidAddress() {
@@ -349,4 +358,46 @@ func (s *AddressTestSuite) TestRollups() {
 	s.Require().EqualValues(100, rollup.FirstHeight)
 	s.Require().EqualValues(10, rollup.Size)
 	s.Require().Equal(testRollup.AstriaId, rollup.AstriaId)
+}
+
+func (s *AddressTestSuite) TestRoles() {
+	q := make(url.Values)
+	q.Set("limit", "10")
+	q.Set("offset", "0")
+
+	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/address/:hash/roles")
+	c.SetParamNames("hash")
+	c.SetParamValues(testAddressHash)
+
+	s.address.EXPECT().
+		ByHash(gomock.Any(), testAddress.Hash).
+		Return(testAddress, nil).
+		Times(1)
+
+	s.bridge.EXPECT().
+		ByRoles(gomock.Any(), uint64(1), 10, 0).
+		Return([]storage.Bridge{
+			{
+				Asset:    currency.DefaultCurrency,
+				FeeAsset: currency.DefaultCurrency,
+				Address:  &testAddress,
+			},
+		}, nil).
+		Times(1)
+
+	s.Require().NoError(s.handler.Roles(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var br []responses.Bridge
+	err := json.NewDecoder(rec.Body).Decode(&br)
+	s.Require().NoError(err)
+	s.Require().Len(br, 1)
+
+	bridge := br[0]
+	s.Require().Equal(testAddressHash, bridge.Address)
+	s.Require().Equal("nria", bridge.Asset)
+	s.Require().Equal("nria", bridge.FeeAsset)
 }

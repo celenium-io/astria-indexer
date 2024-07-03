@@ -7,13 +7,11 @@ import (
 	"context"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
-	"github.com/pkg/errors"
 )
 
 func (module *Module) saveRollup(
 	ctx context.Context,
 	tx storage.Transaction,
-	addrToId map[string]uint64,
 	rollups map[string]*storage.Rollup,
 	rollupAddress map[string]*storage.RollupAddress,
 ) (int64, error) {
@@ -23,13 +21,6 @@ func (module *Module) saveRollup(
 
 	data := make([]*storage.Rollup, 0)
 	for _, value := range rollups {
-		if value.BridgeAddress != nil {
-			if id, ok := addrToId[value.BridgeAddress.String()]; ok {
-				value.BridgeAddressId = id
-			} else {
-				return 0, errors.Errorf("unknown bridge address id: %s", value.BridgeAddress.String())
-			}
-		}
 		data = append(data, value)
 	}
 

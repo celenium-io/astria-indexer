@@ -248,9 +248,6 @@ func (s *TransactionTestSuite) TestSaveRollups() {
 			ActionsCount: 1,
 			Size:         10,
 		}
-		if i%2 == 1 {
-			rollups[i].BridgeAddressId = uint64(i)
-		}
 	}
 
 	count, err := tx.SaveRollups(ctx, rollups...)
@@ -392,6 +389,29 @@ func (s *TransactionTestSuite) TestSaveBalanceUpdates() {
 	}
 
 	err = tx.SaveBalanceUpdates(ctx, balanceUpdates...)
+	s.Require().NoError(err)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
+}
+
+func (s *TransactionTestSuite) TestSaveBridges() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	bridges := make([]*storage.Bridge, 5)
+	for i := 0; i < 5; i++ {
+		bridges[i] = new(storage.Bridge)
+		bridges[i].AddressId = uint64(i + 1000)
+		bridges[i].WithdrawerId = uint64(i + 100)
+		bridges[i].SudoId = uint64(i + 10)
+		bridges[i].RollupId = uint64(i + 50)
+	}
+
+	err = tx.SaveBridges(ctx, bridges...)
 	s.Require().NoError(err)
 
 	s.Require().NoError(tx.Flush(ctx))

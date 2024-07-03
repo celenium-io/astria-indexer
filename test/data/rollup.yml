@@ -3,10 +3,8 @@
   first_height: 7316
   actions_count: 1
   size: 112
-  bridge_address_id: null
 - id: 2
   astria_id: 0xf69ac0156da05bc30d82e516641be86c8fbee5ad8f38ca2b1c4c145249dde6a3
   first_height: 23456
   actions_count: 10
   size: 1120
-  bridge_address_id: 2

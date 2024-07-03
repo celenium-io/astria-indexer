@@ -24,6 +24,7 @@ type Context struct {
 	DataSize       int64
 	ActionTypes    storageTypes.Bits
 	Constants      map[string]*storage.Constant
+	Bridges        map[string]*storage.Bridge
 }
 
 func NewContext() Context {
@@ -34,6 +35,7 @@ func NewContext() Context {
 		SupplyChange:  decimal.Zero,
 		Validators:    NewValidators(),
 		Constants:     make(map[string]*storage.Constant),
+		Bridges:       make(map[string]*storage.Bridge),
 	}
 }
 
@@ -49,6 +51,18 @@ func (ctx *Context) AddGenericConstant(key, value string) {
 func (ctx *Context) ConstantsArray() []*storage.Constant {
 	arr := make([]*storage.Constant, 0)
 	for _, val := range ctx.Constants {
+		arr = append(arr, val)
+	}
+	return arr
+}
+
+func (ctx *Context) AddBridge(b *storage.Bridge) {
+	ctx.Bridges[b.Address.Hash] = b
+}
+
+func (ctx *Context) BridgesArray() []*storage.Bridge {
+	arr := make([]*storage.Bridge, 0)
+	for _, val := range ctx.Bridges {
 		arr = append(arr, val)
 	}
 	return arr

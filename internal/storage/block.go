@@ -57,6 +57,7 @@ type Block struct {
 	Validators      map[string]*Validator     `bun:"-"` // internal field for updating validators
 	BlockSignatures []BlockSignature          `bun:"-"` // internal field for saving block signatures
 	Constants       []*Constant               `bun:"-"` // internal field for updating constants
+	Bridges         []*Bridge                 `bun:"-"` // internal field for saving bridges
 
 	Txs      []*Tx       `bun:"rel:has-many"`
 	Stats    *BlockStats `bun:"rel:has-one,join:height=height"`

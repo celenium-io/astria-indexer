@@ -18,6 +18,7 @@ type AddressHandler struct {
 	txs         storage.ITx
 	actions     storage.IAction
 	rollups     storage.IRollup
+	bridge      storage.IBridge
 	state       storage.IState
 	indexerName string
 }
@@ -27,6 +28,7 @@ func NewAddressHandler(
 	txs storage.ITx,
 	actions storage.IAction,
 	rollups storage.IRollup,
+	bridge storage.IBridge,
 	state storage.IState,
 	indexerName string,
 ) *AddressHandler {
@@ -35,6 +37,7 @@ func NewAddressHandler(
 		txs:         txs,
 		actions:     actions,
 		rollups:     rollups,
+		bridge:      bridge,
 		state:       state,
 		indexerName: indexerName,
 	}
@@ -68,12 +71,15 @@ func (handler *AddressHandler) Get(c echo.Context) error {
 		return handleError(c, err, handler.address)
 	}
 
-	rollup, err := handler.rollups.ByBridgeAddress(c.Request().Context(), address.Id)
-	if err != nil && !handler.address.IsNoRows(err) {
-		return handleError(c, err, handler.address)
+	bridge, err := handler.bridge.ByAddress(c.Request().Context(), address.Id)
+	if err != nil {
+		if !handler.bridge.IsNoRows(err) {
+			return handleError(c, err, handler.address)
+		}
+		return c.JSON(http.StatusOK, responses.NewAddress(address, nil))
 	}
 
-	return c.JSON(http.StatusOK, responses.NewAddress(address, &rollup))
+	return c.JSON(http.StatusOK, responses.NewAddress(address, &bridge))
 }
 
 // List godoc
@@ -346,8 +352,58 @@ func (handler *AddressHandler) Rollups(c echo.Context) error {
 
 	response := make([]responses.Rollup, len(rollups))
 	for i := range rollups {
-		response[i] = responses.NewRollup(rollups[i].Rollup)
+		response[i] = responses.NewRollup(rollups[i].Rollup, nil)
 	}
 
+	return returnArray(c, response)
+}
+
+type getAddressRoles struct {
+	Hash   string `param:"hash"   validate:"required,address"`
+	Limit  int    `query:"limit"  validate:"omitempty,min=1,max=100"`
+	Offset int    `query:"offset" validate:"omitempty,min=0"`
+}
+
+func (p *getAddressRoles) SetDefault() {
+	if p.Limit == 0 {
+		p.Limit = 10
+	}
+}
+
+// Roles godoc
+//
+//	@Summary		Get address roles in bridges
+//	@Description	Get address roles in bridges
+//	@Tags			address
+//	@ID				address-roles
+//	@Param			hash		path	string	true	"Hash"								minlength(48)	maxlength(48)
+//	@Param			limit		query	integer	false	"Count of requested entities"		mininum(1)	maximum(100)
+//	@Param			offset		query	integer	false	"Offset"							mininum(1)
+//	@Produce		json
+//	@Success		200	{array}		responses.Bridge
+//	@Failure		400	{object}	Error
+//	@Failure		500	{object}	Error
+//	@Router			/v1/address/{hash}/roles [get]
+func (handler *AddressHandler) Roles(c echo.Context) error {
+	req, err := bindAndValidate[getAddressRoles](c)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+	req.SetDefault()
+
+	address, err := handler.address.ByHash(c.Request().Context(), req.Hash)
+	if err != nil {
+		return handleError(c, err, handler.address)
+	}
+
+	roles, err := handler.bridge.ByRoles(c.Request().Context(), address.Id, req.Limit, req.Offset)
+	if err != nil {
+		return handleError(c, err, handler.address)
+	}
+
+	response := make([]responses.Bridge, len(roles))
+	for i := range roles {
+		response[i] = responses.NewBridge(roles[i])
+	}
 	return returnArray(c, response)
 }
