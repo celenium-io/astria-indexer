@@ -378,3 +378,20 @@ func (tx Transaction) UpdateValidators(ctx context.Context, validators ...*model
 	}
 	return nil
 }
+
+func (tx Transaction) UpdateConstants(ctx context.Context, constants ...*models.Constant) error {
+	if len(constants) == 0 {
+		return nil
+	}
+	values := tx.Tx().NewValues(&constants)
+
+	_, err := tx.Tx().NewUpdate().
+		With("_data", values).
+		Model((*models.Constant)(nil)).
+		TableExpr("_data").
+		Set("value = _data.value").
+		Where("constant.module = _data.module").
+		Where("constant.name = _data.name").
+		Exec(ctx)
+	return err
+}

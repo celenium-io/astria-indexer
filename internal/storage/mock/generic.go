@@ -1689,6 +1689,49 @@ func (c *TransactionUpdateAddressesCall) DoAndReturn(f func(context.Context, ...
 	return c
 }
 
+// UpdateConstants mocks base method.
+func (m *MockTransaction) UpdateConstants(ctx context.Context, constants ...*storage.Constant) error {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx}
+	for _, a := range constants {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdateConstants", varargs...)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateConstants indicates an expected call of UpdateConstants.
+func (mr *MockTransactionMockRecorder) UpdateConstants(ctx any, constants ...any) *TransactionUpdateConstantsCall {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx}, constants...)
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateConstants", reflect.TypeOf((*MockTransaction)(nil).UpdateConstants), varargs...)
+	return &TransactionUpdateConstantsCall{Call: call}
+}
+
+// TransactionUpdateConstantsCall wrap *gomock.Call
+type TransactionUpdateConstantsCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *TransactionUpdateConstantsCall) Return(arg0 error) *TransactionUpdateConstantsCall {
+	c.Call = c.Call.Return(arg0)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *TransactionUpdateConstantsCall) Do(f func(context.Context, ...*storage.Constant) error) *TransactionUpdateConstantsCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *TransactionUpdateConstantsCall) DoAndReturn(f func(context.Context, ...*storage.Constant) error) *TransactionUpdateConstantsCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // UpdateRollups mocks base method.
 func (m *MockTransaction) UpdateRollups(ctx context.Context, rollups ...*storage.Rollup) error {
 	m.ctrl.T.Helper()

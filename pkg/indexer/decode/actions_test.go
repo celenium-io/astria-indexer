@@ -878,6 +878,8 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("fee change: sequence_base_fee", func(t *testing.T) {
+		decodeContext := NewContext()
+
 		message := &astria.Action_FeeChangeAction{
 			FeeChangeAction: &astria.FeeChangeAction{
 				Value: &astria.FeeChangeAction_SequenceBaseFee{
@@ -897,12 +899,14 @@ func TestDecodeActions(t *testing.T) {
 		}
 
 		action := storage.Action{}
-		err := parseFeeChange(message, &action)
+		err := parseFeeChange(message, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
 
 	t.Run("fee change: bridge_lock_byte_cost_multiplier", func(t *testing.T) {
+		decodeContext := NewContext()
+
 		message := &astria.Action_FeeChangeAction{
 			FeeChangeAction: &astria.FeeChangeAction{
 				Value: &astria.FeeChangeAction_BridgeLockByteCostMultiplier{
@@ -922,12 +926,14 @@ func TestDecodeActions(t *testing.T) {
 		}
 
 		action := storage.Action{}
-		err := parseFeeChange(message, &action)
+		err := parseFeeChange(message, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
 
 	t.Run("fee change: bridge_sudo_change_base_fee", func(t *testing.T) {
+		decodeContext := NewContext()
+
 		message := &astria.Action_FeeChangeAction{
 			FeeChangeAction: &astria.FeeChangeAction{
 				Value: &astria.FeeChangeAction_BridgeSudoChangeBaseFee{
@@ -947,12 +953,14 @@ func TestDecodeActions(t *testing.T) {
 		}
 
 		action := storage.Action{}
-		err := parseFeeChange(message, &action)
+		err := parseFeeChange(message, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
 
 	t.Run("fee change: ics20_withdrawal_base_fee", func(t *testing.T) {
+		decodeContext := NewContext()
+
 		message := &astria.Action_FeeChangeAction{
 			FeeChangeAction: &astria.FeeChangeAction{
 				Value: &astria.FeeChangeAction_Ics20WithdrawalBaseFee{
@@ -972,12 +980,14 @@ func TestDecodeActions(t *testing.T) {
 		}
 
 		action := storage.Action{}
-		err := parseFeeChange(message, &action)
+		err := parseFeeChange(message, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
 
 	t.Run("fee change: init_bridge_account_base_fee", func(t *testing.T) {
+		decodeContext := NewContext()
+
 		message := &astria.Action_FeeChangeAction{
 			FeeChangeAction: &astria.FeeChangeAction{
 				Value: &astria.FeeChangeAction_InitBridgeAccountBaseFee{
@@ -997,12 +1007,14 @@ func TestDecodeActions(t *testing.T) {
 		}
 
 		action := storage.Action{}
-		err := parseFeeChange(message, &action)
+		err := parseFeeChange(message, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
 
 	t.Run("fee change: sequence_byte_cost_multiplier", func(t *testing.T) {
+		decodeContext := NewContext()
+
 		message := &astria.Action_FeeChangeAction{
 			FeeChangeAction: &astria.FeeChangeAction{
 				Value: &astria.FeeChangeAction_SequenceByteCostMultiplier{
@@ -1022,12 +1034,14 @@ func TestDecodeActions(t *testing.T) {
 		}
 
 		action := storage.Action{}
-		err := parseFeeChange(message, &action)
+		err := parseFeeChange(message, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
 
 	t.Run("fee change: transfer_base_fee", func(t *testing.T) {
+		decodeContext := NewContext()
+
 		message := &astria.Action_FeeChangeAction{
 			FeeChangeAction: &astria.FeeChangeAction{
 				Value: &astria.FeeChangeAction_TransferBaseFee{
@@ -1047,7 +1061,7 @@ func TestDecodeActions(t *testing.T) {
 		}
 
 		action := storage.Action{}
-		err := parseFeeChange(message, &action)
+		err := parseFeeChange(message, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})

@@ -52,6 +52,7 @@ func (p *Module) parse(b types.BlockData) error {
 		RollupAddress: decodeCtx.RollupAddress,
 		Validators:    decodeCtx.Validators,
 		ActionTypes:   decodeCtx.ActionTypes,
+		Constants:     decodeCtx.ConstantsArray(),
 
 		Txs: txs,
 		Stats: &storage.BlockStats{

@@ -13,30 +13,6 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type Context struct {
-	Addresses      Addresses
-	Rollups        Rollups
-	Validators     Validators
-	RollupAddress  map[string]*storage.RollupAddress
-	AddressActions map[string]*storage.AddressAction
-	SupplyChange   decimal.Decimal
-	BytesInBlock   int64
-	GasUsed        int64
-	GasWanted      int64
-	DataSize       int64
-	ActionTypes    storageTypes.Bits
-}
-
-func NewContext() Context {
-	return Context{
-		Addresses:     NewAddress(),
-		Rollups:       NewRollups(),
-		RollupAddress: make(map[string]*storage.RollupAddress),
-		SupplyChange:  decimal.Zero,
-		Validators:    NewValidators(),
-	}
-}
-
 type DecodedTx struct {
 	Tx          *astria.SignedTransaction
 	UnsignedTx  *astria.UnsignedTransaction

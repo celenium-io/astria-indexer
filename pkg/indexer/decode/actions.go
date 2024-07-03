@@ -69,7 +69,7 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 			err = parseBridgeUnlock(val, from, height, ctx, &actions[i])
 		case *astria.Action_FeeChangeAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeFeeChangeBits)
-			err = parseFeeChange(val, &actions[i])
+			err = parseFeeChange(val, ctx, &actions[i])
 
 		default:
 			return nil, errors.Errorf(
@@ -579,33 +579,46 @@ func parseFeeAssetChange(body *astria.Action_FeeAssetChangeAction, action *stora
 	return nil
 }
 
-func parseFeeChange(body *astria.Action_FeeChangeAction, action *storage.Action) error {
+func parseFeeChange(body *astria.Action_FeeChangeAction, ctx *Context, action *storage.Action) error {
 	action.Type = storageTypes.ActionTypeFeeChange
 	action.Data = make(map[string]any)
 	if body.FeeChangeAction != nil {
 		switch t := body.FeeChangeAction.GetValue().(type) {
 		case *astria.FeeChangeAction_BridgeLockByteCostMultiplier:
-			action.Data["bridge_lock_byte_cost_multiplier"] = uint128ToString(t.BridgeLockByteCostMultiplier)
+			val := uint128ToString(t.BridgeLockByteCostMultiplier)
+			action.Data["bridge_lock_byte_cost_multiplier"] = val
+			ctx.AddGenericConstant("bridge_lock_byte_cost_multiplier", val)
 
 		case *astria.FeeChangeAction_BridgeSudoChangeBaseFee:
-			action.Data["bridge_sudo_change_base_fee"] = uint128ToString(t.BridgeSudoChangeBaseFee)
+			val := uint128ToString(t.BridgeSudoChangeBaseFee)
+			action.Data["bridge_sudo_change_base_fee"] = val
+			ctx.AddGenericConstant("bridge_sudo_change_fee", val)
 
 		case *astria.FeeChangeAction_Ics20WithdrawalBaseFee:
-			action.Data["ics20_withdrawal_base_fee"] = uint128ToString(t.Ics20WithdrawalBaseFee)
+			val := uint128ToString(t.Ics20WithdrawalBaseFee)
+			action.Data["ics20_withdrawal_base_fee"] = val
+			ctx.AddGenericConstant("ics20_withdrawal_base_fee", val)
 
 		case *astria.FeeChangeAction_InitBridgeAccountBaseFee:
-			action.Data["init_bridge_account_base_fee"] = uint128ToString(t.InitBridgeAccountBaseFee)
+			val := uint128ToString(t.InitBridgeAccountBaseFee)
+			action.Data["init_bridge_account_base_fee"] = val
+			ctx.AddGenericConstant("init_bridge_account_base_fee", val)
 
 		case *astria.FeeChangeAction_SequenceBaseFee:
-			action.Data["sequence_base_fee"] = uint128ToString(t.SequenceBaseFee)
+			val := uint128ToString(t.SequenceBaseFee)
+			action.Data["sequence_base_fee"] = val
+			ctx.AddGenericConstant("sequence_base_fee", val)
 
 		case *astria.FeeChangeAction_SequenceByteCostMultiplier:
-			action.Data["sequence_byte_cost_multiplier"] = uint128ToString(t.SequenceByteCostMultiplier)
+			val := uint128ToString(t.SequenceByteCostMultiplier)
+			action.Data["sequence_byte_cost_multiplier"] = val
+			ctx.AddGenericConstant("sequence_byte_cost_multiplier", val)
 
 		case *astria.FeeChangeAction_TransferBaseFee:
-			action.Data["transfer_base_fee"] = uint128ToString(t.TransferBaseFee)
+			val := uint128ToString(t.TransferBaseFee)
+			action.Data["transfer_base_fee"] = val
+			ctx.AddGenericConstant("transfer_base_fee", val)
 		}
 	}
-	// TODO: update constants
 	return nil
 }

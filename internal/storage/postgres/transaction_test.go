@@ -756,3 +756,25 @@ func (s *TransactionTestSuite) TestUpdateValidators() {
 	s.Require().NoError(err)
 	s.Require().EqualValues("10000", validator.Power.String())
 }
+
+func (s *TransactionTestSuite) TestUpdateConstants() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	err = tx.UpdateConstants(ctx, &storage.Constant{
+		Module: types.ModuleNameGeneric,
+		Name:   "authority_sudo_key",
+		Value:  "100",
+	})
+	s.Require().NoError(err)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
+
+	c, err := s.storage.Constants.Get(ctx, types.ModuleNameGeneric, "authority_sudo_key")
+	s.Require().NoError(err)
+	s.Require().EqualValues("100", c.Value)
+}

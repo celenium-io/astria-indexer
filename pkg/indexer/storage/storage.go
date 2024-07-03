@@ -163,6 +163,10 @@ func (module *Module) processBlockInTransaction(ctx context.Context, tx storage.
 		return state, err
 	}
 
+	if err := tx.UpdateConstants(ctx, block.Constants...); err != nil {
+		return state, err
+	}
+
 	addrToId, totalAccounts, err := saveAddresses(ctx, tx, block.Addresses)
 	if err != nil {
 		return state, err
