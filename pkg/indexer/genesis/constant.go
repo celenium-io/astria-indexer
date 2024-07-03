@@ -61,7 +61,7 @@ func (module *Module) parseConstants(appState nodeTypes.AppState, consensus pkgT
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
 		Name:   "authority_sudo_address",
-		Value:  appState.AuthoritySudoAddress,
+		Value:  appState.AuthoritySudoAddress.Value,
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
@@ -71,7 +71,7 @@ func (module *Module) parseConstants(appState nodeTypes.AppState, consensus pkgT
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
 		Name:   "ibc_sudo_address",
-		Value:  appState.IbcSudoAddress,
+		Value:  appState.IbcSudoAddress.Value,
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
@@ -102,5 +102,10 @@ func (module *Module) parseConstants(appState nodeTypes.AppState, consensus pkgT
 		Module: storageTypes.ModuleNameGeneric,
 		Name:   "transfer_base_fee",
 		Value:  strconv.FormatInt(appState.Fees.TransferBaseFee, 10),
+	})
+	data.constants = append(data.constants, storage.Constant{
+		Module: storageTypes.ModuleNameGeneric,
+		Name:   "bridge_sudo_change_fee",
+		Value:  strconv.FormatInt(appState.Fees.BridgeSudoChangeFee, 10),
 	})
 }

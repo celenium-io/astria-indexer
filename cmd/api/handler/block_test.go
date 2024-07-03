@@ -30,7 +30,7 @@ import (
 
 var (
 	testAddress = storage.Address{
-		Hash:          testsuite.RandomHash(20),
+		Hash:          testsuite.RandomAddress(),
 		Id:            1,
 		Nonce:         10,
 		ActionsCount:  1,
@@ -41,7 +41,7 @@ var (
 			Id:       1,
 		},
 	}
-	testAddressHash = hex.EncodeToString(testAddress.Hash)
+	testAddressHash = testAddress.Hash
 	testBlock       = storage.Block{
 		Id:           1,
 		Hash:         []byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31},
@@ -519,7 +519,7 @@ func (s *BlockTestSuite) TestGetTransactions() {
 	s.Require().EqualValues(8, tx.GasUsed)
 	s.Require().EqualValues(1, tx.ActionsCount)
 	s.Require().EqualValues(10, tx.Nonce)
-	s.Require().EqualValues(hex.EncodeToString(testAddress.Hash), tx.Signer)
+	s.Require().EqualValues(testAddress.Hash, tx.Signer)
 	s.Require().Equal("codespace", tx.Codespace)
 	s.Require().Equal(types.StatusSuccess, tx.Status)
 }

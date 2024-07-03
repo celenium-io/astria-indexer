@@ -32,7 +32,7 @@ func (s *StorageTestSuite) TestTxByHash() {
 	s.Require().EqualValues(types.StatusSuccess, tx.Status)
 	s.Require().EqualValues(hash, tx.Hash)
 	s.Require().NotNil(tx.Signer)
-	s.Require().Equal("3fff1c39b9d163bfb9bcbf9dfea78675f1b4bc2c", hex.EncodeToString(tx.Signer.Hash))
+	s.Require().Equal("3fff1c39b9d163bfb9bcbf9dfea78675f1b4bc2c", tx.Signer.Hash)
 }
 
 func (s *StorageTestSuite) TestTxByHeight() {
@@ -57,7 +57,7 @@ func (s *StorageTestSuite) TestTxByHeight() {
 	s.Require().EqualValues(hash, tx.Hash)
 
 	s.Require().NotNil(tx.Signer)
-	s.Require().Equal("3fff1c39b9d163bfb9bcbf9dfea78675f1b4bc2c", hex.EncodeToString(tx.Signer.Hash))
+	s.Require().Equal("3fff1c39b9d163bfb9bcbf9dfea78675f1b4bc2c", tx.Signer.Hash)
 }
 
 func (s *StorageTestSuite) TestTxFilter() {
@@ -88,7 +88,7 @@ func (s *StorageTestSuite) TestTxFilter() {
 	s.Require().EqualValues(hash, tx.Hash)
 
 	s.Require().NotNil(tx.Signer)
-	s.Require().Equal("3fff1c39b9d163bfb9bcbf9dfea78675f1b4bc2c", hex.EncodeToString(tx.Signer.Hash))
+	s.Require().Equal("3fff1c39b9d163bfb9bcbf9dfea78675f1b4bc2c", tx.Signer.Hash)
 
 	s.Require().Len(tx.Actions, 1)
 }

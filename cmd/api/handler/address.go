@@ -4,7 +4,6 @@
 package handler
 
 import (
-	"encoding/hex"
 	"net/http"
 	"time"
 
@@ -64,12 +63,7 @@ func (handler *AddressHandler) Get(c echo.Context) error {
 		return badRequestError(c, err)
 	}
 
-	hash, err := hex.DecodeString(req.Hash)
-	if err != nil {
-		return badRequestError(c, err)
-	}
-
-	address, err := handler.address.ByHash(c.Request().Context(), hash)
+	address, err := handler.address.ByHash(c.Request().Context(), req.Hash)
 	if err != nil {
 		return handleError(c, err, handler.address)
 	}
@@ -171,12 +165,7 @@ func (handler *AddressHandler) Transactions(c echo.Context) error {
 	}
 	req.SetDefault()
 
-	hash, err := hex.DecodeString(req.Hash)
-	if err != nil {
-		return badRequestError(c, err)
-	}
-
-	address, err := handler.address.ByHash(c.Request().Context(), hash)
+	address, err := handler.address.ByHash(c.Request().Context(), req.Hash)
 	if err != nil {
 		return handleError(c, err, handler.address)
 	}
@@ -269,12 +258,7 @@ func (handler *AddressHandler) Actions(c echo.Context) error {
 
 	req.SetDefault()
 
-	hash, err := hex.DecodeString(req.Hash)
-	if err != nil {
-		return badRequestError(c, err)
-	}
-
-	address, err := handler.address.ByHash(c.Request().Context(), hash)
+	address, err := handler.address.ByHash(c.Request().Context(), req.Hash)
 	if err != nil {
 		return handleError(c, err, handler.address)
 	}
@@ -350,12 +334,7 @@ func (handler *AddressHandler) Rollups(c echo.Context) error {
 
 	req.SetDefault()
 
-	hash, err := hex.DecodeString(req.Hash)
-	if err != nil {
-		return badRequestError(c, err)
-	}
-
-	address, err := handler.address.ByHash(c.Request().Context(), hash)
+	address, err := handler.address.ByHash(c.Request().Context(), req.Hash)
 	if err != nil {
 		return handleError(c, err, handler.address)
 	}

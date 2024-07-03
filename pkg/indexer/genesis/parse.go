@@ -4,6 +4,7 @@
 package genesis
 
 import (
+	"github.com/celenium-io/astria-indexer/internal/astria"
 	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/pkg/node/types"
@@ -71,11 +72,7 @@ func (module *Module) parseAccounts(accounts []types.Account, height pkgTypes.Le
 			},
 		}
 
-		hash, err := pkgTypes.HexFromString(accounts[i].Address)
-		if err != nil {
-			return err
-		}
-		address.Hash = hash
+		address.Hash = accounts[i].Address.Value
 		data.addresses[address.String()] = &address
 
 		data.supply = data.supply.Add(address.Balance.Total)
@@ -113,7 +110,10 @@ func (module *Module) parseValidators(validators []types.Validator, height pkgTy
 			if err != nil {
 				return err
 			}
-			address.Hash = hash
+			address.Hash, err = astria.EncodeAddress(hash)
+			if err != nil {
+				return err
+			}
 			data.addresses[address.String()] = &address
 		}
 	}

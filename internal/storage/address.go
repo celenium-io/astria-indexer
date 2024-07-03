@@ -5,7 +5,6 @@ package storage
 
 import (
 	"context"
-	"encoding/hex"
 
 	"github.com/celenium-io/astria-indexer/pkg/types"
 
@@ -23,7 +22,7 @@ type AddressListFilter struct {
 type IAddress interface {
 	storage.Table[*Address]
 
-	ByHash(ctx context.Context, hash []byte) (Address, error)
+	ByHash(ctx context.Context, hash string) (Address, error)
 	ListWithBalance(ctx context.Context, fltrs AddressListFilter) ([]Address, error)
 }
 
@@ -33,7 +32,7 @@ type Address struct {
 
 	Id            uint64      `bun:"id,pk,notnull,autoincrement" comment:"Unique internal identity"`
 	Height        types.Level `bun:"height"                      comment:"Block number of the first address occurrence."`
-	Hash          []byte      `bun:"hash,unique:address_hash"    comment:"Address hash."`
+	Hash          string      `bun:"hash,unique:address_hash"    comment:"Address hash"`
 	Nonce         uint32      `bun:"nonce"                       comment:"Nonce"`
 	ActionsCount  int64       `bun:"actions_count"               comment:"Count of actions in which the address was involved"`
 	SignedTxCount int64       `bun:"signed_tx_count"             comment:"Count of signed transactions"`
@@ -47,5 +46,5 @@ func (Address) TableName() string {
 }
 
 func (address Address) String() string {
-	return hex.EncodeToString(address.Hash)
+	return address.Hash
 }

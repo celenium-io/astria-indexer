@@ -5,7 +5,6 @@ package handler
 
 import (
 	"context"
-	"encoding/hex"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -83,7 +82,7 @@ func (s *TxTestSuite) TestGet() {
 	s.Require().EqualValues(8, tx.GasUsed)
 	s.Require().EqualValues(1, tx.ActionsCount)
 	s.Require().EqualValues(10, tx.Nonce)
-	s.Require().EqualValues(hex.EncodeToString(testAddress.Hash), tx.Signer)
+	s.Require().EqualValues(testAddress.Hash, tx.Signer)
 	s.Require().Equal("codespace", tx.Codespace)
 	s.Require().Equal(types.StatusSuccess, tx.Status)
 }
@@ -149,7 +148,7 @@ func (s *TxTestSuite) TestList() {
 	s.Require().EqualValues(8, tx.GasUsed)
 	s.Require().EqualValues(1, tx.ActionsCount)
 	s.Require().EqualValues(10, tx.Nonce)
-	s.Require().EqualValues(hex.EncodeToString(testAddress.Hash), tx.Signer)
+	s.Require().EqualValues(testAddress.Hash, tx.Signer)
 	s.Require().Equal("codespace", tx.Codespace)
 	s.Require().Equal(types.StatusSuccess, tx.Status)
 }
@@ -246,7 +245,7 @@ func (s *TxTestSuite) TestListTime() {
 	s.Require().EqualValues(8, tx.GasUsed)
 	s.Require().EqualValues(1, tx.ActionsCount)
 	s.Require().EqualValues(10, tx.Nonce)
-	s.Require().EqualValues(hex.EncodeToString(testAddress.Hash), tx.Signer)
+	s.Require().EqualValues(testAddress.Hash, tx.Signer)
 	s.Require().Equal("codespace", tx.Codespace)
 	s.Require().Equal(types.StatusSuccess, tx.Status)
 }
@@ -299,7 +298,7 @@ func (s *TxTestSuite) TestListWithActions() {
 	s.Require().EqualValues(8, tx.GasUsed)
 	s.Require().EqualValues(1, tx.ActionsCount)
 	s.Require().EqualValues(10, tx.Nonce)
-	s.Require().EqualValues(hex.EncodeToString(testAddress.Hash), tx.Signer)
+	s.Require().EqualValues(testAddress.Hash, tx.Signer)
 	s.Require().Equal("codespace", tx.Codespace)
 	s.Require().Equal(types.StatusSuccess, tx.Status)
 }

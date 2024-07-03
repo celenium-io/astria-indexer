@@ -8,28 +8,32 @@ const (
 	ActionTypeSequenceBits
 	ActionTypeValidatorUpdateBits
 	ActionTypeSudoAddressChangeBits
-	ActionTypeMintBits
 	ActionTypeIbcRelayBits
 	ActionTypeIcs20WithdrawalBits
 	ActionTypeIbcRelayerChangeBits
 	ActionTypeFeeAssetChangeBits
 	ActionTypeInitBridgeAccountBits
 	ActionTypeBridgeLockBits
+	ActionTypeBridgeUnlockBits
+	ActionTypeBridgeSudoChangeBits
+	ActionTypeFeeChangeBits
 )
 
 var (
 	actionTypesMap = map[ActionType]Bits{
-		ActionTypeIbcRelay:          ActionTypeIbcRelayBits,
-		ActionTypeIcs20Withdrawal:   ActionTypeIcs20WithdrawalBits,
-		ActionTypeMint:              ActionTypeMintBits,
-		ActionTypeSequence:          ActionTypeSequenceBits,
-		ActionTypeSudoAddressChange: ActionTypeSudoAddressChangeBits,
-		ActionTypeTransfer:          ActionTypeTransferBits,
-		ActionTypeValidatorUpdate:   ActionTypeValidatorUpdateBits,
-		ActionTypeBridgeLock:        ActionTypeBridgeLockBits,
-		ActionTypeFeeAssetChange:    ActionTypeFeeAssetChangeBits,
-		ActionTypeInitBridgeAccount: ActionTypeInitBridgeAccountBits,
-		ActionTypeIbcRelayerChange:  ActionTypeIbcRelayerChangeBits,
+		ActionTypeIbcRelay:               ActionTypeIbcRelayBits,
+		ActionTypeIcs20Withdrawal:        ActionTypeIcs20WithdrawalBits,
+		ActionTypeSequence:               ActionTypeSequenceBits,
+		ActionTypeSudoAddressChange:      ActionTypeSudoAddressChangeBits,
+		ActionTypeTransfer:               ActionTypeTransferBits,
+		ActionTypeValidatorUpdate:        ActionTypeValidatorUpdateBits,
+		ActionTypeBridgeLock:             ActionTypeBridgeLockBits,
+		ActionTypeFeeAssetChange:         ActionTypeFeeAssetChangeBits,
+		ActionTypeInitBridgeAccount:      ActionTypeInitBridgeAccountBits,
+		ActionTypeIbcRelayerChange:       ActionTypeIbcRelayerChangeBits,
+		ActionTypeBridgeUnlock:           ActionTypeBridgeUnlockBits,
+		ActionTypeBridgeSudoChangeAction: ActionTypeBridgeSudoChangeBits,
+		ActionTypeFeeChange:              ActionTypeFeeChangeBits,
 	}
 )
 
@@ -45,8 +49,6 @@ func NewActionTypeMask(vals ...string) ActionTypeMask {
 			mask.Set(ActionTypeIbcRelayBits)
 		case string(ActionTypeIcs20Withdrawal):
 			mask.Set(ActionTypeIcs20WithdrawalBits)
-		case string(ActionTypeMint):
-			mask.Set(ActionTypeMintBits)
 		case string(ActionTypeSequence):
 			mask.Set(ActionTypeSequenceBits)
 		case string(ActionTypeSudoAddressChange):
@@ -63,6 +65,12 @@ func NewActionTypeMask(vals ...string) ActionTypeMask {
 			mask.Set(ActionTypeIbcRelayerChangeBits)
 		case string(ActionTypeInitBridgeAccount):
 			mask.Set(ActionTypeInitBridgeAccountBits)
+		case string(ActionTypeBridgeUnlock):
+			mask.Set(ActionTypeBridgeUnlockBits)
+		case string(ActionTypeBridgeSudoChangeAction):
+			mask.Set(ActionTypeBridgeSudoChangeBits)
+		case string(ActionTypeFeeChange):
+			mask.Set(ActionTypeFeeChangeBits)
 		}
 	}
 
@@ -79,7 +87,7 @@ func (mask ActionTypeMask) Strings() []string {
 	}
 
 	vals := make([]string, 0)
-	for val := ActionTypeTransferBits; val <= ActionTypeBridgeLockBits; val <<= 1 {
+	for val := ActionTypeTransferBits; val <= ActionTypeFeeChangeBits; val <<= 1 {
 		if !mask.Has(val) {
 			continue
 		}
@@ -88,8 +96,6 @@ func (mask ActionTypeMask) Strings() []string {
 			vals = append(vals, string(ActionTypeIbcRelay))
 		case ActionTypeIcs20WithdrawalBits:
 			vals = append(vals, string(ActionTypeIcs20Withdrawal))
-		case ActionTypeMintBits:
-			vals = append(vals, string(ActionTypeMint))
 		case ActionTypeSequenceBits:
 			vals = append(vals, string(ActionTypeSequence))
 		case ActionTypeSudoAddressChangeBits:
@@ -106,6 +112,12 @@ func (mask ActionTypeMask) Strings() []string {
 			vals = append(vals, string(ActionTypeIbcRelayerChange))
 		case ActionTypeInitBridgeAccountBits:
 			vals = append(vals, string(ActionTypeInitBridgeAccount))
+		case ActionTypeBridgeSudoChangeBits:
+			vals = append(vals, string(ActionTypeBridgeSudoChangeAction))
+		case ActionTypeBridgeUnlockBits:
+			vals = append(vals, string(ActionTypeBridgeUnlock))
+		case ActionTypeFeeChangeBits:
+			vals = append(vals, string(ActionTypeFeeChange))
 		}
 	}
 

@@ -6,6 +6,8 @@ package testsuite
 import (
 	"crypto/rand"
 	"encoding/hex"
+
+	"github.com/celenium-io/astria-indexer/internal/astria"
 )
 
 // Ptr - returns pointer of value  for testing purpose
@@ -31,4 +33,12 @@ func RandomHash(length int) []byte {
 	hash := make([]byte, length)
 	_, _ = rand.Read(hash)
 	return hash
+}
+
+// RandomAddress - returns random address
+func RandomAddress() string {
+	hash := make([]byte, 20)
+	_, _ = rand.Read(hash)
+	val, _ := astria.EncodeAddress(hash)
+	return val
 }

@@ -64,7 +64,10 @@ func Tx(b types.BlockData, index int, ctx *Context) (d DecodedTx, err error) {
 		return d, errors.Wrap(err, "tx decoding")
 	}
 
-	address := AddressFromPubKey(d.Tx.GetPublicKey())
+	address, err := AddressFromPubKey(d.Tx.GetPublicKey())
+	if err != nil {
+		return d, errors.Wrapf(err, "decode publick key: %x", d.Tx.GetPublicKey())
+	}
 	d.Signer = ctx.Addresses.Set(address, b.Height, decimal.Zero, 0, 1)
 	ctx.Addresses.UpdateNonce(address, d.UnsignedTx.GetParams().GetNonce())
 

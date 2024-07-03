@@ -99,7 +99,7 @@ func (s *TransactionTestSuite) TestSaveAddresses() {
 	for i := 0; i < 5; i++ {
 		addresses = append(addresses, &storage.Address{
 			Height: pkgTypes.Level(10000 + i),
-			Hash:   testsuite.RandomHash(20),
+			Hash:   testsuite.RandomAddress(),
 			Id:     uint64(i),
 		})
 
