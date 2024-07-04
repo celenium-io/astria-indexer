@@ -27,26 +27,32 @@ func saveBridges(
 			return errors.Errorf("unknown bridge address: %s", bridges[i].Address.Hash)
 		}
 
-		if id, ok := addrToId[bridges[i].Sudo.Hash]; ok {
-			bridges[i].SudoId = id
-		} else {
-			return errors.Errorf("unknown sudo bridge address: %s", bridges[i].Sudo.Hash)
-		}
-
-		if id, ok := addrToId[bridges[i].Withdrawer.Hash]; ok {
-			bridges[i].WithdrawerId = id
-		} else {
-			return errors.Errorf("unknown withdrawer bridge address: %s", bridges[i].Withdrawer.Hash)
-		}
-
-		if bridges[i].Rollup.Id == 0 {
-			rollup, err := tx.GetRollup(ctx, bridges[i].Rollup.AstriaId)
-			if err != nil {
-				return err
+		if bridges[i].Sudo != nil {
+			if id, ok := addrToId[bridges[i].Sudo.Hash]; ok {
+				bridges[i].SudoId = id
+			} else {
+				return errors.Errorf("unknown sudo bridge address: %s", bridges[i].Sudo.Hash)
 			}
-			bridges[i].RollupId = rollup.Id
-		} else {
-			bridges[i].RollupId = bridges[i].Rollup.Id
+		}
+
+		if bridges[i].Withdrawer != nil {
+			if id, ok := addrToId[bridges[i].Withdrawer.Hash]; ok {
+				bridges[i].WithdrawerId = id
+			} else {
+				return errors.Errorf("unknown withdrawer bridge address: %s", bridges[i].Withdrawer.Hash)
+			}
+		}
+
+		if bridges[i].Rollup != nil {
+			if bridges[i].Rollup.Id == 0 {
+				rollup, err := tx.GetRollup(ctx, bridges[i].Rollup.AstriaId)
+				if err != nil {
+					return err
+				}
+				bridges[i].RollupId = rollup.Id
+			} else {
+				bridges[i].RollupId = bridges[i].Rollup.Id
+			}
 		}
 	}
 
