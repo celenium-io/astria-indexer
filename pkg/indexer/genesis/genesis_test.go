@@ -32,6 +32,9 @@ func TestParseAccounts(t *testing.T) {
 	err = module.parseAccounts(g.AppState.Accounts, 1, &data)
 	require.NoError(t, err)
 
+	err = module.parseValidators(g.Validators, 1, &data)
+	require.NoError(t, err)
+
 	want := map[string]*storage.Address{
 		"astria1lhpxecq5ffhq68dgu9s8y2g5h53jqw5cvudrkk": {
 			Height: 1,
@@ -75,6 +78,42 @@ func TestParseAccounts(t *testing.T) {
 			Balance: &storage.Balance{
 				Id:       0,
 				Total:    decimal.RequireFromString("340282366920938463463374607431768211455"),
+				Currency: "nria",
+			},
+		},
+		"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2": {
+			Height: 1,
+			Hash:   "astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2",
+			Balance: &storage.Balance{
+				Id:       0,
+				Total:    decimal.Zero,
+				Currency: "nria",
+			},
+		},
+		"astria1lhd67thmzakayk37mh53qmnc6v568ptzhptunx": {
+			Height: 1,
+			Hash:   "astria1lhd67thmzakayk37mh53qmnc6v568ptzhptunx",
+			Balance: &storage.Balance{
+				Id:       0,
+				Total:    decimal.Zero,
+				Currency: "nria",
+			},
+		},
+		"astria1eradtvny7l2m23rf0r5k4mp4f8jp7y6njpc6k7": {
+			Height: 1,
+			Hash:   "astria1eradtvny7l2m23rf0r5k4mp4f8jp7y6njpc6k7",
+			Balance: &storage.Balance{
+				Id:       0,
+				Total:    decimal.Zero,
+				Currency: "nria",
+			},
+		},
+		"astria19adwu5yhtat0t8zv2fyzwl93uj5rypvnrfsyw0": {
+			Height: 1,
+			Hash:   "astria19adwu5yhtat0t8zv2fyzwl93uj5rypvnrfsyw0",
+			Balance: &storage.Balance{
+				Id:       0,
+				Total:    decimal.Zero,
 				Currency: "nria",
 			},
 		},

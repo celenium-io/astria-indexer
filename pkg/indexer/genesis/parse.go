@@ -102,8 +102,9 @@ func (module *Module) parseValidators(validators []types.Validator, height pkgTy
 			Power:      decimal.RequireFromString(validators[i].Power),
 		})
 
-		if _, ok := data.addresses[validators[i].Address]; !ok {
+		if _, ok := data.addresses[addr]; !ok {
 			address := storage.Address{
+				Hash:   addr,
 				Height: height,
 				Balance: &storage.Balance{
 					Total:    decimal.Zero,
@@ -111,7 +112,7 @@ func (module *Module) parseValidators(validators []types.Validator, height pkgTy
 				},
 			}
 
-			data.addresses[address.String()] = &address
+			data.addresses[addr] = &address
 		}
 	}
 	return nil
