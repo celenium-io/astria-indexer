@@ -94,7 +94,7 @@ func (s *ModuleTestSuite) TestBlockLast() {
 		Hash:            hash,
 		VersionBlock:    11,
 		VersionApp:      1,
-		ProposerAddress: "115F94D8C98FFD73FE65182611140F0EDC7C3C94",
+		ProposerAddress: "astria16rgmx2s86kk2r69rhjnvs9y44ujfhadc7yav9a",
 		Time:            time.Now(),
 		Stats:           &storage.BlockStats{},
 	})

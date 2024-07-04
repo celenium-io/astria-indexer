@@ -6,8 +6,8 @@ package postgres
 import (
 	"context"
 	"encoding/hex"
-	"strings"
 
+	"github.com/celenium-io/astria-indexer/internal/astria"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-net/go-lib/database"
 )
@@ -32,10 +32,6 @@ func (s *Search) Search(ctx context.Context, query string) (results []storage.Se
 		Where("name ILIKE ?", text)
 
 	if hash, err := hex.DecodeString(query); err == nil {
-		addressQuery := s.db.DB().NewSelect().
-			Model((*storage.Address)(nil)).
-			ColumnExpr("id, encode(hash, 'hex') as value, 'address' as type").
-			Where("hash = ?", hash)
 		blockQuery := s.db.DB().NewSelect().
 			Model((*storage.Block)(nil)).
 			ColumnExpr("id, encode(hash, 'hex') as value, 'block' as type").
@@ -48,16 +44,26 @@ func (s *Search) Search(ctx context.Context, query string) (results []storage.Se
 			Model((*storage.Rollup)(nil)).
 			ColumnExpr("id, encode(astria_id, 'hex') as value, 'rollup' as type").
 			Where("astria_id = ?", hash)
+
+		searchQuery = searchQuery.
+			UnionAll(blockQuery).
+			UnionAll(txQuery).
+			UnionAll(rollupQuery)
+	}
+
+	if astria.IsAddress(query) {
+		addressQuery := s.db.DB().NewSelect().
+			Model((*storage.Address)(nil)).
+			ColumnExpr("id, hash as value, 'address' as type").
+			Where("hash = ?", query)
+
 		validatorQuery := s.db.DB().NewSelect().
 			Model((*storage.Validator)(nil)).
 			ColumnExpr("id, name as value, 'validator' as type").
-			Where("address = ?", strings.ToUpper(query))
+			Where("address = ?", query)
 
 		searchQuery = searchQuery.
 			UnionAll(addressQuery).
-			UnionAll(blockQuery).
-			UnionAll(txQuery).
-			UnionAll(rollupQuery).
 			UnionAll(validatorQuery)
 	}
 

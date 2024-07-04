@@ -26,7 +26,7 @@ func (s *StorageTestSuite) TestBlockByHeight() {
 	s.Require().EqualValues(appHash, block.AppHash)
 
 	s.Require().NotNil(block.Proposer)
-	s.Require().EqualValues("6F35496BCC8CF0EF9E2AC090FAEF578152549518", block.Proposer.Address)
+	s.Require().EqualValues("astria1475jkpuvznd44szgfz8wwdf9w6xh5dx9jwqgvz", block.Proposer.Address)
 
 	s.Require().Nil(block.Stats)
 }
@@ -46,7 +46,7 @@ func (s *StorageTestSuite) TestBlockByHeightWithStats() {
 	s.Require().EqualValues(appHash, block.AppHash)
 
 	s.Require().NotNil(block.Proposer)
-	s.Require().EqualValues("6F35496BCC8CF0EF9E2AC090FAEF578152549518", block.Proposer.Address)
+	s.Require().EqualValues("astria1475jkpuvznd44szgfz8wwdf9w6xh5dx9jwqgvz", block.Proposer.Address)
 
 	s.Require().NotNil(block.Stats)
 	s.Require().EqualValues(7965, block.Stats.Height)
@@ -70,7 +70,7 @@ func (s *StorageTestSuite) TestBlockByHash() {
 	s.Require().EqualValues(appHash, block.AppHash)
 
 	s.Require().NotNil(block.Proposer)
-	s.Require().EqualValues("6F35496BCC8CF0EF9E2AC090FAEF578152549518", block.Proposer.Address)
+	s.Require().EqualValues("astria1475jkpuvznd44szgfz8wwdf9w6xh5dx9jwqgvz", block.Proposer.Address)
 }
 
 func (s *StorageTestSuite) TestBlockLast() {
@@ -88,7 +88,7 @@ func (s *StorageTestSuite) TestBlockLast() {
 	s.Require().EqualValues(appHash, block.AppHash)
 
 	s.Require().NotNil(block.Proposer)
-	s.Require().EqualValues("6F35496BCC8CF0EF9E2AC090FAEF578152549518", block.Proposer.Address)
+	s.Require().EqualValues("astria1475jkpuvznd44szgfz8wwdf9w6xh5dx9jwqgvz", block.Proposer.Address)
 }
 
 func (s *StorageTestSuite) TestBlockListWithStats() {
@@ -108,7 +108,7 @@ func (s *StorageTestSuite) TestBlockListWithStats() {
 	s.Require().EqualValues(appHash, block.AppHash)
 
 	s.Require().NotNil(block.Proposer)
-	s.Require().EqualValues("6F35496BCC8CF0EF9E2AC090FAEF578152549518", block.Proposer.Address)
+	s.Require().EqualValues("astria1475jkpuvznd44szgfz8wwdf9w6xh5dx9jwqgvz", block.Proposer.Address)
 
 	s.Require().NotNil(block.Stats)
 }

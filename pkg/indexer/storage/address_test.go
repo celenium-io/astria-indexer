@@ -9,7 +9,6 @@ import (
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/mock"
-	testsuite "github.com/celenium-io/astria-indexer/internal/test_suite"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -33,7 +32,7 @@ func Test_saveAddresses(t *testing.T) {
 			name: "test 2",
 			addresses: map[string]*storage.Address{
 				"deadbeaf": {
-					Hash:   testsuite.MustHexDecode("deadbeaf"),
+					Hash:   "deadbeaf",
 					Height: 100,
 					Balance: &storage.Balance{
 						Currency: "nria",
@@ -50,7 +49,7 @@ func Test_saveAddresses(t *testing.T) {
 			name: "test 3",
 			addresses: map[string]*storage.Address{
 				"deadbeaf": {
-					Hash:   testsuite.MustHexDecode("deadbeaf"),
+					Hash:   "deadbeaf",
 					Height: 100,
 					Balance: &storage.Balance{
 						Currency: "nria",

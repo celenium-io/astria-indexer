@@ -4,6 +4,7 @@
 package genesis
 
 import (
+	"github.com/celenium-io/astria-indexer/internal/astria"
 	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/pkg/node/types"
@@ -71,11 +72,7 @@ func (module *Module) parseAccounts(accounts []types.Account, height pkgTypes.Le
 			},
 		}
 
-		hash, err := pkgTypes.HexFromString(accounts[i].Address)
-		if err != nil {
-			return err
-		}
-		address.Hash = hash
+		address.Hash = accounts[i].Address.Value
 		data.addresses[address.String()] = &address
 
 		data.supply = data.supply.Add(address.Balance.Total)
@@ -92,16 +89,22 @@ func (module *Module) parseAccounts(accounts []types.Account, height pkgTypes.Le
 
 func (module *Module) parseValidators(validators []types.Validator, height pkgTypes.Level, data *parsedData) error {
 	for i := range validators {
+		addr, err := astria.EncodeFromHex(validators[i].Address)
+		if err != nil {
+			return err
+		}
+
 		data.validators = append(data.validators, &storage.Validator{
-			Address:    validators[i].Address,
+			Address:    addr,
 			PubkeyType: validators[i].PubKey.Type,
 			PubKey:     validators[i].PubKey.Value,
 			Name:       validators[i].Name,
 			Power:      decimal.RequireFromString(validators[i].Power),
 		})
 
-		if _, ok := data.addresses[validators[i].Address]; !ok {
+		if _, ok := data.addresses[addr]; !ok {
 			address := storage.Address{
+				Hash:   addr,
 				Height: height,
 				Balance: &storage.Balance{
 					Total:    decimal.Zero,
@@ -109,12 +112,7 @@ func (module *Module) parseValidators(validators []types.Validator, height pkgTy
 				},
 			}
 
-			hash, err := pkgTypes.HexFromString(validators[i].Address)
-			if err != nil {
-				return err
-			}
-			address.Hash = hash
-			data.addresses[address.String()] = &address
+			data.addresses[addr] = &address
 		}
 	}
 	return nil

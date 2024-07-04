@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/celenium-io/astria-indexer/internal/astria"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/pkg/indexer/decode"
 	"github.com/celenium-io/astria-indexer/pkg/types"
@@ -28,6 +29,11 @@ func (p *Module) parse(b types.BlockData) error {
 		return errors.Wrapf(err, "while parsing block on level=%d", b.Height)
 	}
 
+	proposer, err := astria.EncodeFromHex(b.Block.ProposerAddress.String())
+	if err != nil {
+		return errors.Wrap(err, "decoding block proposer address")
+	}
+
 	block := &storage.Block{
 		Height:       b.Height,
 		Time:         b.Block.Time,
@@ -44,7 +50,7 @@ func (p *Module) parse(b types.BlockData) error {
 		AppHash:            b.Block.AppHash,
 		LastResultsHash:    b.Block.LastResultsHash,
 		EvidenceHash:       b.Block.EvidenceHash,
-		ProposerAddress:    b.Block.ProposerAddress.String(),
+		ProposerAddress:    proposer,
 
 		ChainId:       b.Block.ChainID,
 		Addresses:     decodeCtx.Addresses,
@@ -52,6 +58,8 @@ func (p *Module) parse(b types.BlockData) error {
 		RollupAddress: decodeCtx.RollupAddress,
 		Validators:    decodeCtx.Validators,
 		ActionTypes:   decodeCtx.ActionTypes,
+		Constants:     decodeCtx.ConstantsArray(),
+		Bridges:       decodeCtx.BridgesArray(),
 
 		Txs: txs,
 		Stats: &storage.BlockStats{

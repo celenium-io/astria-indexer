@@ -37,13 +37,6 @@ func TestActionTypeMask(t *testing.T) {
 		require.Equal(t, arr, mask.Strings())
 	})
 
-	t.Run("mint", func(t *testing.T) {
-		arr := []string{string(ActionTypeMint)}
-
-		mask := NewActionTypeMask(arr...)
-		require.Equal(t, arr, mask.Strings())
-	})
-
 	t.Run("sequence", func(t *testing.T) {
 		arr := []string{string(ActionTypeSequence)}
 
@@ -60,6 +53,48 @@ func TestActionTypeMask(t *testing.T) {
 
 	t.Run("validator update", func(t *testing.T) {
 		arr := []string{string(ActionTypeValidatorUpdate)}
+
+		mask := NewActionTypeMask(arr...)
+		require.Equal(t, arr, mask.Strings())
+	})
+
+	t.Run("bridge unlock", func(t *testing.T) {
+		arr := []string{string(ActionTypeBridgeUnlock)}
+
+		mask := NewActionTypeMask(arr...)
+		require.Equal(t, arr, mask.Strings())
+	})
+
+	t.Run("bridge lock", func(t *testing.T) {
+		arr := []string{string(ActionTypeBridgeLock)}
+
+		mask := NewActionTypeMask(arr...)
+		require.Equal(t, arr, mask.Strings())
+	})
+
+	t.Run("bridge sudo change action", func(t *testing.T) {
+		arr := []string{string(ActionTypeBridgeSudoChangeAction)}
+
+		mask := NewActionTypeMask(arr...)
+		require.Equal(t, arr, mask.Strings())
+	})
+
+	t.Run("fee change", func(t *testing.T) {
+		arr := []string{string(ActionTypeFeeChange)}
+
+		mask := NewActionTypeMask(arr...)
+		require.Equal(t, arr, mask.Strings())
+	})
+
+	t.Run("init bridge account", func(t *testing.T) {
+		arr := []string{string(ActionTypeInitBridgeAccount)}
+
+		mask := NewActionTypeMask(arr...)
+		require.Equal(t, arr, mask.Strings())
+	})
+
+	t.Run("ibc relayer change", func(t *testing.T) {
+		arr := []string{string(ActionTypeIbcRelayerChange)}
 
 		mask := NewActionTypeMask(arr...)
 		require.Equal(t, arr, mask.Strings())

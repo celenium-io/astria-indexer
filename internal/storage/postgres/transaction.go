@@ -132,11 +132,10 @@ func (tx Transaction) SaveRollups(ctx context.Context, rollups ...*models.Rollup
 	}
 
 	query := tx.Tx().NewInsert().Model(&rs).
-		Column("first_height", "astria_id", "actions_count", "size", "bridge_address_id").
+		Column("first_height", "astria_id", "actions_count", "size").
 		On("CONFLICT ON CONSTRAINT rollup_id DO UPDATE").
 		Set("actions_count = added_rollup.actions_count + EXCLUDED.actions_count").
-		Set("size = added_rollup.size + EXCLUDED.size").
-		Set("bridge_address_id = case when EXCLUDED.bridge_address_id is not null then EXCLUDED.bridge_address_id else added_rollup.bridge_address_id end")
+		Set("size = added_rollup.size + EXCLUDED.size")
 
 	if _, err := query.Returning("xmax, id").Exec(ctx); err != nil {
 		return 0, err
@@ -194,6 +193,35 @@ func (tx Transaction) SaveBalanceUpdates(ctx context.Context, updates ...models.
 	return err
 }
 
+func (tx Transaction) SaveBridges(ctx context.Context, bridges ...*models.Bridge) error {
+	if len(bridges) == 0 {
+		return nil
+	}
+
+	for i := range bridges {
+		query := tx.Tx().NewInsert().Model(bridges[i]).
+			On("CONFLICT (address_id) DO UPDATE")
+
+		if bridges[i].SudoId > 0 {
+			query.Set("sudo_id = ?", bridges[i].SudoId)
+		}
+
+		if bridges[i].WithdrawerId > 0 {
+			query.Set("withdrawer_id = ?", bridges[i].WithdrawerId)
+		}
+
+		if bridges[i].FeeAsset != "" {
+			query.Set("fee_asset = ?", bridges[i].FeeAsset)
+		}
+
+		if _, err := query.Exec(ctx); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (tx Transaction) LastBlock(ctx context.Context) (block models.Block, err error) {
 	err = tx.Tx().NewSelect().Model(&block).Order("id desc").Limit(1).Scan(ctx)
 	return
@@ -236,13 +264,20 @@ func (tx Transaction) RollbackValidators(ctx context.Context, height types.Level
 	_, err = tx.Tx().NewDelete().Model((*models.Validator)(nil)).Where("height = ?", height).Exec(ctx)
 	return
 }
+
 func (tx Transaction) RollbackBlockSignatures(ctx context.Context, height types.Level) (err error) {
 	_, err = tx.Tx().NewDelete().Model((*models.BlockSignature)(nil)).
 		Where("height = ?", height).Exec(ctx)
 	return
 }
+
 func (tx Transaction) RollbackBalanceUpdates(ctx context.Context, height types.Level) (updates []models.BalanceUpdate, err error) {
 	_, err = tx.Tx().NewDelete().Model(&updates).Where("height = ?", height).Returning("*").Exec(ctx)
+	return
+}
+
+func (tx Transaction) RollbackBridges(ctx context.Context, height types.Level) (err error) {
+	_, err = tx.Tx().NewDelete().Model((*models.Bridge)(nil)).Where("height = ?", height).Exec(ctx)
 	return
 }
 
@@ -377,4 +412,29 @@ func (tx Transaction) UpdateValidators(ctx context.Context, validators ...*model
 		}
 	}
 	return nil
+}
+
+func (tx Transaction) UpdateConstants(ctx context.Context, constants ...*models.Constant) error {
+	if len(constants) == 0 {
+		return nil
+	}
+	values := tx.Tx().NewValues(&constants)
+
+	_, err := tx.Tx().NewUpdate().
+		With("_data", values).
+		Model((*models.Constant)(nil)).
+		TableExpr("_data").
+		Set("value = _data.value").
+		Where("constant.module = _data.module").
+		Where("constant.name = _data.name").
+		Exec(ctx)
+	return err
+}
+
+func (tx Transaction) GetRollup(ctx context.Context, rollupId []byte) (rollup models.Rollup, err error) {
+	err = tx.Tx().NewSelect().
+		Model(&rollup).
+		Where("astria_id = ?", rollupId).
+		Scan(ctx)
+	return
 }

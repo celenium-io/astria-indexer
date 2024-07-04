@@ -47,7 +47,7 @@ func getExpectedBlock() storage.Block {
 		AppHash:            types.Hex{0x0, 0x0, 0x1, 0x6},
 		LastResultsHash:    types.Hex{0x0, 0x0, 0x1, 0x7},
 		EvidenceHash:       types.Hex{0x0, 0x0, 0x1, 0x8},
-		ProposerAddress:    types.Hex{0x0, 0x0, 0x1, 0x9}.String(),
+		ProposerAddress:    "astria1qqqqzzgxcftkc",
 		ChainId:            "explorer-test",
 		Txs:                make([]*storage.Tx, 0),
 		Stats: &storage.BlockStats{
@@ -63,6 +63,8 @@ func getExpectedBlock() storage.Block {
 		RollupAddress:   make(map[string]*storage.RollupAddress),
 		Validators:      make(map[string]*storage.Validator),
 		BlockSignatures: []storage.BlockSignature{},
+		Constants:       make([]*storage.Constant, 0),
+		Bridges:         make([]*storage.Bridge, 0),
 	}
 }
 

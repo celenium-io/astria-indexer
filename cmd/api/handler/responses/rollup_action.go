@@ -25,7 +25,7 @@ func NewRollupAction(action storage.RollupAction) RollupAction {
 	}
 
 	if action.Rollup != nil {
-		r := NewRollup(action.Rollup)
+		r := NewRollup(action.Rollup, nil)
 		result.Rollup = &r
 	}
 

@@ -1,0 +1,8 @@
+- id: 1
+  rollup_id: 1
+  address_id: 1
+  init_height: 7316
+  sudo_id: 1
+  withdrawer_id: 1
+  asset: nria
+  fee_asset: nria

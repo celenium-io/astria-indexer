@@ -17,11 +17,11 @@ func Test_isAddress(t *testing.T) {
 	}{
 		{
 			name:    "test 1",
-			address: "115F94D8C98FFD73FE65182611140F0EDC7C3C94",
+			address: "astria1lhpxecq5ffhq68dgu9s8y2g5h53jqw5cvudrkk",
 			want:    true,
 		}, {
 			name:    "test 2",
-			address: "B385E68E3A3A2D250C7C4024972576D698B9E748",
+			address: "astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p",
 			want:    true,
 		}, {
 			name:    "test 3",

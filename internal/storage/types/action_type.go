@@ -10,13 +10,15 @@ package types
 		sequence,
 		validator_update,
 		sudo_address_change,
-		mint,
 		ibc_relay,
 		ics20_withdrawal,
 		ibc_relayer_change,
 		fee_asset_change,
 		init_bridge_account,
-		bridge_lock
+		bridge_lock,
+		bridge_unlock,
+		bridge_sudo_change_action,
+		fee_change
 	)
 */
 //go:generate go-enum --marshal --sql --values --names

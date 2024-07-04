@@ -13,30 +13,6 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type Context struct {
-	Addresses      Addresses
-	Rollups        Rollups
-	Validators     Validators
-	RollupAddress  map[string]*storage.RollupAddress
-	AddressActions map[string]*storage.AddressAction
-	SupplyChange   decimal.Decimal
-	BytesInBlock   int64
-	GasUsed        int64
-	GasWanted      int64
-	DataSize       int64
-	ActionTypes    storageTypes.Bits
-}
-
-func NewContext() Context {
-	return Context{
-		Addresses:     NewAddress(),
-		Rollups:       NewRollups(),
-		RollupAddress: make(map[string]*storage.RollupAddress),
-		SupplyChange:  decimal.Zero,
-		Validators:    NewValidators(),
-	}
-}
-
 type DecodedTx struct {
 	Tx          *astria.SignedTransaction
 	UnsignedTx  *astria.UnsignedTransaction
@@ -64,7 +40,10 @@ func Tx(b types.BlockData, index int, ctx *Context) (d DecodedTx, err error) {
 		return d, errors.Wrap(err, "tx decoding")
 	}
 
-	address := AddressFromPubKey(d.Tx.GetPublicKey())
+	address, err := AddressFromPubKey(d.Tx.GetPublicKey())
+	if err != nil {
+		return d, errors.Wrapf(err, "decode publick key: %x", d.Tx.GetPublicKey())
+	}
 	d.Signer = ctx.Addresses.Set(address, b.Height, decimal.Zero, 0, 1)
 	ctx.Addresses.UpdateNonce(address, d.UnsignedTx.GetParams().GetNonce())
 

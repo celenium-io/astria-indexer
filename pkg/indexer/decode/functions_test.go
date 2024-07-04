@@ -65,15 +65,15 @@ func TestAddressFromPubKey(t *testing.T) {
 		{
 			name: "test 1",
 			pk:   "32415F09DBEE4297CC9A841C2C2312BF903FC53C48860D788AE66097355A585F",
-			want: "230592632006DB2733444BB6DE11DB3F4B2F9AE4",
+			want: "astria1yvzeyceqqmdjwv6yfwmduywm8a9jlxhyj5tlx2",
 		}, {
 			name: "test 2",
 			pk:   "09E29331B2FAD4CBD367986803484A2F544441485E8E736112D2AD49B83656CA",
-			want: "6F35496BCC8CF0EF9E2AC090FAEF578152549518",
+			want: "astria1du65j67v3ncwl832czg04m6hs9f9f9gchacdam",
 		}, {
 			name: "test 3",
 			pk:   "96F43A8448928F1E580864D69FE44E093C5A82A1D4A80C59086D7E67976CDA45",
-			want: "115F94D8C98FFD73FE65182611140F0EDC7C3C94",
+			want: "astria1z90efkxf3l7h8ln9rqnpz9q0pmw8c0y5dvfdhe",
 		},
 	}
 	for _, tt := range tests {
@@ -81,8 +81,9 @@ func TestAddressFromPubKey(t *testing.T) {
 			pk, err := hex.DecodeString(tt.pk)
 			require.NoError(t, err)
 
-			got := AddressFromPubKey(pk)
-			require.Equal(t, tt.want, got.String())
+			got, err := AddressFromPubKey(pk)
+			require.NoError(t, err)
+			require.Equal(t, tt.want, got)
 		})
 	}
 }

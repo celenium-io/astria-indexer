@@ -99,7 +99,7 @@ func (s *TransactionTestSuite) TestSaveAddresses() {
 	for i := 0; i < 5; i++ {
 		addresses = append(addresses, &storage.Address{
 			Height: pkgTypes.Level(10000 + i),
-			Hash:   testsuite.RandomHash(20),
+			Hash:   testsuite.RandomAddress(),
 			Id:     uint64(i),
 		})
 
@@ -248,9 +248,6 @@ func (s *TransactionTestSuite) TestSaveRollups() {
 			ActionsCount: 1,
 			Size:         10,
 		}
-		if i%2 == 1 {
-			rollups[i].BridgeAddressId = uint64(i)
-		}
 	}
 
 	count, err := tx.SaveRollups(ctx, rollups...)
@@ -398,6 +395,29 @@ func (s *TransactionTestSuite) TestSaveBalanceUpdates() {
 	s.Require().NoError(tx.Close(ctx))
 }
 
+func (s *TransactionTestSuite) TestSaveBridges() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	bridges := make([]*storage.Bridge, 5)
+	for i := 0; i < 5; i++ {
+		bridges[i] = new(storage.Bridge)
+		bridges[i].AddressId = uint64(i + 1000)
+		bridges[i].WithdrawerId = uint64(i + 100)
+		bridges[i].SudoId = uint64(i + 10)
+		bridges[i].RollupId = uint64(i + 50)
+	}
+
+	err = tx.SaveBridges(ctx, bridges...)
+	s.Require().NoError(err)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
+}
+
 func (s *TransactionTestSuite) TestGetProposerId() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
@@ -405,7 +425,7 @@ func (s *TransactionTestSuite) TestGetProposerId() {
 	tx, err := BeginTransaction(ctx, s.storage.Transactable)
 	s.Require().NoError(err)
 
-	id, err := tx.GetProposerId(ctx, "115F94D8C98FFD73FE65182611140F0EDC7C3C94")
+	id, err := tx.GetProposerId(ctx, "astria1c220qfmjrwqlk939ca5a5z2rjxryyr9m3ah8gl")
 	s.Require().NoError(err)
 	s.Require().EqualValues(3, id)
 
@@ -755,4 +775,26 @@ func (s *TransactionTestSuite) TestUpdateValidators() {
 	validator, err := s.storage.Validator.GetByID(ctx, 1)
 	s.Require().NoError(err)
 	s.Require().EqualValues("10000", validator.Power.String())
+}
+
+func (s *TransactionTestSuite) TestUpdateConstants() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	err = tx.UpdateConstants(ctx, &storage.Constant{
+		Module: types.ModuleNameGeneric,
+		Name:   "authority_sudo_key",
+		Value:  "100",
+	})
+	s.Require().NoError(err)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
+
+	c, err := s.storage.Constants.Get(ctx, types.ModuleNameGeneric, "authority_sudo_key")
+	s.Require().NoError(err)
+	s.Require().EqualValues("100", c.Value)
 }

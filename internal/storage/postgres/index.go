@@ -149,15 +149,6 @@ func createIndices(ctx context.Context, conn *database.Bun) error {
 			Exec(ctx); err != nil {
 			return err
 		}
-		if _, err := tx.NewCreateIndex().
-			IfNotExists().
-			Model((*storage.Rollup)(nil)).
-			Index("rollup_bridge_address_id_idx").
-			Column("bridge_address_id").
-			Where("bridge_address_id is not null").
-			Exec(ctx); err != nil {
-			return err
-		}
 
 		// Rollup actions
 		if _, err := tx.NewCreateIndex().
@@ -224,6 +215,33 @@ func createIndices(ctx context.Context, conn *database.Bun) error {
 			Index("validator_name_idx").
 			ColumnExpr("name gin_trgm_ops").
 			Using("GIN").
+			Exec(ctx); err != nil {
+			return err
+		}
+
+		// Bridge
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Bridge)(nil)).
+			Index("bridge_init_height_idx").
+			Column("init_height").
+			Using("BRIN").
+			Exec(ctx); err != nil {
+			return err
+		}
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Bridge)(nil)).
+			Index("bridge_sudo_id_idx").
+			Column("sudo_id").
+			Exec(ctx); err != nil {
+			return err
+		}
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Bridge)(nil)).
+			Index("bridge_withdrawer_id_idx").
+			Column("withdrawer_id").
 			Exec(ctx); err != nil {
 			return err
 		}

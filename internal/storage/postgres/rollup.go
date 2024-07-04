@@ -66,16 +66,11 @@ func (r *Rollup) CountActionsByTxId(ctx context.Context, txId uint64) (int64, er
 }
 
 func (r *Rollup) ByHash(ctx context.Context, hash []byte) (rollup storage.Rollup, err error) {
-	query := r.DB().NewSelect().Model((*storage.Rollup)(nil)).
+	err = r.DB().NewSelect().Model(&rollup).
 		Where("astria_id = ?", hash).
-		Limit(1)
+		Limit(1).
+		Scan(ctx)
 
-	err = r.DB().NewSelect().
-		TableExpr("(?) as rollup", query).
-		ColumnExpr("rollup.*").
-		ColumnExpr("address.hash as bridge_address__hash").
-		Join("left join address on address.id = rollup.bridge_address_id").
-		Scan(ctx, &rollup)
 	return
 }
 
@@ -118,14 +113,5 @@ func (r *Rollup) ListExt(ctx context.Context, fltrs storage.RollupListFilter) (r
 	query = offsetScope(query, fltrs.Offset)
 
 	err = query.Scan(ctx)
-	return
-}
-
-func (r *Rollup) ByBridgeAddress(ctx context.Context, id uint64) (rollup storage.Rollup, err error) {
-	err = r.DB().NewSelect().
-		Model(&rollup).
-		Where("bridge_address_id = ?", id).
-		Limit(1).
-		Scan(ctx)
 	return
 }

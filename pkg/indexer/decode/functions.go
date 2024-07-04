@@ -7,8 +7,8 @@ import (
 	"math/big"
 
 	v1 "buf.build/gen/go/astria/primitives/protocolbuffers/go/astria/primitive/v1"
+	"github.com/celenium-io/astria-indexer/internal/astria"
 	"github.com/cometbft/cometbft/crypto/ed25519"
-	"github.com/cometbft/cometbft/libs/bytes"
 )
 
 func uint128ToString(u *v1.Uint128) string {
@@ -21,6 +21,6 @@ func uint128ToString(u *v1.Uint128) string {
 	return val.Text(10)
 }
 
-func AddressFromPubKey(pk []byte) bytes.HexBytes {
-	return ed25519.PubKey(pk).Address()
+func AddressFromPubKey(pk []byte) (string, error) {
+	return astria.EncodeAddress(ed25519.PubKey(pk).Address())
 }

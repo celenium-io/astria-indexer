@@ -76,8 +76,6 @@ func (s *StorageTestSuite) TestRollupByHash() {
 	s.Require().EqualValues(hash, rollup.AstriaId)
 	s.Require().EqualValues(112, rollup.Size)
 	s.Require().EqualValues(1, rollup.ActionsCount)
-
-	s.Require().Nil(rollup.BridgeAddress)
 }
 
 func (s *StorageTestSuite) TestRollupAddresses() {
@@ -134,13 +132,4 @@ func (s *StorageTestSuite) TestListExt() {
 		}
 	}
 
-}
-
-func (s *StorageTestSuite) TestByBridgedAddress() {
-	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer ctxCancel()
-
-	rollup, err := s.storage.Rollup.ByBridgeAddress(ctx, 2)
-	s.Require().NoError(err)
-	s.Require().EqualValues(2, rollup.Id)
 }

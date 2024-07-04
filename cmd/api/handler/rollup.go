@@ -15,6 +15,7 @@ import (
 type RollupHandler struct {
 	rollups     storage.IRollup
 	actions     storage.IAction
+	bridge      storage.IBridge
 	state       storage.IState
 	indexerName string
 }
@@ -22,12 +23,14 @@ type RollupHandler struct {
 func NewRollupHandler(
 	rollups storage.IRollup,
 	actions storage.IAction,
+	bridge storage.IBridge,
 	state storage.IState,
 	indexerName string,
 ) *RollupHandler {
 	return &RollupHandler{
 		rollups:     rollups,
 		actions:     actions,
+		bridge:      bridge,
 		state:       state,
 		indexerName: indexerName,
 	}
@@ -66,7 +69,16 @@ func (handler *RollupHandler) Get(c echo.Context) error {
 		return handleError(c, err, handler.rollups)
 	}
 
-	return c.JSON(http.StatusOK, responses.NewRollup(&rollup))
+	bridge, err := handler.bridge.ByRollup(c.Request().Context(), rollup.Id)
+	if err != nil {
+		if !handler.bridge.IsNoRows(err) {
+			return handleError(c, err, handler.rollups)
+		} else {
+			return c.JSON(http.StatusOK, responses.NewRollup(&rollup, nil))
+		}
+	}
+
+	return c.JSON(http.StatusOK, responses.NewRollup(&rollup, &bridge))
 }
 
 type listRollupsRequest struct {
@@ -120,7 +132,7 @@ func (handler *RollupHandler) List(c echo.Context) error {
 
 	response := make([]responses.Rollup, len(rollups))
 	for i := range rollups {
-		response[i] = responses.NewRollup(&rollups[i])
+		response[i] = responses.NewRollup(&rollups[i], nil)
 	}
 
 	return returnArray(c, response)

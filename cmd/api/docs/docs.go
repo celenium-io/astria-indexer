@@ -205,13 +205,15 @@ const docTemplate = `{
                             "sequence",
                             "validator_update",
                             "sudo_address_change",
-                            "mint",
                             "ibc_relay",
                             "ics20_withdrawal",
                             "ibc_relayer_change",
                             "fee_asset_change",
                             "init_bridge_account",
-                            "bridge_lock"
+                            "bridge_lock",
+                            "bridge_unlock",
+                            "bridge_sudo_change_action",
+                            "fee_change"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -226,6 +228,66 @@ const docTemplate = `{
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/responses.Action"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/address/{hash}/roles": {
+            "get": {
+                "description": "Get address roles in bridges",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Get address roles in bridges",
+                "operationId": "address-roles",
+                "parameters": [
+                    {
+                        "maxLength": 48,
+                        "minLength": 48,
+                        "type": "string",
+                        "description": "Hash",
+                        "name": "hash",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "type": "integer",
+                        "description": "Count of requested entities",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.Bridge"
                             }
                         }
                     },
@@ -378,13 +440,15 @@ const docTemplate = `{
                             "sequence",
                             "validator_update",
                             "sudo_address_change",
-                            "mint",
                             "ibc_relay",
                             "ics20_withdrawal",
                             "ibc_relayer_change",
                             "fee_asset_change",
                             "init_bridge_account",
-                            "bridge_lock"
+                            "bridge_lock",
+                            "bridge_unlock",
+                            "bridge_sudo_change_action",
+                            "fee_change"
                         ],
                         "type": "string",
                         "description": "Comma-separated message types list",
@@ -1544,13 +1608,15 @@ const docTemplate = `{
                             "sequence",
                             "validator_update",
                             "sudo_address_change",
-                            "mint",
                             "ibc_relay",
                             "ics20_withdrawal",
                             "ibc_relayer_change",
                             "fee_asset_change",
                             "init_bridge_account",
-                            "bridge_lock"
+                            "bridge_lock",
+                            "bridge_unlock",
+                            "bridge_sudo_change_action",
+                            "fee_change"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -2149,8 +2215,8 @@ const docTemplate = `{
                 "balance": {
                     "$ref": "#/definitions/responses.Balance"
                 },
-                "bridged_rollup": {
-                    "type": "string"
+                "bridge": {
+                    "$ref": "#/definitions/responses.Bridge"
                 },
                 "first_height": {
                     "type": "integer",
@@ -2158,7 +2224,7 @@ const docTemplate = `{
                 },
                 "hash": {
                     "type": "string",
-                    "example": "115F94D8C98FFD73FE65182611140F0EDC7C3C94"
+                    "example": "astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2"
                 },
                 "id": {
                     "type": "integer",
@@ -2293,6 +2359,36 @@ const docTemplate = `{
                 "tx_count": {
                     "type": "integer",
                     "example": 12
+                }
+            }
+        },
+        "responses.Bridge": {
+            "description": "bridge account information",
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string",
+                    "example": "astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2"
+                },
+                "asset": {
+                    "type": "string",
+                    "example": "nria"
+                },
+                "fee_asset": {
+                    "type": "string",
+                    "example": "nria"
+                },
+                "rollup": {
+                    "type": "string",
+                    "example": "O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc="
+                },
+                "sudo": {
+                    "type": "string",
+                    "example": "astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2"
+                },
+                "withdrawer": {
+                    "type": "string",
+                    "example": "astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2"
                 }
             }
         },
@@ -2462,9 +2558,8 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 101
                 },
-                "bridge_address": {
-                    "type": "string",
-                    "example": "115F94D8C98FFD73FE65182611140F0EDC7C3C94"
+                "bridge": {
+                    "$ref": "#/definitions/responses.Bridge"
                 },
                 "first_height": {
                     "type": "integer",

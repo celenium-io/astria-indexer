@@ -1,36 +1,36 @@
 - id: 2
   height: 0
-  hash: 0x2e046327a2ccac7c8f8018ed44e43184b502eb3e
+  hash: astria1lhpxecq5ffhq68dgu9s8y2g5h53jqw5cvudrkk
   nonce: 0
   actions_count: 0
   signed_tx_count: 0
 - id: 3
   height: 0
-  hash: 0x230592632006db2733444bb6de11db3f4b2f9ae4
+  hash: astria16rgmx2s86kk2r69rhjnvs9y44ujfhadc7yav9a
   nonce: 0
   actions_count: 0
   signed_tx_count: 0
 - id: 4
   height: 0
-  hash: 0x6f35496bcc8cf0ef9e2ac090faef578152549518
+  hash: astria1475jkpuvznd44szgfz8wwdf9w6xh5dx9jwqgvz
   nonce: 0
   actions_count: 0
   signed_tx_count: 0
 - id: 5
   height: 0
-  hash: 0x115f94d8c98ffd73fe65182611140f0edc7c3c94
+  hash: astria1c220qfmjrwqlk939ca5a5z2rjxryyr9m3ah8gl
   nonce: 0
   actions_count: 0
   signed_tx_count: 0
 - id: 1
   height: 0
-  hash: 0x3fff1c39b9d163bfb9bcbf9dfea78675f1b4bc2c
+  hash: astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p
   nonce: 1
   actions_count: 1
   signed_tx_count: 2
 - id: 8
   height: 7965
-  hash: 0xb385e68e3a3a2d250c7c4024972576d698b9e748
+  hash: astria1e9q7egqgz8rz6aej8nr57swqgaeujhz04vd9q5
   nonce: 0
   actions_count: 1
   signed_tx_count: 0

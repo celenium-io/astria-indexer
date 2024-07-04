@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
+	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/mock"
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
@@ -26,6 +27,7 @@ type RollupTestSuite struct {
 	suite.Suite
 	rollups *mock.MockIRollup
 	actions *mock.MockIAction
+	bridge  *mock.MockIBridge
 	state   *mock.MockIState
 	echo    *echo.Echo
 	handler *RollupHandler
@@ -39,8 +41,9 @@ func (s *RollupTestSuite) SetupSuite() {
 	s.ctrl = gomock.NewController(s.T())
 	s.rollups = mock.NewMockIRollup(s.ctrl)
 	s.actions = mock.NewMockIAction(s.ctrl)
+	s.bridge = mock.NewMockIBridge(s.ctrl)
 	s.state = mock.NewMockIState(s.ctrl)
-	s.handler = NewRollupHandler(s.rollups, s.actions, s.state, testIndexerName)
+	s.handler = NewRollupHandler(s.rollups, s.actions, s.bridge, s.state, testIndexerName)
 }
 
 // TearDownSuite -
@@ -66,6 +69,15 @@ func (s *RollupTestSuite) TestGet() {
 		Return(testRollup, nil).
 		Times(1)
 
+	s.bridge.EXPECT().
+		ByRollup(gomock.Any(), testRollup.Id).
+		Return(storage.Bridge{
+			Asset:    currency.DefaultCurrency,
+			FeeAsset: currency.DefaultCurrency,
+			Address:  &testAddress,
+		}, nil).
+		Times(1)
+
 	s.Require().NoError(s.handler.Get(c))
 	s.Require().Equal(http.StatusOK, rec.Code)
 
@@ -77,6 +89,10 @@ func (s *RollupTestSuite) TestGet() {
 	s.Require().EqualValues(100, rollup.FirstHeight)
 	s.Require().EqualValues(10, rollup.Size)
 	s.Require().Equal(testRollup.AstriaId, rollup.AstriaId)
+	s.Require().NotNil(rollup.Bridge)
+	s.Require().Equal(testAddressHash, rollup.Bridge.Address)
+	s.Require().Equal("nria", rollup.Bridge.Asset)
+	s.Require().Equal("nria", rollup.Bridge.FeeAsset)
 }
 
 func (s *RollupTestSuite) TestGetInvalidAddress() {

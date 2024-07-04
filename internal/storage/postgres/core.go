@@ -25,6 +25,7 @@ type Storage struct {
 
 	Blocks          models.IBlock
 	BlockStats      models.IBlockStats
+	Bridges         models.IBridge
 	Constants       models.IConstant
 	Tx              models.ITx
 	Action          models.IAction
@@ -51,6 +52,7 @@ func Create(ctx context.Context, cfg config.Database, scriptsDir string) (Storag
 		Storage:         strg,
 		Blocks:          NewBlocks(strg.Connection()),
 		BlockStats:      NewBlockStats(strg.Connection()),
+		Bridges:         NewBridge(strg.Connection()),
 		Constants:       NewConstant(strg.Connection()),
 		Action:          NewAction(strg.Connection()),
 		Address:         NewAddress(strg.Connection()),
