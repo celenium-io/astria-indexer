@@ -26,6 +26,7 @@ func (s *StorageTestSuite) TestAddressByHash() {
 	s.Require().EqualValues(1, address.ActionsCount)
 	s.Require().EqualValues(2, address.SignedTxCount)
 	s.Require().EqualValues(hash, address.Hash)
+	s.Require().Len(address.Balance, 2)
 }
 
 func (s *StorageTestSuite) TestAddressListWithBalances() {
@@ -45,6 +46,7 @@ func (s *StorageTestSuite) TestAddressListWithBalances() {
 	s.Require().EqualValues(1, address.Nonce)
 	s.Require().EqualValues(1, address.ActionsCount)
 	s.Require().EqualValues(2, address.SignedTxCount)
+	s.Require().Len(address.Balance, 1)
 
 	s.Require().EqualValues("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", address.Hash)
 }

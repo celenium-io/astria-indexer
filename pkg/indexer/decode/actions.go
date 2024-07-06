@@ -8,6 +8,7 @@ import (
 	"time"
 
 	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transactions/v1alpha1"
+	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/celenium-io/astria-indexer/pkg/types"
@@ -100,8 +101,9 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, from string, heig
 	action.Data = make(map[string]any)
 	if body.Ics20Withdrawal != nil {
 		amount := uint128ToString(body.Ics20Withdrawal.GetAmount())
+		asset := body.Ics20Withdrawal.GetDenom()
 		action.Data["amount"] = amount
-		action.Data["denom"] = body.Ics20Withdrawal.GetDenom()
+		action.Data["denom"] = asset
 		action.Data["fee_asset"] = body.Ics20Withdrawal.GetFeeAsset()
 		action.Data["destination_address"] = body.Ics20Withdrawal.GetDestinationChainAddress()
 		action.Data["return_address"] = body.Ics20Withdrawal.GetReturnAddress().GetBech32M()
@@ -124,7 +126,7 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, from string, heig
 		}
 		if bridge := body.Ics20Withdrawal.GetBridgeAddress().GetBech32M(); bridge != "" {
 			action.Data["bridge"] = bridge
-			addr := ctx.Addresses.Set(bridge, height, decAmount.Copy().Neg(), 1, 0)
+			addr := ctx.Addresses.Set(bridge, height, decAmount.Copy().Neg(), asset, 1, 0)
 			action.Addresses = append(action.Addresses, &storage.AddressAction{
 				Address:    addr,
 				Action:     action,
@@ -133,7 +135,7 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, from string, heig
 				ActionType: action.Type,
 			})
 		} else {
-			addr := ctx.Addresses.Set(from, height, decAmount.Copy().Neg(), 1, 0)
+			addr := ctx.Addresses.Set(from, height, decAmount.Copy().Neg(), asset, 1, 0)
 			action.Addresses = append(action.Addresses, &storage.AddressAction{
 				Address:    addr,
 				Action:     action,
@@ -144,7 +146,7 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, from string, heig
 		}
 
 		returnAddress := body.Ics20Withdrawal.GetReturnAddress().GetBech32M()
-		addr := ctx.Addresses.Set(returnAddress, height, decAmount, 1, 0)
+		addr := ctx.Addresses.Set(returnAddress, height, decAmount, asset, 1, 0)
 		action.Addresses = append(action.Addresses, &storage.AddressAction{
 			Address:    addr,
 			Action:     action,
@@ -174,7 +176,7 @@ func parseSequenceAction(body *astria.Action_SequenceAction, from string, height
 		dataSize := len(body.SequenceAction.GetData())
 
 		rollup := ctx.Rollups.Set(rollupId, height, dataSize)
-		fromAddress := ctx.Addresses.Set(from, height, decimal.Zero, 1, 0)
+		fromAddress := ctx.Addresses.Set(from, height, decimal.Zero, "", 1, 0)
 
 		rollupAddress := &storage.RollupAddress{
 			Rollup:  rollup,
@@ -216,7 +218,7 @@ func parseSudoAddressChangeAction(body *astria.Action_SudoAddressChangeAction, h
 		address := body.SudoAddressChangeAction.GetNewAddress().GetBech32M()
 		action.Data["address"] = address
 
-		addr := ctx.Addresses.Set(address, height, decimal.Zero, 1, 0)
+		addr := ctx.Addresses.Set(address, height, decimal.Zero, "", 1, 0)
 		action.Addresses = append(action.Addresses, &storage.AddressAction{
 			Address:    addr,
 			Action:     action,
@@ -244,7 +246,7 @@ func parseTransferAction(body *astria.Action_TransferAction, from string, height
 		decAmount := decimal.RequireFromString(amount)
 
 		if from == to {
-			addr := ctx.Addresses.Set(from, height, decimal.Zero, 1, 0)
+			addr := ctx.Addresses.Set(from, height, decimal.Zero, "", 1, 0)
 			action.Addresses = append(action.Addresses, &storage.AddressAction{
 				Address:    addr,
 				Action:     action,
@@ -253,8 +255,8 @@ func parseTransferAction(body *astria.Action_TransferAction, from string, height
 				ActionType: action.Type,
 			})
 		} else {
-			toAddr := ctx.Addresses.Set(to, height, decAmount, 1, 0)
-			fromAddr := ctx.Addresses.Set(from, height, decAmount.Neg(), 1, 0)
+			toAddr := ctx.Addresses.Set(to, height, decAmount, asset, 1, 0)
+			fromAddr := ctx.Addresses.Set(from, height, decAmount.Neg(), asset, 1, 0)
 			action.Addresses = append(action.Addresses,
 				&storage.AddressAction{
 					Address:    toAddr,
@@ -302,7 +304,7 @@ func parseValidatorUpdateAction(body *astria.Action_ValidatorUpdateAction, heigh
 		if err != nil {
 			return err
 		}
-		addr := ctx.Addresses.Set(address, height, decimal.Zero, 1, 0)
+		addr := ctx.Addresses.Set(address, height, decimal.Zero, "", 1, 0)
 		action.Addresses = append(action.Addresses, &storage.AddressAction{
 			Address:    addr,
 			Action:     action,
@@ -322,7 +324,7 @@ func parseIbcRelayerChange(body *astria.Action_IbcRelayerChangeAction, height ty
 		if addition := body.IbcRelayerChangeAction.GetAddition(); len(addition.GetBech32M()) > 0 {
 			action.Data["addition"] = addition.GetBech32M()
 
-			addr := ctx.Addresses.Set(addition.GetBech32M(), height, decimal.Zero, 1, 0)
+			addr := ctx.Addresses.Set(addition.GetBech32M(), height, decimal.Zero, "", 1, 0)
 			action.Addresses = append(action.Addresses, &storage.AddressAction{
 				Address:    addr,
 				Action:     action,
@@ -335,7 +337,7 @@ func parseIbcRelayerChange(body *astria.Action_IbcRelayerChangeAction, height ty
 		if removal := body.IbcRelayerChangeAction.GetRemoval(); len(removal.GetBech32M()) > 0 {
 			action.Data["removal"] = removal.GetBech32M()
 
-			addr := ctx.Addresses.Set(removal.GetBech32M(), height, decimal.Zero, 1, 0)
+			addr := ctx.Addresses.Set(removal.GetBech32M(), height, decimal.Zero, "", 1, 0)
 			action.Addresses = append(action.Addresses, &storage.AddressAction{
 				Address:    addr,
 				Action:     action,
@@ -359,7 +361,7 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from st
 			InitHeight: height,
 			Asset:      body.InitBridgeAccountAction.GetAsset(),
 			FeeAsset:   body.InitBridgeAccountAction.GetFeeAsset(),
-			Address:    ctx.Addresses.Set(from, height, decimal.Zero, 1, 0),
+			Address:    ctx.Addresses.Set(from, height, decimal.Zero, "", 1, 0),
 			Rollup:     rollup,
 		}
 
@@ -370,7 +372,7 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from st
 		if sudo := body.InitBridgeAccountAction.GetSudoAddress().GetBech32M(); sudo != "" {
 			action.Data["sudo"] = sudo
 			if sudo != from {
-				addr := ctx.Addresses.Set(sudo, height, decimal.Zero, 1, 0)
+				addr := ctx.Addresses.Set(sudo, height, decimal.Zero, "", 1, 0)
 				action.Addresses = append(action.Addresses, &storage.AddressAction{
 					Address:    addr,
 					Action:     action,
@@ -387,7 +389,7 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from st
 		if withdrawer := body.InitBridgeAccountAction.GetWithdrawerAddress().GetBech32M(); withdrawer != "" {
 			action.Data["withdrawer"] = withdrawer
 			if withdrawer != from {
-				addr := ctx.Addresses.Set(withdrawer, height, decimal.Zero, 1, 0)
+				addr := ctx.Addresses.Set(withdrawer, height, decimal.Zero, "", 1, 0)
 				action.Addresses = append(action.Addresses, &storage.AddressAction{
 					Address:    addr,
 					Action:     action,
@@ -422,7 +424,7 @@ func parseBridgeSudoChange(body *astria.Action_BridgeSudoChangeAction, height ty
 		feeAsset := body.BridgeSudoChangeAction.GetFeeAsset()
 
 		action.Data["bridge"] = bridgeAddress
-		bridgeAddr := ctx.Addresses.Set(bridgeAddress, height, decimal.Zero, 1, 0)
+		bridgeAddr := ctx.Addresses.Set(bridgeAddress, height, decimal.Zero, "", 1, 0)
 		action.Addresses = append(action.Addresses, &storage.AddressAction{
 			Address:    bridgeAddr,
 			Action:     action,
@@ -437,7 +439,7 @@ func parseBridgeSudoChange(body *astria.Action_BridgeSudoChangeAction, height ty
 
 		if sudo != "" {
 			action.Data["sudo"] = sudo
-			addr := ctx.Addresses.Set(sudo, height, decimal.Zero, 1, 0)
+			addr := ctx.Addresses.Set(sudo, height, decimal.Zero, "", 1, 0)
 			action.Addresses = append(action.Addresses, &storage.AddressAction{
 				Address:    addr,
 				Action:     action,
@@ -449,7 +451,7 @@ func parseBridgeSudoChange(body *astria.Action_BridgeSudoChangeAction, height ty
 		}
 		if withdrawer != "" {
 			action.Data["withdrawer"] = withdrawer
-			addr := ctx.Addresses.Set(withdrawer, height, decimal.Zero, 1, 0)
+			addr := ctx.Addresses.Set(withdrawer, height, decimal.Zero, "", 1, 0)
 			action.Addresses = append(action.Addresses, &storage.AddressAction{
 				Address:    addr,
 				Action:     action,
@@ -485,7 +487,7 @@ func parseBridgeLock(body *astria.Action_BridgeLockAction, from string, height t
 
 		toAddress := body.BridgeLockAction.GetTo().GetBech32M()
 		decAmount := decimal.RequireFromString(amount)
-		toAddr := ctx.Addresses.Set(toAddress, height, decAmount, 1, 0)
+		toAddr := ctx.Addresses.Set(toAddress, height, decAmount, asset, 1, 0)
 
 		if from == toAddress {
 			action.Addresses = append(action.Addresses,
@@ -498,7 +500,7 @@ func parseBridgeLock(body *astria.Action_BridgeLockAction, from string, height t
 				},
 			)
 		} else {
-			fromAddr := ctx.Addresses.Set(from, height, decAmount.Neg(), 1, 0)
+			fromAddr := ctx.Addresses.Set(from, height, decAmount.Neg(), asset, 1, 0)
 
 			action.Addresses = append(action.Addresses,
 				&storage.AddressAction{
@@ -556,13 +558,13 @@ func parseBridgeUnlock(body *astria.Action_BridgeUnlockAction, from string, heig
 		}
 
 		decAmount := decimal.RequireFromString(amount)
-		toAddr := ctx.Addresses.Set(toAddress, height, decAmount, 1, 0)
+		toAddr := ctx.Addresses.Set(toAddress, height, decAmount, "", 1, 0)
 
 		var fromAddr *storage.Address
 		if bridge == "" {
-			fromAddr = ctx.Addresses.Set(from, height, decAmount.Neg(), 1, 0)
+			fromAddr = ctx.Addresses.Set(from, height, decAmount.Neg(), "", 1, 0)
 		} else {
-			fromAddr = ctx.Addresses.Set(bridge, height, decAmount.Neg(), 1, 0)
+			fromAddr = ctx.Addresses.Set(bridge, height, decAmount.Neg(), "", 1, 0)
 		}
 
 		action.Addresses = append(action.Addresses,
@@ -586,13 +588,13 @@ func parseBridgeUnlock(body *astria.Action_BridgeUnlockAction, from string, heig
 			storage.BalanceUpdate{
 				Address:  toAddr,
 				Height:   action.Height,
-				Currency: toAddr.Balance.Currency,
+				Currency: currency.DefaultCurrency,
 				Update:   decAmount,
 			},
 			storage.BalanceUpdate{
 				Address:  fromAddr,
 				Height:   action.Height,
-				Currency: fromAddr.Balance.Currency,
+				Currency: currency.DefaultCurrency,
 				Update:   decAmount.Neg(),
 			},
 		)

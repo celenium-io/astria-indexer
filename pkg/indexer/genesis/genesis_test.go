@@ -39,82 +39,100 @@ func TestParseAccounts(t *testing.T) {
 		"astria1lhpxecq5ffhq68dgu9s8y2g5h53jqw5cvudrkk": {
 			Height: 1,
 			Hash:   "astria1lhpxecq5ffhq68dgu9s8y2g5h53jqw5cvudrkk",
-			Balance: &storage.Balance{
-				Id:       0,
-				Total:    decimal.RequireFromString("333333333333333333"),
-				Currency: "nria",
+			Balance: []*storage.Balance{
+				{
+					Id:       0,
+					Total:    decimal.RequireFromString("333333333333333333"),
+					Currency: "nria",
+				},
 			},
 		},
 		"astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p": {
 			Height: 1,
 			Hash:   "astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p",
-			Balance: &storage.Balance{
-				Id:       0,
-				Total:    decimal.RequireFromString("60"),
-				Currency: "nria",
+			Balance: []*storage.Balance{
+				{
+					Id:       0,
+					Total:    decimal.RequireFromString("60"),
+					Currency: "nria",
+				},
 			},
 		},
 		"astria1c220qfmjrwqlk939ca5a5z2rjxryyr9m3ah8gl": {
 			Height: 1,
 			Hash:   "astria1c220qfmjrwqlk939ca5a5z2rjxryyr9m3ah8gl",
-			Balance: &storage.Balance{
-				Id:       0,
-				Total:    decimal.RequireFromString("333333333333333333"),
-				Currency: "nria",
+			Balance: []*storage.Balance{
+				{
+					Id:       0,
+					Total:    decimal.RequireFromString("333333333333333333"),
+					Currency: "nria",
+				},
 			},
 		},
 		"astria1475jkpuvznd44szgfz8wwdf9w6xh5dx9jwqgvz": {
 			Height: 1,
 			Hash:   "astria1475jkpuvznd44szgfz8wwdf9w6xh5dx9jwqgvz",
-			Balance: &storage.Balance{
-				Id:       0,
-				Total:    decimal.RequireFromString("333333333333333333"),
-				Currency: "nria",
+			Balance: []*storage.Balance{
+				{
+					Id:       0,
+					Total:    decimal.RequireFromString("333333333333333333"),
+					Currency: "nria",
+				},
 			},
 		},
 		"astria16rgmx2s86kk2r69rhjnvs9y44ujfhadc7yav9a": {
 			Height: 1,
 			Hash:   "astria16rgmx2s86kk2r69rhjnvs9y44ujfhadc7yav9a",
-			Balance: &storage.Balance{
-				Id:       0,
-				Total:    decimal.RequireFromString("340282366920938463463374607431768211455"),
-				Currency: "nria",
+			Balance: []*storage.Balance{
+				{
+					Id:       0,
+					Total:    decimal.RequireFromString("340282366920938463463374607431768211455"),
+					Currency: "nria",
+				},
 			},
 		},
 		"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2": {
 			Height: 1,
 			Hash:   "astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2",
-			Balance: &storage.Balance{
-				Id:       0,
-				Total:    decimal.Zero,
-				Currency: "nria",
+			Balance: []*storage.Balance{
+				{
+					Id:       0,
+					Total:    decimal.Zero,
+					Currency: "nria",
+				},
 			},
 		},
 		"astria1lhd67thmzakayk37mh53qmnc6v568ptzhptunx": {
 			Height: 1,
 			Hash:   "astria1lhd67thmzakayk37mh53qmnc6v568ptzhptunx",
-			Balance: &storage.Balance{
-				Id:       0,
-				Total:    decimal.Zero,
-				Currency: "nria",
+			Balance: []*storage.Balance{
+				{
+					Id:       0,
+					Total:    decimal.Zero,
+					Currency: "nria",
+				},
 			},
 		},
 		"astria1eradtvny7l2m23rf0r5k4mp4f8jp7y6njpc6k7": {
 			Height: 1,
 			Hash:   "astria1eradtvny7l2m23rf0r5k4mp4f8jp7y6njpc6k7",
-			Balance: &storage.Balance{
-				Id:       0,
-				Total:    decimal.Zero,
-				Currency: "nria",
+			Balance: []*storage.Balance{
+				{
+					Id:       0,
+					Total:    decimal.Zero,
+					Currency: "nria",
+				},
 			},
 		},
 		"astria19adwu5yhtat0t8zv2fyzwl93uj5rypvnrfsyw0": {
 			Height: 1,
 			Hash:   "astria19adwu5yhtat0t8zv2fyzwl93uj5rypvnrfsyw0",
-			Balance: &storage.Balance{
-				Id:       0,
-				Total:    decimal.Zero,
-				Currency: "nria",
+			Balance: []*storage.Balance{
+				{
+					Id:       0,
+					Total:    decimal.Zero,
+					Currency: "nria",
+				},
 			},
 		},
 	}

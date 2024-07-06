@@ -48,9 +48,11 @@ func (module *Module) save(ctx context.Context, data parsedData) error {
 			return tx.HandleError(ctx, err)
 		}
 
-		balances := make([]storage.Balance, len(entities))
+		balances := make([]storage.Balance, 0)
 		for i := range entities {
-			balances[i] = *entities[i].Balance
+			for _, balance := range entities[i].Balance {
+				balances = append(balances, *balance)
+			}
 		}
 		if err := tx.SaveBalances(ctx, balances...); err != nil {
 			return tx.HandleError(ctx, err)

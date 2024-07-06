@@ -16,11 +16,29 @@ func NewAddress() Addresses {
 	return make(map[string]*storage.Address)
 }
 
-func (a Addresses) Set(address string, height types.Level, change decimal.Decimal, actionCount int, signedTxCount int) *storage.Address {
+func (a Addresses) Set(address string, height types.Level, change decimal.Decimal, asset string, actionCount int, signedTxCount int) *storage.Address {
+	if asset == "" {
+		asset = currency.DefaultCurrency
+	}
+
 	if addr, ok := a[address]; ok {
-		addr.Balance.Total = addr.Balance.Total.Add(change)
 		addr.ActionsCount += int64(actionCount)
 		addr.SignedTxCount += int64(signedTxCount)
+
+		var balanceFound bool
+		for i := range addr.Balance {
+			if addr.Balance[i].Currency == asset {
+				balanceFound = true
+				addr.Balance[i].Total = addr.Balance[i].Total.Add(change)
+			}
+		}
+		if !balanceFound {
+			addr.Balance = append(addr.Balance, &storage.Balance{
+				Total:    change,
+				Currency: asset,
+			})
+		}
+
 		return addr
 	}
 	addr := &storage.Address{
@@ -28,9 +46,11 @@ func (a Addresses) Set(address string, height types.Level, change decimal.Decima
 		Hash:          address,
 		ActionsCount:  int64(actionCount),
 		SignedTxCount: int64(signedTxCount),
-		Balance: &storage.Balance{
-			Total:    change,
-			Currency: currency.DefaultCurrency,
+		Balance: []*storage.Balance{
+			{
+				Total:    change,
+				Currency: asset,
+			},
 		},
 	}
 	a[address] = addr

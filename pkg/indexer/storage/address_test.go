@@ -34,9 +34,11 @@ func Test_saveAddresses(t *testing.T) {
 				"deadbeaf": {
 					Hash:   "deadbeaf",
 					Height: 100,
-					Balance: &storage.Balance{
-						Currency: "nria",
-						Total:    decimal.RequireFromString("1"),
+					Balance: []*storage.Balance{
+						{
+							Currency: "nria",
+							Total:    decimal.RequireFromString("1"),
+						},
 					},
 				},
 			},
@@ -51,9 +53,11 @@ func Test_saveAddresses(t *testing.T) {
 				"deadbeaf": {
 					Hash:   "deadbeaf",
 					Height: 100,
-					Balance: &storage.Balance{
-						Currency: "nria",
-						Total:    decimal.RequireFromString("1"),
+					Balance: []*storage.Balance{
+						{
+							Currency: "nria",
+							Total:    decimal.RequireFromString("1"),
+						},
 					},
 				},
 			},

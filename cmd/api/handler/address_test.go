@@ -186,8 +186,9 @@ func (s *AddressTestSuite) TestList() {
 	s.Require().EqualValues(0, address.Height)
 	s.Require().EqualValues(10, address.Nonce)
 	s.Require().Equal(testAddressHash, address.Hash)
-	s.Require().Equal("1000", address.Balance.Value)
-	s.Require().Equal("nria", address.Balance.Currency)
+	s.Require().Len(address.Balance, 1)
+	s.Require().Equal("1000", address.Balance[0].Value)
+	s.Require().Equal("nria", address.Balance[0].Currency)
 }
 
 func (s *AddressTestSuite) TestTransactions() {
