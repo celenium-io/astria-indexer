@@ -708,7 +708,7 @@ func TestDecodeActions(t *testing.T) {
 				"to":        to,
 				"bridge":    bridge,
 				"amount":    "10",
-				"memo":      "memo",
+				"memo":      "6d656d6f",
 			},
 			Addresses: make([]*storage.AddressAction, 0),
 			BalanceUpdates: []storage.BalanceUpdate{

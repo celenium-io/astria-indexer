@@ -5,6 +5,7 @@ package decode
 
 import (
 	"encoding/base64"
+	"encoding/hex"
 	"time"
 
 	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transactions/v1alpha1"
@@ -551,7 +552,7 @@ func parseBridgeUnlock(body *astria.Action_BridgeUnlockAction, from string, heig
 		action.Data["fee_asset"] = body.BridgeUnlockAction.GetFeeAsset()
 		action.Data["amount"] = amount
 		if memo := body.BridgeUnlockAction.GetMemo(); len(memo) > 0 {
-			action.Data["memo"] = string(memo)
+			action.Data["memo"] = hex.EncodeToString(memo)
 		}
 		if bridge != "" {
 			action.Data["bridge"] = bridge
