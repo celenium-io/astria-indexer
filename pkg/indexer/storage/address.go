@@ -29,11 +29,13 @@ func saveAddresses(
 	}
 
 	addToId := make(map[string]uint64)
-	balances := make([]storage.Balance, len(data))
+	balances := make([]storage.Balance, 0)
 	for i := range data {
 		addToId[data[i].String()] = data[i].Id
-		data[i].Balance.Id = data[i].Id
-		balances[i] = *data[i].Balance
+		for j := range data[i].Balance {
+			data[i].Balance[j].Id = data[i].Id
+			balances = append(balances, *data[i].Balance[j])
+		}
 	}
 	err = tx.SaveBalances(ctx, balances...)
 	return addToId, totalAccounts, err

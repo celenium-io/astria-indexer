@@ -40,8 +40,10 @@ definitions:
       actions_count:
         example: 10
         type: integer
-      balance:
-        $ref: '#/definitions/responses.Balance'
+      balances:
+        items:
+          $ref: '#/definitions/responses.Balance'
+        type: array
       bridge:
         $ref: '#/definitions/responses.Bridge'
       first_height:

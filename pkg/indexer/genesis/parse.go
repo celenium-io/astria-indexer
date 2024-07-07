@@ -66,21 +66,23 @@ func (module *Module) parseAccounts(accounts []types.Account, height pkgTypes.Le
 	for i := range accounts {
 		address := storage.Address{
 			Height: height,
-			Balance: &storage.Balance{
-				Total:    decimal.RequireFromString(accounts[i].Balance.String()),
-				Currency: currency.DefaultCurrency,
+			Balance: []*storage.Balance{
+				{
+					Total:    decimal.RequireFromString(accounts[i].Balance.String()),
+					Currency: currency.DefaultCurrency,
+				},
 			},
 		}
 
 		address.Hash = accounts[i].Address.Value
 		data.addresses[address.String()] = &address
 
-		data.supply = data.supply.Add(address.Balance.Total)
+		data.supply = data.supply.Add(address.Balance[0].Total)
 
 		data.balanceUpdates = append(data.balanceUpdates, storage.BalanceUpdate{
 			Address:  &address,
-			Update:   address.Balance.Total,
-			Currency: address.Balance.Currency,
+			Update:   address.Balance[0].Total,
+			Currency: address.Balance[0].Currency,
 			Height:   0,
 		})
 	}
@@ -106,9 +108,11 @@ func (module *Module) parseValidators(validators []types.Validator, height pkgTy
 			address := storage.Address{
 				Hash:   addr,
 				Height: height,
-				Balance: &storage.Balance{
-					Total:    decimal.Zero,
-					Currency: currency.DefaultCurrency,
+				Balance: []*storage.Balance{
+					{
+						Total:    decimal.Zero,
+						Currency: currency.DefaultCurrency,
+					},
 				},
 			}
 

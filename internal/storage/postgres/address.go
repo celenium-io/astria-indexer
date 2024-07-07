@@ -9,6 +9,7 @@ import (
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-net/go-lib/database"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
+	"github.com/uptrace/bun"
 )
 
 // Address -
@@ -25,7 +26,8 @@ func NewAddress(db *database.Bun) *Address {
 
 // ByHash -
 func (a *Address) ByHash(ctx context.Context, hash string) (address storage.Address, err error) {
-	err = a.DB().NewSelect().Model(&address).
+	err = a.DB().NewSelect().
+		Model(&address).
 		Where("hash = ?", hash).
 		Relation("Balance").
 		Scan(ctx)
@@ -33,9 +35,12 @@ func (a *Address) ByHash(ctx context.Context, hash string) (address storage.Addr
 }
 
 func (a *Address) ListWithBalance(ctx context.Context, fltrs storage.AddressListFilter) (address []storage.Address, err error) {
-	query := a.DB().NewSelect().Model(&address).
+	query := a.DB().NewSelect().
+		Model(&address).
 		Offset(fltrs.Offset).
-		Relation("Balance")
+		Relation("Balance", func(sq *bun.SelectQuery) *bun.SelectQuery {
+			return sq.Where("currency = 'nria'")
+		})
 
 	query = addressListFilter(query, fltrs)
 

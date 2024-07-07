@@ -35,10 +35,12 @@ var (
 		Nonce:         10,
 		ActionsCount:  1,
 		SignedTxCount: 1,
-		Balance: &storage.Balance{
-			Currency: currency.DefaultCurrency,
-			Total:    decimal.RequireFromString("1000"),
-			Id:       1,
+		Balance: []*storage.Balance{
+			{
+				Currency: currency.DefaultCurrency,
+				Total:    decimal.RequireFromString("1000"),
+				Id:       1,
+			},
 		},
 	}
 	testAddressHash = testAddress.Hash

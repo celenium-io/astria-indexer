@@ -110,9 +110,11 @@ func TestDecodeActions(t *testing.T) {
 						Height:       1000,
 						Hash:         address,
 						ActionsCount: 1,
-						Balance: &storage.Balance{
-							Currency: currency.DefaultCurrency,
-							Total:    decimal.RequireFromString("1"),
+						Balance: []*storage.Balance{
+							{
+								Currency: currency.DefaultCurrency,
+								Total:    decimal.RequireFromString("1"),
+							},
 						},
 					},
 					Currency: currency.DefaultCurrency,
@@ -126,9 +128,11 @@ func TestDecodeActions(t *testing.T) {
 				Height:       1000,
 				Hash:         address,
 				ActionsCount: 1,
-				Balance: &storage.Balance{
-					Currency: currency.DefaultCurrency,
-					Total:    decimal.RequireFromString("1"),
+				Balance: []*storage.Balance{
+					{
+						Currency: currency.DefaultCurrency,
+						Total:    decimal.RequireFromString("1"),
+					},
 				},
 			},
 			ActionType: types.ActionTypeIcs20Withdrawal,
@@ -140,9 +144,11 @@ func TestDecodeActions(t *testing.T) {
 				Height:       1000,
 				Hash:         from,
 				ActionsCount: 1,
-				Balance: &storage.Balance{
-					Currency: currency.DefaultCurrency,
-					Total:    decimal.RequireFromString("-1"),
+				Balance: []*storage.Balance{
+					{
+						Currency: currency.DefaultCurrency,
+						Total:    decimal.RequireFromString("-1"),
+					},
 				},
 			},
 			ActionType: types.ActionTypeIcs20Withdrawal,
@@ -162,18 +168,7 @@ func TestDecodeActions(t *testing.T) {
 		decodeContext := NewContext()
 
 		from := testsuite.RandomAddress()
-		decodeContext.Addresses.Set(from, 1000, decimal.Zero, 0, 1)
-
-		addressModel := &storage.Address{
-			Height:        1000,
-			Hash:          from,
-			ActionsCount:  1,
-			SignedTxCount: 1,
-			Balance: &storage.Balance{
-				Currency: currency.DefaultCurrency,
-				Total:    decimal.Zero,
-			},
-		}
+		addressModel := decodeContext.Addresses.Set(from, 1000, decimal.Zero, "", 0, 1)
 
 		message := &astria.Action_SequenceAction{
 			SequenceAction: &astria.SequenceAction{
@@ -245,7 +240,7 @@ func TestDecodeActions(t *testing.T) {
 				Height:       1000,
 				ActionsCount: 1,
 				Hash:         newAddress,
-				Balance:      &balance,
+				Balance:      []*storage.Balance{&balance},
 			},
 			ActionType: types.ActionTypeSudoAddressChange,
 			Action:     &wantAction,
@@ -269,9 +264,11 @@ func TestDecodeActions(t *testing.T) {
 			Hash:          from,
 			ActionsCount:  1,
 			SignedTxCount: 0,
-			Balance: &storage.Balance{
-				Currency: currency.DefaultCurrency,
-				Total:    decimal.RequireFromString("-10"),
+			Balance: []*storage.Balance{
+				{
+					Currency: currency.DefaultCurrency,
+					Total:    decimal.RequireFromString("-10"),
+				},
 			},
 		}
 
@@ -281,9 +278,11 @@ func TestDecodeActions(t *testing.T) {
 			Hash:          to,
 			ActionsCount:  1,
 			SignedTxCount: 0,
-			Balance: &storage.Balance{
-				Currency: currency.DefaultCurrency,
-				Total:    decimal.RequireFromString("10"),
+			Balance: []*storage.Balance{
+				{
+					Currency: currency.DefaultCurrency,
+					Total:    decimal.RequireFromString("10"),
+				},
 			},
 		}
 
@@ -311,13 +310,13 @@ func TestDecodeActions(t *testing.T) {
 			BalanceUpdates: []storage.BalanceUpdate{
 				{
 					Address:  toModel,
-					Update:   toModel.Balance.Total,
-					Currency: toModel.Balance.Currency,
+					Update:   toModel.Balance[0].Total,
+					Currency: toModel.Balance[0].Currency,
 					Height:   1000,
 				}, {
 					Address:  fromModel,
-					Update:   fromModel.Balance.Total,
-					Currency: fromModel.Balance.Currency,
+					Update:   fromModel.Balance[0].Total,
+					Currency: fromModel.Balance[0].Currency,
 					Height:   1000,
 				},
 			},
@@ -352,9 +351,11 @@ func TestDecodeActions(t *testing.T) {
 			Hash:          from,
 			ActionsCount:  1,
 			SignedTxCount: 0,
-			Balance: &storage.Balance{
-				Currency: currency.DefaultCurrency,
-				Total:    decimal.Zero,
+			Balance: []*storage.Balance{
+				{
+					Currency: currency.DefaultCurrency,
+					Total:    decimal.Zero,
+				},
 			},
 		}
 
@@ -428,7 +429,7 @@ func TestDecodeActions(t *testing.T) {
 				Height:       1000,
 				ActionsCount: 1,
 				Hash:         address,
-				Balance:      &balance,
+				Balance:      []*storage.Balance{&balance},
 			},
 			ActionType: types.ActionTypeValidatorUpdate,
 			Action:     &wantAction,
@@ -523,9 +524,11 @@ func TestDecodeActions(t *testing.T) {
 			Hash:          to,
 			ActionsCount:  1,
 			SignedTxCount: 0,
-			Balance: &storage.Balance{
-				Currency: currency.DefaultCurrency,
-				Total:    decimal.RequireFromString("10"),
+			Balance: []*storage.Balance{
+				{
+					Currency: currency.DefaultCurrency,
+					Total:    decimal.RequireFromString("10"),
+				},
 			},
 		}
 
@@ -535,9 +538,11 @@ func TestDecodeActions(t *testing.T) {
 			Hash:          from,
 			ActionsCount:  1,
 			SignedTxCount: 0,
-			Balance: &storage.Balance{
-				Currency: currency.DefaultCurrency,
-				Total:    decimal.RequireFromString("-10"),
+			Balance: []*storage.Balance{
+				{
+					Currency: currency.DefaultCurrency,
+					Total:    decimal.RequireFromString("-10"),
+				},
 			},
 		}
 
@@ -555,14 +560,14 @@ func TestDecodeActions(t *testing.T) {
 			BalanceUpdates: []storage.BalanceUpdate{
 				{
 					Address:  toModel,
-					Update:   toModel.Balance.Total,
-					Currency: toModel.Balance.Currency,
+					Update:   toModel.Balance[0].Total,
+					Currency: toModel.Balance[0].Currency,
 					Height:   1000,
 				},
 				{
 					Address:  fromModel,
-					Update:   fromModel.Balance.Total,
-					Currency: fromModel.Balance.Currency,
+					Update:   fromModel.Balance[0].Total,
+					Currency: fromModel.Balance[0].Currency,
 					Height:   1000,
 				},
 			},
@@ -614,9 +619,11 @@ func TestDecodeActions(t *testing.T) {
 			Hash:          to,
 			ActionsCount:  1,
 			SignedTxCount: 0,
-			Balance: &storage.Balance{
-				Currency: currency.DefaultCurrency,
-				Total:    decimal.RequireFromString("10"),
+			Balance: []*storage.Balance{
+				{
+					Currency: currency.DefaultCurrency,
+					Total:    decimal.RequireFromString("10"),
+				},
 			},
 		}
 
@@ -673,9 +680,11 @@ func TestDecodeActions(t *testing.T) {
 			Hash:          to,
 			ActionsCount:  1,
 			SignedTxCount: 0,
-			Balance: &storage.Balance{
-				Currency: currency.DefaultCurrency,
-				Total:    decimal.RequireFromString("10"),
+			Balance: []*storage.Balance{
+				{
+					Currency: currency.DefaultCurrency,
+					Total:    decimal.RequireFromString("10"),
+				},
 			},
 		}
 		fromModel := &storage.Address{
@@ -683,9 +692,11 @@ func TestDecodeActions(t *testing.T) {
 			Hash:          bridge,
 			ActionsCount:  1,
 			SignedTxCount: 0,
-			Balance: &storage.Balance{
-				Currency: currency.DefaultCurrency,
-				Total:    decimal.RequireFromString("-10"),
+			Balance: []*storage.Balance{
+				{
+					Currency: currency.DefaultCurrency,
+					Total:    decimal.RequireFromString("-10"),
+				},
 			},
 		}
 
@@ -697,20 +708,20 @@ func TestDecodeActions(t *testing.T) {
 				"to":        to,
 				"bridge":    bridge,
 				"amount":    "10",
-				"memo":      "memo",
+				"memo":      "6d656d6f",
 			},
 			Addresses: make([]*storage.AddressAction, 0),
 			BalanceUpdates: []storage.BalanceUpdate{
 				{
 					Address:  toModel,
-					Update:   toModel.Balance.Total,
-					Currency: toModel.Balance.Currency,
+					Update:   toModel.Balance[0].Total,
+					Currency: toModel.Balance[0].Currency,
 					Height:   1000,
 				},
 				{
 					Address:  fromModel,
-					Update:   fromModel.Balance.Total,
-					Currency: fromModel.Balance.Currency,
+					Update:   fromModel.Balance[0].Total,
+					Currency: fromModel.Balance[0].Currency,
 					Height:   1000,
 				},
 			},
@@ -746,8 +757,8 @@ func TestDecodeActions(t *testing.T) {
 		sudo := testsuite.RandomAddress()
 		withdrawer := testsuite.RandomAddress()
 
-		sudoAddr := decodeContext.Addresses.Set(sudo, 1000, decimal.Zero, 1, 0)
-		wdwAddr := decodeContext.Addresses.Set(withdrawer, 1000, decimal.Zero, 1, 0)
+		sudoAddr := decodeContext.Addresses.Set(sudo, 1000, decimal.Zero, "", 1, 0)
+		wdwAddr := decodeContext.Addresses.Set(withdrawer, 1000, decimal.Zero, "", 1, 0)
 
 		message := &astria.Action_InitBridgeAccountAction{
 			InitBridgeAccountAction: &astria.InitBridgeAccountAction{
@@ -819,9 +830,11 @@ func TestDecodeActions(t *testing.T) {
 			Hash:          address,
 			ActionsCount:  1,
 			SignedTxCount: 0,
-			Balance: &storage.Balance{
-				Currency: currency.DefaultCurrency,
-				Total:    decimal.Zero,
+			Balance: []*storage.Balance{
+				{
+					Currency: currency.DefaultCurrency,
+					Total:    decimal.Zero,
+				},
 			},
 		}
 
@@ -865,9 +878,11 @@ func TestDecodeActions(t *testing.T) {
 			Hash:          address,
 			ActionsCount:  1,
 			SignedTxCount: 0,
-			Balance: &storage.Balance{
-				Currency: currency.DefaultCurrency,
-				Total:    decimal.Zero,
+			Balance: []*storage.Balance{
+				{
+					Currency: currency.DefaultCurrency,
+					Total:    decimal.Zero,
+				},
 			},
 		}
 
@@ -1116,9 +1131,11 @@ func TestDecodeActions(t *testing.T) {
 				Height:       1000,
 				Hash:         bridge,
 				ActionsCount: 1,
-				Balance: &storage.Balance{
-					Currency: currency.DefaultCurrency,
-					Total:    decimal.Zero,
+				Balance: []*storage.Balance{
+					{
+						Currency: currency.DefaultCurrency,
+						Total:    decimal.Zero,
+					},
 				},
 			},
 			ActionType: types.ActionTypeBridgeSudoChangeAction,
@@ -1129,9 +1146,11 @@ func TestDecodeActions(t *testing.T) {
 				Height:       1000,
 				Hash:         sudo,
 				ActionsCount: 1,
-				Balance: &storage.Balance{
-					Currency: currency.DefaultCurrency,
-					Total:    decimal.Zero,
+				Balance: []*storage.Balance{
+					{
+						Currency: currency.DefaultCurrency,
+						Total:    decimal.Zero,
+					},
 				},
 			},
 			ActionType: types.ActionTypeBridgeSudoChangeAction,
@@ -1142,9 +1161,11 @@ func TestDecodeActions(t *testing.T) {
 				Height:       1000,
 				Hash:         withdrawer,
 				ActionsCount: 1,
-				Balance: &storage.Balance{
-					Currency: currency.DefaultCurrency,
-					Total:    decimal.Zero,
+				Balance: []*storage.Balance{
+					{
+						Currency: currency.DefaultCurrency,
+						Total:    decimal.Zero,
+					},
 				},
 			},
 			ActionType: types.ActionTypeBridgeSudoChangeAction,

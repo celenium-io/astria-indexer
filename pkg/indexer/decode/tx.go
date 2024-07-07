@@ -44,7 +44,7 @@ func Tx(b types.BlockData, index int, ctx *Context) (d DecodedTx, err error) {
 	if err != nil {
 		return d, errors.Wrapf(err, "decode publick key: %x", d.Tx.GetPublicKey())
 	}
-	d.Signer = ctx.Addresses.Set(address, b.Height, decimal.Zero, 0, 1)
+	d.Signer = ctx.Addresses.Set(address, b.Height, decimal.Zero, "", 0, 1)
 	ctx.Addresses.UpdateNonce(address, d.UnsignedTx.GetParams().GetNonce())
 
 	d.Actions, err = parseActions(b.Height, b.Block.Time, address, &d, ctx)

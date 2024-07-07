@@ -19,8 +19,8 @@ type Address struct {
 	Nonce         uint32         `example:"10"                                            json:"nonce"           swaggertype:"integer"`
 	Hash          string         `example:"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2" json:"hash"            swaggertype:"string"`
 
-	Balance *Balance `json:"balance,omitempty"`
-	Bridge  *Bridge  `json:"bridge,omitempty"`
+	Balance []Balance `json:"balances,omitempty"`
+	Bridge  *Bridge   `json:"bridge,omitempty"`
 }
 
 func NewAddress(addr storage.Address, bridge *storage.Bridge) Address {
@@ -31,13 +31,14 @@ func NewAddress(addr storage.Address, bridge *storage.Bridge) Address {
 		SignedTxCount: addr.SignedTxCount,
 		Nonce:         addr.Nonce,
 		Hash:          addr.String(),
+		Balance:       make([]Balance, 0),
 	}
 
-	if addr.Balance != nil {
-		result.Balance = &Balance{
-			Currency: addr.Balance.Currency,
-			Value:    addr.Balance.Total.String(),
-		}
+	for i := range addr.Balance {
+		result.Balance = append(result.Balance, Balance{
+			Currency: addr.Balance[i].Currency,
+			Value:    addr.Balance[i].Total.String(),
+		})
 	}
 
 	if bridge != nil {

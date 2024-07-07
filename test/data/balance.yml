@@ -16,3 +16,6 @@
 - id: 8
   currency: nria
   total: 1
+- id: 1
+  currency: test
+  total: 10

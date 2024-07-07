@@ -2212,8 +2212,11 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 10
                 },
-                "balance": {
-                    "$ref": "#/definitions/responses.Balance"
+                "balances": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/responses.Balance"
+                    }
                 },
                 "bridge": {
                     "$ref": "#/definitions/responses.Bridge"

@@ -37,7 +37,7 @@ type Address struct {
 	ActionsCount  int64       `bun:"actions_count"               comment:"Count of actions in which the address was involved"`
 	SignedTxCount int64       `bun:"signed_tx_count"             comment:"Count of signed transactions"`
 
-	Balance *Balance `bun:"rel:has-one,join:id=id"`
+	Balance []*Balance `bun:"rel:has-many,join:id=id"`
 }
 
 // TableName -
