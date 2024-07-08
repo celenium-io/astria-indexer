@@ -362,7 +362,7 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from st
 			InitHeight: height,
 			Asset:      body.InitBridgeAccountAction.GetAsset(),
 			FeeAsset:   body.InitBridgeAccountAction.GetFeeAsset(),
-			Address:    ctx.Addresses.Set(from, height, decimal.Zero, "", 1, 0),
+			Address:    ctx.Addresses.Set(from, height, decimal.Zero, "", 0, 0),
 			Rollup:     rollup,
 		}
 
