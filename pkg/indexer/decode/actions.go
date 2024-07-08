@@ -435,43 +435,47 @@ func parseBridgeSudoChange(body *astria.Action_BridgeSudoChangeAction, height ty
 		})
 
 		bridge := storage.Bridge{
-			Address: bridgeAddr,
+			Address:    bridgeAddr,
+			Sudo:       bridgeAddr,
+			Withdrawer: bridgeAddr,
 		}
 
 		if sudo != "" {
 			action.Data["sudo"] = sudo
 
-			sudoActionsCount := 1
-			if bridgeAddress == sudo {
-				sudoActionsCount = 0
+			if bridgeAddress != sudo {
+				addr := ctx.Addresses.Set(sudo, height, decimal.Zero, "", 1, 0)
+				action.Addresses = append(action.Addresses, &storage.AddressAction{
+					Address:    addr,
+					Action:     action,
+					Time:       action.Time,
+					Height:     action.Height,
+					ActionType: action.Type,
+				})
+				bridge.Sudo = addr
 			}
-			addr := ctx.Addresses.Set(sudo, height, decimal.Zero, "", sudoActionsCount, 0)
-			action.Addresses = append(action.Addresses, &storage.AddressAction{
-				Address:    addr,
-				Action:     action,
-				Time:       action.Time,
-				Height:     action.Height,
-				ActionType: action.Type,
-			})
-			bridge.Sudo = addr
 		}
 
 		if withdrawer != "" {
 			action.Data["withdrawer"] = withdrawer
 
-			withdrawerActionsCount := 1
-			if bridgeAddress == withdrawer || sudo == withdrawer {
-				withdrawerActionsCount = 0
+			actions := 1
+			if sudo == withdrawer || bridgeAddress == withdrawer {
+				actions = 0
 			}
-			addr := ctx.Addresses.Set(withdrawer, height, decimal.Zero, "", withdrawerActionsCount, 0)
-			action.Addresses = append(action.Addresses, &storage.AddressAction{
-				Address:    addr,
-				Action:     action,
-				Time:       action.Time,
-				Height:     action.Height,
-				ActionType: action.Type,
-			})
+			addr := ctx.Addresses.Set(withdrawer, height, decimal.Zero, "", actions, 0)
 			bridge.Withdrawer = addr
+
+			if bridgeAddress != withdrawer && sudo != withdrawer {
+				action.Addresses = append(action.Addresses, &storage.AddressAction{
+					Address:    addr,
+					Action:     action,
+					Time:       action.Time,
+					Height:     action.Height,
+					ActionType: action.Type,
+				})
+			}
+
 		}
 
 		if feeAsset != "" {
