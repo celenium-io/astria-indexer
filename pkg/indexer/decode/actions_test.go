@@ -1179,4 +1179,257 @@ func TestDecodeActions(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
+
+	t.Run("bridge sudo change: bridge is suor", func(t *testing.T) {
+		decodeContext := NewContext()
+		bridge := testsuite.RandomAddress()
+		sudo := bridge
+		withdrawer := testsuite.RandomAddress()
+
+		message := &astria.Action_BridgeSudoChangeAction{
+			BridgeSudoChangeAction: &astria.BridgeSudoChangeAction{
+				FeeAsset:             feeAssetId,
+				BridgeAddress:        &primitivev1.Address{Bech32M: bridge},
+				NewWithdrawerAddress: &primitivev1.Address{Bech32M: withdrawer},
+				NewSudoAddress:       &primitivev1.Address{Bech32M: sudo},
+			},
+		}
+
+		wantAction := storage.Action{
+			Type: types.ActionTypeBridgeSudoChangeAction,
+			Data: map[string]any{
+				"fee_asset":  feeAssetId,
+				"withdrawer": withdrawer,
+				"sudo":       sudo,
+				"bridge":     bridge,
+			},
+			Height:    1000,
+			Addresses: make([]*storage.AddressAction, 0),
+		}
+
+		wantAction.Addresses = append(wantAction.Addresses, &storage.AddressAction{
+			Height: 1000,
+			Address: &storage.Address{
+				Height:       1000,
+				Hash:         bridge,
+				ActionsCount: 1,
+				Balance: []*storage.Balance{
+					{
+						Currency: currency.DefaultCurrency,
+						Total:    decimal.Zero,
+					},
+				},
+			},
+			ActionType: types.ActionTypeBridgeSudoChangeAction,
+			Action:     &wantAction,
+		}, &storage.AddressAction{
+			Height: 1000,
+			Address: &storage.Address{
+				Height:       1000,
+				Hash:         withdrawer,
+				ActionsCount: 1,
+				Balance: []*storage.Balance{
+					{
+						Currency: currency.DefaultCurrency,
+						Total:    decimal.Zero,
+					},
+				},
+			},
+			ActionType: types.ActionTypeBridgeSudoChangeAction,
+			Action:     &wantAction,
+		})
+
+		action := storage.Action{
+			Height: 1000,
+		}
+		err := parseBridgeSudoChange(message, 1000, &decodeContext, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+	})
+
+	t.Run("bridge sudo change: bridge is withdrawer", func(t *testing.T) {
+		decodeContext := NewContext()
+		bridge := testsuite.RandomAddress()
+		sudo := testsuite.RandomAddress()
+		withdrawer := bridge
+
+		message := &astria.Action_BridgeSudoChangeAction{
+			BridgeSudoChangeAction: &astria.BridgeSudoChangeAction{
+				FeeAsset:             feeAssetId,
+				BridgeAddress:        &primitivev1.Address{Bech32M: bridge},
+				NewWithdrawerAddress: &primitivev1.Address{Bech32M: withdrawer},
+				NewSudoAddress:       &primitivev1.Address{Bech32M: sudo},
+			},
+		}
+
+		wantAction := storage.Action{
+			Type: types.ActionTypeBridgeSudoChangeAction,
+			Data: map[string]any{
+				"fee_asset":  feeAssetId,
+				"withdrawer": withdrawer,
+				"sudo":       sudo,
+				"bridge":     bridge,
+			},
+			Height:    1000,
+			Addresses: make([]*storage.AddressAction, 0),
+		}
+
+		wantAction.Addresses = append(wantAction.Addresses, &storage.AddressAction{
+			Height: 1000,
+			Address: &storage.Address{
+				Height:       1000,
+				Hash:         bridge,
+				ActionsCount: 1,
+				Balance: []*storage.Balance{
+					{
+						Currency: currency.DefaultCurrency,
+						Total:    decimal.Zero,
+					},
+				},
+			},
+			ActionType: types.ActionTypeBridgeSudoChangeAction,
+			Action:     &wantAction,
+		}, &storage.AddressAction{
+			Height: 1000,
+			Address: &storage.Address{
+				Height:       1000,
+				Hash:         sudo,
+				ActionsCount: 1,
+				Balance: []*storage.Balance{
+					{
+						Currency: currency.DefaultCurrency,
+						Total:    decimal.Zero,
+					},
+				},
+			},
+			ActionType: types.ActionTypeBridgeSudoChangeAction,
+			Action:     &wantAction,
+		})
+
+		action := storage.Action{
+			Height: 1000,
+		}
+		err := parseBridgeSudoChange(message, 1000, &decodeContext, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+	})
+
+	t.Run("bridge sudo change: sudo is withdrawer", func(t *testing.T) {
+		decodeContext := NewContext()
+		bridge := testsuite.RandomAddress()
+		sudo := testsuite.RandomAddress()
+		withdrawer := sudo
+
+		message := &astria.Action_BridgeSudoChangeAction{
+			BridgeSudoChangeAction: &astria.BridgeSudoChangeAction{
+				FeeAsset:             feeAssetId,
+				BridgeAddress:        &primitivev1.Address{Bech32M: bridge},
+				NewWithdrawerAddress: &primitivev1.Address{Bech32M: withdrawer},
+				NewSudoAddress:       &primitivev1.Address{Bech32M: sudo},
+			},
+		}
+
+		wantAction := storage.Action{
+			Type: types.ActionTypeBridgeSudoChangeAction,
+			Data: map[string]any{
+				"fee_asset":  feeAssetId,
+				"withdrawer": withdrawer,
+				"sudo":       sudo,
+				"bridge":     bridge,
+			},
+			Height:    1000,
+			Addresses: make([]*storage.AddressAction, 0),
+		}
+
+		wantAction.Addresses = append(wantAction.Addresses, &storage.AddressAction{
+			Height: 1000,
+			Address: &storage.Address{
+				Height:       1000,
+				Hash:         bridge,
+				ActionsCount: 1,
+				Balance: []*storage.Balance{
+					{
+						Currency: currency.DefaultCurrency,
+						Total:    decimal.Zero,
+					},
+				},
+			},
+			ActionType: types.ActionTypeBridgeSudoChangeAction,
+			Action:     &wantAction,
+		}, &storage.AddressAction{
+			Height: 1000,
+			Address: &storage.Address{
+				Height:       1000,
+				Hash:         sudo,
+				ActionsCount: 1,
+				Balance: []*storage.Balance{
+					{
+						Currency: currency.DefaultCurrency,
+						Total:    decimal.Zero,
+					},
+				},
+			},
+			ActionType: types.ActionTypeBridgeSudoChangeAction,
+			Action:     &wantAction,
+		})
+
+		action := storage.Action{
+			Height: 1000,
+		}
+		err := parseBridgeSudoChange(message, 1000, &decodeContext, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+	})
+
+	t.Run("bridge sudo change: all equals", func(t *testing.T) {
+		decodeContext := NewContext()
+		bridge := testsuite.RandomAddress()
+		sudo := bridge
+		withdrawer := bridge
+
+		message := &astria.Action_BridgeSudoChangeAction{
+			BridgeSudoChangeAction: &astria.BridgeSudoChangeAction{
+				FeeAsset:             feeAssetId,
+				BridgeAddress:        &primitivev1.Address{Bech32M: bridge},
+				NewWithdrawerAddress: &primitivev1.Address{Bech32M: withdrawer},
+				NewSudoAddress:       &primitivev1.Address{Bech32M: sudo},
+			},
+		}
+
+		wantAction := storage.Action{
+			Type: types.ActionTypeBridgeSudoChangeAction,
+			Data: map[string]any{
+				"fee_asset":  feeAssetId,
+				"withdrawer": withdrawer,
+				"sudo":       sudo,
+				"bridge":     bridge,
+			},
+			Height:    1000,
+			Addresses: make([]*storage.AddressAction, 0),
+		}
+
+		wantAction.Addresses = append(wantAction.Addresses, &storage.AddressAction{
+			Height: 1000,
+			Address: &storage.Address{
+				Height:       1000,
+				Hash:         bridge,
+				ActionsCount: 1,
+				Balance: []*storage.Balance{
+					{
+						Currency: currency.DefaultCurrency,
+						Total:    decimal.Zero,
+					},
+				},
+			},
+			ActionType: types.ActionTypeBridgeSudoChangeAction,
+			Action:     &wantAction,
+		})
+
+		action := storage.Action{
+			Height: 1000,
+		}
+		err := parseBridgeSudoChange(message, 1000, &decodeContext, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+	})
 }

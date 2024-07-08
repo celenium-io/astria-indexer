@@ -435,32 +435,47 @@ func parseBridgeSudoChange(body *astria.Action_BridgeSudoChangeAction, height ty
 		})
 
 		bridge := storage.Bridge{
-			Address: bridgeAddr,
+			Address:    bridgeAddr,
+			Sudo:       bridgeAddr,
+			Withdrawer: bridgeAddr,
 		}
 
 		if sudo != "" {
 			action.Data["sudo"] = sudo
-			addr := ctx.Addresses.Set(sudo, height, decimal.Zero, "", 1, 0)
-			action.Addresses = append(action.Addresses, &storage.AddressAction{
-				Address:    addr,
-				Action:     action,
-				Time:       action.Time,
-				Height:     action.Height,
-				ActionType: action.Type,
-			})
-			bridge.Sudo = addr
+
+			if bridgeAddress != sudo {
+				addr := ctx.Addresses.Set(sudo, height, decimal.Zero, "", 1, 0)
+				action.Addresses = append(action.Addresses, &storage.AddressAction{
+					Address:    addr,
+					Action:     action,
+					Time:       action.Time,
+					Height:     action.Height,
+					ActionType: action.Type,
+				})
+				bridge.Sudo = addr
+			}
 		}
+
 		if withdrawer != "" {
 			action.Data["withdrawer"] = withdrawer
-			addr := ctx.Addresses.Set(withdrawer, height, decimal.Zero, "", 1, 0)
-			action.Addresses = append(action.Addresses, &storage.AddressAction{
-				Address:    addr,
-				Action:     action,
-				Time:       action.Time,
-				Height:     action.Height,
-				ActionType: action.Type,
-			})
+
+			actions := 1
+			if sudo == withdrawer || bridgeAddress == withdrawer {
+				actions = 0
+			}
+			addr := ctx.Addresses.Set(withdrawer, height, decimal.Zero, "", actions, 0)
 			bridge.Withdrawer = addr
+
+			if bridgeAddress != withdrawer && sudo != withdrawer {
+				action.Addresses = append(action.Addresses, &storage.AddressAction{
+					Address:    addr,
+					Action:     action,
+					Time:       action.Time,
+					Height:     action.Height,
+					ActionType: action.Type,
+				})
+			}
+
 		}
 
 		if feeAsset != "" {
