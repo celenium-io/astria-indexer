@@ -791,19 +791,20 @@ func TestDecodeActions(t *testing.T) {
 			Addresses: make([]*storage.AddressAction, 0),
 		}
 		wantAction.RollupAction.Action = &wantAction
-		wantAction.Addresses = append(wantAction.Addresses, &storage.AddressAction{
-			Address:    sudoAddr,
-			Height:     1000,
-			Time:       wantAction.Time,
-			Action:     &wantAction,
-			ActionType: types.ActionTypeInitBridgeAccount,
-		}, &storage.AddressAction{
-			Address:    wdwAddr,
-			Height:     1000,
-			Time:       wantAction.Time,
-			Action:     &wantAction,
-			ActionType: types.ActionTypeInitBridgeAccount,
-		})
+		wantAction.Addresses = append(wantAction.Addresses,
+			&storage.AddressAction{
+				Address:    sudoAddr,
+				Height:     1000,
+				Time:       wantAction.Time,
+				Action:     &wantAction,
+				ActionType: types.ActionTypeInitBridgeAccount,
+			}, &storage.AddressAction{
+				Address:    wdwAddr,
+				Height:     1000,
+				Time:       wantAction.Time,
+				Action:     &wantAction,
+				ActionType: types.ActionTypeInitBridgeAccount,
+			})
 
 		action := storage.Action{
 			Height: 1000,
