@@ -814,6 +814,50 @@ func TestDecodeActions(t *testing.T) {
 		require.Equal(t, wantAction, action)
 	})
 
+	t.Run("init bridge account: the same address", func(t *testing.T) {
+		decodeContext := NewContext()
+
+		rollupId := testsuite.RandomHash(10)
+		from := testsuite.RandomAddress()
+		message := &astria.Action_InitBridgeAccountAction{
+			InitBridgeAccountAction: &astria.InitBridgeAccountAction{
+				RollupId:          &primitivev1.RollupId{Inner: rollupId},
+				FeeAsset:          feeAssetId,
+				Asset:             assetId,
+				SudoAddress:       &primitivev1.Address{Bech32M: from},
+				WithdrawerAddress: &primitivev1.Address{Bech32M: from},
+			},
+		}
+
+		wantAction := storage.Action{
+			Height: 1000,
+			Type:   types.ActionTypeInitBridgeAccount,
+			Data: map[string]any{
+				"rollup_id":  rollupId,
+				"asset":      assetId,
+				"fee_asset":  feeAssetId,
+				"sudo":       from,
+				"withdrawer": from,
+			},
+			RollupAction: &storage.RollupAction{
+				Height: 1000,
+				Rollup: &storage.Rollup{
+					AstriaId:     message.InitBridgeAccountAction.GetRollupId().GetInner(),
+					FirstHeight:  1000,
+					ActionsCount: 1,
+				},
+			},
+		}
+		wantAction.RollupAction.Action = &wantAction
+
+		action := storage.Action{
+			Height: 1000,
+		}
+		err := parseInitBridgeAccount(message, from, 1000, &decodeContext, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+	})
+
 	t.Run("ibc relayer change: addition", func(t *testing.T) {
 		decodeContext := NewContext()
 
