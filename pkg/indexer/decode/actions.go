@@ -383,7 +383,9 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from st
 				})
 				bridge.Sudo = addr
 			}
-		} else {
+		}
+
+		if bridge.Sudo == nil {
 			bridge.Sudo = bridge.Address
 		}
 
@@ -400,7 +402,9 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from st
 				})
 				bridge.Withdrawer = addr
 			}
-		} else {
+		}
+
+		if bridge.Withdrawer == nil {
 			bridge.Withdrawer = bridge.Address
 		}
 
