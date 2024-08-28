@@ -31,7 +31,23 @@ func TestParseTxs_SuccessTx(t *testing.T) {
 		Info:      "info",
 		GasWanted: 12000,
 		GasUsed:   1000,
-		Events:    nil,
+		Events: []types.Event{
+			{
+				Type: "tx.fees",
+				Attributes: []types.EventAttribute{
+					{
+						Key:   "asset",
+						Value: "ibc/704031c868fd3d3c84a1cfa8cb45deba4ea746b44697f7f4a6ed1b8f6c239b82",
+					}, {
+						Key:   "feeAmount",
+						Value: "153",
+					}, {
+						Key:   "actionType",
+						Value: "astria.protocol.transactions.v1alpha1.FeeAssetChangeAction",
+					},
+				},
+			},
+		},
 		Codespace: "codespace",
 	}
 	block, now := testsuite.CreateTestBlock(txRes, true)

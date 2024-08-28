@@ -4,7 +4,7 @@
 package types
 
 import (
-	"encoding/json"
+	"math/big"
 	"time"
 
 	"github.com/celenium-io/astria-indexer/pkg/types"
@@ -39,8 +39,8 @@ type AppState struct {
 }
 
 type Account struct {
-	Address Bech32m     `json:"address"`
-	Balance json.Number `json:"balance"`
+	Address Bech32m `json:"address"`
+	Balance BigInt  `json:"balance"`
 }
 
 type Bech32m struct {
@@ -52,11 +52,27 @@ type Prefixes struct {
 }
 
 type Fees struct {
-	TransferBaseFee              int64 `json:"transfer_base_fee"`
-	SequenceBaseFee              int64 `json:"sequence_base_fee"`
-	SequenceByteCostMultiplier   int64 `json:"sequence_byte_cost_multiplier"`
-	InitBridgeAccountBaseFee     int64 `json:"init_bridge_account_base_fee"`
-	BridgeLockByteCostMultiplier int64 `json:"bridge_lock_byte_cost_multiplier"`
-	Ics20WithdrawalBaseFee       int64 `json:"ics20_withdrawal_base_fee"`
-	BridgeSudoChangeFee          int64 `json:"bridge_sudo_change_fee"`
+	TransferBaseFee              BigInt `json:"transfer_base_fee"`
+	SequenceBaseFee              BigInt `json:"sequence_base_fee"`
+	SequenceByteCostMultiplier   BigInt `json:"sequence_byte_cost_multiplier"`
+	InitBridgeAccountBaseFee     BigInt `json:"init_bridge_account_base_fee"`
+	BridgeLockByteCostMultiplier BigInt `json:"bridge_lock_byte_cost_multiplier"`
+	Ics20WithdrawalBaseFee       BigInt `json:"ics20_withdrawal_base_fee"`
+	BridgeSudoChangeFee          BigInt `json:"bridge_sudo_change_fee"`
+}
+
+type BigInt struct {
+	Low  uint64 `json:"lo"`
+	High uint64 `json:"hi"`
+}
+
+func (bi BigInt) String() string {
+	b := new(big.Int)
+	b = b.SetUint64(bi.High)
+	b = b.Lsh(b, 64)
+
+	lo := new(big.Int)
+	lo = lo.SetUint64(bi.Low)
+	b = b.Xor(b, lo)
+	return b.String()
 }

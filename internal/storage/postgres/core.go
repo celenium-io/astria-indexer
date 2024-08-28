@@ -28,6 +28,7 @@ type Storage struct {
 	Bridges         models.IBridge
 	Constants       models.IConstant
 	Tx              models.ITx
+	Fee             models.IFee
 	Action          models.IAction
 	Address         models.IAddress
 	Rollup          models.IRollup
@@ -55,6 +56,7 @@ func Create(ctx context.Context, cfg config.Database, scriptsDir string) (Storag
 		Bridges:         NewBridge(strg.Connection()),
 		Constants:       NewConstant(strg.Connection()),
 		Action:          NewAction(strg.Connection()),
+		Fee:             NewFee(strg.Connection()),
 		Address:         NewAddress(strg.Connection()),
 		BlockSignatures: NewBlockSignature(strg.Connection()),
 		Rollup:          NewRollup(strg.Connection()),

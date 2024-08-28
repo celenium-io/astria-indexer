@@ -22,16 +22,17 @@ func (p *Module) parse(b types.BlockData) error {
 		Int64("height", b.Block.Height).
 		Msg("parsing block...")
 
+	proposer, err := astria.EncodeFromHex(b.Block.ProposerAddress.String())
+	if err != nil {
+		return errors.Wrap(err, "decoding block proposer address")
+	}
+
 	decodeCtx := decode.NewContext()
+	decodeCtx.Proposer = proposer
 
 	txs, err := parseTxs(b, &decodeCtx)
 	if err != nil {
 		return errors.Wrapf(err, "while parsing block on level=%d", b.Height)
-	}
-
-	proposer, err := astria.EncodeFromHex(b.Block.ProposerAddress.String())
-	if err != nil {
-		return errors.Wrap(err, "decoding block proposer address")
 	}
 
 	block := &storage.Block{

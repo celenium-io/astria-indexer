@@ -8,14 +8,13 @@ import (
 	"encoding/hex"
 
 	"github.com/celenium-io/astria-indexer/pkg/types"
-	"github.com/dipdup-net/indexer-sdk/pkg/storage"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/uptrace/bun"
 )
 
 //go:generate mockgen -source=$GOFILE -destination=mock/$GOFILE -package=mock -typed
 type IRollup interface {
-	storage.Table[*Rollup]
+	sdk.Table[*Rollup]
 
 	ActionsByHeight(ctx context.Context, height types.Level, limit, offset int) ([]RollupAction, error)
 	CountActionsByHeight(ctx context.Context, height types.Level) (int64, error)

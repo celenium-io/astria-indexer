@@ -25,6 +25,8 @@ type Context struct {
 	ActionTypes    storageTypes.Bits
 	Constants      map[string]*storage.Constant
 	Bridges        map[string]*storage.Bridge
+	Fees           []*storage.Fee
+	Proposer       string
 }
 
 func NewContext() Context {
@@ -36,6 +38,7 @@ func NewContext() Context {
 		Validators:    NewValidators(),
 		Constants:     make(map[string]*storage.Constant),
 		Bridges:       make(map[string]*storage.Bridge),
+		Fees:          make([]*storage.Fee, 0),
 	}
 }
 
@@ -66,4 +69,8 @@ func (ctx *Context) BridgesArray() []*storage.Bridge {
 		arr = append(arr, val)
 	}
 	return arr
+}
+
+func (ctx *Context) AddFee(fee *storage.Fee) {
+	ctx.Fees = append(ctx.Fees, fee)
 }

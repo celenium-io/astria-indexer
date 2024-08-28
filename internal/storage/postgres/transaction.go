@@ -101,6 +101,15 @@ func (tx Transaction) SaveActions(ctx context.Context, actions ...*models.Action
 	return err
 }
 
+func (tx Transaction) SaveFees(ctx context.Context, fees ...*models.Fee) error {
+	if len(fees) == 0 {
+		return nil
+	}
+
+	_, err := tx.Tx().NewInsert().Model(&fees).Returning("id").Exec(ctx)
+	return err
+}
+
 func (tx Transaction) SaveValidators(ctx context.Context, validators ...*models.Validator) error {
 	if len(validators) == 0 {
 		return nil
@@ -308,6 +317,14 @@ func (tx Transaction) RollbackRollups(ctx context.Context, height types.Level) (
 		Model(&rollups).
 		Where("first_height = ?", height).
 		Returning("*").
+		Exec(ctx)
+	return
+}
+
+func (tx Transaction) RollbackFees(ctx context.Context, height types.Level) (err error) {
+	_, err = tx.Tx().NewDelete().
+		Model((*models.Fee)(nil)).
+		Where("height = ?", height).
 		Exec(ctx)
 	return
 }
