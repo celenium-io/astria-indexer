@@ -9,6 +9,8 @@ definitions:
       data:
         additionalProperties: {}
         type: object
+      fee:
+        $ref: '#/definitions/responses.Fee'
       height:
         example: 1000
         format: int64
@@ -191,6 +193,17 @@ definitions:
           type: string
         type: array
     type: object
+  responses.Fee:
+    properties:
+      amount:
+        example: "1000"
+        format: string
+        type: string
+      asset:
+        example: nria
+        format: string
+        type: string
+    type: object
   responses.NetworkSummary:
     properties:
       block_time:
@@ -318,6 +331,8 @@ definitions:
       data:
         additionalProperties: {}
         type: object
+      fee:
+        $ref: '#/definitions/responses.Fee'
       height:
         example: 1000
         format: int64

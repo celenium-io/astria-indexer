@@ -2172,6 +2172,9 @@ const docTemplate = `{
                     "type": "object",
                     "additionalProperties": {}
                 },
+                "fee": {
+                    "$ref": "#/definitions/responses.Fee"
+                },
                 "height": {
                     "type": "integer",
                     "format": "int64",
@@ -2423,6 +2426,21 @@ const docTemplate = `{
                 }
             }
         },
+        "responses.Fee": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "1000"
+                },
+                "asset": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "nria"
+                }
+            }
+        },
         "responses.NetworkSummary": {
             "type": "object",
             "properties": {
@@ -2588,6 +2606,9 @@ const docTemplate = `{
                 "data": {
                     "type": "object",
                     "additionalProperties": {}
+                },
+                "fee": {
+                    "$ref": "#/definitions/responses.Fee"
                 },
                 "height": {
                     "type": "integer",
