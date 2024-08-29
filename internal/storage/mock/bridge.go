@@ -123,18 +123,18 @@ func (c *MockIBridgeByRolesCall) DoAndReturn(f func(context.Context, uint64, int
 }
 
 // ByRollup mocks base method.
-func (m *MockIBridge) ByRollup(ctx context.Context, rollupId uint64) (storage.Bridge, error) {
+func (m *MockIBridge) ByRollup(ctx context.Context, rollupId uint64, limit, offset int) ([]storage.Bridge, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ByRollup", ctx, rollupId)
-	ret0, _ := ret[0].(storage.Bridge)
+	ret := m.ctrl.Call(m, "ByRollup", ctx, rollupId, limit, offset)
+	ret0, _ := ret[0].([]storage.Bridge)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ByRollup indicates an expected call of ByRollup.
-func (mr *MockIBridgeMockRecorder) ByRollup(ctx, rollupId any) *MockIBridgeByRollupCall {
+func (mr *MockIBridgeMockRecorder) ByRollup(ctx, rollupId, limit, offset any) *MockIBridgeByRollupCall {
 	mr.mock.ctrl.T.Helper()
-	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ByRollup", reflect.TypeOf((*MockIBridge)(nil).ByRollup), ctx, rollupId)
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ByRollup", reflect.TypeOf((*MockIBridge)(nil).ByRollup), ctx, rollupId, limit, offset)
 	return &MockIBridgeByRollupCall{Call: call}
 }
 
@@ -144,19 +144,19 @@ type MockIBridgeByRollupCall struct {
 }
 
 // Return rewrite *gomock.Call.Return
-func (c *MockIBridgeByRollupCall) Return(arg0 storage.Bridge, arg1 error) *MockIBridgeByRollupCall {
+func (c *MockIBridgeByRollupCall) Return(arg0 []storage.Bridge, arg1 error) *MockIBridgeByRollupCall {
 	c.Call = c.Call.Return(arg0, arg1)
 	return c
 }
 
 // Do rewrite *gomock.Call.Do
-func (c *MockIBridgeByRollupCall) Do(f func(context.Context, uint64) (storage.Bridge, error)) *MockIBridgeByRollupCall {
+func (c *MockIBridgeByRollupCall) Do(f func(context.Context, uint64, int, int) ([]storage.Bridge, error)) *MockIBridgeByRollupCall {
 	c.Call = c.Call.Do(f)
 	return c
 }
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *MockIBridgeByRollupCall) DoAndReturn(f func(context.Context, uint64) (storage.Bridge, error)) *MockIBridgeByRollupCall {
+func (c *MockIBridgeByRollupCall) DoAndReturn(f func(context.Context, uint64, int, int) ([]storage.Bridge, error)) *MockIBridgeByRollupCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }

@@ -352,7 +352,7 @@ func (handler *AddressHandler) Rollups(c echo.Context) error {
 
 	response := make([]responses.Rollup, len(rollups))
 	for i := range rollups {
-		response[i] = responses.NewRollup(rollups[i].Rollup, nil)
+		response[i] = responses.NewRollup(rollups[i].Rollup)
 	}
 
 	return returnArray(c, response)

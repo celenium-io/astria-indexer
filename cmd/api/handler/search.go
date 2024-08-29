@@ -84,7 +84,7 @@ func (s *SearchHandler) Search(c echo.Context) error {
 			if err != nil {
 				return handleError(c, err, s.address)
 			}
-			body = responses.NewRollup(rollup, nil)
+			body = responses.NewRollup(rollup)
 		case "address":
 			address, err := s.address.GetByID(c.Request().Context(), results[i].Id)
 			if err != nil {

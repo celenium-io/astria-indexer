@@ -14,22 +14,15 @@ type Rollup struct {
 	AstriaId     []byte      `example:"O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc=" json:"hash"          swaggertype:"string"`
 	ActionsCount int64       `example:"101"                                          json:"actions_count" swaggertype:"integer"`
 	Size         int64       `example:"100"                                          json:"size"          swaggertype:"integer"`
-
-	Bridge *Bridge `json:"bridge,omitempty"`
 }
 
-func NewRollup(rollup *storage.Rollup, bridge *storage.Bridge) Rollup {
+func NewRollup(rollup *storage.Rollup) Rollup {
 	r := Rollup{
 		Id:           rollup.Id,
 		AstriaId:     rollup.AstriaId,
 		FirstHeight:  rollup.FirstHeight,
 		ActionsCount: rollup.ActionsCount,
 		Size:         rollup.Size,
-	}
-
-	if bridge != nil {
-		b := NewBridge(*bridge)
-		r.Bridge = &b
 	}
 
 	return r

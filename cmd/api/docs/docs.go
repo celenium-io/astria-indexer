@@ -1266,6 +1266,76 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/rollup/{hash}/bridges": {
+            "get": {
+                "description": "Get rollup bridges",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rollup"
+                ],
+                "summary": "Get rollup bridges",
+                "operationId": "rollup-bridges",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Base64Url encoded rollup id",
+                        "name": "hash",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Count of requested entities",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "description": "Sort order",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.Bridge"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/search": {
             "get": {
                 "produces": [
@@ -2578,9 +2648,6 @@ const docTemplate = `{
                 "actions_count": {
                     "type": "integer",
                     "example": 101
-                },
-                "bridge": {
-                    "$ref": "#/definitions/responses.Bridge"
                 },
                 "first_height": {
                     "type": "integer",

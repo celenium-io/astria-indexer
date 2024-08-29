@@ -318,6 +318,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 			rollupGroup.GET("", rollupsHandler.Get)
 			rollupGroup.GET("/actions", rollupsHandler.Actions)
 			rollupGroup.GET("/addresses", rollupsHandler.Addresses)
+			rollupGroup.GET("/bridges", rollupsHandler.Bridges)
 		}
 	}
 

@@ -69,16 +69,7 @@ func (handler *RollupHandler) Get(c echo.Context) error {
 		return handleError(c, err, handler.rollups)
 	}
 
-	bridge, err := handler.bridge.ByRollup(c.Request().Context(), rollup.Id)
-	if err != nil {
-		if !handler.bridge.IsNoRows(err) {
-			return handleError(c, err, handler.rollups)
-		} else {
-			return c.JSON(http.StatusOK, responses.NewRollup(&rollup, nil))
-		}
-	}
-
-	return c.JSON(http.StatusOK, responses.NewRollup(&rollup, &bridge))
+	return c.JSON(http.StatusOK, responses.NewRollup(&rollup))
 }
 
 type listRollupsRequest struct {
@@ -132,7 +123,7 @@ func (handler *RollupHandler) List(c echo.Context) error {
 
 	response := make([]responses.Rollup, len(rollups))
 	for i := range rollups {
-		response[i] = responses.NewRollup(&rollups[i], nil)
+		response[i] = responses.NewRollup(&rollups[i])
 	}
 
 	return returnArray(c, response)
@@ -258,6 +249,51 @@ func (handler *RollupHandler) Addresses(c echo.Context) error {
 		if addresses[i].Address != nil {
 			response[i] = responses.NewAddress(*addresses[i].Address, nil)
 		}
+	}
+
+	return returnArray(c, response)
+}
+
+// Bridges godoc
+//
+//	@Summary		Get rollup bridges
+//	@Description	Get rollup bridges
+//	@Tags			rollup
+//	@ID				rollup-bridges
+//	@Param			hash			path	string					true	"Base64Url encoded rollup id"
+//	@Param			limit			query	integer					false	"Count of requested entities"			minimum(1)		maximum(100)
+//	@Param			offset			query	integer					false	"Offset"								minimum(1)
+//	@Param			sort			query	string					false	"Sort order"							Enums(asc, desc)
+//	@Produce		json
+//	@Success		200	{array}		responses.Bridge
+//	@Failure		400	{object}	Error
+//	@Failure		500	{object}	Error
+//	@Router			/v1/rollup/{hash}/bridges [get]
+func (handler *RollupHandler) Bridges(c echo.Context) error {
+	req, err := bindAndValidate[getRollupList](c)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+	req.SetDefault()
+
+	hash, err := base64.URLEncoding.DecodeString(req.Hash)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+
+	rollup, err := handler.rollups.ByHash(c.Request().Context(), hash)
+	if err != nil {
+		return handleError(c, err, handler.rollups)
+	}
+
+	bridges, err := handler.bridge.ByRollup(c.Request().Context(), rollup.Id, req.Limit, req.Offset)
+	if err != nil {
+		return handleError(c, err, handler.rollups)
+	}
+
+	response := make([]responses.Bridge, len(bridges))
+	for i := range bridges {
+		response[i] = responses.NewBridge(bridges[i])
 	}
 
 	return returnArray(c, response)

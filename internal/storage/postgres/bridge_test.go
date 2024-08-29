@@ -42,9 +42,10 @@ func (s *StorageTestSuite) TestBridgeByRollup() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	bridge, err := s.storage.Bridges.ByRollup(ctx, 1)
+	bridges, err := s.storage.Bridges.ByRollup(ctx, 1, 10, 0)
 	s.Require().NoError(err)
 
+	bridge := bridges[0]
 	s.Require().EqualValues(7316, bridge.InitHeight)
 	s.Require().EqualValues(1, bridge.AddressId)
 	s.Require().EqualValues(1, bridge.SudoId)
