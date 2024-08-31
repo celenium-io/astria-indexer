@@ -141,9 +141,10 @@ func (tx Transaction) SaveRollups(ctx context.Context, rollups ...*models.Rollup
 	}
 
 	query := tx.Tx().NewInsert().Model(&rs).
-		Column("first_height", "astria_id", "actions_count", "size").
+		Column("first_height", "astria_id", "actions_count", "bridge_count", "size").
 		On("CONFLICT ON CONSTRAINT rollup_id DO UPDATE").
 		Set("actions_count = added_rollup.actions_count + EXCLUDED.actions_count").
+		Set("bridge_count = added_rollup.bridge_count + EXCLUDED.bridge_count").
 		Set("size = added_rollup.size + EXCLUDED.size")
 
 	if _, err := query.Returning("xmax, id").Exec(ctx); err != nil {

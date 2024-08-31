@@ -77,6 +77,7 @@ func (s *RollupTestSuite) TestGet() {
 	s.Require().NoError(err)
 	s.Require().EqualValues(1, rollup.Id)
 	s.Require().EqualValues(1, rollup.ActionsCount)
+	s.Require().EqualValues(1, rollup.BridgeCount)
 	s.Require().EqualValues(100, rollup.FirstHeight)
 	s.Require().EqualValues(10, rollup.Size)
 	s.Require().Equal(testRollup.AstriaId, rollup.AstriaId)

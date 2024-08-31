@@ -33,6 +33,7 @@ type Rollup struct {
 	AstriaId     []byte      `bun:"astria_id,unique:rollup_id"  comment:"Astria rollup identity"`
 	FirstHeight  types.Level `bun:"first_height"                comment:"Block number of the first rollup occurrence"`
 	ActionsCount int64       `bun:"actions_count"               comment:"Count of actions in which the rollup was involved"`
+	BridgeCount  int64       `bun:"bridge_count"                comment:"Count of connected bridges"`
 	Size         int64       `bun:"size"                        comment:"Count bytes which was saved in the rollup"`
 }
 

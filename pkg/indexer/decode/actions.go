@@ -414,6 +414,7 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from st
 			Address:    ctx.Addresses.Set(from, height, decimal.Zero, "", 0, 0),
 			Rollup:     rollup,
 		}
+		rollup.BridgeCount += 1
 
 		action.Data["rollup_id"] = rollupId
 		action.Data["fee_asset"] = bridge.FeeAsset
