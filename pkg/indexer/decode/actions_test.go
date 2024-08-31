@@ -786,6 +786,7 @@ func TestDecodeActions(t *testing.T) {
 					AstriaId:     message.InitBridgeAccountAction.GetRollupId().GetInner(),
 					FirstHeight:  1000,
 					ActionsCount: 1,
+					BridgeCount:  1,
 				},
 			},
 			Addresses: make([]*storage.AddressAction, 0),
@@ -845,6 +846,7 @@ func TestDecodeActions(t *testing.T) {
 					AstriaId:     message.InitBridgeAccountAction.GetRollupId().GetInner(),
 					FirstHeight:  1000,
 					ActionsCount: 1,
+					BridgeCount:  1,
 				},
 			},
 		}

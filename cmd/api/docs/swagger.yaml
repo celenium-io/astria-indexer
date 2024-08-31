@@ -311,6 +311,9 @@ definitions:
       actions_count:
         example: 101
         type: integer
+      bridge_count:
+        example: 2
+        type: integer
       first_height:
         example: 100
         type: integer

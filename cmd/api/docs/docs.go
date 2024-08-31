@@ -2649,6 +2649,10 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 101
                 },
+                "bridge_count": {
+                    "type": "integer",
+                    "example": 2
+                },
                 "first_height": {
                     "type": "integer",
                     "example": 100

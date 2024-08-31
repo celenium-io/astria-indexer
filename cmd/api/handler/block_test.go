@@ -81,6 +81,7 @@ var (
 		FirstHeight:  100,
 		AstriaId:     testsuite.RandomHash(32),
 		ActionsCount: 1,
+		BridgeCount:  1,
 		Size:         10,
 	}
 	testRollupURLHash = base64.URLEncoding.EncodeToString(testRollup.AstriaId)
