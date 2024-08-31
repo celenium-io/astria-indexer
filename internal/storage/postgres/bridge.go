@@ -43,10 +43,13 @@ func (b *Bridge) ByAddress(ctx context.Context, addressId uint64) (bridge storag
 	return
 }
 
-func (b *Bridge) ByRollup(ctx context.Context, rollupId uint64) (bridge storage.Bridge, err error) {
+func (b *Bridge) ByRollup(ctx context.Context, rollupId uint64, limit, offset int) (bridge []storage.Bridge, err error) {
 	query := b.DB().NewSelect().
 		Model((*storage.Bridge)(nil)).
-		Where("rollup_id = ?", rollupId)
+		Where("rollup_id = ?", rollupId).
+		Offset(offset)
+
+	query = limitScope(query, limit)
 
 	err = b.DB().NewSelect().
 		TableExpr("(?) as bridge", query).

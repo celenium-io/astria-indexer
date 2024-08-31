@@ -246,6 +246,35 @@ func createIndices(ctx context.Context, conn *database.Bun) error {
 			return err
 		}
 
+		// Fee
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Fee)(nil)).
+			Index("fee_height_idx").
+			Column("height").
+			Using("BRIN").
+			Exec(ctx); err != nil {
+			return err
+		}
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Fee)(nil)).
+			Index("fee_action_id_idx").
+			Column("action_id").
+			Using("BRIN").
+			Exec(ctx); err != nil {
+			return err
+		}
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Fee)(nil)).
+			Index("fee_tx_id_idx").
+			Column("tx_id").
+			Using("BRIN").
+			Exec(ctx); err != nil {
+			return err
+		}
+
 		return nil
 	})
 }

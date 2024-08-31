@@ -16,7 +16,7 @@ type IBridge interface {
 	storage.Table[*Bridge]
 
 	ByAddress(ctx context.Context, addressId uint64) (Bridge, error)
-	ByRollup(ctx context.Context, rollupId uint64) (Bridge, error)
+	ByRollup(ctx context.Context, rollupId uint64, limit, offset int) ([]Bridge, error)
 	ByRoles(ctx context.Context, addressId uint64, limit, offset int) ([]Bridge, error)
 }
 

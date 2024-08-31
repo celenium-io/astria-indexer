@@ -20,18 +20,37 @@ type Action struct {
 	Type     types.ActionType `example:"sequence"                                                         format:"string"    json:"type"              swaggertype:"string"`
 	TxHash   string           `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" format:"binary"    json:"tx_hash,omitempty" swaggertype:"string"`
 
+	Fee  *Fee           `json:"fee,omitempty"`
 	Data map[string]any `json:"data"`
 }
 
+type Fee struct {
+	Amount string `example:"1000" format:"string" json:"amount" swaggertype:"string"`
+	Asset  string `example:"nria" format:"string" json:"asset"  swaggertype:"string"`
+}
+
+func NewFee(fee *storage.Fee) *Fee {
+	if fee == nil {
+		return nil
+	}
+	return &Fee{
+		Amount: fee.Amount.String(),
+		Asset:  fee.Asset,
+	}
+}
+
 func NewAction(action storage.Action) Action {
-	return Action{
+	result := Action{
 		Id:       action.Id,
 		Height:   action.Height,
 		Time:     action.Time,
 		Position: action.Position,
 		Type:     action.Type,
 		Data:     action.Data,
+		Fee:      NewFee(action.Fee),
 	}
+
+	return result
 }
 
 func NewActionWithTx(action storage.ActionWithTx) Action {
@@ -42,6 +61,7 @@ func NewActionWithTx(action storage.ActionWithTx) Action {
 		Position: action.Position,
 		Type:     action.Type,
 		Data:     action.Data,
+		Fee:      NewFee(action.Fee),
 	}
 
 	if action.Tx != nil {
@@ -65,6 +85,7 @@ func NewAddressAction(action storage.AddressAction) Action {
 	if action.Action != nil {
 		result.Data = action.Action.Data
 		result.Position = action.Action.Position
+		result.Fee = NewFee(action.Action.Fee)
 	}
 
 	return result

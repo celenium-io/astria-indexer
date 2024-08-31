@@ -11,7 +11,6 @@ import (
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
-	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/labstack/echo/v4"
 )
 
@@ -140,7 +139,7 @@ func (handler *TxHandler) List(c echo.Context) error {
 		fltrs.TimeTo = time.Unix(req.To, 0).UTC()
 	}
 	for i := range req.ActionTypes {
-		fltrs.ActionTypes.SetType(storageTypes.ActionType(req.ActionTypes[i]))
+		fltrs.ActionTypes.SetType(types.ActionType(req.ActionTypes[i]))
 	}
 
 	txs, err := handler.tx.Filter(c.Request().Context(), fltrs)

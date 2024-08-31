@@ -37,21 +37,28 @@ func (a *Action) ByBlock(ctx context.Context, height types.Level, limit, offset 
 	err = a.DB().NewSelect().
 		TableExpr("(?) as action", query).
 		ColumnExpr("action.*").
+		ColumnExpr("fee.asset as fee__asset, fee.amount as fee__amount").
 		ColumnExpr("tx.hash as tx__hash").
 		Join("left join tx on tx.id = action.tx_id").
+		Join("left join fee on fee.action_id = action.id").
 		Scan(ctx, &actions)
 	return
 }
 
 func (a *Action) ByTxId(ctx context.Context, txId uint64, limit, offset int) (actions []storage.Action, err error) {
 	query := a.DB().NewSelect().
-		Model(&actions).
+		Model((*storage.Action)(nil)).
 		Where("tx_id = ?", txId)
 
 	query = limitScope(query, limit)
 	query = offsetScope(query, offset)
 
-	err = query.Scan(ctx)
+	err = a.DB().NewSelect().
+		TableExpr("(?) as action", query).
+		ColumnExpr("fee.asset as fee__asset, fee.amount as fee__amount").
+		ColumnExpr("action.*").
+		Join("left join fee on fee.action_id = action.id").
+		Scan(ctx, &actions)
 	return
 }
 
@@ -72,9 +79,11 @@ func (a *Action) ByAddress(ctx context.Context, addressId uint64, filters storag
 		TableExpr("(?) as address_action", subQuery).
 		ColumnExpr("address_action.*").
 		ColumnExpr("action.id as action__id, action.height as action__height, action.time as action__time, action.position as action__position, action.type as action__type, action.tx_id as action__tx_id, action.data as action__data").
+		ColumnExpr("fee.asset as action__fee__asset, fee.amount as action__fee__amount").
 		ColumnExpr("tx.hash as tx__hash").
 		Join("left join tx on tx.id = address_action.tx_id").
-		Join("left join action on action.id = address_action.action_id")
+		Join("left join action on action.id = address_action.action_id").
+		Join("left join fee on fee.action_id = address_action.action_id")
 	query = sortScope(query, "action_id", filters.Sort)
 	err = query.Scan(ctx, &actions)
 	return
@@ -92,10 +101,12 @@ func (a *Action) ByRollup(ctx context.Context, rollupId uint64, limit, offset in
 	query := a.DB().NewSelect().
 		TableExpr("(?) as rollup_action", subQuery).
 		ColumnExpr("rollup_action.*").
+		ColumnExpr("fee.asset as action__fee__asset, fee.amount as action__fee__amount").
 		ColumnExpr("action.id as action__id, action.height as action__height, action.time as action__time, action.position as action__position, action.type as action__type, action.tx_id as action__tx_id, action.data as action__data").
 		ColumnExpr("tx.hash as tx__hash").
 		Join("left join tx on tx.id = rollup_action.tx_id").
-		Join("left join action on action.id = rollup_action.action_id")
+		Join("left join action on action.id = rollup_action.action_id").
+		Join("left join fee on fee.action_id = rollup_action.action_id")
 	query = sortScope(query, "action_id", sort)
 	err = query.Scan(ctx, &actions)
 	return

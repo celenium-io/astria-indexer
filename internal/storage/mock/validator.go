@@ -8,6 +8,7 @@
 //
 //	mockgen -source=validator.go -destination=mock/validator.go -package=mock -typed
 //
+
 // Package mock is a generated GoMock package.
 package mock
 
@@ -53,31 +54,31 @@ func (m *MockIValidator) CursorList(ctx context.Context, id, limit uint64, order
 }
 
 // CursorList indicates an expected call of CursorList.
-func (mr *MockIValidatorMockRecorder) CursorList(ctx, id, limit, order, cmp any) *IValidatorCursorListCall {
+func (mr *MockIValidatorMockRecorder) CursorList(ctx, id, limit, order, cmp any) *MockIValidatorCursorListCall {
 	mr.mock.ctrl.T.Helper()
 	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CursorList", reflect.TypeOf((*MockIValidator)(nil).CursorList), ctx, id, limit, order, cmp)
-	return &IValidatorCursorListCall{Call: call}
+	return &MockIValidatorCursorListCall{Call: call}
 }
 
-// IValidatorCursorListCall wrap *gomock.Call
-type IValidatorCursorListCall struct {
+// MockIValidatorCursorListCall wrap *gomock.Call
+type MockIValidatorCursorListCall struct {
 	*gomock.Call
 }
 
 // Return rewrite *gomock.Call.Return
-func (c *IValidatorCursorListCall) Return(arg0 []*storage.Validator, arg1 error) *IValidatorCursorListCall {
+func (c *MockIValidatorCursorListCall) Return(arg0 []*storage.Validator, arg1 error) *MockIValidatorCursorListCall {
 	c.Call = c.Call.Return(arg0, arg1)
 	return c
 }
 
 // Do rewrite *gomock.Call.Do
-func (c *IValidatorCursorListCall) Do(f func(context.Context, uint64, uint64, storage0.SortOrder, storage0.Comparator) ([]*storage.Validator, error)) *IValidatorCursorListCall {
+func (c *MockIValidatorCursorListCall) Do(f func(context.Context, uint64, uint64, storage0.SortOrder, storage0.Comparator) ([]*storage.Validator, error)) *MockIValidatorCursorListCall {
 	c.Call = c.Call.Do(f)
 	return c
 }
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *IValidatorCursorListCall) DoAndReturn(f func(context.Context, uint64, uint64, storage0.SortOrder, storage0.Comparator) ([]*storage.Validator, error)) *IValidatorCursorListCall {
+func (c *MockIValidatorCursorListCall) DoAndReturn(f func(context.Context, uint64, uint64, storage0.SortOrder, storage0.Comparator) ([]*storage.Validator, error)) *MockIValidatorCursorListCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }
@@ -92,31 +93,31 @@ func (m *MockIValidator) GetByID(ctx context.Context, id uint64) (*storage.Valid
 }
 
 // GetByID indicates an expected call of GetByID.
-func (mr *MockIValidatorMockRecorder) GetByID(ctx, id any) *IValidatorGetByIDCall {
+func (mr *MockIValidatorMockRecorder) GetByID(ctx, id any) *MockIValidatorGetByIDCall {
 	mr.mock.ctrl.T.Helper()
 	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockIValidator)(nil).GetByID), ctx, id)
-	return &IValidatorGetByIDCall{Call: call}
+	return &MockIValidatorGetByIDCall{Call: call}
 }
 
-// IValidatorGetByIDCall wrap *gomock.Call
-type IValidatorGetByIDCall struct {
+// MockIValidatorGetByIDCall wrap *gomock.Call
+type MockIValidatorGetByIDCall struct {
 	*gomock.Call
 }
 
 // Return rewrite *gomock.Call.Return
-func (c *IValidatorGetByIDCall) Return(arg0 *storage.Validator, arg1 error) *IValidatorGetByIDCall {
+func (c *MockIValidatorGetByIDCall) Return(arg0 *storage.Validator, arg1 error) *MockIValidatorGetByIDCall {
 	c.Call = c.Call.Return(arg0, arg1)
 	return c
 }
 
 // Do rewrite *gomock.Call.Do
-func (c *IValidatorGetByIDCall) Do(f func(context.Context, uint64) (*storage.Validator, error)) *IValidatorGetByIDCall {
+func (c *MockIValidatorGetByIDCall) Do(f func(context.Context, uint64) (*storage.Validator, error)) *MockIValidatorGetByIDCall {
 	c.Call = c.Call.Do(f)
 	return c
 }
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *IValidatorGetByIDCall) DoAndReturn(f func(context.Context, uint64) (*storage.Validator, error)) *IValidatorGetByIDCall {
+func (c *MockIValidatorGetByIDCall) DoAndReturn(f func(context.Context, uint64) (*storage.Validator, error)) *MockIValidatorGetByIDCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }
@@ -130,31 +131,31 @@ func (m *MockIValidator) IsNoRows(err error) bool {
 }
 
 // IsNoRows indicates an expected call of IsNoRows.
-func (mr *MockIValidatorMockRecorder) IsNoRows(err any) *IValidatorIsNoRowsCall {
+func (mr *MockIValidatorMockRecorder) IsNoRows(err any) *MockIValidatorIsNoRowsCall {
 	mr.mock.ctrl.T.Helper()
 	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsNoRows", reflect.TypeOf((*MockIValidator)(nil).IsNoRows), err)
-	return &IValidatorIsNoRowsCall{Call: call}
+	return &MockIValidatorIsNoRowsCall{Call: call}
 }
 
-// IValidatorIsNoRowsCall wrap *gomock.Call
-type IValidatorIsNoRowsCall struct {
+// MockIValidatorIsNoRowsCall wrap *gomock.Call
+type MockIValidatorIsNoRowsCall struct {
 	*gomock.Call
 }
 
 // Return rewrite *gomock.Call.Return
-func (c *IValidatorIsNoRowsCall) Return(arg0 bool) *IValidatorIsNoRowsCall {
+func (c *MockIValidatorIsNoRowsCall) Return(arg0 bool) *MockIValidatorIsNoRowsCall {
 	c.Call = c.Call.Return(arg0)
 	return c
 }
 
 // Do rewrite *gomock.Call.Do
-func (c *IValidatorIsNoRowsCall) Do(f func(error) bool) *IValidatorIsNoRowsCall {
+func (c *MockIValidatorIsNoRowsCall) Do(f func(error) bool) *MockIValidatorIsNoRowsCall {
 	c.Call = c.Call.Do(f)
 	return c
 }
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *IValidatorIsNoRowsCall) DoAndReturn(f func(error) bool) *IValidatorIsNoRowsCall {
+func (c *MockIValidatorIsNoRowsCall) DoAndReturn(f func(error) bool) *MockIValidatorIsNoRowsCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }
@@ -169,31 +170,31 @@ func (m *MockIValidator) LastID(ctx context.Context) (uint64, error) {
 }
 
 // LastID indicates an expected call of LastID.
-func (mr *MockIValidatorMockRecorder) LastID(ctx any) *IValidatorLastIDCall {
+func (mr *MockIValidatorMockRecorder) LastID(ctx any) *MockIValidatorLastIDCall {
 	mr.mock.ctrl.T.Helper()
 	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LastID", reflect.TypeOf((*MockIValidator)(nil).LastID), ctx)
-	return &IValidatorLastIDCall{Call: call}
+	return &MockIValidatorLastIDCall{Call: call}
 }
 
-// IValidatorLastIDCall wrap *gomock.Call
-type IValidatorLastIDCall struct {
+// MockIValidatorLastIDCall wrap *gomock.Call
+type MockIValidatorLastIDCall struct {
 	*gomock.Call
 }
 
 // Return rewrite *gomock.Call.Return
-func (c *IValidatorLastIDCall) Return(arg0 uint64, arg1 error) *IValidatorLastIDCall {
+func (c *MockIValidatorLastIDCall) Return(arg0 uint64, arg1 error) *MockIValidatorLastIDCall {
 	c.Call = c.Call.Return(arg0, arg1)
 	return c
 }
 
 // Do rewrite *gomock.Call.Do
-func (c *IValidatorLastIDCall) Do(f func(context.Context) (uint64, error)) *IValidatorLastIDCall {
+func (c *MockIValidatorLastIDCall) Do(f func(context.Context) (uint64, error)) *MockIValidatorLastIDCall {
 	c.Call = c.Call.Do(f)
 	return c
 }
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *IValidatorLastIDCall) DoAndReturn(f func(context.Context) (uint64, error)) *IValidatorLastIDCall {
+func (c *MockIValidatorLastIDCall) DoAndReturn(f func(context.Context) (uint64, error)) *MockIValidatorLastIDCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }
@@ -208,31 +209,31 @@ func (m *MockIValidator) List(ctx context.Context, limit, offset uint64, order s
 }
 
 // List indicates an expected call of List.
-func (mr *MockIValidatorMockRecorder) List(ctx, limit, offset, order any) *IValidatorListCall {
+func (mr *MockIValidatorMockRecorder) List(ctx, limit, offset, order any) *MockIValidatorListCall {
 	mr.mock.ctrl.T.Helper()
 	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockIValidator)(nil).List), ctx, limit, offset, order)
-	return &IValidatorListCall{Call: call}
+	return &MockIValidatorListCall{Call: call}
 }
 
-// IValidatorListCall wrap *gomock.Call
-type IValidatorListCall struct {
+// MockIValidatorListCall wrap *gomock.Call
+type MockIValidatorListCall struct {
 	*gomock.Call
 }
 
 // Return rewrite *gomock.Call.Return
-func (c *IValidatorListCall) Return(arg0 []*storage.Validator, arg1 error) *IValidatorListCall {
+func (c *MockIValidatorListCall) Return(arg0 []*storage.Validator, arg1 error) *MockIValidatorListCall {
 	c.Call = c.Call.Return(arg0, arg1)
 	return c
 }
 
 // Do rewrite *gomock.Call.Do
-func (c *IValidatorListCall) Do(f func(context.Context, uint64, uint64, storage0.SortOrder) ([]*storage.Validator, error)) *IValidatorListCall {
+func (c *MockIValidatorListCall) Do(f func(context.Context, uint64, uint64, storage0.SortOrder) ([]*storage.Validator, error)) *MockIValidatorListCall {
 	c.Call = c.Call.Do(f)
 	return c
 }
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *IValidatorListCall) DoAndReturn(f func(context.Context, uint64, uint64, storage0.SortOrder) ([]*storage.Validator, error)) *IValidatorListCall {
+func (c *MockIValidatorListCall) DoAndReturn(f func(context.Context, uint64, uint64, storage0.SortOrder) ([]*storage.Validator, error)) *MockIValidatorListCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }
@@ -246,31 +247,31 @@ func (m_2 *MockIValidator) Save(ctx context.Context, m *storage.Validator) error
 }
 
 // Save indicates an expected call of Save.
-func (mr *MockIValidatorMockRecorder) Save(ctx, m any) *IValidatorSaveCall {
+func (mr *MockIValidatorMockRecorder) Save(ctx, m any) *MockIValidatorSaveCall {
 	mr.mock.ctrl.T.Helper()
 	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockIValidator)(nil).Save), ctx, m)
-	return &IValidatorSaveCall{Call: call}
+	return &MockIValidatorSaveCall{Call: call}
 }
 
-// IValidatorSaveCall wrap *gomock.Call
-type IValidatorSaveCall struct {
+// MockIValidatorSaveCall wrap *gomock.Call
+type MockIValidatorSaveCall struct {
 	*gomock.Call
 }
 
 // Return rewrite *gomock.Call.Return
-func (c *IValidatorSaveCall) Return(arg0 error) *IValidatorSaveCall {
+func (c *MockIValidatorSaveCall) Return(arg0 error) *MockIValidatorSaveCall {
 	c.Call = c.Call.Return(arg0)
 	return c
 }
 
 // Do rewrite *gomock.Call.Do
-func (c *IValidatorSaveCall) Do(f func(context.Context, *storage.Validator) error) *IValidatorSaveCall {
+func (c *MockIValidatorSaveCall) Do(f func(context.Context, *storage.Validator) error) *MockIValidatorSaveCall {
 	c.Call = c.Call.Do(f)
 	return c
 }
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *IValidatorSaveCall) DoAndReturn(f func(context.Context, *storage.Validator) error) *IValidatorSaveCall {
+func (c *MockIValidatorSaveCall) DoAndReturn(f func(context.Context, *storage.Validator) error) *MockIValidatorSaveCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }
@@ -284,31 +285,31 @@ func (m_2 *MockIValidator) Update(ctx context.Context, m *storage.Validator) err
 }
 
 // Update indicates an expected call of Update.
-func (mr *MockIValidatorMockRecorder) Update(ctx, m any) *IValidatorUpdateCall {
+func (mr *MockIValidatorMockRecorder) Update(ctx, m any) *MockIValidatorUpdateCall {
 	mr.mock.ctrl.T.Helper()
 	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockIValidator)(nil).Update), ctx, m)
-	return &IValidatorUpdateCall{Call: call}
+	return &MockIValidatorUpdateCall{Call: call}
 }
 
-// IValidatorUpdateCall wrap *gomock.Call
-type IValidatorUpdateCall struct {
+// MockIValidatorUpdateCall wrap *gomock.Call
+type MockIValidatorUpdateCall struct {
 	*gomock.Call
 }
 
 // Return rewrite *gomock.Call.Return
-func (c *IValidatorUpdateCall) Return(arg0 error) *IValidatorUpdateCall {
+func (c *MockIValidatorUpdateCall) Return(arg0 error) *MockIValidatorUpdateCall {
 	c.Call = c.Call.Return(arg0)
 	return c
 }
 
 // Do rewrite *gomock.Call.Do
-func (c *IValidatorUpdateCall) Do(f func(context.Context, *storage.Validator) error) *IValidatorUpdateCall {
+func (c *MockIValidatorUpdateCall) Do(f func(context.Context, *storage.Validator) error) *MockIValidatorUpdateCall {
 	c.Call = c.Call.Do(f)
 	return c
 }
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *IValidatorUpdateCall) DoAndReturn(f func(context.Context, *storage.Validator) error) *IValidatorUpdateCall {
+func (c *MockIValidatorUpdateCall) DoAndReturn(f func(context.Context, *storage.Validator) error) *MockIValidatorUpdateCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }

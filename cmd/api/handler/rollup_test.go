@@ -69,15 +69,6 @@ func (s *RollupTestSuite) TestGet() {
 		Return(testRollup, nil).
 		Times(1)
 
-	s.bridge.EXPECT().
-		ByRollup(gomock.Any(), testRollup.Id).
-		Return(storage.Bridge{
-			Asset:    currency.DefaultCurrency,
-			FeeAsset: currency.DefaultCurrency,
-			Address:  &testAddress,
-		}, nil).
-		Times(1)
-
 	s.Require().NoError(s.handler.Get(c))
 	s.Require().Equal(http.StatusOK, rec.Code)
 
@@ -89,10 +80,6 @@ func (s *RollupTestSuite) TestGet() {
 	s.Require().EqualValues(100, rollup.FirstHeight)
 	s.Require().EqualValues(10, rollup.Size)
 	s.Require().Equal(testRollup.AstriaId, rollup.AstriaId)
-	s.Require().NotNil(rollup.Bridge)
-	s.Require().Equal(testAddressHash, rollup.Bridge.Address)
-	s.Require().Equal("nria", rollup.Bridge.Asset)
-	s.Require().Equal("nria", rollup.Bridge.FeeAsset)
 }
 
 func (s *RollupTestSuite) TestGetInvalidAddress() {
@@ -266,4 +253,46 @@ func (s *RollupTestSuite) TestAddresses() {
 	s.Require().EqualValues(0, address.Height)
 	s.Require().EqualValues(10, address.Nonce)
 	s.Require().Equal(testAddressHash, address.Hash)
+}
+
+func (s *RollupTestSuite) TestBridges() {
+	q := make(url.Values)
+	q.Set("limit", "10")
+	q.Set("offset", "0")
+
+	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/rollup/:hash/bridges")
+	c.SetParamNames("hash")
+	c.SetParamValues(testRollupURLHash)
+
+	s.rollups.EXPECT().
+		ByHash(gomock.Any(), testRollup.AstriaId).
+		Return(testRollup, nil).
+		Times(1)
+
+	s.bridge.EXPECT().
+		ByRollup(gomock.Any(), uint64(1), 10, 0).
+		Return([]storage.Bridge{
+			{
+				Asset:    currency.DefaultCurrency,
+				FeeAsset: currency.DefaultCurrency,
+				Address:  &testAddress,
+			},
+		}, nil).
+		Times(1)
+
+	s.Require().NoError(s.handler.Bridges(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var bridges []responses.Bridge
+	err := json.NewDecoder(rec.Body).Decode(&bridges)
+	s.Require().NoError(err)
+	s.Require().Len(bridges, 1)
+
+	bridge := bridges[0]
+	s.Require().Equal(testAddressHash, bridge.Address)
+	s.Require().Equal("nria", bridge.Asset)
+	s.Require().Equal("nria", bridge.FeeAsset)
 }
