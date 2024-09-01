@@ -1311,6 +1311,39 @@
                         "description": "If true join brigde actions. Default: true",
                         "name": "bridge_actions",
                         "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "transfer",
+                            "sequence",
+                            "validator_update",
+                            "sudo_address_change",
+                            "ibc_relay",
+                            "ics20_withdrawal",
+                            "ibc_relayer_change",
+                            "fee_asset_change",
+                            "init_bridge_account",
+                            "bridge_lock",
+                            "bridge_unlock",
+                            "bridge_sudo_change_action",
+                            "fee_change"
+                        ],
+                        "type": "string",
+                        "description": "Comma-separated action types list",
+                        "name": "action_types",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Time from in unix timestamp",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Time to in unix timestamp",
+                        "name": "to",
+                        "in": "query"
                     }
                 ],
                 "responses": {

@@ -38,6 +38,9 @@ type RollupAndBridgeActionsFilter struct {
 	Sort          storage.SortOrder
 	RollupActions bool
 	BridgeActions bool
+	ActionTypes   types.ActionTypeMask
+	From          time.Time
+	To            time.Time
 }
 
 type ActionWithTx struct {

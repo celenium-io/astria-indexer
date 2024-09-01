@@ -196,6 +196,7 @@ func TestDecodeActions(t *testing.T) {
 					ActionsCount: 1,
 					Size:         10,
 				},
+				ActionType: types.ActionTypeSequence,
 			},
 		}
 		wantAction.RollupAction.Action = &wantAction
@@ -788,6 +789,7 @@ func TestDecodeActions(t *testing.T) {
 					ActionsCount: 1,
 					BridgeCount:  1,
 				},
+				ActionType: types.ActionTypeInitBridgeAccount,
 			},
 			Addresses: make([]*storage.AddressAction, 0),
 		}
@@ -848,6 +850,7 @@ func TestDecodeActions(t *testing.T) {
 					ActionsCount: 1,
 					BridgeCount:  1,
 				},
+				ActionType: types.ActionTypeInitBridgeAccount,
 			},
 		}
 		wantAction.RollupAction.Action = &wantAction

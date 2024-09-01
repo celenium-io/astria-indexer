@@ -272,9 +272,10 @@ func (s *TransactionTestSuite) TestSaveRollupActions() {
 	ra := make([]*storage.RollupAction, 5)
 	for i := 0; i < 5; i++ {
 		ra[i] = &storage.RollupAction{
-			RollupId: uint64(i + 1),
-			ActionId: uint64(5 - i),
-			Height:   10000,
+			RollupId:   uint64(i + 1),
+			ActionId:   uint64(5 - i),
+			Height:     10000,
+			ActionType: types.ActionTypeBridgeLock,
 		}
 	}
 
