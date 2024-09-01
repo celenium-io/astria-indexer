@@ -9,6 +9,7 @@ import (
 
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
+	testsuite "github.com/celenium-io/astria-indexer/internal/test_suite"
 	"github.com/labstack/echo/v4"
 )
 
@@ -294,6 +295,87 @@ func (handler *RollupHandler) Bridges(c echo.Context) error {
 	response := make([]responses.Bridge, len(bridges))
 	for i := range bridges {
 		response[i] = responses.NewBridge(bridges[i])
+	}
+
+	return returnArray(c, response)
+}
+
+type allRollupActionsRequest struct {
+	Hash          string `param:"hash"           validate:"required,base64url"`
+	Limit         int    `query:"limit"          validate:"omitempty,min=1,max=100"`
+	Offset        int    `query:"offset"         validate:"omitempty,min=0"`
+	Sort          string `query:"sort"           validate:"omitempty,oneof=asc desc"`
+	RollupActions *bool  `query:"rollup_actions" validate:"omitempty"`
+	BridgeActions *bool  `query:"bridge_actions" validate:"omitempty"`
+}
+
+func (p *allRollupActionsRequest) SetDefault() {
+	if p.Limit == 0 {
+		p.Limit = 10
+	}
+	if p.Sort == "" {
+		p.Sort = asc
+	}
+	if p.BridgeActions == nil {
+		p.BridgeActions = testsuite.Ptr(true)
+	}
+	if p.RollupActions == nil {
+		p.RollupActions = testsuite.Ptr(true)
+	}
+}
+
+func (p *allRollupActionsRequest) toDbRequest() storage.RollupAndBridgeActionsFilter {
+	return storage.RollupAndBridgeActionsFilter{
+		Limit:         p.Limit,
+		Offset:        p.Offset,
+		Sort:          pgSort(p.Sort),
+		RollupActions: *p.RollupActions,
+		BridgeActions: *p.BridgeActions,
+	}
+}
+
+// AllActions godoc
+//
+//	@Summary		Get rollup actions with actions of all connected bridges
+//	@Description	Get rollup actions with actions of all connected bridges
+//	@Tags			rollup
+//	@ID				rollup-all-actions
+//	@Param			hash			path	string					true	"Base64Url encoded rollup id"
+//	@Param			limit			query	integer					false	"Count of requested entities"					minimum(1)		maximum(100)
+//	@Param			offset			query	integer					false	"Offset"										minimum(1)
+//	@Param			sort			query	string					false	"Sort order"									Enums(asc, desc)
+//	@Param			rollup_actions	query	boolean					false	"If true join rollup actions. Default: true"
+//	@Param			bridge_actions	query	boolean					false	"If true join brigde actions. Default: true"
+//	@Produce		json
+//	@Success		200	{array}		responses.Action
+//	@Failure		400	{object}	Error
+//	@Failure		500	{object}	Error
+//	@Router			/v1/rollup/{hash}/all_actions [get]
+func (handler *RollupHandler) AllActions(c echo.Context) error {
+	req, err := bindAndValidate[allRollupActionsRequest](c)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+	req.SetDefault()
+
+	hash, err := base64.URLEncoding.DecodeString(req.Hash)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+
+	rollup, err := handler.rollups.ByHash(c.Request().Context(), hash)
+	if err != nil {
+		return handleError(c, err, handler.rollups)
+	}
+
+	actions, err := handler.actions.ByRollupAndBridge(c.Request().Context(), rollup.Id, req.toDbRequest())
+	if err != nil {
+		return handleError(c, err, handler.rollups)
+	}
+
+	response := make([]responses.Action, len(actions))
+	for i := range actions {
+		response[i] = responses.NewActionWithTx(actions[i])
 	}
 
 	return returnArray(c, response)

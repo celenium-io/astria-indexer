@@ -297,3 +297,59 @@ func (s *RollupTestSuite) TestBridges() {
 	s.Require().Equal("nria", bridge.Asset)
 	s.Require().Equal("nria", bridge.FeeAsset)
 }
+
+func (s *RollupTestSuite) TestAllActions() {
+	q := make(url.Values)
+	q.Set("limit", "10")
+	q.Set("offset", "0")
+	q.Set("sort", "desc")
+	q.Set("rollup_actions", "false")
+
+	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/rollup/:hash/all_actions")
+	c.SetParamNames("hash")
+	c.SetParamValues(testRollupURLHash)
+
+	s.rollups.EXPECT().
+		ByHash(gomock.Any(), testRollup.AstriaId).
+		Return(testRollup, nil).
+		Times(1)
+
+	s.actions.EXPECT().
+		ByRollupAndBridge(gomock.Any(), uint64(1), storage.RollupAndBridgeActionsFilter{
+			Limit:         10,
+			Offset:        0,
+			Sort:          sdk.SortOrderDesc,
+			RollupActions: false,
+			BridgeActions: true,
+		}).
+		Return([]storage.ActionWithTx{
+			{
+				Action: storage.Action{
+					Data:     map[string]any{},
+					Position: 1,
+					Type:     types.ActionTypeSequence,
+					Id:       1,
+					Height:   100,
+				},
+				Tx: &testTx,
+			},
+		}, nil).
+		Times(1)
+
+	s.Require().NoError(s.handler.AllActions(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var actions []responses.RollupAction
+	err := json.NewDecoder(rec.Body).Decode(&actions)
+	s.Require().NoError(err)
+	s.Require().Len(actions, 1)
+
+	action := actions[0]
+	s.Require().EqualValues(1, action.Id)
+	s.Require().EqualValues(100, action.Height)
+	s.Require().EqualValues(1, action.Position)
+	s.Require().EqualValues(types.ActionTypeSequence, action.Type)
+}

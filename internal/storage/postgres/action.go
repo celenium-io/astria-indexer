@@ -111,3 +111,50 @@ func (a *Action) ByRollup(ctx context.Context, rollupId uint64, limit, offset in
 	err = query.Scan(ctx, &actions)
 	return
 }
+
+func (a *Action) ByRollupAndBridge(ctx context.Context, rollupId uint64, fltrs storage.RollupAndBridgeActionsFilter) (actions []storage.ActionWithTx, err error) {
+	rollupActions := a.DB().NewSelect().
+		Model((*storage.RollupAction)(nil)).
+		Column("action_id", "time", "tx_id").
+		Where("rollup_id = ?", rollupId)
+	rollupActions = sortScope(rollupActions, "time", fltrs.Sort)
+
+	bridges := a.DB().NewSelect().
+		Model((*storage.Bridge)(nil)).
+		Column("address_id").
+		Where("rollup_id = ?", rollupId)
+
+	addressActions := a.DB().NewSelect().
+		Model((*storage.AddressAction)(nil)).
+		Column("action_id", "time", "tx_id").
+		Where("address_id IN (?)", bridges)
+	addressActions = sortScope(addressActions, "time", fltrs.Sort)
+
+	var subQuery *bun.SelectQuery
+	switch {
+	case fltrs.BridgeActions && fltrs.RollupActions:
+		subQuery = a.DB().NewSelect().TableExpr("(?) as rollup_action", rollupActions.Union(addressActions))
+	case !fltrs.BridgeActions && fltrs.RollupActions:
+		subQuery = rollupActions
+	case fltrs.BridgeActions && !fltrs.RollupActions:
+		subQuery = addressActions
+	case !fltrs.BridgeActions && !fltrs.RollupActions:
+		return
+	}
+
+	subQuery = sortScope(subQuery, "rollup_action.time", fltrs.Sort)
+	subQuery = limitScope(subQuery, fltrs.Limit)
+	subQuery = offsetScope(subQuery, fltrs.Offset)
+
+	query := a.DB().NewSelect().
+		With("rollup_action", subQuery).
+		Table("rollup_action").
+		ColumnExpr("fee.asset as fee__asset, fee.amount as fee__amount").
+		ColumnExpr("action.*").
+		ColumnExpr("tx.hash as tx__hash").
+		Join("left join tx on tx.id = rollup_action.tx_id").
+		Join("left join action on action.id = rollup_action.action_id").
+		Join("left join fee on fee.action_id = rollup_action.action_id")
+	err = query.Scan(ctx, &actions)
+	return
+}
