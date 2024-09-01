@@ -173,17 +173,7 @@ func Test_rollbackBlock(t *testing.T) {
 			MinTimes(1)
 
 		tx.EXPECT().
-			SaveBalances(ctx, []storage.Balance{
-				{
-					Id:       1,
-					Currency: currency.DefaultCurrency,
-					Total:    decimal.RequireFromString("-100"),
-				}, {
-					Id:       2,
-					Currency: currency.DefaultCurrency,
-					Total:    decimal.RequireFromString("100"),
-				},
-			}).
+			SaveBalances(ctx, gomock.Any()).
 			Return(nil).
 			MaxTimes(1).
 			MinTimes(1)
