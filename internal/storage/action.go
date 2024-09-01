@@ -22,6 +22,7 @@ type IAction interface {
 	ByBlock(ctx context.Context, height pkgTypes.Level, limit, offset int) ([]ActionWithTx, error)
 	ByAddress(ctx context.Context, addressId uint64, filters AddressActionsFilter) ([]AddressAction, error)
 	ByRollup(ctx context.Context, rollupId uint64, limit, offset int, sort storage.SortOrder) ([]RollupAction, error)
+	ByRollupAndBridge(ctx context.Context, rollupId uint64, fltrs RollupAndBridgeActionsFilter) ([]ActionWithTx, error)
 }
 
 type AddressActionsFilter struct {
@@ -29,6 +30,14 @@ type AddressActionsFilter struct {
 	Offset      int
 	Sort        storage.SortOrder
 	ActionTypes types.ActionTypeMask
+}
+
+type RollupAndBridgeActionsFilter struct {
+	Limit         int
+	Offset        int
+	Sort          storage.SortOrder
+	RollupActions bool
+	BridgeActions bool
 }
 
 type ActionWithTx struct {

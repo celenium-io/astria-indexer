@@ -162,6 +162,45 @@ func (c *MockIActionByRollupCall) DoAndReturn(f func(context.Context, uint64, in
 	return c
 }
 
+// ByRollupAndBridge mocks base method.
+func (m *MockIAction) ByRollupAndBridge(ctx context.Context, rollupId uint64, fltrs storage.RollupAndBridgeActionsFilter) ([]storage.ActionWithTx, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ByRollupAndBridge", ctx, rollupId, fltrs)
+	ret0, _ := ret[0].([]storage.ActionWithTx)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ByRollupAndBridge indicates an expected call of ByRollupAndBridge.
+func (mr *MockIActionMockRecorder) ByRollupAndBridge(ctx, rollupId, fltrs any) *MockIActionByRollupAndBridgeCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ByRollupAndBridge", reflect.TypeOf((*MockIAction)(nil).ByRollupAndBridge), ctx, rollupId, fltrs)
+	return &MockIActionByRollupAndBridgeCall{Call: call}
+}
+
+// MockIActionByRollupAndBridgeCall wrap *gomock.Call
+type MockIActionByRollupAndBridgeCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockIActionByRollupAndBridgeCall) Return(arg0 []storage.ActionWithTx, arg1 error) *MockIActionByRollupAndBridgeCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockIActionByRollupAndBridgeCall) Do(f func(context.Context, uint64, storage.RollupAndBridgeActionsFilter) ([]storage.ActionWithTx, error)) *MockIActionByRollupAndBridgeCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockIActionByRollupAndBridgeCall) DoAndReturn(f func(context.Context, uint64, storage.RollupAndBridgeActionsFilter) ([]storage.ActionWithTx, error)) *MockIActionByRollupAndBridgeCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // ByTxId mocks base method.
 func (m *MockIAction) ByTxId(ctx context.Context, txId uint64, limit, offset int) ([]storage.Action, error) {
 	m.ctrl.T.Helper()
