@@ -67,7 +67,7 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 		case *astria.Action_BridgeLockAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeBridgeLockBits)
 			err = parseBridgeLock(val, from, height, ctx, &actions[i])
-			feeType = "astria.protocol.transactions.v1alpha1.BridgeUnlockAction"
+			feeType = "astria.protocol.transactions.v1alpha1.BridgeLockAction"
 		case *astria.Action_FeeAssetChangeAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeFeeAssetChangeBits)
 			err = parseFeeAssetChange(val, &actions[i])
