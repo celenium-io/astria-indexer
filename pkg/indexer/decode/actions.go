@@ -174,6 +174,8 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, from string, heig
 		if body.Ics20Withdrawal.GetTimeoutTime() > 0 {
 			action.Data["timeout_time"] = body.Ics20Withdrawal.GetTimeoutTime()
 		}
+
+		returnAddress := body.Ics20Withdrawal.GetReturnAddress().GetBech32M()
 		if bridge := body.Ics20Withdrawal.GetBridgeAddress().GetBech32M(); bridge != "" {
 			action.Data["bridge"] = bridge
 			addr := ctx.Addresses.Set(bridge, height, decAmount.Copy().Neg(), asset, 1, 0)
@@ -184,6 +186,30 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, from string, heig
 				Height:     action.Height,
 				ActionType: action.Type,
 			})
+			if returnAddress != bridge {
+				returnAddr := ctx.Addresses.Set(returnAddress, height, decAmount, asset, 1, 0)
+				action.Addresses = append(action.Addresses, &storage.AddressAction{
+					Address:    returnAddr,
+					Action:     action,
+					Time:       action.Time,
+					Height:     action.Height,
+					ActionType: action.Type,
+				})
+
+				action.BalanceUpdates = append(action.BalanceUpdates, storage.BalanceUpdate{
+					Address:  returnAddr,
+					Height:   action.Height,
+					Currency: body.Ics20Withdrawal.GetDenom(),
+					Update:   decAmount,
+				})
+			} else {
+				action.BalanceUpdates = append(action.BalanceUpdates, storage.BalanceUpdate{
+					Address:  addr,
+					Height:   action.Height,
+					Currency: body.Ics20Withdrawal.GetDenom(),
+					Update:   decAmount,
+				})
+			}
 		} else {
 			addr := ctx.Addresses.Set(from, height, decAmount.Copy().Neg(), asset, 1, 0)
 			action.Addresses = append(action.Addresses, &storage.AddressAction{
@@ -193,24 +219,30 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, from string, heig
 				Height:     action.Height,
 				ActionType: action.Type,
 			})
+			if returnAddress != from {
+				returnAddr := ctx.Addresses.Set(returnAddress, height, decAmount, asset, 1, 0)
+				action.Addresses = append(action.Addresses, &storage.AddressAction{
+					Address:    returnAddr,
+					Action:     action,
+					Time:       action.Time,
+					Height:     action.Height,
+					ActionType: action.Type,
+				})
+				action.BalanceUpdates = append(action.BalanceUpdates, storage.BalanceUpdate{
+					Address:  returnAddr,
+					Height:   action.Height,
+					Currency: body.Ics20Withdrawal.GetDenom(),
+					Update:   decAmount,
+				})
+			} else {
+				action.BalanceUpdates = append(action.BalanceUpdates, storage.BalanceUpdate{
+					Address:  addr,
+					Height:   action.Height,
+					Currency: body.Ics20Withdrawal.GetDenom(),
+					Update:   decAmount,
+				})
+			}
 		}
-
-		returnAddress := body.Ics20Withdrawal.GetReturnAddress().GetBech32M()
-		addr := ctx.Addresses.Set(returnAddress, height, decAmount, asset, 1, 0)
-		action.Addresses = append(action.Addresses, &storage.AddressAction{
-			Address:    addr,
-			Action:     action,
-			Time:       action.Time,
-			Height:     action.Height,
-			ActionType: action.Type,
-		})
-
-		action.BalanceUpdates = append(action.BalanceUpdates, storage.BalanceUpdate{
-			Address:  addr,
-			Height:   action.Height,
-			Currency: body.Ics20Withdrawal.GetDenom(),
-			Update:   decAmount,
-		})
 	}
 	return nil
 }
