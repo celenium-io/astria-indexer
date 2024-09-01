@@ -155,6 +155,7 @@ func (a *Action) ByRollupAndBridge(ctx context.Context, rollupId uint64, fltrs s
 		Join("left join tx on tx.id = rollup_action.tx_id").
 		Join("left join action on action.id = rollup_action.action_id").
 		Join("left join fee on fee.action_id = rollup_action.action_id")
+	query = sortScope(query, "rollup_action.time", fltrs.Sort)
 	err = query.Scan(ctx, &actions)
 	return
 }
