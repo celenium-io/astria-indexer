@@ -142,7 +142,7 @@ func (a *Action) ByRollupAndBridge(ctx context.Context, rollupId uint64, fltrs s
 		return
 	}
 
-	subQuery = sortScope(subQuery, "rollup_action.time", fltrs.Sort)
+	subQuery = sortScope(subQuery, "time", fltrs.Sort)
 	subQuery = limitScope(subQuery, fltrs.Limit)
 	subQuery = offsetScope(subQuery, fltrs.Offset)
 
