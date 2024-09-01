@@ -1449,6 +1449,32 @@ paths:
         in: query
         name: bridge_actions
         type: boolean
+      - description: Comma-separated action types list
+        enum:
+        - transfer
+        - sequence
+        - validator_update
+        - sudo_address_change
+        - ibc_relay
+        - ics20_withdrawal
+        - ibc_relayer_change
+        - fee_asset_change
+        - init_bridge_account
+        - bridge_lock
+        - bridge_unlock
+        - bridge_sudo_change_action
+        - fee_change
+        in: query
+        name: action_types
+        type: string
+      - description: Time from in unix timestamp
+        in: query
+        name: from
+        type: integer
+      - description: Time to in unix timestamp
+        in: query
+        name: to
+        type: integer
       produces:
       - application/json
       responses:

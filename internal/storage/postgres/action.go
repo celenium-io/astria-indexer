@@ -117,6 +117,7 @@ func (a *Action) ByRollupAndBridge(ctx context.Context, rollupId uint64, fltrs s
 		Model((*storage.RollupAction)(nil)).
 		Column("action_id", "time", "tx_id").
 		Where("rollup_id = ?", rollupId)
+
 	rollupActions = sortScope(rollupActions, "time", fltrs.Sort)
 
 	bridges := a.DB().NewSelect().
@@ -129,6 +130,19 @@ func (a *Action) ByRollupAndBridge(ctx context.Context, rollupId uint64, fltrs s
 		Column("action_id", "time", "tx_id").
 		Where("address_id IN (?)", bridges)
 	addressActions = sortScope(addressActions, "time", fltrs.Sort)
+
+	if !fltrs.From.IsZero() {
+		rollupActions = rollupActions.Where("time >= ?", fltrs.From)
+		addressActions = addressActions.Where("time >= ?", fltrs.From)
+	}
+	if !fltrs.To.IsZero() {
+		rollupActions = rollupActions.Where("time < ?", fltrs.To)
+		addressActions = addressActions.Where("time < ?", fltrs.To)
+	}
+	if !fltrs.ActionTypes.Empty() {
+		rollupActions = rollupActions.Where("action_type IN (?)", bun.In(fltrs.ActionTypes.Strings()))
+		addressActions = addressActions.Where("action_type IN (?)", bun.In(fltrs.ActionTypes.Strings()))
+	}
 
 	var subQuery *bun.SelectQuery
 	switch {

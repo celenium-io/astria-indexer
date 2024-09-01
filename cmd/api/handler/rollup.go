@@ -6,9 +6,11 @@ package handler
 import (
 	"encoding/base64"
 	"net/http"
+	"time"
 
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/types"
 	testsuite "github.com/celenium-io/astria-indexer/internal/test_suite"
 	"github.com/labstack/echo/v4"
 )
@@ -301,12 +303,16 @@ func (handler *RollupHandler) Bridges(c echo.Context) error {
 }
 
 type allRollupActionsRequest struct {
-	Hash          string `param:"hash"           validate:"required,base64url"`
-	Limit         int    `query:"limit"          validate:"omitempty,min=1,max=100"`
-	Offset        int    `query:"offset"         validate:"omitempty,min=0"`
-	Sort          string `query:"sort"           validate:"omitempty,oneof=asc desc"`
-	RollupActions *bool  `query:"rollup_actions" validate:"omitempty"`
-	BridgeActions *bool  `query:"bridge_actions" validate:"omitempty"`
+	Hash          string      `param:"hash"           validate:"required,base64url"`
+	Limit         int         `query:"limit"          validate:"omitempty,min=1,max=100"`
+	Offset        int         `query:"offset"         validate:"omitempty,min=0"`
+	Sort          string      `query:"sort"           validate:"omitempty,oneof=asc desc"`
+	RollupActions *bool       `query:"rollup_actions" validate:"omitempty"`
+	BridgeActions *bool       `query:"bridge_actions" validate:"omitempty"`
+	ActionTypes   StringArray `query:"action_types"   validate:"omitempty,dive,action_type"`
+
+	From int64 `example:"1692892095" query:"from" swaggertype:"integer" validate:"omitempty,min=1"`
+	To   int64 `example:"1692892095" query:"to"   swaggertype:"integer" validate:"omitempty,min=1"`
 }
 
 func (p *allRollupActionsRequest) SetDefault() {
@@ -325,13 +331,26 @@ func (p *allRollupActionsRequest) SetDefault() {
 }
 
 func (p *allRollupActionsRequest) toDbRequest() storage.RollupAndBridgeActionsFilter {
-	return storage.RollupAndBridgeActionsFilter{
+	fltrs := storage.RollupAndBridgeActionsFilter{
 		Limit:         p.Limit,
 		Offset:        p.Offset,
 		Sort:          pgSort(p.Sort),
 		RollupActions: *p.RollupActions,
 		BridgeActions: *p.BridgeActions,
+		ActionTypes:   types.NewActionTypeMask(),
 	}
+
+	if p.From > 0 {
+		fltrs.From = time.Unix(p.From, 0).UTC()
+	}
+	if p.To > 0 {
+		fltrs.To = time.Unix(p.To, 0).UTC()
+	}
+	for i := range p.ActionTypes {
+		fltrs.ActionTypes.SetType(types.ActionType(p.ActionTypes[i]))
+	}
+
+	return fltrs
 }
 
 // AllActions godoc
@@ -340,12 +359,15 @@ func (p *allRollupActionsRequest) toDbRequest() storage.RollupAndBridgeActionsFi
 //	@Description	Get rollup actions with actions of all connected bridges
 //	@Tags			rollup
 //	@ID				rollup-all-actions
-//	@Param			hash			path	string					true	"Base64Url encoded rollup id"
-//	@Param			limit			query	integer					false	"Count of requested entities"					minimum(1)		maximum(100)
-//	@Param			offset			query	integer					false	"Offset"										minimum(1)
-//	@Param			sort			query	string					false	"Sort order"									Enums(asc, desc)
-//	@Param			rollup_actions	query	boolean					false	"If true join rollup actions. Default: true"
-//	@Param			bridge_actions	query	boolean					false	"If true join brigde actions. Default: true"
+//	@Param			hash			path	string				true	"Base64Url encoded rollup id"
+//	@Param			limit			query	integer				false	"Count of requested entities"					minimum(1)		maximum(100)
+//	@Param			offset			query	integer				false	"Offset"										minimum(1)
+//	@Param			sort			query	string				false	"Sort order"									Enums(asc, desc)
+//	@Param			rollup_actions	query	boolean				false	"If true join rollup actions. Default: true"
+//	@Param			bridge_actions	query	boolean				false	"If true join brigde actions. Default: true"
+//	@Param			action_types	query	types.ActionType	false	"Comma-separated action types list"
+//	@Param			from			query	integer				false	"Time from in unix timestamp"					mininum(1)
+//	@Param			to				query	integer				false	"Time to in unix timestamp"						mininum(1)
 //	@Produce		json
 //	@Success		200	{array}		responses.Action
 //	@Failure		400	{object}	Error

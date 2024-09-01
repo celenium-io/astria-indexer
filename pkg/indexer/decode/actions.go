@@ -250,11 +250,12 @@ func parseSequenceAction(body *astria.Action_SequenceAction, from string, height
 		})
 
 		action.RollupAction = &storage.RollupAction{
-			Time:   action.Time,
-			Height: action.Height,
-			Size:   int64(dataSize),
-			Action: action,
-			Rollup: rollup,
+			Time:       action.Time,
+			Height:     action.Height,
+			Size:       int64(dataSize),
+			Action:     action,
+			Rollup:     rollup,
+			ActionType: action.Type,
 		}
 		ctx.DataSize += int64(dataSize)
 	}
@@ -459,10 +460,11 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from st
 		}
 
 		action.RollupAction = &storage.RollupAction{
-			Time:   action.Time,
-			Height: action.Height,
-			Action: action,
-			Rollup: rollup,
+			Time:       action.Time,
+			Height:     action.Height,
+			Action:     action,
+			Rollup:     rollup,
+			ActionType: action.Type,
 		}
 		ctx.AddBridge(&bridge)
 	}
