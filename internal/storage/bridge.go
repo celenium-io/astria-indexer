@@ -24,7 +24,7 @@ type Bridge struct {
 	bun.BaseModel `bun:"table:bridge" comment:"Table with bridges"`
 
 	Id           uint64         `bun:"id,pk,notnull,autoincrement"         comment:"Unique internal identity"`
-	RollupId     uint64         `bun:"rollup_id,unique:bridge_rollup_id"   comment:"Rollup id"`
+	RollupId     uint64         `bun:"rollup_id"                           comment:"Rollup id"`
 	AddressId    uint64         `bun:"address_id,unique:bridge_address_id" comment:"Address id"`
 	Asset        string         `bun:"asset"                               comment:"Asset"`
 	FeeAsset     string         `bun:"fee_asset"                           comment:"Fee asset"`
