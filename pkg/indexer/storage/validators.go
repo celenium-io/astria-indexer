@@ -9,7 +9,7 @@ import (
 	"github.com/celenium-io/astria-indexer/internal/storage"
 )
 
-func saveValidators(
+func (module *Module) saveValidators(
 	ctx context.Context,
 	tx storage.Transaction,
 	validators map[string]*storage.Validator,
@@ -23,5 +23,15 @@ func saveValidators(
 		vals = append(vals, val)
 	}
 
-	return tx.UpdateValidators(ctx, vals...)
+	if err := tx.UpdateValidators(ctx, vals...); err != nil {
+		return err
+	}
+
+	for i := range vals {
+		if _, ok := module.validators[vals[i].Address]; !ok {
+			module.validators[vals[i].Address] = vals[i].Id
+		}
+	}
+
+	return nil
 }

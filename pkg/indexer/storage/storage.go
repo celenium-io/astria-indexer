@@ -202,7 +202,7 @@ func (module *Module) processBlockInTransaction(ctx context.Context, tx storage.
 		return state, err
 	}
 
-	if err := saveValidators(ctx, tx, block.Validators); err != nil {
+	if err := module.saveValidators(ctx, tx, block.Validators); err != nil {
 		return state, err
 	}
 

@@ -395,7 +395,7 @@ func parseValidatorUpdateAction(body *astria.Action_ValidatorUpdateAction, heigh
 			Height:     action.Height,
 			ActionType: action.Type,
 		})
-		ctx.Validators.Set(pubKey, power)
+		ctx.Validators.Set(pubKey, power, address, height)
 	}
 	return nil
 }

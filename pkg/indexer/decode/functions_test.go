@@ -74,6 +74,10 @@ func TestAddressFromPubKey(t *testing.T) {
 			name: "test 3",
 			pk:   "96F43A8448928F1E580864D69FE44E093C5A82A1D4A80C59086D7E67976CDA45",
 			want: "astria1z90efkxf3l7h8ln9rqnpz9q0pmw8c0y5dvfdhe",
+		}, {
+			name: "test 4",
+			pk:   "352b09264c7ca6e2b40845f589973eeeb1c1068fc336ba571714ec018760be06",
+			want: "astria13cyhkel6fkkzskxtjntulcqtpwpvjvslfclvtg",
 		},
 	}
 	for _, tt := range tests {
