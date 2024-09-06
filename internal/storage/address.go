@@ -36,6 +36,7 @@ type Address struct {
 	Nonce         uint32      `bun:"nonce"                       comment:"Nonce"`
 	ActionsCount  int64       `bun:"actions_count"               comment:"Count of actions in which the address was involved"`
 	SignedTxCount int64       `bun:"signed_tx_count"             comment:"Count of signed transactions"`
+	IsBridge      bool        `bun:"is_bridge"                   comment:"Indicate whether the account is a bridge or not"`
 
 	Balance []*Balance `bun:"rel:has-many,join:id=id"`
 }
