@@ -4,33 +4,39 @@
   nonce: 0
   actions_count: 0
   signed_tx_count: 0
+  is_bridge: true
 - id: 3
   height: 0
   hash: astria16rgmx2s86kk2r69rhjnvs9y44ujfhadc7yav9a
   nonce: 0
   actions_count: 0
   signed_tx_count: 0
+  is_bridge: false
 - id: 4
   height: 0
   hash: astria1475jkpuvznd44szgfz8wwdf9w6xh5dx9jwqgvz
   nonce: 0
   actions_count: 0
   signed_tx_count: 0
+  is_bridge: false
 - id: 5
   height: 0
   hash: astria1c220qfmjrwqlk939ca5a5z2rjxryyr9m3ah8gl
   nonce: 0
   actions_count: 0
   signed_tx_count: 0
+  is_bridge: false
 - id: 1
   height: 0
   hash: astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p
   nonce: 1
   actions_count: 1
   signed_tx_count: 2
+  is_bridge: false
 - id: 8
   height: 7965
   hash: astria1e9q7egqgz8rz6aej8nr57swqgaeujhz04vd9q5
   nonce: 0
   actions_count: 1
   signed_tx_count: 0
+  is_bridge: false

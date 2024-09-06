@@ -2421,6 +2421,9 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 321
                 },
+                "is_bridge": {
+                    "type": "boolean"
+                },
                 "nonce": {
                     "type": "integer",
                     "example": 10

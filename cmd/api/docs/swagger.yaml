@@ -57,6 +57,8 @@ definitions:
       id:
         example: 321
         type: integer
+      is_bridge:
+        type: boolean
       nonce:
         example: 10
         type: integer

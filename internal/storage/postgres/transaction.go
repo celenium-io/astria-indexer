@@ -58,11 +58,12 @@ func (tx Transaction) SaveAddresses(ctx context.Context, addresses ...*models.Ad
 	}
 
 	_, err := tx.Tx().NewInsert().Model(&addr).
-		Column("height", "hash", "nonce", "actions_count", "signed_tx_count").
+		Column("height", "hash", "nonce", "actions_count", "signed_tx_count", "is_bridge").
 		On("CONFLICT ON CONSTRAINT address_hash DO UPDATE").
 		Set("actions_count = added_address.actions_count + EXCLUDED.actions_count").
 		Set("signed_tx_count = added_address.signed_tx_count + EXCLUDED.signed_tx_count").
 		Set("nonce = GREATEST(EXCLUDED.nonce, added_address.nonce)").
+		Set("is_bridge = EXCLUDED.is_bridge OR added_address.is_bridge").
 		Returning("xmax, id").
 		Exec(ctx)
 	if err != nil {

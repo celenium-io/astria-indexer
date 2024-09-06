@@ -44,50 +44,62 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 			tx.ActionTypes.Set(storageTypes.ActionTypeIbcRelayBits)
 			err = parseIbcAction(val, &actions[i])
 			feeType = "penumbra.core.component.ibc.v1.IbcAction"
+
 		case *astria.Action_Ics20Withdrawal:
 			tx.ActionTypes.Set(storageTypes.ActionTypeIcs20WithdrawalBits)
 			err = parseIcs20Withdrawal(val, from, height, ctx, &actions[i])
 			feeType = "astria.protocol.transactions.v1alpha1.Ics20Withdrawal"
+
 		case *astria.Action_SequenceAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeSequenceBits)
 			err = parseSequenceAction(val, from, height, ctx, &actions[i])
 			feeType = "astria.protocol.transactions.v1alpha1.SequenceAction"
+
 		case *astria.Action_SudoAddressChangeAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeSudoAddressChangeBits)
 			err = parseSudoAddressChangeAction(val, height, ctx, &actions[i])
 			feeType = "astria.protocol.transactions.v1alpha1.SudoAddressChangeAction"
+
 		case *astria.Action_TransferAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeTransferBits)
 			err = parseTransferAction(val, from, height, ctx, &actions[i])
 			feeType = "astria.protocol.transactions.v1alpha1.TransferAction"
+
 		case *astria.Action_ValidatorUpdateAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeValidatorUpdateBits)
 			err = parseValidatorUpdateAction(val, height, ctx, &actions[i])
 			feeType = "tendermint.abci.ValidatorUpdateAction"
+
 		case *astria.Action_BridgeLockAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeBridgeLockBits)
 			err = parseBridgeLock(val, from, height, ctx, &actions[i])
 			feeType = "astria.protocol.transactions.v1alpha1.BridgeLockAction"
+
 		case *astria.Action_FeeAssetChangeAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeFeeAssetChangeBits)
 			err = parseFeeAssetChange(val, &actions[i])
 			feeType = "astria.protocol.transactions.v1alpha1.FeeAssetChangeAction"
+
 		case *astria.Action_IbcRelayerChangeAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeIbcRelayerChangeBits)
 			err = parseIbcRelayerChange(val, height, ctx, &actions[i])
 			feeType = "astria.protocol.transactions.v1alpha1.IbcRelayerChangeAction"
+
 		case *astria.Action_InitBridgeAccountAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeInitBridgeAccountBits)
 			err = parseInitBridgeAccount(val, from, height, ctx, &actions[i])
 			feeType = "astria.protocol.transactions.v1alpha1.InitBridgeAccountAction"
+
 		case *astria.Action_BridgeSudoChangeAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeBridgeSudoChangeBits)
 			err = parseBridgeSudoChange(val, height, ctx, &actions[i])
 			feeType = "astria.protocol.transactions.v1alpha1.BridgeSudoChangeAction"
+
 		case *astria.Action_BridgeUnlockAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeBridgeUnlockBits)
 			err = parseBridgeUnlock(val, from, height, ctx, &actions[i])
 			feeType = "astria.protocol.transactions.v1alpha1.BridgeUnlockAction"
+
 		case *astria.Action_FeeChangeAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeFeeChangeBits)
 			err = parseFeeChange(val, ctx, &actions[i])
@@ -447,6 +459,7 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from st
 			Address:    ctx.Addresses.Set(from, height, decimal.Zero, "", 0, 0),
 			Rollup:     rollup,
 		}
+		bridge.Address.IsBridge = true
 		rollup.BridgeCount += 1
 
 		action.Data["rollup_id"] = rollupId

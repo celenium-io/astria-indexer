@@ -18,6 +18,7 @@ type Address struct {
 	SignedTxCount int64          `example:"10"                                            json:"signed_tx_count" swaggertype:"integer"`
 	Nonce         uint32         `example:"10"                                            json:"nonce"           swaggertype:"integer"`
 	Hash          string         `example:"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2" json:"hash"            swaggertype:"string"`
+	IsBridge      bool           `example:"false"                                         json:"is_bridge"       swaggertype:"boolean"`
 
 	Balance []Balance `json:"balances,omitempty"`
 	Bridge  *Bridge   `json:"bridge,omitempty"`
@@ -30,6 +31,7 @@ func NewAddress(addr storage.Address, bridge *storage.Bridge) Address {
 		ActionsCount:  addr.ActionsCount,
 		SignedTxCount: addr.SignedTxCount,
 		Nonce:         addr.Nonce,
+		IsBridge:      addr.IsBridge,
 		Hash:          addr.String(),
 		Balance:       make([]Balance, 0),
 	}
