@@ -58,6 +58,7 @@ definitions:
         example: 321
         type: integer
       is_bridge:
+        example: false
         type: boolean
       nonce:
         example: 10
@@ -2011,7 +2012,7 @@ paths:
       - transactions
   /v1/validators:
     get:
-      description: List validators
+      description: List validators sorted by power
       operationId: list-validator
       parameters:
       - description: Count of requested entities

@@ -85,10 +85,11 @@ func (s *ValidatorTestSuite) TestList() {
 	c.SetPath("/validators")
 
 	s.validators.EXPECT().
-		List(gomock.Any(), uint64(10), uint64(0), pgSort("asc")).
-		Return([]*storage.Validator{
-			&testValidator,
-		}, nil)
+		ListByPower(gomock.Any(), 10, 0, pgSort("asc")).
+		Return([]storage.Validator{
+			testValidator,
+		}, nil).
+		Times(1)
 
 	s.Require().NoError(s.handler.List(c))
 	s.Require().Equal(http.StatusOK, rec.Code)

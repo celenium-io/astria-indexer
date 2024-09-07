@@ -67,10 +67,25 @@ func (handler *ValidatorHandler) Get(c echo.Context) error {
 	return c.JSON(http.StatusOK, responses.NewValidator(validator))
 }
 
+type validatorsRequest struct {
+	Limit  int    `query:"limit"  validate:"omitempty,min=1,max=100"`
+	Offset int    `query:"offset" validate:"omitempty,min=0"`
+	Sort   string `query:"sort"   validate:"omitempty,oneof=asc desc"`
+}
+
+func (p *validatorsRequest) SetDefault() {
+	if p.Limit == 0 {
+		p.Limit = 10
+	}
+	if p.Sort == "" {
+		p.Sort = asc
+	}
+}
+
 // List godoc
 //
 //	@Summary		List validators
-//	@Description	List validators
+//	@Description	List validators sorted by power
 //	@Tags			validator
 //	@ID				list-validator
 //	@Param			limit	query	integer	false	"Count of requested entities"	mininum(1)	maximum(100)
@@ -83,20 +98,20 @@ func (handler *ValidatorHandler) Get(c echo.Context) error {
 //	@Failure		500	{object}	Error
 //	@Router			/v1/validators [get]
 func (handler *ValidatorHandler) List(c echo.Context) error {
-	req, err := bindAndValidate[listRequest](c)
+	req, err := bindAndValidate[validatorsRequest](c)
 	if err != nil {
 		return badRequestError(c, err)
 	}
 	req.SetDefault()
 
-	validators, err := handler.validators.List(c.Request().Context(), req.Limit, req.Offset, pgSort(req.Sort))
+	validators, err := handler.validators.ListByPower(c.Request().Context(), req.Limit, req.Offset, pgSort(req.Sort))
 	if err != nil {
 		return handleError(c, err, handler.validators)
 	}
 
 	response := make([]responses.Validator, len(validators))
 	for i := range validators {
-		response[i] = *responses.NewValidator(validators[i])
+		response[i] = *responses.NewValidator(&validators[i])
 	}
 
 	return returnArray(c, response)
