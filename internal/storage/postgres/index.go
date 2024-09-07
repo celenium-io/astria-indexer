@@ -218,6 +218,14 @@ func createIndices(ctx context.Context, conn *database.Bun) error {
 			Exec(ctx); err != nil {
 			return err
 		}
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Validator)(nil)).
+			Index("validator_power_idx").
+			ColumnExpr("power").
+			Exec(ctx); err != nil {
+			return err
+		}
 
 		// Bridge
 		if _, err := tx.NewCreateIndex().

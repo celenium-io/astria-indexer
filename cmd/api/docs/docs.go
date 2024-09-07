@@ -2098,7 +2098,7 @@ const docTemplate = `{
         },
         "/v1/validators": {
             "get": {
-                "description": "List validators",
+                "description": "List validators sorted by power",
                 "produces": [
                     "application/json",
                     "application/json"
@@ -2422,7 +2422,8 @@ const docTemplate = `{
                     "example": 321
                 },
                 "is_bridge": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "example": false
                 },
                 "nonce": {
                     "type": "integer",

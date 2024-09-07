@@ -17,5 +17,5 @@
   pubkey_type: tendermint/PubKeyEd25519
   pubkey: 0x96f43a8448928f1e580864d69fe44e093c5a82a1d4a80c59086d7e67976cda45
   name: node2
-  power: 1
+  power: 2
   height: 0

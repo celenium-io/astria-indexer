@@ -238,6 +238,45 @@ func (c *MockIValidatorListCall) DoAndReturn(f func(context.Context, uint64, uin
 	return c
 }
 
+// ListByPower mocks base method.
+func (m *MockIValidator) ListByPower(ctx context.Context, limit, offset int, order storage0.SortOrder) ([]storage.Validator, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListByPower", ctx, limit, offset, order)
+	ret0, _ := ret[0].([]storage.Validator)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListByPower indicates an expected call of ListByPower.
+func (mr *MockIValidatorMockRecorder) ListByPower(ctx, limit, offset, order any) *MockIValidatorListByPowerCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByPower", reflect.TypeOf((*MockIValidator)(nil).ListByPower), ctx, limit, offset, order)
+	return &MockIValidatorListByPowerCall{Call: call}
+}
+
+// MockIValidatorListByPowerCall wrap *gomock.Call
+type MockIValidatorListByPowerCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockIValidatorListByPowerCall) Return(arg0 []storage.Validator, arg1 error) *MockIValidatorListByPowerCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockIValidatorListByPowerCall) Do(f func(context.Context, int, int, storage0.SortOrder) ([]storage.Validator, error)) *MockIValidatorListByPowerCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockIValidatorListByPowerCall) DoAndReturn(f func(context.Context, int, int, storage0.SortOrder) ([]storage.Validator, error)) *MockIValidatorListByPowerCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // Save mocks base method.
 func (m_2 *MockIValidator) Save(ctx context.Context, m *storage.Validator) error {
 	m_2.ctrl.T.Helper()
