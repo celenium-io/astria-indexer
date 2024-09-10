@@ -4,20 +4,26 @@
 package parser
 
 import (
+	"context"
 	"testing"
 
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	testsuite "github.com/celenium-io/astria-indexer/internal/test_suite"
 	"github.com/celenium-io/astria-indexer/pkg/indexer/decode"
+	"github.com/celenium-io/astria-indexer/pkg/node/mock"
 	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 func TestParseTxs_EmptyTxsResults(t *testing.T) {
 	block, _ := testsuite.EmptyBlock()
 
-	ctx := decode.NewContext()
-	resultTxs, err := parseTxs(block, &ctx)
+	decodeCtx := decode.NewContext()
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	api := mock.NewMockApi(ctrl)
+	resultTxs, err := parseTxs(context.Background(), block, &decodeCtx, api)
 
 	assert.NoError(t, err)
 	assert.Empty(t, resultTxs)
@@ -52,7 +58,11 @@ func TestParseTxs_SuccessTx(t *testing.T) {
 	}
 	block, now := testsuite.CreateTestBlock(txRes, true)
 	ctx := decode.NewContext()
-	resultTxs, err := parseTxs(block, &ctx)
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	api := mock.NewMockApi(ctrl)
+
+	resultTxs, err := parseTxs(context.Background(), block, &ctx, api)
 
 	assert.NoError(t, err)
 	assert.Len(t, resultTxs, 1)
@@ -79,7 +89,10 @@ func TestParseTxs_FailedTx(t *testing.T) {
 	}
 	block, now := testsuite.CreateTestBlock(txRes, true)
 	ctx := decode.NewContext()
-	resultTxs, err := parseTxs(block, &ctx)
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	api := mock.NewMockApi(ctrl)
+	resultTxs, err := parseTxs(context.Background(), block, &ctx, api)
 
 	assert.NoError(t, err)
 	assert.Len(t, resultTxs, 1)
@@ -106,7 +119,10 @@ func TestParseTxs_FailedTxWithNonstandardErrorCode(t *testing.T) {
 	}
 	block, now := testsuite.CreateTestBlock(txRes, true)
 	ctx := decode.NewContext()
-	resultTxs, err := parseTxs(block, &ctx)
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	api := mock.NewMockApi(ctrl)
+	resultTxs, err := parseTxs(context.Background(), block, &ctx, api)
 
 	assert.NoError(t, err)
 	assert.Len(t, resultTxs, 1)

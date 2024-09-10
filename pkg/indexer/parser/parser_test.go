@@ -9,20 +9,24 @@ import (
 	"time"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/pkg/node/mock"
 	"github.com/celenium-io/astria-indexer/pkg/types"
 	cometTypes "github.com/cometbft/cometbft/types"
 	"github.com/dipdup-net/indexer-sdk/pkg/modules"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 var testTime = time.Now()
 
-func createModules(t *testing.T) (modules.BaseModule, string, Module) {
+func createModules(t *testing.T, ctrl *gomock.Controller) (modules.BaseModule, string, Module) {
 	writerModule := modules.New("writer-module")
 	outputName := "write"
 	writerModule.CreateOutput(outputName)
-	parserModule := NewModule()
+
+	api := mock.NewMockApi(ctrl)
+	parserModule := NewModule(api)
 
 	err := parserModule.AttachTo(&writerModule, outputName, InputName)
 	assert.NoError(t, err)
@@ -134,7 +138,10 @@ func getBlock() types.BlockData {
 }
 
 func TestParserModule_Success(t *testing.T) {
-	writerModule, outputName, parserModule := createModules(t)
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	writerModule, outputName, parserModule := createModules(t, ctrl)
 
 	readerModule := modules.New("reader-module")
 	readerInputName := "read"
@@ -169,7 +176,10 @@ func TestParserModule_Success(t *testing.T) {
 }
 
 func TestModule_OnClosedChannel(t *testing.T) {
-	_, _, parserModule := createModules(t)
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	_, _, parserModule := createModules(t, ctrl)
 
 	stopperModule := modules.New("stopper-module")
 	stopInputName := "stop-signal"
@@ -198,7 +208,10 @@ func TestModule_OnClosedChannel(t *testing.T) {
 }
 
 func TestModule_OnParseError(t *testing.T) {
-	writerModule, writerOutputName, parserModule := createModules(t)
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	writerModule, writerOutputName, parserModule := createModules(t, ctrl)
 
 	stopperModule := modules.New("stopper-module")
 	stopInputName := "stop-signal"

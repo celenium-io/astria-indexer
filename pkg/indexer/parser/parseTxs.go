@@ -4,14 +4,17 @@
 package parser
 
 import (
+	"context"
+
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/celenium-io/astria-indexer/pkg/indexer/decode"
+	"github.com/celenium-io/astria-indexer/pkg/node"
 	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/pkg/errors"
 )
 
-func parseTxs(b types.BlockData, ctx *decode.Context) ([]*storage.Tx, error) {
+func parseTxs(ctx context.Context, b types.BlockData, decodeCtx *decode.Context, api node.Api) ([]*storage.Tx, error) {
 	count := len(b.Block.Txs)
 	index := 0
 	if count == 0 {
@@ -21,24 +24,24 @@ func parseTxs(b types.BlockData, ctx *decode.Context) ([]*storage.Tx, error) {
 	if len(b.Block.Txs) >= 2 && len(b.Block.Txs[0]) == 32 && len(b.Block.Txs[1]) == 32 {
 		count -= 2
 		index = 2
-		ctx.BytesInBlock += 64
+		decodeCtx.BytesInBlock += 64
 	}
 
 	txs := make([]*storage.Tx, count)
 
 	for i := index; i < len(b.TxsResults); i++ {
-		if err := parseEvents(b.TxsResults[i].Events, ctx); err != nil {
+		if err := parseEvents(ctx, b.TxsResults[i].Events, decodeCtx, api); err != nil {
 			return nil, errors.Wrap(err, "parse events")
 		}
 
-		t, err := parseTx(b, i, b.TxsResults[i], ctx)
+		t, err := parseTx(b, i, b.TxsResults[i], decodeCtx)
 		if err != nil {
 			return nil, err
 		}
 		txs[i-index] = &t
 
-		ctx.GasWanted += b.TxsResults[i].GasWanted
-		ctx.GasUsed += b.TxsResults[i].GasUsed
+		decodeCtx.GasWanted += b.TxsResults[i].GasWanted
+		decodeCtx.GasUsed += b.TxsResults[i].GasUsed
 	}
 
 	return txs, nil

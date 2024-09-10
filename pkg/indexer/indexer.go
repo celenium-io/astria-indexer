@@ -56,7 +56,7 @@ func New(ctx context.Context, cfg config.Config, stopperModule modules.Module) (
 		return Indexer{}, errors.Wrap(err, "while creating rollback module")
 	}
 
-	p, err := createParser(r)
+	p, err := createParser(r, &api)
 	if err != nil {
 		return Indexer{}, errors.Wrap(err, "while creating parser module")
 	}
@@ -150,8 +150,8 @@ func createRollback(receiverModule modules.Module, pg postgres.Storage, api node
 	return &rollbackModule, nil
 }
 
-func createParser(receiverModule modules.Module) (*parser.Module, error) {
-	parserModule := parser.NewModule()
+func createParser(receiverModule modules.Module, api node.Api) (*parser.Module, error) {
+	parserModule := parser.NewModule(api)
 
 	if err := parserModule.AttachTo(receiverModule, receiver.BlocksOutput, parser.InputName); err != nil {
 		return nil, errors.Wrap(err, "while attaching parser to receiver")

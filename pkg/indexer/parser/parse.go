@@ -4,6 +4,7 @@
 package parser
 
 import (
+	"context"
 	"encoding/hex"
 	"strings"
 	"time"
@@ -16,7 +17,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func (p *Module) parse(b types.BlockData) error {
+func (p *Module) parse(ctx context.Context, b types.BlockData) error {
 	start := time.Now()
 	p.Log.Info().
 		Int64("height", b.Block.Height).
@@ -30,7 +31,7 @@ func (p *Module) parse(b types.BlockData) error {
 	decodeCtx := decode.NewContext()
 	decodeCtx.Proposer = proposer
 
-	txs, err := parseTxs(b, &decodeCtx)
+	txs, err := parseTxs(ctx, b, &decodeCtx, p.api)
 	if err != nil {
 		return errors.Wrapf(err, "while parsing block on level=%d", b.Height)
 	}

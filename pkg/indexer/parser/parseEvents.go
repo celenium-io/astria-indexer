@@ -4,20 +4,27 @@
 package parser
 
 import (
+	"context"
+	"strings"
+	"time"
+
+	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/asset/v1alpha1"
 	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/pkg/indexer/decode"
+	"github.com/celenium-io/astria-indexer/pkg/node"
 	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/pkg/errors"
 	"github.com/shopspring/decimal"
+	"google.golang.org/protobuf/proto"
 )
 
-func parseEvents(events []types.Event, ctx *decode.Context) error {
+func parseEvents(ctx context.Context, events []types.Event, decodeCtx *decode.Context, api node.Api) error {
 	for i := range events {
 		var err error
 		switch events[i].Type {
 		case "tx.fees":
-			err = parseTxFees(events[i].Attributes, ctx)
+			err = parseTxFees(ctx, events[i].Attributes, decodeCtx, api)
 		default:
 			continue
 		}
@@ -29,7 +36,39 @@ func parseEvents(events []types.Event, ctx *decode.Context) error {
 	return nil
 }
 
-func parseTxFees(attrs []types.EventAttribute, ctx *decode.Context) error {
+var (
+	assets = map[string]string{
+		"704031c868fd3d3c84a1cfa8cb45deba4ea746b44697f7f4a6ed1b8f6c239b82": string(currency.Nria),
+	}
+)
+
+func getAsset(ctx context.Context, api node.Api, val string) (string, error) {
+	if !strings.HasPrefix(val, "ibc") {
+		return val, nil
+	}
+	parts := strings.Split(val, "/")
+	hash := parts[len(parts)-1]
+	if asset, ok := assets[hash]; ok {
+		return asset, nil
+	}
+
+	timeoutCtx, cancel := context.WithTimeout(ctx, time.Second*10)
+	defer cancel()
+
+	metadata, err := api.GetAssetInfo(timeoutCtx, hash)
+	if err != nil {
+		return "", errors.Wrap(err, val)
+	}
+
+	var response astria.DenomResponse
+	if err := proto.Unmarshal(metadata.Response.Value, &response); err != nil {
+		return "", errors.Wrap(err, val)
+	}
+	assets[hash] = response.GetDenom()
+	return response.GetDenom(), nil
+}
+
+func parseTxFees(ctx context.Context, attrs []types.EventAttribute, decodeCtx *decode.Context, api node.Api) error {
 	var (
 		fee = new(storage.Fee)
 		err error
@@ -37,11 +76,11 @@ func parseTxFees(attrs []types.EventAttribute, ctx *decode.Context) error {
 	for i := range attrs {
 		switch attrs[i].Key {
 		case "asset":
-			fee.Asset = attrs[i].Value
-			// TODO: think about general logic with IBC channels
-			if fee.Asset == "ibc/704031c868fd3d3c84a1cfa8cb45deba4ea746b44697f7f4a6ed1b8f6c239b82" {
-				fee.Asset = string(currency.Nria)
+			asset, err := getAsset(ctx, api, attrs[i].Value)
+			if err != nil {
+				return err
 			}
+			fee.Asset = asset
 		case "feeAmount":
 			fee.Amount, err = decimal.NewFromString(attrs[i].Value)
 			if err != nil {
@@ -53,6 +92,6 @@ func parseTxFees(attrs []types.EventAttribute, ctx *decode.Context) error {
 		}
 	}
 
-	ctx.AddFee(fee)
+	decodeCtx.AddFee(fee)
 	return nil
 }
