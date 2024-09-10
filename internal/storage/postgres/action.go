@@ -148,6 +148,7 @@ func (a *Action) ByRollupAndBridge(ctx context.Context, rollupId uint64, fltrs s
 	switch {
 	case fltrs.BridgeActions && fltrs.RollupActions:
 		subQuery = a.DB().NewSelect().TableExpr("(?) as rollup_action", rollupActions.Union(addressActions))
+		subQuery = sortScope(subQuery, "time", fltrs.Sort)
 	case !fltrs.BridgeActions && fltrs.RollupActions:
 		subQuery = rollupActions
 	case fltrs.BridgeActions && !fltrs.RollupActions:
@@ -156,7 +157,6 @@ func (a *Action) ByRollupAndBridge(ctx context.Context, rollupId uint64, fltrs s
 		return
 	}
 
-	subQuery = sortScope(subQuery, "time", fltrs.Sort)
 	subQuery = limitScope(subQuery, fltrs.Limit)
 	subQuery = offsetScope(subQuery, fltrs.Offset)
 
