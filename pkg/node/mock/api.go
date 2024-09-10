@@ -239,6 +239,45 @@ func (c *MockApiGenesisCall) DoAndReturn(f func(context.Context) (types.Genesis,
 	return c
 }
 
+// GetAssetInfo mocks base method.
+func (m *MockApi) GetAssetInfo(ctx context.Context, asset string) (types.DenomMetadataResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAssetInfo", ctx, asset)
+	ret0, _ := ret[0].(types.DenomMetadataResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAssetInfo indicates an expected call of GetAssetInfo.
+func (mr *MockApiMockRecorder) GetAssetInfo(ctx, asset any) *MockApiGetAssetInfoCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAssetInfo", reflect.TypeOf((*MockApi)(nil).GetAssetInfo), ctx, asset)
+	return &MockApiGetAssetInfoCall{Call: call}
+}
+
+// MockApiGetAssetInfoCall wrap *gomock.Call
+type MockApiGetAssetInfoCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockApiGetAssetInfoCall) Return(arg0 types.DenomMetadataResponse, arg1 error) *MockApiGetAssetInfoCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockApiGetAssetInfoCall) Do(f func(context.Context, string) (types.DenomMetadataResponse, error)) *MockApiGetAssetInfoCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockApiGetAssetInfoCall) DoAndReturn(f func(context.Context, string) (types.DenomMetadataResponse, error)) *MockApiGetAssetInfoCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // Head mocks base method.
 func (m *MockApi) Head(ctx context.Context) (types0.ResultBlock, error) {
 	m.ctrl.T.Helper()

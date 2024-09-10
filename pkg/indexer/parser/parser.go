@@ -6,11 +6,14 @@ package parser
 import (
 	"context"
 
+	"github.com/celenium-io/astria-indexer/pkg/node"
 	"github.com/dipdup-net/indexer-sdk/pkg/modules"
 )
 
 type Module struct {
 	modules.BaseModule
+
+	api node.Api
 }
 
 var _ modules.Module = (*Module)(nil)
@@ -21,9 +24,10 @@ const (
 	StopOutput = "stop"
 )
 
-func NewModule() Module {
+func NewModule(api node.Api) Module {
 	m := Module{
 		BaseModule: modules.New("parser"),
+		api:        api,
 	}
 	m.CreateInput(InputName)
 	m.CreateOutput(OutputName)

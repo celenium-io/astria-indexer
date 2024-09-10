@@ -20,4 +20,5 @@ type Api interface {
 	Genesis(ctx context.Context) (types.Genesis, error)
 	BlockData(ctx context.Context, level pkgTypes.Level) (pkgTypes.BlockData, error)
 	BlockDataGet(ctx context.Context, level pkgTypes.Level) (pkgTypes.BlockData, error)
+	GetAssetInfo(ctx context.Context, asset string) (types.DenomMetadataResponse, error)
 }
