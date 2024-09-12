@@ -153,7 +153,9 @@ func parseIbcAction(body *astria.Action_IbcAction, action *storage.Action) error
 	action.Data = make(map[string]any)
 
 	if body.IbcAction != nil && body.IbcAction.GetRawAction() != nil {
-		action.Data["raw"] = base64.StdEncoding.EncodeToString(body.IbcAction.GetRawAction().GetValue())
+		data := body.IbcAction.GetRawAction().GetValue()
+		action.Data["raw"] = base64.StdEncoding.EncodeToString(data)
+		action.Data["type"] = body.IbcAction.GetRawAction().GetTypeUrl()
 	}
 	return nil
 }

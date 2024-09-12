@@ -32,7 +32,8 @@ func TestDecodeActions(t *testing.T) {
 		message := &astria.Action_IbcAction{
 			IbcAction: &v1.IbcRelay{
 				RawAction: &anypb.Any{
-					Value: []byte{0, 0, 0, 0},
+					Value:   []byte{0, 0, 0, 0},
+					TypeUrl: "msg_type",
 				},
 			},
 		}
@@ -41,7 +42,8 @@ func TestDecodeActions(t *testing.T) {
 			Height: 1000,
 			Type:   types.ActionTypeIbcRelay,
 			Data: map[string]any{
-				"raw": "AAAAAA==",
+				"raw":  "AAAAAA==",
+				"type": "msg_type",
 			},
 		}
 
