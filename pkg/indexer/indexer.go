@@ -5,7 +5,6 @@ package indexer
 
 import (
 	"context"
-	"sync"
 
 	"github.com/dipdup-net/indexer-sdk/pkg/modules/stopper"
 
@@ -36,7 +35,6 @@ type Indexer struct {
 	rollback *rollback.Module
 	genesis  *genesis.Module
 	stopper  modules.Module
-	wg       *sync.WaitGroup
 	log      zerolog.Logger
 }
 
@@ -85,7 +83,6 @@ func New(ctx context.Context, cfg config.Config, stopperModule modules.Module) (
 		rollback: rb,
 		genesis:  genesisModule,
 		stopper:  stopperModule,
-		wg:       new(sync.WaitGroup),
 		log:      log.With().Str("module", "indexer").Logger(),
 	}, nil
 }
@@ -101,7 +98,6 @@ func (i *Indexer) Start(ctx context.Context) {
 
 func (i *Indexer) Close() error {
 	i.log.Info().Msg("closing...")
-	i.wg.Wait()
 
 	if err := i.receiver.Close(); err != nil {
 		log.Err(err).Msg("closing receiver")
