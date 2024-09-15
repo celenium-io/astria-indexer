@@ -24,3 +24,13 @@ docker-compose up -d --build
 ```
 
 You have to set environment variables for customizing instances and indexing logic. Example of environment file can be found [here](.env.example).
+
+You can run full stack with GUI:
+
+```bash
+export TAG=v1.0.0 # set here needed backend version
+export FRONT_ENV=v1.0.0  # set here needed frontend version
+docker-compose -f full.docker-compose.yml up -d 
+```
+
+After that you can find GUI on `http://localhost:3000`.

@@ -1,0 +1,62 @@
+version: "3.6"
+
+services:
+  indexer:
+    image: ghcr.io/celenium-io/astria-indexer:${TAG:-main}
+    env_file:
+      - .env
+    restart: always
+    depends_on:
+      - db
+    logging: &astria-logging
+      options:
+        max-size: 10m
+        max-file: "5"
+
+  api:
+    restart: always
+    image: ghcr.io/celenium-io/astria-indexer-api:${TAG:-main}
+    env_file:
+      - .env
+    depends_on:
+      - db
+    ports:
+      - "127.0.0.1:9876:9876"
+    logging: *astria-logging
+
+  db:
+    command:
+      - -cshared_preload_libraries=timescaledb,pg_stat_statements
+      - -cpg_stat_statements.track=all
+    image: timescale/timescaledb-ha:pg15-latest
+    restart: always
+    volumes:
+      - db:/home/postgres/pgdata/data
+    environment:
+      - POSTGRES_HOST=${POSTGRES_HOST:-db}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB:-astria}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d astria"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: *astria-logging
+
+  gui:
+    image: ghcr.io/celenium-io/astrotrek-interface:${FRONT_TAG:-latest}
+    ports:
+      - "127.0.0.1:3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - api
+    environment:
+      - NUXT_PUBLIC_API_DEV=${NUXT_PUBLIC_API_DEV:-http://127.0.0.1:9876/v1}
+      - NUXT_PUBLIC_WSS_DEV=${NUXT_PUBLIC_WSS_DEV:-wss://127.0.0.1:9876/v1/ws}
+    restart: always
+    command: npm run start
+    logging: *astria-logging
+volumes:
+  db:
