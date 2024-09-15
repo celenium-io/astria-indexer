@@ -29,7 +29,7 @@ You can run full stack with GUI:
 
 ```bash
 export TAG=v1.0.0 # set here needed backend version
-export FRONT_ENV=v1.0.0  # set here needed frontend version
+export FRONT_TAG=v1.0.0  # set here needed frontend version
 docker-compose -f full.docker-compose.yml up -d 
 ```
 
