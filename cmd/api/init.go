@@ -203,6 +203,7 @@ func initEcho(cfg ApiConfig, db postgres.Storage, env string) *echo.Echo {
 			},
 		},
 	))
+	e.Use(middleware.CORS())
 	e.Use(middleware.Recover())
 	e.Use(middleware.Secure())
 	e.Pre(middleware.RemoveTrailingSlash())
