@@ -9,7 +9,6 @@ import (
 	"time"
 
 	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transactions/v1alpha1"
-	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/celenium-io/astria-indexer/pkg/types"
@@ -665,9 +664,10 @@ func parseBridgeUnlock(body *astria.Action_BridgeUnlockAction, from string, heig
 		amount := uint128ToString(body.BridgeUnlockAction.GetAmount())
 		toAddress := body.BridgeUnlockAction.GetTo().GetBech32M()
 		bridge := body.BridgeUnlockAction.GetBridgeAddress().GetBech32M()
+		feeAsset := body.BridgeUnlockAction.GetFeeAsset()
 
 		action.Data["to"] = toAddress
-		action.Data["fee_asset"] = body.BridgeUnlockAction.GetFeeAsset()
+		action.Data["fee_asset"] = feeAsset
 		action.Data["amount"] = amount
 		if memo := body.BridgeUnlockAction.GetMemo(); len(memo) > 0 {
 			action.Data["memo"] = hex.EncodeToString(memo)
@@ -707,13 +707,13 @@ func parseBridgeUnlock(body *astria.Action_BridgeUnlockAction, from string, heig
 			storage.BalanceUpdate{
 				Address:  toAddr,
 				Height:   action.Height,
-				Currency: currency.DefaultCurrency,
+				Currency: feeAsset,
 				Update:   decAmount,
 			},
 			storage.BalanceUpdate{
 				Address:  fromAddr,
 				Height:   action.Height,
-				Currency: currency.DefaultCurrency,
+				Currency: feeAsset,
 				Update:   decAmount.Neg(),
 			},
 		)

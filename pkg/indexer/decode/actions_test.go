@@ -718,13 +718,13 @@ func TestDecodeActions(t *testing.T) {
 				{
 					Address:  toModel,
 					Update:   toModel.Balance[0].Total,
-					Currency: toModel.Balance[0].Currency,
+					Currency: feeAssetId,
 					Height:   1000,
 				},
 				{
 					Address:  fromModel,
 					Update:   fromModel.Balance[0].Total,
-					Currency: fromModel.Balance[0].Currency,
+					Currency: feeAssetId,
 					Height:   1000,
 				},
 			},
