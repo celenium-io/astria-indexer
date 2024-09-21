@@ -685,7 +685,7 @@ func TestDecodeActions(t *testing.T) {
 			SignedTxCount: 0,
 			Balance: []*storage.Balance{
 				{
-					Currency: currency.DefaultCurrency,
+					Currency: feeAssetId,
 					Total:    decimal.RequireFromString("10"),
 				},
 			},
@@ -697,7 +697,7 @@ func TestDecodeActions(t *testing.T) {
 			SignedTxCount: 0,
 			Balance: []*storage.Balance{
 				{
-					Currency: currency.DefaultCurrency,
+					Currency: feeAssetId,
 					Total:    decimal.RequireFromString("-10"),
 				},
 			},

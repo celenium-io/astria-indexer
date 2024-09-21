@@ -677,13 +677,13 @@ func parseBridgeUnlock(body *astria.Action_BridgeUnlockAction, from string, heig
 		}
 
 		decAmount := decimal.RequireFromString(amount)
-		toAddr := ctx.Addresses.Set(toAddress, height, decAmount, "", 1, 0)
+		toAddr := ctx.Addresses.Set(toAddress, height, decAmount, feeAsset, 1, 0)
 
 		var fromAddr *storage.Address
 		if bridge == "" {
-			fromAddr = ctx.Addresses.Set(from, height, decAmount.Neg(), "", 1, 0)
+			fromAddr = ctx.Addresses.Set(from, height, decAmount.Neg(), feeAsset, 1, 0)
 		} else {
-			fromAddr = ctx.Addresses.Set(bridge, height, decAmount.Neg(), "", 1, 0)
+			fromAddr = ctx.Addresses.Set(bridge, height, decAmount.Neg(), feeAsset, 1, 0)
 		}
 
 		action.Addresses = append(action.Addresses,
