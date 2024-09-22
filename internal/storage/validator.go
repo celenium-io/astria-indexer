@@ -8,7 +8,6 @@ import (
 
 	pkgTypes "github.com/celenium-io/astria-indexer/pkg/types"
 
-	"github.com/dipdup-net/indexer-sdk/pkg/storage"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/shopspring/decimal"
 	"github.com/uptrace/bun"
@@ -16,7 +15,7 @@ import (
 
 //go:generate mockgen -source=$GOFILE -destination=mock/$GOFILE -package=mock -typed
 type IValidator interface {
-	storage.Table[*Validator]
+	sdk.Table[*Validator]
 
 	ListByPower(ctx context.Context, limit, offset int, order sdk.SortOrder) ([]Validator, error)
 }

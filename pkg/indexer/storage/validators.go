@@ -23,7 +23,7 @@ func (module *Module) saveValidators(
 		vals = append(vals, val)
 	}
 
-	if err := tx.UpdateValidators(ctx, vals...); err != nil {
+	if err := tx.SaveValidators(ctx, vals...); err != nil {
 		return err
 	}
 
