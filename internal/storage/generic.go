@@ -76,7 +76,6 @@ type Transaction interface {
 	UpdateAddresses(ctx context.Context, address ...*Address) error
 	UpdateConstants(ctx context.Context, constants ...*Constant) error
 	UpdateRollups(ctx context.Context, rollups ...*Rollup) error
-	UpdateValidators(ctx context.Context, validators ...*Validator) error
 
 	LastBlock(ctx context.Context) (block Block, err error)
 	State(ctx context.Context, name string) (state State, err error)

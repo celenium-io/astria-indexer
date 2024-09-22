@@ -754,26 +754,28 @@ func (s *TransactionTestSuite) TestRetentionBlockSignatures() {
 	s.Require().Len(signs, 3)
 }
 
-func (s *TransactionTestSuite) TestUpdateValidators() {
+func (s *TransactionTestSuite) TestCreateValidator() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
 	tx, err := BeginTransaction(ctx, s.storage.Transactable)
 	s.Require().NoError(err)
 
-	pk, err := hex.DecodeString("32415f09dbee4297cc9a841c2c2312bf903fc53c48860d788ae66097355a585f")
+	pk, err := hex.DecodeString("52415f09dbee4297cc9a841c2c2312bf903fc53c48860d788ae66097355a5851")
 	s.Require().NoError(err)
 
-	err = tx.UpdateValidators(ctx, &storage.Validator{
+	val := &storage.Validator{
 		PubKey: pk,
 		Power:  decimal.NewFromInt(10000),
-	})
+	}
+	err = tx.SaveValidators(ctx, val)
 	s.Require().NoError(err)
+	s.Require().Greater(val.Id, uint64(0))
 
 	s.Require().NoError(tx.Flush(ctx))
 	s.Require().NoError(tx.Close(ctx))
 
-	validator, err := s.storage.Validator.GetByID(ctx, 1)
+	validator, err := s.storage.Validator.GetByID(ctx, val.Id)
 	s.Require().NoError(err)
 	s.Require().EqualValues("10000", validator.Power.String())
 }
