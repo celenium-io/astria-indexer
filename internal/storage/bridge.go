@@ -18,6 +18,7 @@ type IBridge interface {
 	ByAddress(ctx context.Context, addressId uint64) (Bridge, error)
 	ByRollup(ctx context.Context, rollupId uint64, limit, offset int) ([]Bridge, error)
 	ByRoles(ctx context.Context, addressId uint64, limit, offset int) ([]Bridge, error)
+	ListWithAddress(ctx context.Context, limit, offset int) ([]Bridge, error)
 }
 
 type Bridge struct {

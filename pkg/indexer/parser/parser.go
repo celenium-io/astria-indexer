@@ -13,7 +13,8 @@ import (
 type Module struct {
 	modules.BaseModule
 
-	api node.Api
+	api          node.Api
+	bridgeAssets map[string]string
 }
 
 var _ modules.Module = (*Module)(nil)
@@ -24,10 +25,11 @@ const (
 	StopOutput = "stop"
 )
 
-func NewModule(api node.Api) Module {
+func NewModule(api node.Api, bridgeAssets map[string]string) Module {
 	m := Module{
-		BaseModule: modules.New("parser"),
-		api:        api,
+		BaseModule:   modules.New("parser"),
+		api:          api,
+		bridgeAssets: bridgeAssets,
 	}
 	m.CreateInput(InputName)
 	m.CreateOutput(OutputName)

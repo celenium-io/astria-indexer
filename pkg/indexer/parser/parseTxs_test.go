@@ -19,7 +19,7 @@ import (
 func TestParseTxs_EmptyTxsResults(t *testing.T) {
 	block, _ := testsuite.EmptyBlock()
 
-	decodeCtx := decode.NewContext()
+	decodeCtx := decode.NewContext(map[string]string{})
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	api := mock.NewMockApi(ctrl)
@@ -57,7 +57,7 @@ func TestParseTxs_SuccessTx(t *testing.T) {
 		Codespace: "codespace",
 	}
 	block, now := testsuite.CreateTestBlock(txRes, true)
-	ctx := decode.NewContext()
+	ctx := decode.NewContext(map[string]string{})
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	api := mock.NewMockApi(ctrl)
@@ -88,7 +88,7 @@ func TestParseTxs_FailedTx(t *testing.T) {
 		Codespace: "codespace",
 	}
 	block, now := testsuite.CreateTestBlock(txRes, true)
-	ctx := decode.NewContext()
+	ctx := decode.NewContext(map[string]string{})
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	api := mock.NewMockApi(ctrl)
@@ -118,7 +118,7 @@ func TestParseTxs_FailedTxWithNonstandardErrorCode(t *testing.T) {
 		Codespace: "codespace",
 	}
 	block, now := testsuite.CreateTestBlock(txRes, true)
-	ctx := decode.NewContext()
+	ctx := decode.NewContext(map[string]string{})
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	api := mock.NewMockApi(ctrl)

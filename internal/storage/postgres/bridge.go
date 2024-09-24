@@ -8,6 +8,7 @@ import (
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-net/go-lib/database"
+	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 )
 
@@ -86,6 +87,23 @@ func (b *Bridge) ByRoles(ctx context.Context, addressId uint64, limit, offset in
 		Join("left join address as sudo on sudo.id = bridge.sudo_id").
 		Join("left join address as withdrawer on withdrawer.id = bridge.withdrawer_id").
 		Join("left join rollup on rollup.id = bridge.rollup_id").
+		Scan(ctx, &result)
+	return
+}
+
+func (b *Bridge) ListWithAddress(ctx context.Context, limit, offset int) (result []storage.Bridge, err error) {
+	query := b.DB().NewSelect().
+		Model((*storage.Bridge)(nil)).
+		Offset(offset)
+
+	query = limitScope(query, limit)
+	query = sortScope(query, "id", sdk.SortOrderAsc)
+
+	err = b.DB().NewSelect().
+		TableExpr("(?) as bridge", query).
+		ColumnExpr("bridge.*").
+		ColumnExpr("address.hash as address__hash").
+		Join("left join address as address on address.id = bridge.address_id").
 		Scan(ctx, &result)
 	return
 }

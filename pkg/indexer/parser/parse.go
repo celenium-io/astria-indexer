@@ -28,7 +28,7 @@ func (p *Module) parse(ctx context.Context, b types.BlockData) error {
 		return errors.Wrap(err, "decoding block proposer address")
 	}
 
-	decodeCtx := decode.NewContext()
+	decodeCtx := decode.NewContext(p.bridgeAssets)
 	decodeCtx.Proposer = proposer
 
 	txs, err := parseTxs(ctx, b, &decodeCtx, p.api)
