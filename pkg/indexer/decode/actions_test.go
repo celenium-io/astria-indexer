@@ -56,7 +56,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("ics 20 withdrawal", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		address := testsuite.RandomAddress()
 		from := testsuite.RandomAddress()
@@ -167,7 +167,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("sequence", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		from := testsuite.RandomAddress()
 		addressModel := decodeContext.Addresses.Set(from, 1000, decimal.Zero, "", 0, 1)
@@ -219,7 +219,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("sudo address change", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		newAddress := testsuite.RandomAddress()
 		message := &astria.Action_SudoAddressChangeAction{
@@ -259,7 +259,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("transfer", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		from := testsuite.RandomAddress()
 		fromModel := &storage.Address{
@@ -346,7 +346,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("transfer to myself", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		from := testsuite.RandomAddress()
 		fromModel := &storage.Address{
@@ -401,7 +401,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("validator update", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 		message := &astria.Action_ValidatorUpdateAction{
 			ValidatorUpdateAction: &abci.ValidatorUpdate{
 				PubKey: &crypto.PublicKey{
@@ -504,7 +504,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("bridge lock", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		to := testsuite.RandomAddress()
 		dest := testsuite.RandomAddress()
@@ -599,7 +599,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("bridge lock the same address", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		to := testsuite.RandomAddress()
 		dest := testsuite.RandomAddress()
@@ -660,10 +660,12 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("bridge unlock", func(t *testing.T) {
-		decodeContext := NewContext()
+		bridge := testsuite.RandomAddress()
+		decodeContext := NewContext(map[string]string{
+			bridge: assetId,
+		})
 
 		to := testsuite.RandomAddress()
-		bridge := testsuite.RandomAddress()
 
 		message := &astria.Action_BridgeUnlockAction{
 			BridgeUnlockAction: &astria.BridgeUnlockAction{
@@ -685,7 +687,7 @@ func TestDecodeActions(t *testing.T) {
 			SignedTxCount: 0,
 			Balance: []*storage.Balance{
 				{
-					Currency: feeAssetId,
+					Currency: assetId,
 					Total:    decimal.RequireFromString("10"),
 				},
 			},
@@ -697,7 +699,7 @@ func TestDecodeActions(t *testing.T) {
 			SignedTxCount: 0,
 			Balance: []*storage.Balance{
 				{
-					Currency: feeAssetId,
+					Currency: assetId,
 					Total:    decimal.RequireFromString("-10"),
 				},
 			},
@@ -718,13 +720,13 @@ func TestDecodeActions(t *testing.T) {
 				{
 					Address:  toModel,
 					Update:   toModel.Balance[0].Total,
-					Currency: feeAssetId,
+					Currency: assetId,
 					Height:   1000,
 				},
 				{
 					Address:  fromModel,
 					Update:   fromModel.Balance[0].Total,
-					Currency: feeAssetId,
+					Currency: assetId,
 					Height:   1000,
 				},
 			},
@@ -753,7 +755,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("init bridge account", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		rollupId := testsuite.RandomHash(10)
 		from := testsuite.RandomAddress()
@@ -817,10 +819,12 @@ func TestDecodeActions(t *testing.T) {
 		err := parseInitBridgeAccount(message, from, 1000, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
+		require.Len(t, decodeContext.bridgeAssets, 1)
+		require.Contains(t, decodeContext.bridgeAssets, from)
 	})
 
 	t.Run("init bridge account: the same address", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		rollupId := testsuite.RandomHash(10)
 		from := testsuite.RandomAddress()
@@ -863,10 +867,12 @@ func TestDecodeActions(t *testing.T) {
 		err := parseInitBridgeAccount(message, from, 1000, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
+		require.Len(t, decodeContext.bridgeAssets, 1)
+		require.Contains(t, decodeContext.bridgeAssets, from)
 	})
 
 	t.Run("ibc relayer change: addition", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		address := testsuite.RandomAddress()
 		message := &astria.Action_IbcRelayerChangeAction{
@@ -914,7 +920,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("ibc relayer change: removal", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		address := testsuite.RandomAddress()
 		message := &astria.Action_IbcRelayerChangeAction{
@@ -962,7 +968,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("fee change: sequence_base_fee", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		message := &astria.Action_FeeChangeAction{
 			FeeChangeAction: &astria.FeeChangeAction{
@@ -989,7 +995,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("fee change: bridge_lock_byte_cost_multiplier", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		message := &astria.Action_FeeChangeAction{
 			FeeChangeAction: &astria.FeeChangeAction{
@@ -1016,7 +1022,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("fee change: bridge_sudo_change_base_fee", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		message := &astria.Action_FeeChangeAction{
 			FeeChangeAction: &astria.FeeChangeAction{
@@ -1043,7 +1049,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("fee change: ics20_withdrawal_base_fee", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		message := &astria.Action_FeeChangeAction{
 			FeeChangeAction: &astria.FeeChangeAction{
@@ -1070,7 +1076,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("fee change: init_bridge_account_base_fee", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		message := &astria.Action_FeeChangeAction{
 			FeeChangeAction: &astria.FeeChangeAction{
@@ -1097,7 +1103,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("fee change: sequence_byte_cost_multiplier", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		message := &astria.Action_FeeChangeAction{
 			FeeChangeAction: &astria.FeeChangeAction{
@@ -1124,7 +1130,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("fee change: transfer_base_fee", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 
 		message := &astria.Action_FeeChangeAction{
 			FeeChangeAction: &astria.FeeChangeAction{
@@ -1151,7 +1157,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("bridge sudo change", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 		bridge := testsuite.RandomAddress()
 		sudo := testsuite.RandomAddress()
 		withdrawer := testsuite.RandomAddress()
@@ -1233,7 +1239,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("bridge sudo change: bridge is suor", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 		bridge := testsuite.RandomAddress()
 		sudo := bridge
 		withdrawer := testsuite.RandomAddress()
@@ -1300,7 +1306,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("bridge sudo change: bridge is withdrawer", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 		bridge := testsuite.RandomAddress()
 		sudo := testsuite.RandomAddress()
 		withdrawer := bridge
@@ -1367,7 +1373,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("bridge sudo change: sudo is withdrawer", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 		bridge := testsuite.RandomAddress()
 		sudo := testsuite.RandomAddress()
 		withdrawer := sudo
@@ -1434,7 +1440,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("bridge sudo change: all equals", func(t *testing.T) {
-		decodeContext := NewContext()
+		decodeContext := NewContext(map[string]string{})
 		bridge := testsuite.RandomAddress()
 		sudo := bridge
 		withdrawer := bridge

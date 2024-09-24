@@ -26,7 +26,7 @@ func createModules(t *testing.T, ctrl *gomock.Controller) (modules.BaseModule, s
 	writerModule.CreateOutput(outputName)
 
 	api := mock.NewMockApi(ctrl)
-	parserModule := NewModule(api)
+	parserModule := NewModule(api, map[string]string{})
 
 	err := parserModule.AttachTo(&writerModule, outputName, InputName)
 	assert.NoError(t, err)

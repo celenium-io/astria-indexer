@@ -355,6 +355,45 @@ func (c *MockIBridgeListCall) DoAndReturn(f func(context.Context, uint64, uint64
 	return c
 }
 
+// ListWithAddress mocks base method.
+func (m *MockIBridge) ListWithAddress(ctx context.Context, limit, offset int) ([]storage.Bridge, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListWithAddress", ctx, limit, offset)
+	ret0, _ := ret[0].([]storage.Bridge)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListWithAddress indicates an expected call of ListWithAddress.
+func (mr *MockIBridgeMockRecorder) ListWithAddress(ctx, limit, offset any) *MockIBridgeListWithAddressCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListWithAddress", reflect.TypeOf((*MockIBridge)(nil).ListWithAddress), ctx, limit, offset)
+	return &MockIBridgeListWithAddressCall{Call: call}
+}
+
+// MockIBridgeListWithAddressCall wrap *gomock.Call
+type MockIBridgeListWithAddressCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockIBridgeListWithAddressCall) Return(arg0 []storage.Bridge, arg1 error) *MockIBridgeListWithAddressCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockIBridgeListWithAddressCall) Do(f func(context.Context, int, int) ([]storage.Bridge, error)) *MockIBridgeListWithAddressCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockIBridgeListWithAddressCall) DoAndReturn(f func(context.Context, int, int) ([]storage.Bridge, error)) *MockIBridgeListWithAddressCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // Save mocks base method.
 func (m_2 *MockIBridge) Save(ctx context.Context, m *storage.Bridge) error {
 	m_2.ctrl.T.Helper()

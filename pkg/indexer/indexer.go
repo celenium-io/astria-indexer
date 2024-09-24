@@ -54,7 +54,7 @@ func New(ctx context.Context, cfg config.Config, stopperModule modules.Module) (
 		return Indexer{}, errors.Wrap(err, "while creating rollback module")
 	}
 
-	p, err := createParser(r, &api)
+	p, err := createParser(ctx, r, &api, pg)
 	if err != nil {
 		return Indexer{}, errors.Wrap(err, "while creating parser module")
 	}
@@ -146,8 +146,27 @@ func createRollback(receiverModule modules.Module, pg postgres.Storage, api node
 	return &rollbackModule, nil
 }
 
-func createParser(receiverModule modules.Module, api node.Api) (*parser.Module, error) {
-	parserModule := parser.NewModule(api)
+func makeBridgeAssetsMap(ctx context.Context, pg postgres.Storage) (map[string]string, error) {
+	assets := make(map[string]string)
+	for end := false; !end; {
+		data, err := pg.Bridges.ListWithAddress(ctx, 100, len(assets))
+		if err != nil {
+			return nil, err
+		}
+		for i := range data {
+			assets[data[i].Address.Hash] = data[i].Asset
+		}
+		end = len(data) < 100
+	}
+	return assets, nil
+}
+
+func createParser(ctx context.Context, receiverModule modules.Module, api node.Api, pg postgres.Storage) (*parser.Module, error) {
+	assets, err := makeBridgeAssetsMap(ctx, pg)
+	if err != nil {
+		return nil, errors.Wrap(err, "make bridge asset map")
+	}
+	parserModule := parser.NewModule(api, assets)
 
 	if err := parserModule.AttachTo(receiverModule, receiver.BlocksOutput, parser.InputName); err != nil {
 		return nil, errors.Wrap(err, "while attaching parser to receiver")

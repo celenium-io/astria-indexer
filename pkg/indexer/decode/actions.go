@@ -9,6 +9,7 @@ import (
 	"time"
 
 	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transactions/v1alpha1"
+	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/celenium-io/astria-indexer/pkg/types"
@@ -513,6 +514,7 @@ func parseInitBridgeAccount(body *astria.Action_InitBridgeAccountAction, from st
 			ActionType: action.Type,
 		}
 		ctx.AddBridge(&bridge)
+		ctx.AddBridgeAsset(from, bridge.Asset)
 	}
 	return nil
 }
@@ -651,7 +653,6 @@ func parseBridgeLock(body *astria.Action_BridgeLockAction, from string, height t
 					Update:   decAmount.Neg(),
 				},
 			)
-
 		}
 	}
 	return nil
@@ -676,15 +677,25 @@ func parseBridgeUnlock(body *astria.Action_BridgeUnlockAction, from string, heig
 			action.Data["bridge"] = bridge
 		}
 
-		decAmount := decimal.RequireFromString(amount)
-		toAddr := ctx.Addresses.Set(toAddress, height, decAmount, feeAsset, 1, 0)
+		var (
+			decAmount   = decimal.RequireFromString(amount)
+			fromAddr    *storage.Address
+			unlockAsset string
+		)
 
-		var fromAddr *storage.Address
 		if bridge == "" {
-			fromAddr = ctx.Addresses.Set(from, height, decAmount.Neg(), feeAsset, 1, 0)
+			fromAddr = ctx.Addresses.Set(from, height, decAmount.Neg(), "", 1, 0)
+			unlockAsset = currency.DefaultCurrency
 		} else {
-			fromAddr = ctx.Addresses.Set(bridge, height, decAmount.Neg(), feeAsset, 1, 0)
+			asset, ok := ctx.bridgeAssets[bridge]
+			if !ok {
+				return errors.Errorf("unknown bridge asset: %s", bridge)
+			}
+			fromAddr = ctx.Addresses.Set(bridge, height, decAmount.Neg(), asset, 1, 0)
+			unlockAsset = asset
 		}
+
+		toAddr := ctx.Addresses.Set(toAddress, height, decAmount, unlockAsset, 1, 0)
 
 		action.Addresses = append(action.Addresses,
 			&storage.AddressAction{
@@ -707,13 +718,13 @@ func parseBridgeUnlock(body *astria.Action_BridgeUnlockAction, from string, heig
 			storage.BalanceUpdate{
 				Address:  toAddr,
 				Height:   action.Height,
-				Currency: feeAsset,
+				Currency: unlockAsset,
 				Update:   decAmount,
 			},
 			storage.BalanceUpdate{
 				Address:  fromAddr,
 				Height:   action.Height,
-				Currency: feeAsset,
+				Currency: unlockAsset,
 				Update:   decAmount.Neg(),
 			},
 		)
