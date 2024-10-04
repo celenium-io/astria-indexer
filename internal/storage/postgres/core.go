@@ -28,6 +28,7 @@ type Storage struct {
 	Bridges         models.IBridge
 	Constants       models.IConstant
 	Tx              models.ITx
+	Transfers       models.ITransfer
 	Fee             models.IFee
 	Action          models.IAction
 	Address         models.IAddress
@@ -61,6 +62,7 @@ func Create(ctx context.Context, cfg config.Database, scriptsDir string) (Storag
 		BlockSignatures: NewBlockSignature(strg.Connection()),
 		Rollup:          NewRollup(strg.Connection()),
 		Tx:              NewTx(strg.Connection()),
+		Transfers:       NewTransfer(strg.Connection()),
 		Validator:       NewValidator(strg.Connection()),
 		State:           NewState(strg.Connection()),
 		Search:          NewSearch(strg.Connection()),
@@ -128,6 +130,7 @@ func createHypertables(ctx context.Context, conn *database.Bun) error {
 			&models.BlockSignature{},
 			&models.RollupAction{},
 			&models.Fee{},
+			&models.Transfer{},
 		} {
 			if _, err := tx.ExecContext(ctx,
 				`SELECT create_hypertable(?, 'time', chunk_time_interval => INTERVAL '1 month', if_not_exists => TRUE);`,

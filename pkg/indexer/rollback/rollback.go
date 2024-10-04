@@ -210,6 +210,10 @@ func rollbackBlock(ctx context.Context, tx storage.Transaction, height types.Lev
 		return err
 	}
 
+	if err := tx.RollbackTransfers(ctx, height); err != nil {
+		return err
+	}
+
 	if err := tx.RollbackBlockSignatures(ctx, height); err != nil {
 		return err
 	}

@@ -62,6 +62,7 @@ func (p *Module) parse(ctx context.Context, b types.BlockData) error {
 		ActionTypes:   decodeCtx.ActionTypes,
 		Constants:     decodeCtx.ConstantsArray(),
 		Bridges:       decodeCtx.BridgesArray(),
+		Transfers:     decodeCtx.Transfers,
 
 		Txs: txs,
 		Stats: &storage.BlockStats{

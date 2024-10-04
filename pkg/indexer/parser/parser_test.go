@@ -69,6 +69,7 @@ func getExpectedBlock() storage.Block {
 		BlockSignatures: []storage.BlockSignature{},
 		Constants:       make([]*storage.Constant, 0),
 		Bridges:         make([]*storage.Bridge, 0),
+		Transfers:       make([]*storage.Transfer, 0),
 	}
 }
 

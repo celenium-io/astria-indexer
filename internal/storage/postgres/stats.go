@@ -203,3 +203,17 @@ func (s Stats) FeeSummary(ctx context.Context) (response []storage.FeeSummary, e
 		Scan(ctx, &response)
 	return
 }
+
+func (s Stats) TokenTransferDistribution(ctx context.Context, limit int) (items []storage.TokenTransferDistributionItem, err error) {
+	query := s.db.DB().NewSelect().
+		Table(storage.ViewTransferStatsByMonth).
+		ColumnExpr("sum(transfers_count) as transfers_count").
+		ColumnExpr("sum(amount) as amount").
+		Column("asset").
+		Group("asset").
+		Order("amount desc")
+
+	query = limitScope(query, limit)
+	err = query.Scan(ctx, &items)
+	return
+}
