@@ -217,3 +217,12 @@ func (s Stats) TokenTransferDistribution(ctx context.Context, limit int) (items 
 	err = query.Scan(ctx, &items)
 	return
 }
+
+func (s Stats) ActiveAddressesCount(ctx context.Context) (val int64, err error) {
+	err = s.db.DB().NewSelect().
+		Model((*storage.Tx)(nil)).
+		ColumnExpr("count(distinct signer_id)").
+		Where("time > now() - '1 month'::interval").
+		Scan(ctx, &val)
+	return
+}

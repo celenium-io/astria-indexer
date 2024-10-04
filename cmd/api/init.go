@@ -343,6 +343,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 	{
 		stats.GET("/summary", statsHandler.Summary)
 		stats.GET("/summary/:timeframe", statsHandler.SummaryTimeframe)
+		stats.GET("/summary/active_addresses_count", statsHandler.ActiveAddressesCount)
 		stats.GET("/series/:name/:timeframe", statsHandler.Series)
 
 		rollup := stats.Group("/rollup")

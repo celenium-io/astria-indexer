@@ -135,4 +135,5 @@ type IStats interface {
 	RollupSeries(ctx context.Context, rollupId uint64, timeframe Timeframe, name string, req SeriesRequest) ([]SeriesItem, error)
 	FeeSummary(ctx context.Context) ([]FeeSummary, error)
 	TokenTransferDistribution(ctx context.Context, limit int) ([]TokenTransferDistributionItem, error)
+	ActiveAddressesCount(ctx context.Context) (int64, error)
 }

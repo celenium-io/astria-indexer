@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/dipdup-net/go-lib/config"
 	"github.com/dipdup-net/go-lib/database"
 	"github.com/go-testfixtures/testfixtures/v3"
@@ -155,6 +156,28 @@ func (s *StatsTestSuite) TestTokenTransferDistribution() {
 	summary, err := s.storage.Stats.TokenTransferDistribution(ctx, 10)
 	s.Require().NoError(err)
 	s.Require().Len(summary, 1)
+}
+
+func (s *StatsTestSuite) TestActiveAddressCount() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	err = tx.SaveTransactions(ctx, &storage.Tx{
+		Time:     time.Now().UTC(),
+		SignerId: 1,
+		Status:   types.StatusSuccess,
+	})
+	s.Require().NoError(err)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
+
+	value, err := s.storage.Stats.ActiveAddressesCount(ctx)
+	s.Require().NoError(err)
+	s.Require().EqualValues(1, value)
 }
 
 func TestSuiteStats_Run(t *testing.T) {
