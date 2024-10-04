@@ -18,6 +18,7 @@ type AddressHandler struct {
 	txs         storage.ITx
 	actions     storage.IAction
 	rollups     storage.IRollup
+	fees        storage.IFee
 	bridge      storage.IBridge
 	state       storage.IState
 	indexerName string
@@ -28,6 +29,7 @@ func NewAddressHandler(
 	txs storage.ITx,
 	actions storage.IAction,
 	rollups storage.IRollup,
+	fees storage.IFee,
 	bridge storage.IBridge,
 	state storage.IState,
 	indexerName string,
@@ -37,6 +39,7 @@ func NewAddressHandler(
 		txs:         txs,
 		actions:     actions,
 		rollups:     rollups,
+		fees:        fees,
 		bridge:      bridge,
 		state:       state,
 		indexerName: indexerName,
@@ -404,6 +407,59 @@ func (handler *AddressHandler) Roles(c echo.Context) error {
 	response := make([]responses.Bridge, len(roles))
 	for i := range roles {
 		response[i] = responses.NewBridge(roles[i])
+	}
+	return returnArray(c, response)
+}
+
+type getAddressFees struct {
+	Hash   string `param:"hash"   validate:"required,address"`
+	Limit  int    `query:"limit"  validate:"omitempty,min=1,max=100"`
+	Offset int    `query:"offset" validate:"omitempty,min=0"`
+	Sort   string `query:"sort"   validate:"omitempty,oneof=asc desc"`
+}
+
+func (p *getAddressFees) SetDefault() {
+	if p.Limit == 0 {
+		p.Limit = 10
+	}
+	if p.Sort == "" {
+		p.Sort = desc
+	}
+}
+
+// Fees godoc
+//
+//	@Summary		Get address paid fees
+//	@Description	Get address paid fees
+//	@Tags			address
+//	@ID				get-address-fees
+//	@Param			hash		path	string	true	"Hash"								minlength(48)	maxlength(48)
+//	@Param			limit		query	integer	false	"Count of requested entities"		mininum(1)	maximum(100)
+//	@Param			offset		query	integer	false	"Offset"							mininum(1)
+//	@Produce		json
+//	@Success		200	{array}		responses.FullFee
+//	@Failure		400	{object}	Error
+//	@Failure		500	{object}	Error
+//	@Router			/v1/address/{hash}/fees [get]
+func (handler *AddressHandler) Fees(c echo.Context) error {
+	req, err := bindAndValidate[getAddressFees](c)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+	req.SetDefault()
+
+	address, err := handler.address.ByHash(c.Request().Context(), req.Hash)
+	if err != nil {
+		return handleError(c, err, handler.address)
+	}
+
+	fees, err := handler.fees.ByPayerId(c.Request().Context(), address.Id, req.Limit, req.Offset, pgSort(req.Sort))
+	if err != nil {
+		return handleError(c, err, handler.address)
+	}
+	response := make([]responses.FullFee, len(fees))
+	for i := range fees {
+		response[i] = responses.NewFullFee(fees[i])
 	}
 	return returnArray(c, response)
 }

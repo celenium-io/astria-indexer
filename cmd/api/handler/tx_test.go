@@ -13,10 +13,12 @@ import (
 	"time"
 
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
+	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/mock"
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/labstack/echo/v4"
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"
 )
@@ -27,6 +29,7 @@ type TxTestSuite struct {
 	tx      *mock.MockITx
 	actions *mock.MockIAction
 	rollups *mock.MockIRollup
+	fees    *mock.MockIFee
 	state   *mock.MockIState
 	echo    *echo.Echo
 	handler *TxHandler
@@ -44,8 +47,9 @@ func (s *TxTestSuite) SetupSuite() {
 	s.tx = mock.NewMockITx(s.ctrl)
 	s.actions = mock.NewMockIAction(s.ctrl)
 	s.rollups = mock.NewMockIRollup(s.ctrl)
+	s.fees = mock.NewMockIFee(s.ctrl)
 	s.state = mock.NewMockIState(s.ctrl)
-	s.handler = NewTxHandler(s.tx, s.actions, s.rollups, s.state, testIndexerName)
+	s.handler = NewTxHandler(s.tx, s.actions, s.rollups, s.fees, s.state, testIndexerName)
 }
 
 func (s *TxTestSuite) TearDownSuite() {
@@ -425,4 +429,42 @@ func (s *TxTestSuite) TestRollupActionsCount() {
 	err := json.NewDecoder(rec.Body).Decode(&count)
 	s.Require().NoError(err)
 	s.Require().EqualValues(1234, count)
+}
+
+func (s *TxTestSuite) TestFees() {
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/tx/:hash/fees")
+	c.SetParamNames("hash")
+	c.SetParamValues(testTxHash)
+
+	s.tx.EXPECT().
+		ByHash(gomock.Any(), testTx.Hash).
+		Return(testTx, nil).
+		Times(1)
+
+	s.fees.EXPECT().
+		ByTxId(gomock.Any(), testTx.Id, 10, 0).
+		Return([]storage.Fee{
+			{
+				TxId:     testTx.Id,
+				Time:     testTime,
+				Height:   1000,
+				ActionId: 1,
+				Amount:   decimal.RequireFromString("1000"),
+				Asset:    currency.DefaultCurrency,
+				PayerId:  1,
+				Payer:    &testAddress,
+			},
+		}, nil).
+		Times(1)
+
+	s.Require().NoError(s.handler.GetFees(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var fees []responses.Fee
+	err := json.NewDecoder(rec.Body).Decode(&fees)
+	s.Require().NoError(err)
+	s.Require().Len(fees, 1)
 }

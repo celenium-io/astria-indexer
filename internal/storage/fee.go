@@ -4,6 +4,7 @@
 package storage
 
 import (
+	"context"
 	"time"
 
 	pkgTypes "github.com/celenium-io/astria-indexer/pkg/types"
@@ -12,8 +13,12 @@ import (
 	"github.com/uptrace/bun"
 )
 
+//go:generate mockgen -source=$GOFILE -destination=mock/$GOFILE -package=mock -typed
 type IFee interface {
 	storage.Table[*Fee]
+
+	ByTxId(ctx context.Context, id uint64, limit, offset int) ([]Fee, error)
+	ByPayerId(ctx context.Context, id uint64, limit, offset int, sort storage.SortOrder) ([]Fee, error)
 }
 
 type Fee struct {
@@ -30,6 +35,7 @@ type Fee struct {
 
 	ActionType string   `bun:"-"`
 	Payer      *Address `bun:"rel:belongs-to"`
+	Tx         *Tx      `bun:"rel:belongs-to"`
 }
 
 func (Fee) TableName() string {

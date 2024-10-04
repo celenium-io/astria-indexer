@@ -263,7 +263,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 	searchHandler := handler.NewSearchHandler(db.Search, db.Address, db.Blocks, db.Tx, db.Rollup, db.Validator)
 	v1.GET("/search", searchHandler.Search)
 
-	addressHandlers := handler.NewAddressHandler(db.Address, db.Tx, db.Action, db.Rollup, db.Bridges, db.State, cfg.Indexer.Name)
+	addressHandlers := handler.NewAddressHandler(db.Address, db.Tx, db.Action, db.Rollup, db.Fee, db.Bridges, db.State, cfg.Indexer.Name)
 	addressesGroup := v1.Group("/address")
 	{
 		addressesGroup.GET("", addressHandlers.List)
@@ -275,6 +275,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 			addressGroup.GET("/actions", addressHandlers.Actions)
 			addressGroup.GET("/rollups", addressHandlers.Rollups)
 			addressGroup.GET("/roles", addressHandlers.Roles)
+			addressGroup.GET("/fees", addressHandlers.Fees)
 		}
 	}
 
@@ -294,7 +295,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 		}
 	}
 
-	txHandlers := handler.NewTxHandler(db.Tx, db.Action, db.Rollup, db.State, cfg.Indexer.Name)
+	txHandlers := handler.NewTxHandler(db.Tx, db.Action, db.Rollup, db.Fee, db.State, cfg.Indexer.Name)
 	txGroup := v1.Group("/tx")
 	{
 		txGroup.GET("", txHandlers.List)
@@ -303,6 +304,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 		{
 			hashGroup.GET("", txHandlers.Get)
 			hashGroup.GET("/actions", txHandlers.GetActions)
+			hashGroup.GET("/fees", txHandlers.GetFees)
 			hashGroup.GET("/rollup_actions", txHandlers.RollupActions)
 			hashGroup.GET("/rollup_actions/count", txHandlers.RollupActionsCount)
 		}
@@ -346,6 +348,11 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 		rollup := stats.Group("/rollup")
 		{
 			rollup.GET("/series/:hash/:name/:timeframe", statsHandler.RollupSeries)
+		}
+
+		fee := stats.Group("/fee")
+		{
+			fee.GET("/summary", statsHandler.FeeSummary)
 		}
 	}
 

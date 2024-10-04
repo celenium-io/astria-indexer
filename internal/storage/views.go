@@ -10,4 +10,7 @@ const (
 	ViewRollupStatsByHour  = "rollup_stats_by_hour"
 	ViewRollupStatsByDay   = "rollup_stats_by_day"
 	ViewRollupStatsByMonth = "rollup_stats_by_month"
+	ViewFeeStatsByHour     = "fee_stats_by_hour"
+	ViewFeeStatsByDay      = "fee_stats_by_day"
+	ViewFeeStatsByMonth    = "fee_stats_by_month"
 )

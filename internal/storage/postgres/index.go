@@ -290,6 +290,14 @@ func createIndices(ctx context.Context, conn *database.Bun) error {
 			Exec(ctx); err != nil {
 			return err
 		}
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Fee)(nil)).
+			Index("fee_asset_idx").
+			Column("asset").
+			Exec(ctx); err != nil {
+			return err
+		}
 
 		return nil
 	})

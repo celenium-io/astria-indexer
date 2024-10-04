@@ -113,10 +113,19 @@ type RollupSummary struct {
 	MaxSize      int64 `bun:"max_size"`
 }
 
+type FeeSummary struct {
+	Asset     string `bun:"asset"`
+	Amount    string `bun:"amount"`
+	MinAmount string `bun:"min_amount"`
+	MaxAmount string `bun:"max_amount"`
+	FeeCount  int64  `bun:"fee_count"`
+}
+
 //go:generate mockgen -source=$GOFILE -destination=mock/$GOFILE -package=mock -typed
 type IStats interface {
 	Summary(ctx context.Context) (NetworkSummary, error)
 	SummaryTimeframe(ctx context.Context, timeframe Timeframe) (NetworkSummaryWithChange, error)
 	Series(ctx context.Context, timeframe Timeframe, name string, req SeriesRequest) ([]SeriesItem, error)
 	RollupSeries(ctx context.Context, rollupId uint64, timeframe Timeframe, name string, req SeriesRequest) ([]SeriesItem, error)
+	FeeSummary(ctx context.Context) ([]FeeSummary, error)
 }

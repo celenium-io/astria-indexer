@@ -236,6 +236,66 @@
                 }
             }
         },
+        "/v1/address/{hash}/fees": {
+            "get": {
+                "description": "Get address paid fees",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Get address paid fees",
+                "operationId": "get-address-fees",
+                "parameters": [
+                    {
+                        "maxLength": 48,
+                        "minLength": 48,
+                        "type": "string",
+                        "description": "Hash",
+                        "name": "hash",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "type": "integer",
+                        "description": "Count of requested entities",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.FullFee"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/address/{hash}/roles": {
             "get": {
                 "description": "Get address roles in bridges",
@@ -1485,6 +1545,36 @@
                 }
             }
         },
+        "/v1/stats/fee/summary": {
+            "get": {
+                "description": "Get fee summary",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stats"
+                ],
+                "summary": "Get fee summary",
+                "operationId": "stats-fee-summary",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.FeeSummary"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/stats/rollup/series/{hash}/{name}/{timeframe}": {
             "get": {
                 "description": "Get histogram with precomputed rollup by series name and timeframe",
@@ -1964,6 +2054,66 @@
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/responses.Action"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/tx/{hash}/fees": {
+            "get": {
+                "description": "Get transaction fees",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Get transaction fees",
+                "operationId": "get-transaction-fees",
+                "parameters": [
+                    {
+                        "maxLength": 64,
+                        "minLength": 64,
+                        "type": "string",
+                        "description": "Transaction hash in hexadecimal",
+                        "name": "hash",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "type": "integer",
+                        "description": "Count of requested entities",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.FullFee"
                             }
                         }
                     },
@@ -2617,6 +2767,71 @@
                     "type": "string",
                     "format": "string",
                     "example": "nria"
+                }
+            }
+        },
+        "responses.FeeSummary": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string",
+                    "format": "integer",
+                    "example": "1000000"
+                },
+                "asset": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "nria"
+                },
+                "fee_count": {
+                    "type": "integer",
+                    "format": "integer",
+                    "example": 1000000
+                },
+                "max_amount": {
+                    "type": "string",
+                    "format": "integer",
+                    "example": "1000000"
+                },
+                "min_amount": {
+                    "type": "string",
+                    "format": "integer",
+                    "example": "1000000"
+                }
+            }
+        },
+        "responses.FullFee": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "1000"
+                },
+                "asset": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "nria"
+                },
+                "height": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 100
+                },
+                "payer": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2"
+                },
+                "time": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2023-07-04T03:10:57+00:00"
+                },
+                "tx_hash": {
+                    "type": "string",
+                    "format": "binary",
+                    "example": "652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF"
                 }
             }
         },
