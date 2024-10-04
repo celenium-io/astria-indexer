@@ -98,3 +98,21 @@ func NewNetworkSummaryWithChange(summary storage.NetworkSummaryWithChange) Netwo
 		BlockTimePct:    summary.BlockTimePct,
 	}
 }
+
+type FeeSummary struct {
+	Asset     string `example:"nria"    format:"string"  json:"asset"`
+	Amount    string `example:"1000000" format:"integer" json:"amount"`
+	MinAmount string `example:"1000000" format:"integer" json:"min_amount"`
+	MaxAmount string `example:"1000000" format:"integer" json:"max_amount"`
+	FeeCount  int64  `example:"1000000" format:"integer" json:"fee_count"`
+}
+
+func NewFeeSummary(summary storage.FeeSummary) FeeSummary {
+	return FeeSummary{
+		Asset:     summary.Asset,
+		Amount:    summary.Amount,
+		MinAmount: summary.MinAmount,
+		MaxAmount: summary.MaxAmount,
+		FeeCount:  summary.FeeCount,
+	}
+}

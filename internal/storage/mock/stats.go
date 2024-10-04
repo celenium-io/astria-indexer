@@ -43,6 +43,45 @@ func (m *MockIStats) EXPECT() *MockIStatsMockRecorder {
 	return m.recorder
 }
 
+// FeeSummary mocks base method.
+func (m *MockIStats) FeeSummary(ctx context.Context) ([]storage.FeeSummary, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FeeSummary", ctx)
+	ret0, _ := ret[0].([]storage.FeeSummary)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FeeSummary indicates an expected call of FeeSummary.
+func (mr *MockIStatsMockRecorder) FeeSummary(ctx any) *MockIStatsFeeSummaryCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FeeSummary", reflect.TypeOf((*MockIStats)(nil).FeeSummary), ctx)
+	return &MockIStatsFeeSummaryCall{Call: call}
+}
+
+// MockIStatsFeeSummaryCall wrap *gomock.Call
+type MockIStatsFeeSummaryCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockIStatsFeeSummaryCall) Return(arg0 []storage.FeeSummary, arg1 error) *MockIStatsFeeSummaryCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockIStatsFeeSummaryCall) Do(f func(context.Context) ([]storage.FeeSummary, error)) *MockIStatsFeeSummaryCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockIStatsFeeSummaryCall) DoAndReturn(f func(context.Context) ([]storage.FeeSummary, error)) *MockIStatsFeeSummaryCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // RollupSeries mocks base method.
 func (m *MockIStats) RollupSeries(ctx context.Context, rollupId uint64, timeframe storage.Timeframe, name string, req storage.SeriesRequest) ([]storage.SeriesItem, error) {
 	m.ctrl.T.Helper()

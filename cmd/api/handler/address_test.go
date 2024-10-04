@@ -19,6 +19,7 @@ import (
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/labstack/echo/v4"
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"
 )
@@ -30,6 +31,7 @@ type AddressTestSuite struct {
 	txs     *mock.MockITx
 	actions *mock.MockIAction
 	rollups *mock.MockIRollup
+	fees    *mock.MockIFee
 	bridge  *mock.MockIBridge
 	state   *mock.MockIState
 	echo    *echo.Echo
@@ -46,9 +48,10 @@ func (s *AddressTestSuite) SetupSuite() {
 	s.txs = mock.NewMockITx(s.ctrl)
 	s.actions = mock.NewMockIAction(s.ctrl)
 	s.rollups = mock.NewMockIRollup(s.ctrl)
+	s.fees = mock.NewMockIFee(s.ctrl)
 	s.bridge = mock.NewMockIBridge(s.ctrl)
 	s.state = mock.NewMockIState(s.ctrl)
-	s.handler = NewAddressHandler(s.address, s.txs, s.actions, s.rollups, s.bridge, s.state, testIndexerName)
+	s.handler = NewAddressHandler(s.address, s.txs, s.actions, s.rollups, s.fees, s.bridge, s.state, testIndexerName)
 }
 
 // TearDownSuite -
@@ -401,4 +404,46 @@ func (s *AddressTestSuite) TestRoles() {
 	s.Require().Equal(testAddressHash, bridge.Address)
 	s.Require().Equal("nria", bridge.Asset)
 	s.Require().Equal("nria", bridge.FeeAsset)
+}
+
+func (s *AddressTestSuite) TestFees() {
+	q := make(url.Values)
+	q.Set("limit", "10")
+	q.Set("offset", "0")
+
+	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/address/:hash/fees")
+	c.SetParamNames("hash")
+	c.SetParamValues(testAddressHash)
+
+	s.address.EXPECT().
+		ByHash(gomock.Any(), testAddress.Hash).
+		Return(testAddress, nil).
+		Times(1)
+
+	s.fees.EXPECT().
+		ByPayerId(gomock.Any(), uint64(1), 10, 0, sdk.SortOrderDesc).
+		Return([]storage.Fee{
+			{
+				TxId:     testTx.Id,
+				Time:     testTime,
+				Height:   1000,
+				ActionId: 1,
+				Amount:   decimal.RequireFromString("1000"),
+				Asset:    currency.DefaultCurrency,
+				PayerId:  1,
+				Tx:       &testTx,
+			},
+		}, nil).
+		Times(1)
+
+	s.Require().NoError(s.handler.Fees(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var fees []responses.Fee
+	err := json.NewDecoder(rec.Body).Decode(&fees)
+	s.Require().NoError(err)
+	s.Require().Len(fees, 1)
 }

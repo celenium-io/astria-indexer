@@ -139,6 +139,15 @@ func (s *StatsTestSuite) TestSummaryTimeframe() {
 	}
 }
 
+func (s *StatsTestSuite) TestFeeSummary() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	summary, err := s.storage.Stats.FeeSummary(ctx)
+	s.Require().NoError(err)
+	s.Require().Len(summary, len(summary))
+}
+
 func TestSuiteStats_Run(t *testing.T) {
 	suite.Run(t, new(StatsTestSuite))
 }

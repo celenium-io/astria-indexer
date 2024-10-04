@@ -173,3 +173,25 @@ func (sh StatsHandler) RollupSeries(c echo.Context) error {
 	}
 	return returnArray(c, response)
 }
+
+// FeeSummary godoc
+//
+//	@Summary		Get fee summary
+//	@Description	Get fee summary
+//	@Tags			stats
+//	@ID				stats-fee-summary
+//	@Produce		json
+//	@Success		200	{array}		responses.FeeSummary
+//	@Failure		500	{object}	Error
+//	@Router			/v1/stats/fee/summary [get]
+func (sh StatsHandler) FeeSummary(c echo.Context) error {
+	summary, err := sh.repo.FeeSummary(c.Request().Context())
+	if err != nil {
+		return handleError(c, err, sh.rollups)
+	}
+	response := make([]responses.FeeSummary, len(summary))
+	for i := range summary {
+		response[i] = responses.NewFeeSummary(summary[i])
+	}
+	return c.JSON(http.StatusOK, response)
+}

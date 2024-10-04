@@ -189,3 +189,17 @@ func (s Stats) SummaryTimeframe(ctx context.Context, timeframe storage.Timeframe
 
 	return
 }
+
+func (s Stats) FeeSummary(ctx context.Context) (response []storage.FeeSummary, err error) {
+	err = s.db.DB().NewSelect().
+		Table(storage.ViewFeeStatsByMonth).
+		ColumnExpr("sum(amount) as amount").
+		ColumnExpr("min(min_amount) as min_amount").
+		ColumnExpr("max(max_amount) as max_amount").
+		ColumnExpr("sum(fee_count) as fee_count").
+		Column("asset").
+		Group("asset").
+		Order("amount desc").
+		Scan(ctx, &response)
+	return
+}

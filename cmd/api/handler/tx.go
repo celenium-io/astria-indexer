@@ -18,6 +18,7 @@ type TxHandler struct {
 	tx          storage.ITx
 	actions     storage.IAction
 	rollups     storage.IRollup
+	fees        storage.IFee
 	state       storage.IState
 	indexerName string
 }
@@ -26,6 +27,7 @@ func NewTxHandler(
 	tx storage.ITx,
 	actions storage.IAction,
 	rollups storage.IRollup,
+	fees storage.IFee,
 	state storage.IState,
 	indexerName string,
 ) *TxHandler {
@@ -33,6 +35,7 @@ func NewTxHandler(
 		tx:          tx,
 		actions:     actions,
 		rollups:     rollups,
+		fees:        fees,
 		state:       state,
 		indexerName: indexerName,
 	}
@@ -300,4 +303,46 @@ func (handler *TxHandler) RollupActionsCount(c echo.Context) error {
 		return handleError(c, err, handler.tx)
 	}
 	return c.JSON(http.StatusOK, count)
+}
+
+// GetFees godoc
+//
+//	@Summary		Get transaction fees
+//	@Description	Get transaction fees
+//	@Tags			transactions
+//	@ID				get-transaction-fees
+//	@Param			hash	path	string	true	"Transaction hash in hexadecimal"	minlength(64)	maxlength(64)
+//	@Param			limit	query	integer	false	"Count of requested entities"		mininum(1)		maximum(100)
+//	@Param			offset	query	integer	false	"Offset"							mininum(1)
+//	@Produce		json
+//	@Success		200	{array}		responses.FullFee
+//	@Failure		400	{object}	Error
+//	@Failure		500	{object}	Error
+//	@Router			/v1/tx/{hash}/fees [get]
+func (handler *TxHandler) GetFees(c echo.Context) error {
+	req, err := bindAndValidate[txRequestWithPagination](c)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+	req.SetDefault()
+
+	hash, err := hex.DecodeString(req.Hash)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+
+	tx, err := handler.tx.ByHash(c.Request().Context(), hash)
+	if err != nil {
+		return handleError(c, err, handler.tx)
+	}
+
+	fees, err := handler.fees.ByTxId(c.Request().Context(), tx.Id, req.Limit, req.Offset)
+	if err != nil {
+		return handleError(c, err, handler.tx)
+	}
+	response := make([]responses.FullFee, len(fees))
+	for i := range fees {
+		response[i] = responses.NewFullFee(fees[i])
+	}
+	return returnArray(c, response)
 }
