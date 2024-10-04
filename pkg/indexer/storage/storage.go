@@ -185,6 +185,10 @@ func (module *Module) processBlockInTransaction(ctx context.Context, tx storage.
 		return state, err
 	}
 
+	if err := saveTransfers(ctx, tx, block.Transfers, addrToId); err != nil {
+		return state, err
+	}
+
 	var actions = make([]*storage.Action, 0)
 
 	for i := range block.Txs {

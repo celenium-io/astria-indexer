@@ -145,7 +145,16 @@ func (s *StatsTestSuite) TestFeeSummary() {
 
 	summary, err := s.storage.Stats.FeeSummary(ctx)
 	s.Require().NoError(err)
-	s.Require().Len(summary, len(summary))
+	s.Require().Len(summary, 1)
+}
+
+func (s *StatsTestSuite) TestTokenTransferDistribution() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	summary, err := s.storage.Stats.TokenTransferDistribution(ctx, 10)
+	s.Require().NoError(err)
+	s.Require().Len(summary, 1)
 }
 
 func TestSuiteStats_Run(t *testing.T) {

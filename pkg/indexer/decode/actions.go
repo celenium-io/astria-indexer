@@ -342,6 +342,13 @@ func parseTransferAction(body *astria.Action_TransferAction, from string, height
 
 		decAmount := decimal.RequireFromString(amount)
 
+		transfer := storage.Transfer{
+			Height: height,
+			Time:   action.Time,
+			Asset:  asset,
+			Amount: decAmount,
+		}
+
 		if from == to {
 			addr := ctx.Addresses.Set(from, height, decimal.Zero, "", 1, 0)
 			action.Addresses = append(action.Addresses, &storage.AddressAction{
@@ -351,6 +358,9 @@ func parseTransferAction(body *astria.Action_TransferAction, from string, height
 				Height:     action.Height,
 				ActionType: action.Type,
 			})
+
+			transfer.Source = addr
+			transfer.Destination = addr
 		} else {
 			toAddr := ctx.Addresses.Set(to, height, decAmount, asset, 1, 0)
 			fromAddr := ctx.Addresses.Set(from, height, decAmount.Neg(), asset, 1, 0)
@@ -383,7 +393,12 @@ func parseTransferAction(body *astria.Action_TransferAction, from string, height
 					Currency: asset,
 					Update:   decAmount.Copy().Neg(),
 				})
+
+			transfer.Source = fromAddr
+			transfer.Destination = toAddr
 		}
+
+		ctx.AddTransfer(&transfer)
 	}
 	return nil
 }

@@ -354,6 +354,11 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 		{
 			fee.GET("/summary", statsHandler.FeeSummary)
 		}
+
+		token := stats.Group("/token")
+		{
+			token.GET("/transfer_distribution", statsHandler.TokenTransferDistribution)
+		}
 	}
 
 	if cfg.ApiConfig.Prometheus {

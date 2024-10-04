@@ -237,3 +237,42 @@ func (c *MockIStatsSummaryTimeframeCall) DoAndReturn(f func(context.Context, sto
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }
+
+// TokenTransferDistribution mocks base method.
+func (m *MockIStats) TokenTransferDistribution(ctx context.Context, limit int) ([]storage.TokenTransferDistributionItem, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TokenTransferDistribution", ctx, limit)
+	ret0, _ := ret[0].([]storage.TokenTransferDistributionItem)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// TokenTransferDistribution indicates an expected call of TokenTransferDistribution.
+func (mr *MockIStatsMockRecorder) TokenTransferDistribution(ctx, limit any) *MockIStatsTokenTransferDistributionCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TokenTransferDistribution", reflect.TypeOf((*MockIStats)(nil).TokenTransferDistribution), ctx, limit)
+	return &MockIStatsTokenTransferDistributionCall{Call: call}
+}
+
+// MockIStatsTokenTransferDistributionCall wrap *gomock.Call
+type MockIStatsTokenTransferDistributionCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockIStatsTokenTransferDistributionCall) Return(arg0 []storage.TokenTransferDistributionItem, arg1 error) *MockIStatsTokenTransferDistributionCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockIStatsTokenTransferDistributionCall) Do(f func(context.Context, int) ([]storage.TokenTransferDistributionItem, error)) *MockIStatsTokenTransferDistributionCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockIStatsTokenTransferDistributionCall) DoAndReturn(f func(context.Context, int) ([]storage.TokenTransferDistributionItem, error)) *MockIStatsTokenTransferDistributionCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}

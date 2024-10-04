@@ -116,3 +116,17 @@ func NewFeeSummary(summary storage.FeeSummary) FeeSummary {
 		FeeCount:  summary.FeeCount,
 	}
 }
+
+type TokenTransferDistributionItem struct {
+	Asset          string `example:"nria"    format:"string"  json:"asset"`
+	Amount         string `example:"1000000" format:"integer" json:"amount"`
+	TransfersCount int64  `example:"1000000" format:"integer" json:"transfers_count"`
+}
+
+func NewTokenTransferDistributionItem(summary storage.TokenTransferDistributionItem) TokenTransferDistributionItem {
+	return TokenTransferDistributionItem{
+		Asset:          summary.Asset,
+		Amount:         summary.Amount,
+		TransfersCount: summary.TransfersCount,
+	}
+}

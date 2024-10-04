@@ -1832,6 +1832,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/stats/token/transfer_distribution": {
+            "get": {
+                "description": "Token transfer distribution",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stats"
+                ],
+                "summary": "Token transfer distribution",
+                "operationId": "stats-token-transfer-distribution",
+                "parameters": [
+                    {
+                        "maximum": 100,
+                        "type": "integer",
+                        "description": "Count of requested entities",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.TokenTransferDistributionItem"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/tx": {
             "get": {
                 "description": "List transactions info",
@@ -3194,6 +3233,26 @@ const docTemplate = `{
                     "type": "integer",
                     "format": "int64",
                     "example": 23456
+                }
+            }
+        },
+        "responses.TokenTransferDistributionItem": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string",
+                    "format": "integer",
+                    "example": "1000000"
+                },
+                "asset": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "nria"
+                },
+                "transfers_count": {
+                    "type": "integer",
+                    "format": "integer",
+                    "example": 1000000
                 }
             }
         },

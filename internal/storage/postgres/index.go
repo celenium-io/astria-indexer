@@ -299,6 +299,33 @@ func createIndices(ctx context.Context, conn *database.Bun) error {
 			return err
 		}
 
+		// Transfer
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Transfer)(nil)).
+			Index("transfer_height_idx").
+			Column("height").
+			Using("BRIN").
+			Exec(ctx); err != nil {
+			return err
+		}
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Transfer)(nil)).
+			Index("transfer_src_id_idx").
+			Column("src_id").
+			Exec(ctx); err != nil {
+			return err
+		}
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Transfer)(nil)).
+			Index("transfer_dest_id_idx").
+			Column("dest_id").
+			Exec(ctx); err != nil {
+			return err
+		}
+
 		return nil
 	})
 }

@@ -58,6 +58,7 @@ type Block struct {
 	BlockSignatures []BlockSignature          `bun:"-"` // internal field for saving block signatures
 	Constants       []*Constant               `bun:"-"` // internal field for updating constants
 	Bridges         []*Bridge                 `bun:"-"` // internal field for saving bridges
+	Transfers       []*Transfer               `bun:"-"` // internal field for saving transfers
 
 	Txs      []*Tx       `bun:"rel:has-many"`
 	Stats    *BlockStats `bun:"rel:has-one,join:height=height"`

@@ -195,3 +195,42 @@ func (sh StatsHandler) FeeSummary(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, response)
 }
+
+type tokenTransferDistributionRequest struct {
+	Limit uint64 `query:"limit" validate:"omitempty,min=1,max=100"`
+}
+
+func (p *tokenTransferDistributionRequest) SetDefault() {
+	if p.Limit == 0 {
+		p.Limit = 10
+	}
+}
+
+// TokenTransferDistribution godoc
+//
+//	@Summary		Token transfer distribution
+//	@Description	Token transfer distribution
+//	@Tags			stats
+//	@ID				stats-token-transfer-distribution
+//	@Param			limit	query	integer	false	"Count of requested entities"	mininum(1)	maximum(100)
+//	@Produce		json
+//	@Success		200	{array}		responses.TokenTransferDistributionItem
+//	@Failure		500	{object}	Error
+//	@Router			/v1/stats/token/transfer_distribution [get]
+func (sh StatsHandler) TokenTransferDistribution(c echo.Context) error {
+	req, err := bindAndValidate[tokenTransferDistributionRequest](c)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+	req.SetDefault()
+
+	items, err := sh.repo.TokenTransferDistribution(c.Request().Context(), int(req.Limit))
+	if err != nil {
+		return handleError(c, err, sh.rollups)
+	}
+	response := make([]responses.TokenTransferDistributionItem, len(items))
+	for i := range items {
+		response[i] = responses.NewTokenTransferDistributionItem(items[i])
+	}
+	return c.JSON(http.StatusOK, response)
+}

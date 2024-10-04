@@ -14,6 +14,6 @@
   type: transfer
   tx_id: 2
   data:
-    to: "b385e68e3a3a2d250c7c4024972576d698b9e748"
+    to: astria16rgmx2s86kk2r69rhjnvs9y44ujfhadc7yav9a
     amount: "1"
-    asset_id: "cEAxyGj9PTyEoc+oy0Xeuk6nRrRGl/f0pu0bj2wjm4I="
+    asset: nria

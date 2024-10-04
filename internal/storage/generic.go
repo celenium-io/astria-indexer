@@ -36,6 +36,7 @@ var Models = []any{
 	&BlockSignature{},
 	&Bridge{},
 	&Fee{},
+	&Transfer{},
 }
 
 //go:generate mockgen -source=$GOFILE -destination=mock/$GOFILE -package=mock -typed
@@ -56,6 +57,7 @@ type Transaction interface {
 	SaveTransactions(ctx context.Context, txs ...*Tx) error
 	SaveValidators(ctx context.Context, validators ...*Validator) error
 	SaveFees(ctx context.Context, fees ...*Fee) error
+	SaveTransfers(ctx context.Context, transfers ...*Transfer) error
 	RetentionBlockSignatures(ctx context.Context, height types.Level) error
 
 	RollbackActions(ctx context.Context, height types.Level) (actions []Action, err error)
@@ -73,6 +75,7 @@ type Transaction interface {
 	RollbackTxs(ctx context.Context, height types.Level) (txs []Tx, err error)
 	RollbackValidators(ctx context.Context, height types.Level) (err error)
 	RollbackFees(ctx context.Context, height types.Level) (err error)
+	RollbackTransfers(ctx context.Context, height types.Level) (err error)
 	UpdateAddresses(ctx context.Context, address ...*Address) error
 	UpdateConstants(ctx context.Context, constants ...*Constant) error
 	UpdateRollups(ctx context.Context, rollups ...*Rollup) error

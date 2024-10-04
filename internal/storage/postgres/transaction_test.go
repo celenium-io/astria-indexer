@@ -419,6 +419,29 @@ func (s *TransactionTestSuite) TestSaveBridges() {
 	s.Require().NoError(tx.Close(ctx))
 }
 
+func (s *TransactionTestSuite) TestSaveTransfers() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	transfers := make([]*storage.Transfer, 5)
+	for i := 0; i < 5; i++ {
+		transfers[i] = new(storage.Transfer)
+		transfers[i].SourceId = uint64(i + 1000)
+		transfers[i].DestinationId = uint64(i + 100)
+		transfers[i].Amount = decimal.NewFromInt(int64(i))
+		transfers[i].Asset = string(currency.Nria)
+	}
+
+	err = tx.SaveTransfers(ctx, transfers...)
+	s.Require().NoError(err)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
+}
+
 func (s *TransactionTestSuite) TestGetProposerId() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
@@ -653,6 +676,20 @@ func (s *TransactionTestSuite) TestRollbackRollupAddresses() {
 	s.Require().NoError(err)
 
 	err = tx.RollbackRollupAddresses(ctx, 7316)
+	s.Require().NoError(err)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
+}
+
+func (s *TransactionTestSuite) TestRollbackTransfers() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	err = tx.RollbackTransfers(ctx, 7965)
 	s.Require().NoError(err)
 
 	s.Require().NoError(tx.Flush(ctx))

@@ -26,6 +26,7 @@ type Context struct {
 	Constants      map[string]*storage.Constant
 	Bridges        map[string]*storage.Bridge
 	Fees           []*storage.Fee
+	Transfers      []*storage.Transfer
 	Proposer       string
 
 	bridgeAssets map[string]string
@@ -41,6 +42,7 @@ func NewContext(bridgeAssets map[string]string) Context {
 		Constants:     make(map[string]*storage.Constant),
 		Bridges:       make(map[string]*storage.Bridge),
 		Fees:          make([]*storage.Fee, 0),
+		Transfers:     make([]*storage.Transfer, 0),
 
 		bridgeAssets: bridgeAssets,
 	}
@@ -81,4 +83,8 @@ func (ctx *Context) AddFee(fee *storage.Fee) {
 
 func (ctx *Context) AddBridgeAsset(bridge, asset string) {
 	ctx.bridgeAssets[bridge] = asset
+}
+
+func (ctx *Context) AddTransfer(transfer *storage.Transfer) {
+	ctx.Transfers = append(ctx.Transfers, transfer)
 }

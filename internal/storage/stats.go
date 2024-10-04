@@ -121,6 +121,12 @@ type FeeSummary struct {
 	FeeCount  int64  `bun:"fee_count"`
 }
 
+type TokenTransferDistributionItem struct {
+	Asset          string `bun:"asset"`
+	Amount         string `bun:"amount"`
+	TransfersCount int64  `bun:"transfers_count"`
+}
+
 //go:generate mockgen -source=$GOFILE -destination=mock/$GOFILE -package=mock -typed
 type IStats interface {
 	Summary(ctx context.Context) (NetworkSummary, error)
@@ -128,4 +134,5 @@ type IStats interface {
 	Series(ctx context.Context, timeframe Timeframe, name string, req SeriesRequest) ([]SeriesItem, error)
 	RollupSeries(ctx context.Context, rollupId uint64, timeframe Timeframe, name string, req SeriesRequest) ([]SeriesItem, error)
 	FeeSummary(ctx context.Context) ([]FeeSummary, error)
+	TokenTransferDistribution(ctx context.Context, limit int) ([]TokenTransferDistributionItem, error)
 }

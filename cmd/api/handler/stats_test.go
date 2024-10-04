@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
+	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/mock"
 	"github.com/labstack/echo/v4"
@@ -242,4 +243,64 @@ func (s *StatsTestSuite) TestSummaryTimeframe() {
 		s.Require().EqualValues(6, summary.TxCountPct)
 		s.Require().EqualValues(7, summary.BytesInBlockPct)
 	}
+}
+
+func (s *StatsTestSuite) TestFeeSummary() {
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/v1/stats/fee/summary")
+
+	s.stats.EXPECT().
+		FeeSummary(gomock.Any()).
+		Return([]storage.FeeSummary{
+			{
+				Asset:    currency.DefaultCurrency,
+				Amount:   "1000",
+				FeeCount: 100,
+			},
+		}, nil)
+
+	s.Require().NoError(s.handler.FeeSummary(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var result []responses.FeeSummary
+	err := json.NewDecoder(rec.Body).Decode(&result)
+	s.Require().NoError(err)
+	s.Require().Len(result, 1)
+
+	summary := result[0]
+	s.Require().EqualValues("1000", summary.Amount)
+	s.Require().EqualValues(100, summary.FeeCount)
+	s.Require().EqualValues(currency.DefaultCurrency, summary.Asset)
+}
+
+func (s *StatsTestSuite) TestTokenTransferDistribution() {
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/v1/stats/token/transfer_distribution")
+
+	s.stats.EXPECT().
+		TokenTransferDistribution(gomock.Any(), 10).
+		Return([]storage.TokenTransferDistributionItem{
+			{
+				Asset:          currency.DefaultCurrency,
+				Amount:         "1000",
+				TransfersCount: 100,
+			},
+		}, nil)
+
+	s.Require().NoError(s.handler.TokenTransferDistribution(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var result []responses.TokenTransferDistributionItem
+	err := json.NewDecoder(rec.Body).Decode(&result)
+	s.Require().NoError(err)
+	s.Require().Len(result, 1)
+
+	summary := result[0]
+	s.Require().EqualValues("1000", summary.Amount)
+	s.Require().EqualValues(100, summary.TransfersCount)
+	s.Require().EqualValues(currency.DefaultCurrency, summary.Asset)
 }
