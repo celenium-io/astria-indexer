@@ -1892,6 +1892,24 @@ paths:
       summary: Get network summary for the last period
       tags:
       - stats
+  /v1/stats/summary/active_addresses_count:
+    get:
+      description: Active adddresses count
+      operationId: stats-active-addresses-count
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Active adddresses count
+      tags:
+      - stats
   /v1/stats/token/transfer_distribution:
     get:
       description: Token transfer distribution

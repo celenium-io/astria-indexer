@@ -234,3 +234,21 @@ func (sh StatsHandler) TokenTransferDistribution(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, response)
 }
+
+// ActiveAddressesCount godoc
+//
+//	@Summary		Active adddresses count
+//	@Description	Active adddresses count
+//	@Tags			stats
+//	@ID				stats-active-addresses-count
+//	@Produce		json
+//	@Success		200	{integer}	int64
+//	@Failure		500	{object}	Error
+//	@Router			/v1/stats/summary/active_addresses_count [get]
+func (sh StatsHandler) ActiveAddressesCount(c echo.Context) error {
+	count, err := sh.repo.ActiveAddressesCount(c.Request().Context())
+	if err != nil {
+		return handleError(c, err, sh.rollups)
+	}
+	return c.JSON(http.StatusOK, count)
+}

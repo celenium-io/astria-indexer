@@ -304,3 +304,22 @@ func (s *StatsTestSuite) TestTokenTransferDistribution() {
 	s.Require().EqualValues(100, summary.TransfersCount)
 	s.Require().EqualValues(currency.DefaultCurrency, summary.Asset)
 }
+
+func (s *StatsTestSuite) TestActiveAddressesCount() {
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/v1/stats/summary/active_addresses_count")
+
+	s.stats.EXPECT().
+		ActiveAddressesCount(gomock.Any()).
+		Return(100, nil)
+
+	s.Require().NoError(s.handler.ActiveAddressesCount(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var result int64
+	err := json.NewDecoder(rec.Body).Decode(&result)
+	s.Require().NoError(err)
+	s.Require().EqualValues(100, result)
+}

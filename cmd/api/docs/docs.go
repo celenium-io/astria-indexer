@@ -1782,6 +1782,33 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/stats/summary/active_addresses_count": {
+            "get": {
+                "description": "Active adddresses count",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stats"
+                ],
+                "summary": "Active adddresses count",
+                "operationId": "stats-active-addresses-count",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/stats/summary/{timeframe}": {
             "get": {
                 "description": "Get network summary for the last period",
