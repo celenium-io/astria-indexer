@@ -218,6 +218,11 @@ func rollbackBlock(ctx context.Context, tx storage.Transaction, height types.Lev
 		return err
 	}
 
+	deletedBridges, err := tx.RollbackBridges(ctx, height)
+	if err != nil {
+		return errors.Wrap(err, "bridges")
+	}
+
 	newBlock, err := tx.LastBlock(ctx)
 	if err != nil {
 		return err
@@ -233,8 +238,8 @@ func rollbackBlock(ctx context.Context, tx storage.Transaction, height types.Lev
 	state.TotalTx -= blockStats.TxCount
 	state.TotalAccounts -= int64(countDeletedAddresses)
 	state.TotalRollups -= countDeletedRollups
-	state.TotalFee = state.TotalFee.Sub(blockStats.Fee)
 	state.TotalSupply = state.TotalSupply.Sub(blockStats.SupplyChange)
+	state.TotalBridges -= int64(deletedBridges)
 
 	if err := tx.Update(ctx, &state); err != nil {
 		return err

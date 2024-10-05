@@ -52,7 +52,7 @@ func Test_updateState(t *testing.T) {
 					TotalAccounts: 2,
 					TotalRollups:  12,
 					TotalSupply:   decimal.RequireFromString("1000"),
-					TotalFee:      decimal.RequireFromString("10"),
+					TotalBridges:  10,
 				},
 			},
 			want: storage.State{
@@ -65,13 +65,13 @@ func Test_updateState(t *testing.T) {
 				TotalAccounts: 12,
 				TotalRollups:  23,
 				TotalSupply:   decimal.RequireFromString("1100"),
-				TotalFee:      decimal.RequireFromString("20"),
+				TotalBridges:  20,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			updateState(tt.args.block, tt.args.totalAccounts, tt.args.totalRollups, tt.args.state)
+			updateState(tt.args.block, tt.args.totalAccounts, tt.args.totalRollups, 10, tt.args.state)
 		})
 	}
 }

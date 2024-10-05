@@ -8,7 +8,7 @@ import (
 	"github.com/celenium-io/astria-indexer/pkg/types"
 )
 
-func updateState(block *storage.Block, totalAccounts, totalRollups int64, state *storage.State) {
+func updateState(block *storage.Block, totalAccounts, totalRollups, totalBridges int64, state *storage.State) {
 	if types.Level(block.Id) <= state.LastHeight {
 		return
 	}
@@ -19,7 +19,7 @@ func updateState(block *storage.Block, totalAccounts, totalRollups int64, state 
 	state.TotalTx += block.Stats.TxCount
 	state.TotalAccounts += totalAccounts
 	state.TotalRollups += totalRollups
-	state.TotalFee = state.TotalFee.Add(block.Stats.Fee)
+	state.TotalBridges += totalBridges
 	state.TotalSupply = state.TotalSupply.Add(block.Stats.SupplyChange)
 	state.ChainId = block.ChainId
 }

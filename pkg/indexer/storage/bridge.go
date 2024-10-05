@@ -15,23 +15,23 @@ func saveBridges(
 	tx storage.Transaction,
 	addrToId map[string]uint64,
 	bridges []*storage.Bridge,
-) error {
+) (int64, error) {
 	if len(bridges) == 0 {
-		return nil
+		return 0, nil
 	}
 
 	for i := range bridges {
 		if id, ok := addrToId[bridges[i].Address.Hash]; ok {
 			bridges[i].AddressId = id
 		} else {
-			return errors.Errorf("unknown bridge address: %s", bridges[i].Address.Hash)
+			return 0, errors.Errorf("unknown bridge address: %s", bridges[i].Address.Hash)
 		}
 
 		if bridges[i].Sudo != nil {
 			if id, ok := addrToId[bridges[i].Sudo.Hash]; ok {
 				bridges[i].SudoId = id
 			} else {
-				return errors.Errorf("unknown sudo bridge address: %s", bridges[i].Sudo.Hash)
+				return 0, errors.Errorf("unknown sudo bridge address: %s", bridges[i].Sudo.Hash)
 			}
 		}
 
@@ -39,7 +39,7 @@ func saveBridges(
 			if id, ok := addrToId[bridges[i].Withdrawer.Hash]; ok {
 				bridges[i].WithdrawerId = id
 			} else {
-				return errors.Errorf("unknown withdrawer bridge address: %s", bridges[i].Withdrawer.Hash)
+				return 0, errors.Errorf("unknown withdrawer bridge address: %s", bridges[i].Withdrawer.Hash)
 			}
 		}
 
@@ -47,7 +47,7 @@ func saveBridges(
 			if bridges[i].Rollup.Id == 0 {
 				rollup, err := tx.GetRollup(ctx, bridges[i].Rollup.AstriaId)
 				if err != nil {
-					return err
+					return 0, err
 				}
 				bridges[i].RollupId = rollup.Id
 			} else {

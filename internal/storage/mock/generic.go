@@ -861,11 +861,12 @@ func (c *MockTransactionRollbackBlockStatsCall) DoAndReturn(f func(context.Conte
 }
 
 // RollbackBridges mocks base method.
-func (m *MockTransaction) RollbackBridges(ctx context.Context, height types.Level) error {
+func (m *MockTransaction) RollbackBridges(ctx context.Context, height types.Level) (int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RollbackBridges", ctx, height)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // RollbackBridges indicates an expected call of RollbackBridges.
@@ -881,19 +882,19 @@ type MockTransactionRollbackBridgesCall struct {
 }
 
 // Return rewrite *gomock.Call.Return
-func (c *MockTransactionRollbackBridgesCall) Return(arg0 error) *MockTransactionRollbackBridgesCall {
-	c.Call = c.Call.Return(arg0)
+func (c *MockTransactionRollbackBridgesCall) Return(arg0 int, arg1 error) *MockTransactionRollbackBridgesCall {
+	c.Call = c.Call.Return(arg0, arg1)
 	return c
 }
 
 // Do rewrite *gomock.Call.Do
-func (c *MockTransactionRollbackBridgesCall) Do(f func(context.Context, types.Level) error) *MockTransactionRollbackBridgesCall {
+func (c *MockTransactionRollbackBridgesCall) Do(f func(context.Context, types.Level) (int, error)) *MockTransactionRollbackBridgesCall {
 	c.Call = c.Call.Do(f)
 	return c
 }
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *MockTransactionRollbackBridgesCall) DoAndReturn(f func(context.Context, types.Level) error) *MockTransactionRollbackBridgesCall {
+func (c *MockTransactionRollbackBridgesCall) DoAndReturn(f func(context.Context, types.Level) (int, error)) *MockTransactionRollbackBridgesCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }
@@ -1427,15 +1428,16 @@ func (c *MockTransactionSaveBlockSignaturesCall) DoAndReturn(f func(context.Cont
 }
 
 // SaveBridges mocks base method.
-func (m *MockTransaction) SaveBridges(ctx context.Context, bridges ...*storage.Bridge) error {
+func (m *MockTransaction) SaveBridges(ctx context.Context, bridges ...*storage.Bridge) (int64, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx}
 	for _, a := range bridges {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "SaveBridges", varargs...)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // SaveBridges indicates an expected call of SaveBridges.
@@ -1452,19 +1454,19 @@ type MockTransactionSaveBridgesCall struct {
 }
 
 // Return rewrite *gomock.Call.Return
-func (c *MockTransactionSaveBridgesCall) Return(arg0 error) *MockTransactionSaveBridgesCall {
-	c.Call = c.Call.Return(arg0)
+func (c *MockTransactionSaveBridgesCall) Return(arg0 int64, arg1 error) *MockTransactionSaveBridgesCall {
+	c.Call = c.Call.Return(arg0, arg1)
 	return c
 }
 
 // Do rewrite *gomock.Call.Do
-func (c *MockTransactionSaveBridgesCall) Do(f func(context.Context, ...*storage.Bridge) error) *MockTransactionSaveBridgesCall {
+func (c *MockTransactionSaveBridgesCall) Do(f func(context.Context, ...*storage.Bridge) (int64, error)) *MockTransactionSaveBridgesCall {
 	c.Call = c.Call.Do(f)
 	return c
 }
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *MockTransactionSaveBridgesCall) DoAndReturn(f func(context.Context, ...*storage.Bridge) error) *MockTransactionSaveBridgesCall {
+func (c *MockTransactionSaveBridgesCall) DoAndReturn(f func(context.Context, ...*storage.Bridge) (int64, error)) *MockTransactionSaveBridgesCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }

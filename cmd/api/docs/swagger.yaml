@@ -507,10 +507,10 @@ definitions:
         example: 43
         format: int64
         type: integer
-      total_fee:
-        example: "312"
-        format: string
-        type: string
+      total_bridges:
+        example: 312
+        format: int64
+        type: integer
       total_rollups:
         example: 312
         format: int64

@@ -3241,10 +3241,10 @@ const docTemplate = `{
                     "format": "int64",
                     "example": 43
                 },
-                "total_fee": {
-                    "type": "string",
-                    "format": "string",
-                    "example": "312"
+                "total_bridges": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 312
                 },
                 "total_rollups": {
                     "type": "integer",

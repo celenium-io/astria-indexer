@@ -412,8 +412,9 @@ func (s *TransactionTestSuite) TestSaveBridges() {
 		bridges[i].RollupId = uint64(i + 50)
 	}
 
-	err = tx.SaveBridges(ctx, bridges...)
+	count, err := tx.SaveBridges(ctx, bridges...)
 	s.Require().NoError(err)
+	s.Require().EqualValues(5, count)
 
 	s.Require().NoError(tx.Flush(ctx))
 	s.Require().NoError(tx.Close(ctx))
@@ -533,6 +534,21 @@ func (s *TransactionTestSuite) TestRollbackBlock() {
 	block, err := s.storage.Blocks.Last(ctx)
 	s.Require().NoError(err)
 	s.Require().EqualValues(7964, block.Height)
+}
+
+func (s *TransactionTestSuite) TestRollbackBridge() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	count, err := tx.RollbackBridges(ctx, 7316)
+	s.Require().NoError(err)
+	s.Require().EqualValues(1, count)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
 }
 
 func (s *TransactionTestSuite) TestRollbackBlockStats() {

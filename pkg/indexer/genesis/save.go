@@ -80,7 +80,6 @@ func (module *Module) save(ctx context.Context, data parsedData) error {
 		ChainId:         data.block.ChainId,
 		TotalTx:         data.block.Stats.TxCount,
 		TotalSupply:     data.block.Stats.SupplyChange,
-		TotalFee:        data.block.Stats.Fee,
 		TotalAccounts:   totalAccounts,
 		TotalValidators: len(data.validators),
 	}); err != nil {
