@@ -83,6 +83,45 @@ func (c *MockIBridgeByAddressCall) DoAndReturn(f func(context.Context, uint64) (
 	return c
 }
 
+// ById mocks base method.
+func (m *MockIBridge) ById(ctx context.Context, id uint64) (storage.Bridge, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ById", ctx, id)
+	ret0, _ := ret[0].(storage.Bridge)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ById indicates an expected call of ById.
+func (mr *MockIBridgeMockRecorder) ById(ctx, id any) *MockIBridgeByIdCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ById", reflect.TypeOf((*MockIBridge)(nil).ById), ctx, id)
+	return &MockIBridgeByIdCall{Call: call}
+}
+
+// MockIBridgeByIdCall wrap *gomock.Call
+type MockIBridgeByIdCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockIBridgeByIdCall) Return(arg0 storage.Bridge, arg1 error) *MockIBridgeByIdCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockIBridgeByIdCall) Do(f func(context.Context, uint64) (storage.Bridge, error)) *MockIBridgeByIdCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockIBridgeByIdCall) DoAndReturn(f func(context.Context, uint64) (storage.Bridge, error)) *MockIBridgeByIdCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // ByRoles mocks base method.
 func (m *MockIBridge) ByRoles(ctx context.Context, addressId uint64, limit, offset int) ([]storage.Bridge, error) {
 	m.ctrl.T.Helper()

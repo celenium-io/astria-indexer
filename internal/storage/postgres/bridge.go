@@ -107,3 +107,20 @@ func (b *Bridge) ListWithAddress(ctx context.Context, limit, offset int) (result
 		Scan(ctx, &result)
 	return
 }
+
+func (b *Bridge) ById(ctx context.Context, id uint64) (bridge storage.Bridge, err error) {
+	query := b.DB().NewSelect().
+		Model((*storage.Bridge)(nil)).
+		Where("id = ?", id)
+
+	err = b.DB().NewSelect().
+		TableExpr("(?) as bridge", query).
+		ColumnExpr("bridge.*").
+		ColumnExpr("address.hash as address__hash").
+		ColumnExpr("rollup.astria_id as rollup__astria_id").
+		Join("left join address as address on address.id = bridge.address_id").
+		Join("left join rollup on rollup.id = bridge.rollup_id").
+		Scan(ctx, &bridge)
+
+	return
+}

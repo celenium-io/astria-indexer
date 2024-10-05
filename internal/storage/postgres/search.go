@@ -31,6 +31,13 @@ func (s *Search) Search(ctx context.Context, query string) (results []storage.Se
 		ColumnExpr("id, name as value, 'validator' as type").
 		Where("name ILIKE ?", text)
 
+	bridgeQuery := s.db.DB().NewSelect().
+		Model((*storage.Bridge)(nil)).
+		ColumnExpr("id, asset as value, 'bridge' as type").
+		Where("asset ILIKE ?", text)
+
+	searchQuery = searchQuery.UnionAll(bridgeQuery)
+
 	if hash, err := hex.DecodeString(query); err == nil {
 		blockQuery := s.db.DB().NewSelect().
 			Model((*storage.Block)(nil)).

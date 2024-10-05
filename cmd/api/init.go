@@ -260,7 +260,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 	v1.GET("/constants", constantsHandler.Get)
 	v1.GET("/enums", constantsHandler.Enums)
 
-	searchHandler := handler.NewSearchHandler(db.Search, db.Address, db.Blocks, db.Tx, db.Rollup, db.Validator)
+	searchHandler := handler.NewSearchHandler(db.Search, db.Address, db.Blocks, db.Tx, db.Rollup, db.Bridges, db.Validator)
 	v1.GET("/search", searchHandler.Search)
 
 	addressHandlers := handler.NewAddressHandler(db.Address, db.Tx, db.Action, db.Rollup, db.Fee, db.Bridges, db.State, cfg.Indexer.Name)
