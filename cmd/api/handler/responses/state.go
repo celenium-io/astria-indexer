@@ -22,7 +22,7 @@ type State struct {
 	TotalTx       int64          `example:"23456"                                                            format:"int64"     json:"total_tx"       swaggertype:"integer"`
 	TotalAccounts int64          `example:"43"                                                               format:"int64"     json:"total_accounts" swaggertype:"integer"`
 	TotalRollups  int64          `example:"312"                                                              format:"int64"     json:"total_rollups"  swaggertype:"integer"`
-	TotalFee      string         `example:"312"                                                              format:"string"    json:"total_fee"      swaggertype:"string"`
+	TotalBridges  int64          `example:"312"                                                              format:"int64"     json:"total_bridges"  swaggertype:"integer"`
 	TotalSupply   string         `example:"312"                                                              format:"string"    json:"total_supply"   swaggertype:"string"`
 	Synced        bool           `example:"true"                                                             format:"boolean"   json:"synced"         swaggertype:"boolean"`
 }
@@ -38,7 +38,7 @@ func NewState(state storage.State) State {
 		TotalTx:       state.TotalTx,
 		TotalAccounts: state.TotalAccounts,
 		TotalRollups:  state.TotalRollups,
-		TotalFee:      state.TotalFee.String(),
+		TotalBridges:  state.TotalBridges,
 		TotalSupply:   state.TotalSupply.String(),
 		Synced:        !state.LastTime.UTC().Add(2 * time.Minute).Before(time.Now().UTC()),
 	}

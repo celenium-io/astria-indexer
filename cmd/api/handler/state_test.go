@@ -15,7 +15,6 @@ import (
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/mock"
 	"github.com/labstack/echo/v4"
-	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"
 )
@@ -31,7 +30,7 @@ var (
 		LastTime:      testTime,
 		TotalTx:       1234,
 		TotalAccounts: 123,
-		TotalFee:      decimal.RequireFromString("2"),
+		TotalBridges:  2,
 		TotalRollups:  30,
 	}
 )
@@ -88,7 +87,7 @@ func (s *StateTestSuite) TestHead() {
 	s.Require().EqualValues(100, state.LastHeight)
 	s.Require().EqualValues(1234, state.TotalTx)
 	s.Require().EqualValues(123, state.TotalAccounts)
-	s.Require().Equal("2", state.TotalFee)
+	s.Require().EqualValues(2, state.TotalBridges)
 	s.Require().EqualValues(30, state.TotalRollups)
 	s.Require().Equal(testTime, state.LastTime)
 }

@@ -49,7 +49,7 @@ type Transaction interface {
 	SaveBalances(ctx context.Context, balances ...Balance) error
 	SaveBalanceUpdates(ctx context.Context, updates ...BalanceUpdate) error
 	SaveBlockSignatures(ctx context.Context, signs ...BlockSignature) error
-	SaveBridges(ctx context.Context, bridges ...*Bridge) error
+	SaveBridges(ctx context.Context, bridges ...*Bridge) (int64, error)
 	SaveConstants(ctx context.Context, constants ...Constant) error
 	SaveRollupActions(ctx context.Context, actions ...*RollupAction) error
 	SaveRollupAddresses(ctx context.Context, addresses ...*RollupAddress) error
@@ -68,7 +68,7 @@ type Transaction interface {
 	RollbackBlockSignatures(ctx context.Context, height types.Level) (err error)
 	RollbackBlockStats(ctx context.Context, height types.Level) (stats BlockStats, err error)
 	RollbackBlock(ctx context.Context, height types.Level) error
-	RollbackBridges(ctx context.Context, height types.Level) error
+	RollbackBridges(ctx context.Context, height types.Level) (int, error)
 	RollbackRollupActions(ctx context.Context, height types.Level) (rollupActions []RollupAction, err error)
 	RollbackRollupAddresses(ctx context.Context, height types.Level) (err error)
 	RollbackRollups(ctx context.Context, height types.Level) ([]Rollup, error)

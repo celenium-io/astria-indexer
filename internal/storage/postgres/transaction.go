@@ -213,13 +213,26 @@ func (tx Transaction) SaveBalanceUpdates(ctx context.Context, updates ...models.
 	return err
 }
 
-func (tx Transaction) SaveBridges(ctx context.Context, bridges ...*models.Bridge) error {
+type addedBiridge struct {
+	bun.BaseModel `bun:"bridge"`
+	*models.Bridge
+
+	Xmax uint64 `bun:"xmax"`
+}
+
+func (tx Transaction) SaveBridges(ctx context.Context, bridges ...*models.Bridge) (int64, error) {
 	if len(bridges) == 0 {
-		return nil
+		return 0, nil
 	}
 
+	var count int64
+
 	for i := range bridges {
-		query := tx.Tx().NewInsert().Model(bridges[i]).
+		add := new(addedBiridge)
+		add.Bridge = bridges[i]
+
+		query := tx.Tx().NewInsert().Model(add).
+			Column("rollup_id", "address_id", "asset", "fee_asset", "sudo_id", "withdrawer_id", "init_height").
 			On("CONFLICT (address_id) DO UPDATE")
 
 		if bridges[i].SudoId > 0 {
@@ -234,12 +247,16 @@ func (tx Transaction) SaveBridges(ctx context.Context, bridges ...*models.Bridge
 			query.Set("fee_asset = ?", bridges[i].FeeAsset)
 		}
 
-		if _, err := query.Exec(ctx); err != nil {
-			return err
+		if _, err := query.Returning("xmax, id").Exec(ctx); err != nil {
+			return count, err
+		}
+
+		if add.Xmax == 0 {
+			count++
 		}
 	}
 
-	return nil
+	return count, nil
 }
 
 func (tx Transaction) LastBlock(ctx context.Context) (block models.Block, err error) {
@@ -296,9 +313,10 @@ func (tx Transaction) RollbackBalanceUpdates(ctx context.Context, height types.L
 	return
 }
 
-func (tx Transaction) RollbackBridges(ctx context.Context, height types.Level) (err error) {
-	_, err = tx.Tx().NewDelete().Model((*models.Bridge)(nil)).Where("height = ?", height).Exec(ctx)
-	return
+func (tx Transaction) RollbackBridges(ctx context.Context, height types.Level) (int, error) {
+	var bridge []models.Bridge
+	_, err := tx.Tx().NewDelete().Model(&bridge).Where("init_height = ?", height).Returning("*").Exec(ctx)
+	return len(bridge), err
 }
 
 func (tx Transaction) RollbackAddressActions(ctx context.Context, height types.Level) (addrActions []models.AddressAction, err error) {

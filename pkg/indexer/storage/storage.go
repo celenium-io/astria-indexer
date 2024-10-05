@@ -181,7 +181,8 @@ func (module *Module) processBlockInTransaction(ctx context.Context, tx storage.
 		return state, err
 	}
 
-	if err := saveBridges(ctx, tx, addrToId, block.Bridges); err != nil {
+	totalBridges, err := saveBridges(ctx, tx, addrToId, block.Bridges)
+	if err != nil {
 		return state, err
 	}
 
@@ -210,7 +211,7 @@ func (module *Module) processBlockInTransaction(ctx context.Context, tx storage.
 		return state, err
 	}
 
-	updateState(block, totalAccounts, totalRollups, &state)
+	updateState(block, totalAccounts, totalRollups, totalBridges, &state)
 	if err := tx.Update(ctx, &state); err != nil {
 		return state, err
 	}
