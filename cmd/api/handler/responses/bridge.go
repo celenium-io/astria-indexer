@@ -9,12 +9,12 @@ import "github.com/celenium-io/astria-indexer/internal/storage"
 //
 //	@Description	bridge account information
 type Bridge struct {
-	Address    string `example:"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2" json:"address"    swaggertype:"string"`
-	Rollup     []byte `example:"O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc="  json:"rollup"     swaggertype:"string"`
-	Sudo       string `example:"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2" json:"sudo"       swaggertype:"string"`
-	Withdrawer string `example:"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2" json:"withdrawer" swaggertype:"string"`
-	Asset      string `example:"nria"                                          json:"asset"      swaggertype:"string"`
-	FeeAsset   string `example:"nria"                                          json:"fee_asset"  swaggertype:"string"`
+	Address    string `example:"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2" json:"address"              swaggertype:"string"`
+	Rollup     []byte `example:"O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc="  json:"rollup"               swaggertype:"string"`
+	Sudo       string `example:"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2" json:"sudo,omitempty"       swaggertype:"string"`
+	Withdrawer string `example:"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2" json:"withdrawer,omitempty" swaggertype:"string"`
+	Asset      string `example:"nria"                                          json:"asset"                swaggertype:"string"`
+	FeeAsset   string `example:"nria"                                          json:"fee_asset"            swaggertype:"string"`
 }
 
 func NewBridge(b storage.Bridge) Bridge {

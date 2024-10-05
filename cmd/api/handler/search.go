@@ -15,6 +15,7 @@ type SearchHandler struct {
 	blocks     storage.IBlock
 	txs        storage.ITx
 	rollups    storage.IRollup
+	bridges    storage.IBridge
 	validators storage.IValidator
 }
 
@@ -24,6 +25,7 @@ func NewSearchHandler(
 	blocks storage.IBlock,
 	txs storage.ITx,
 	rollups storage.IRollup,
+	bridges storage.IBridge,
 	validators storage.IValidator,
 ) *SearchHandler {
 	return &SearchHandler{
@@ -32,6 +34,7 @@ func NewSearchHandler(
 		blocks:     blocks,
 		txs:        txs,
 		rollups:    rollups,
+		bridges:    bridges,
 		validators: validators,
 	}
 }
@@ -97,6 +100,12 @@ func (s *SearchHandler) Search(c echo.Context) error {
 				return handleError(c, err, s.address)
 			}
 			body = responses.NewShortValidator(validator)
+		case "bridge":
+			bridge, err := s.bridges.ById(c.Request().Context(), results[i].Id)
+			if err != nil {
+				return handleError(c, err, s.address)
+			}
+			body = responses.NewBridge(bridge)
 		}
 
 		response[i] = responses.NewSearchResult(results[i].Value, results[i].Type, body)

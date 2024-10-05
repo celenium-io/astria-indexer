@@ -93,3 +93,17 @@ func (s *StorageTestSuite) TestSearchValidatorByAddress() {
 	s.Require().EqualValues("validator", result1.Type)
 	s.Require().EqualValues(1, result1.Id)
 }
+
+func (s *StorageTestSuite) TestSearchBridge() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	results, err := s.storage.Search.Search(ctx, "nri")
+	s.Require().NoError(err)
+	s.Require().Len(results, 1)
+
+	result := results[0]
+	s.Require().EqualValues("nria", result.Value)
+	s.Require().EqualValues("bridge", result.Type)
+	s.Require().EqualValues(1, result.Id)
+}

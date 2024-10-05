@@ -28,6 +28,7 @@ type SearchTestSuite struct {
 	address    *mock.MockIAddress
 	rollups    *mock.MockIRollup
 	validators *mock.MockIValidator
+	bridges    *mock.MockIBridge
 	echo       *echo.Echo
 	handler    *SearchHandler
 	ctrl       *gomock.Controller
@@ -44,7 +45,8 @@ func (s *SearchTestSuite) SetupSuite() {
 	s.blocks = mock.NewMockIBlock(s.ctrl)
 	s.rollups = mock.NewMockIRollup(s.ctrl)
 	s.validators = mock.NewMockIValidator(s.ctrl)
-	s.handler = NewSearchHandler(s.search, s.address, s.blocks, s.txs, s.rollups, s.validators)
+	s.bridges = mock.NewMockIBridge(s.ctrl)
+	s.handler = NewSearchHandler(s.search, s.address, s.blocks, s.txs, s.rollups, s.bridges, s.validators)
 }
 
 // TearDownSuite -
@@ -248,6 +250,54 @@ func (s *SearchTestSuite) TestSearchValidator() {
 
 	result := results[0]
 	s.Require().Equal("validator", result.Type)
+	s.Require().Equal("name", result.Value)
+	s.Require().NotNil(result.Body)
+}
+
+func (s *SearchTestSuite) TestSearchBridge() {
+	q := make(url.Values)
+	q.Add("query", "nam")
+
+	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/search")
+
+	s.search.EXPECT().
+		Search(gomock.Any(), "nam").
+		Return([]storage.SearchResult{
+			{
+				Type:  "bridge",
+				Value: "name",
+				Id:    1,
+			},
+		}, nil).
+		Times(1)
+
+	s.bridges.EXPECT().
+		ById(gomock.Any(), uint64(1)).
+		Return(storage.Bridge{
+			Id:         1,
+			Asset:      "name",
+			Address:    &testAddress,
+			AddressId:  testAddress.Id,
+			Rollup:     &testRollup,
+			RollupId:   testRollup.Id,
+			FeeAsset:   "fee_asset",
+			InitHeight: 1000,
+		}, nil).
+		Times(1)
+
+	s.Require().NoError(s.handler.Search(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var results []responses.SearchResult
+	err := json.NewDecoder(rec.Body).Decode(&results)
+	s.Require().NoError(err)
+	s.Require().Len(results, 1)
+
+	result := results[0]
+	s.Require().Equal("bridge", result.Type)
 	s.Require().Equal("name", result.Value)
 	s.Require().NotNil(result.Body)
 }

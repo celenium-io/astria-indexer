@@ -123,3 +123,29 @@ func (s *StorageTestSuite) TestBridgeListWithAddress() {
 	s.Require().Nil(bridge.Withdrawer)
 	s.Require().Nil(bridge.Rollup)
 }
+
+func (s *StorageTestSuite) TestBridgeById() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	bridge, err := s.storage.Bridges.ById(ctx, 1)
+	s.Require().NoError(err)
+
+	s.Require().EqualValues(7316, bridge.InitHeight)
+	s.Require().EqualValues(1, bridge.AddressId)
+	s.Require().EqualValues(1, bridge.SudoId)
+	s.Require().EqualValues(1, bridge.WithdrawerId)
+	s.Require().EqualValues(1, bridge.RollupId)
+	s.Require().EqualValues("nria", bridge.Asset)
+	s.Require().EqualValues("nria", bridge.FeeAsset)
+
+	s.Require().NotNil(bridge.Address)
+	s.Require().Equal("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", bridge.Address.Hash)
+
+	s.Require().Nil(bridge.Sudo)
+	s.Require().Nil(bridge.Withdrawer)
+
+	s.Require().NotNil(bridge.Rollup)
+	hash, _ := hex.DecodeString("19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539")
+	s.Require().Equal(hash, bridge.Rollup.AstriaId)
+}

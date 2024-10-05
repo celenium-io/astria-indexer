@@ -261,6 +261,15 @@ func createIndices(ctx context.Context, conn *database.Bun) error {
 			Exec(ctx); err != nil {
 			return err
 		}
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Bridge)(nil)).
+			Index("bridge_asset_idx").
+			ColumnExpr("asset gin_trgm_ops").
+			Using("GIN").
+			Exec(ctx); err != nil {
+			return err
+		}
 
 		// Fee
 		if _, err := tx.NewCreateIndex().
