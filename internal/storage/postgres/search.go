@@ -5,6 +5,7 @@ package postgres
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/hex"
 
 	"github.com/celenium-io/astria-indexer/internal/astria"
@@ -72,6 +73,16 @@ func (s *Search) Search(ctx context.Context, query string) (results []storage.Se
 		searchQuery = searchQuery.
 			UnionAll(addressQuery).
 			UnionAll(validatorQuery)
+	}
+
+	if decoded, err := base64.StdEncoding.DecodeString(query); err == nil {
+		rollupQuery := s.db.DB().NewSelect().
+			Model((*storage.Rollup)(nil)).
+			ColumnExpr("id, encode(astria_id, 'hex') as value, 'rollup' as type").
+			Where("astria_id = ?", decoded)
+
+		searchQuery = searchQuery.
+			UnionAll(rollupQuery)
 	}
 
 	err = s.db.DB().NewSelect().
