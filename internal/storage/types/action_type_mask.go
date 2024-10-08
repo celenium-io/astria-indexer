@@ -17,6 +17,7 @@ const (
 	ActionTypeBridgeUnlockBits
 	ActionTypeBridgeSudoChangeBits
 	ActionTypeFeeChangeBits
+	ActionTypeIbcSudoChangeBits
 )
 
 var (
@@ -34,6 +35,7 @@ var (
 		ActionTypeBridgeUnlock:           ActionTypeBridgeUnlockBits,
 		ActionTypeBridgeSudoChangeAction: ActionTypeBridgeSudoChangeBits,
 		ActionTypeFeeChange:              ActionTypeFeeChangeBits,
+		ActionTypeIbcSudoChangeAction:    ActionTypeIbcSudoChangeBits,
 	}
 )
 
@@ -71,6 +73,8 @@ func NewActionTypeMask(vals ...string) ActionTypeMask {
 			mask.Set(ActionTypeBridgeSudoChangeBits)
 		case string(ActionTypeFeeChange):
 			mask.Set(ActionTypeFeeChangeBits)
+		case string(ActionTypeIbcSudoChangeAction):
+			mask.Set(ActionTypeIbcSudoChangeBits)
 		}
 	}
 
@@ -87,7 +91,7 @@ func (mask ActionTypeMask) Strings() []string {
 	}
 
 	vals := make([]string, 0)
-	for val := ActionTypeTransferBits; val <= ActionTypeFeeChangeBits; val <<= 1 {
+	for val := ActionTypeTransferBits; val <= ActionTypeIbcSudoChangeBits; val <<= 1 {
 		if !mask.Has(val) {
 			continue
 		}
@@ -118,6 +122,8 @@ func (mask ActionTypeMask) Strings() []string {
 			vals = append(vals, string(ActionTypeBridgeUnlock))
 		case ActionTypeFeeChangeBits:
 			vals = append(vals, string(ActionTypeFeeChange))
+		case ActionTypeIbcSudoChangeBits:
+			vals = append(vals, string(ActionTypeIbcSudoChangeAction))
 		}
 	}
 

@@ -83,6 +83,7 @@ func TestDecodeActions(t *testing.T) {
 				BridgeAddress: &primitivev1.Address{
 					Bech32M: from,
 				},
+				UseCompatAddress: true,
 			},
 		}
 
@@ -99,10 +100,11 @@ func TestDecodeActions(t *testing.T) {
 					"revision_number": uint64(1000),
 					"revision_height": uint64(1001),
 				},
-				"timeout_time": uint64(1000),
-				"fee_asset":    feeAssetId,
-				"memo":         "memo",
-				"bridge":       from,
+				"timeout_time":       uint64(1000),
+				"fee_asset":          feeAssetId,
+				"memo":               "memo",
+				"bridge":             from,
+				"use_compat_address": true,
 			},
 			Addresses: []*storage.AddressAction{},
 			BalanceUpdates: []storage.BalanceUpdate{
@@ -253,7 +255,7 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		err := parseSudoAddressChangeAction(message, 1000, &decodeContext, &action)
+		err := parseSudoAddressChangeAction(message, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
@@ -672,11 +674,13 @@ func TestDecodeActions(t *testing.T) {
 				FeeAsset:      feeAssetId,
 				To:            &primitivev1.Address{Bech32M: to},
 				BridgeAddress: &primitivev1.Address{Bech32M: bridge},
-				Memo:          []byte("memo"),
+				Memo:          "memo",
 				Amount: &primitivev1.Uint128{
 					Lo: 10,
 					Hi: 0,
 				},
+				RollupBlockNumber:       101,
+				RollupWithdrawalEventId: "event_id",
 			},
 		}
 
@@ -709,11 +713,13 @@ func TestDecodeActions(t *testing.T) {
 			Height: 1000,
 			Type:   types.ActionTypeBridgeUnlock,
 			Data: map[string]any{
-				"fee_asset": feeAssetId,
-				"to":        to,
-				"bridge":    bridge,
-				"amount":    "10",
-				"memo":      "6d656d6f",
+				"fee_asset":                  feeAssetId,
+				"to":                         to,
+				"bridge":                     bridge,
+				"amount":                     "10",
+				"memo":                       "memo",
+				"rollup_block_number":        uint64(101),
+				"rollup_withdrawal_event_id": "event_id",
 			},
 			Addresses: make([]*storage.AddressAction, 0),
 			BalanceUpdates: []storage.BalanceUpdate{
@@ -1487,6 +1493,46 @@ func TestDecodeActions(t *testing.T) {
 			Height: 1000,
 		}
 		err := parseBridgeSudoChange(message, 1000, &decodeContext, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+	})
+
+	t.Run("ibc sudo change", func(t *testing.T) {
+		decodeContext := NewContext(map[string]string{})
+
+		newAddress := testsuite.RandomAddress()
+		message := &astria.Action_IbcSudoChangeAction{
+			IbcSudoChangeAction: &astria.IbcSudoChangeAction{
+				NewAddress: &primitivev1.Address{Bech32M: newAddress},
+			},
+		}
+
+		wantAction := storage.Action{
+			Height: 1000,
+			Type:   types.ActionTypeIbcSudoChangeAction,
+			Data: map[string]any{
+				"address": newAddress,
+			},
+			Addresses: make([]*storage.AddressAction, 0),
+		}
+		balance := storage.EmptyBalance()
+		addressAction := storage.AddressAction{
+			Height: 1000,
+			Address: &storage.Address{
+				Height:       1000,
+				ActionsCount: 1,
+				Hash:         newAddress,
+				Balance:      []*storage.Balance{&balance},
+			},
+			ActionType: types.ActionTypeIbcSudoChangeAction,
+			Action:     &wantAction,
+		}
+		wantAction.Addresses = append(wantAction.Addresses, &addressAction)
+
+		action := storage.Action{
+			Height: 1000,
+		}
+		err := parseIbcSudoChangeAction(message, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})

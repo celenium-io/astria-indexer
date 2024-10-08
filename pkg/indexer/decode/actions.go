@@ -5,7 +5,6 @@ package decode
 
 import (
 	"encoding/base64"
-	"encoding/hex"
 	"time"
 
 	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transactions/v1alpha1"
@@ -57,7 +56,7 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 
 		case *astria.Action_SudoAddressChangeAction:
 			tx.ActionTypes.Set(storageTypes.ActionTypeSudoAddressChangeBits)
-			err = parseSudoAddressChangeAction(val, height, ctx, &actions[i])
+			err = parseSudoAddressChangeAction(val, ctx, &actions[i])
 			feeType = "astria.protocol.transactions.v1alpha1.SudoAddressChangeAction"
 
 		case *astria.Action_TransferAction:
@@ -104,6 +103,11 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 			tx.ActionTypes.Set(storageTypes.ActionTypeFeeChangeBits)
 			err = parseFeeChange(val, ctx, &actions[i])
 			feeType = "astria.protocol.transactions.v1alpha1.FeeChangeAction"
+
+		case *astria.Action_IbcSudoChangeAction:
+			tx.ActionTypes.Set(storageTypes.ActionTypeIbcSudoChangeBits)
+			err = parseIbcSudoChangeAction(val, ctx, &actions[i])
+			feeType = "astria.protocol.transactions.v1alpha1.IbcSudoChangeAction"
 
 		default:
 			return nil, errors.Errorf(
@@ -172,6 +176,7 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, from string, heig
 		action.Data["destination_address"] = body.Ics20Withdrawal.GetDestinationChainAddress()
 		action.Data["return_address"] = body.Ics20Withdrawal.GetReturnAddress().GetBech32M()
 		action.Data["source_channel"] = body.Ics20Withdrawal.GetSourceChannel()
+		action.Data["use_compat_address"] = body.Ics20Withdrawal.GetUseCompatAddress()
 
 		decAmount := decimal.RequireFromString(amount)
 
@@ -308,14 +313,14 @@ func parseSequenceAction(body *astria.Action_SequenceAction, from string, height
 	return nil
 }
 
-func parseSudoAddressChangeAction(body *astria.Action_SudoAddressChangeAction, height types.Level, ctx *Context, action *storage.Action) error {
+func parseSudoAddressChangeAction(body *astria.Action_SudoAddressChangeAction, ctx *Context, action *storage.Action) error {
 	action.Type = storageTypes.ActionTypeSudoAddressChange
 	action.Data = make(map[string]any)
 	if body.SudoAddressChangeAction != nil {
 		address := body.SudoAddressChangeAction.GetNewAddress().GetBech32M()
 		action.Data["address"] = address
 
-		addr := ctx.Addresses.Set(address, height, decimal.Zero, "", 1, 0)
+		addr := ctx.Addresses.Set(address, action.Height, decimal.Zero, "", 1, 0)
 		action.Addresses = append(action.Addresses, &storage.AddressAction{
 			Address:    addr,
 			Action:     action,
@@ -323,6 +328,7 @@ func parseSudoAddressChangeAction(body *astria.Action_SudoAddressChangeAction, h
 			Height:     action.Height,
 			ActionType: action.Type,
 		})
+		ctx.AddGenericConstant("authority_sudo_address", address)
 	}
 	return nil
 }
@@ -685,8 +691,11 @@ func parseBridgeUnlock(body *astria.Action_BridgeUnlockAction, from string, heig
 		action.Data["to"] = toAddress
 		action.Data["fee_asset"] = feeAsset
 		action.Data["amount"] = amount
+		action.Data["rollup_block_number"] = body.BridgeUnlockAction.GetRollupBlockNumber()
+		action.Data["rollup_withdrawal_event_id"] = body.BridgeUnlockAction.GetRollupWithdrawalEventId()
+
 		if memo := body.BridgeUnlockAction.GetMemo(); len(memo) > 0 {
-			action.Data["memo"] = hex.EncodeToString(memo)
+			action.Data["memo"] = memo
 		}
 		if bridge != "" {
 			action.Data["bridge"] = bridge
@@ -803,5 +812,27 @@ func parseFeeChange(body *astria.Action_FeeChangeAction, ctx *Context, action *s
 			ctx.AddGenericConstant("transfer_base_fee", val)
 		}
 	}
+	return nil
+}
+
+func parseIbcSudoChangeAction(body *astria.Action_IbcSudoChangeAction, ctx *Context, action *storage.Action) error {
+	action.Type = storageTypes.ActionTypeIbcSudoChangeAction
+	action.Data = make(map[string]any)
+	if body.IbcSudoChangeAction != nil {
+		address := body.IbcSudoChangeAction.GetNewAddress().GetBech32M()
+		action.Data["address"] = address
+
+		addr := ctx.Addresses.Set(address, action.Height, decimal.Zero, "", 1, 0)
+		action.Addresses = append(action.Addresses, &storage.AddressAction{
+			Address:    addr,
+			Action:     action,
+			Time:       action.Time,
+			Height:     action.Height,
+			ActionType: action.Type,
+		})
+
+		ctx.AddGenericConstant("ibc_sudo_change", address)
+	}
+
 	return nil
 }
