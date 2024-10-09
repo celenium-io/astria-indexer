@@ -20,7 +20,7 @@ type Address struct {
 	Hash          string         `example:"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2" json:"hash"            swaggertype:"string"`
 	IsBridge      bool           `example:"false"                                         json:"is_bridge"       swaggertype:"boolean"`
 
-	Balance []Balance `json:"balances,omitempty"`
+	Balance []Balance `json:"balances"`
 	Bridge  *Bridge   `json:"bridge,omitempty"`
 }
 
