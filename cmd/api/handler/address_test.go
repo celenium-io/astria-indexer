@@ -17,6 +17,7 @@ import (
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/mock"
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
+	testsuite "github.com/celenium-io/astria-indexer/internal/test_suite"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/labstack/echo/v4"
 	"github.com/shopspring/decimal"
@@ -102,6 +103,54 @@ func (s *AddressTestSuite) TestGet() {
 	s.Require().Equal(testAddressHash, address.Bridge.Address)
 	s.Require().Equal("nria", address.Bridge.Asset)
 	s.Require().Equal("nria", address.Bridge.FeeAsset)
+}
+
+func (s *AddressTestSuite) TestGetWithEmptyBalances() {
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/address/:hash")
+	c.SetParamNames("hash")
+	c.SetParamValues(testAddressHash)
+
+	s.address.EXPECT().
+		ByHash(gomock.Any(), testAddress.Hash).
+		Return(storage.Address{
+			Hash:          testsuite.RandomAddress(),
+			Id:            1,
+			Nonce:         10,
+			ActionsCount:  1,
+			SignedTxCount: 1,
+			Balance:       nil,
+		}, nil).
+		Times(1)
+
+	s.bridge.EXPECT().
+		ByAddress(gomock.Any(), testAddress.Id).
+		Return(storage.Bridge{
+			Asset:    currency.DefaultCurrency,
+			FeeAsset: currency.DefaultCurrency,
+			Address:  &testAddress,
+		}, nil).
+		Times(1)
+
+	s.Require().NoError(s.handler.Get(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var address responses.Address
+	err := json.NewDecoder(rec.Body).Decode(&address)
+	s.Require().NoError(err)
+	s.Require().EqualValues(1, address.Id)
+	s.Require().EqualValues(1, address.ActionsCount)
+	s.Require().EqualValues(1, address.SignedTxCount)
+	s.Require().EqualValues(0, address.Height)
+	s.Require().EqualValues(10, address.Nonce)
+	s.Require().NotNil(address.Bridge)
+	s.Require().Equal(testAddressHash, address.Bridge.Address)
+	s.Require().Equal("nria", address.Bridge.Asset)
+	s.Require().Equal("nria", address.Bridge.FeeAsset)
+	s.Require().NotNil(address.Balance)
+	s.Require().Empty(address.Balance)
 }
 
 func (s *AddressTestSuite) TestGetWithoutBridge() {
