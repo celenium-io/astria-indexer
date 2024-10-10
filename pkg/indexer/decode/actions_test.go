@@ -29,8 +29,8 @@ const (
 func TestDecodeActions(t *testing.T) {
 
 	t.Run("ibc action", func(t *testing.T) {
-		message := &astria.Action_IbcAction{
-			IbcAction: &v1.IbcRelay{
+		message := &astria.Action_Ibc{
+			Ibc: &v1.IbcRelay{
 				RawAction: &anypb.Any{
 					Value:   []byte{0, 0, 0, 0},
 					TypeUrl: "msg_type",
@@ -174,8 +174,8 @@ func TestDecodeActions(t *testing.T) {
 		from := testsuite.RandomAddress()
 		addressModel := decodeContext.Addresses.Set(from, 1000, decimal.Zero, "", 0, 1)
 
-		message := &astria.Action_SequenceAction{
-			SequenceAction: &astria.SequenceAction{
+		message := &astria.Action_Sequence{
+			Sequence: &astria.Sequence{
 				RollupId: &primitivev1.RollupId{Inner: testsuite.RandomHash(10)},
 				Data:     testsuite.RandomHash(10),
 				FeeAsset: feeAssetId,
@@ -186,8 +186,8 @@ func TestDecodeActions(t *testing.T) {
 			Height: 1000,
 			Type:   types.ActionTypeSequence,
 			Data: map[string]any{
-				"rollup_id": message.SequenceAction.GetRollupId().GetInner(),
-				"data":      message.SequenceAction.GetData(),
+				"rollup_id": message.Sequence.GetRollupId().GetInner(),
+				"data":      message.Sequence.GetData(),
 				"fee_asset": feeAssetId,
 			},
 			Addresses: make([]*storage.AddressAction, 0),
@@ -195,7 +195,7 @@ func TestDecodeActions(t *testing.T) {
 				Size:   10,
 				Height: 1000,
 				Rollup: &storage.Rollup{
-					AstriaId:     message.SequenceAction.GetRollupId().GetInner(),
+					AstriaId:     message.Sequence.GetRollupId().GetInner(),
 					FirstHeight:  1000,
 					ActionsCount: 1,
 					Size:         10,
@@ -224,8 +224,8 @@ func TestDecodeActions(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
 		newAddress := testsuite.RandomAddress()
-		message := &astria.Action_SudoAddressChangeAction{
-			SudoAddressChangeAction: &astria.SudoAddressChangeAction{
+		message := &astria.Action_SudoAddressChange{
+			SudoAddressChange: &astria.SudoAddressChange{
 				NewAddress: &primitivev1.Address{Bech32M: newAddress},
 			},
 		}
@@ -291,8 +291,8 @@ func TestDecodeActions(t *testing.T) {
 			},
 		}
 
-		message := &astria.Action_TransferAction{
-			TransferAction: &astria.TransferAction{
+		message := &astria.Action_Transfer{
+			Transfer: &astria.Transfer{
 				To: &primitivev1.Address{Bech32M: to},
 				Amount: &primitivev1.Uint128{
 					Lo: 10,
@@ -308,8 +308,8 @@ func TestDecodeActions(t *testing.T) {
 			Data: map[string]any{
 				"to":        to,
 				"amount":    "10",
-				"asset":     message.TransferAction.GetAsset(),
-				"fee_asset": message.TransferAction.GetFeeAsset(),
+				"asset":     message.Transfer.GetAsset(),
+				"fee_asset": message.Transfer.GetFeeAsset(),
 			},
 			Addresses: make([]*storage.AddressAction, 0),
 			BalanceUpdates: []storage.BalanceUpdate{
@@ -364,8 +364,8 @@ func TestDecodeActions(t *testing.T) {
 			},
 		}
 
-		message := &astria.Action_TransferAction{
-			TransferAction: &astria.TransferAction{
+		message := &astria.Action_Transfer{
+			Transfer: &astria.Transfer{
 				To: &primitivev1.Address{Bech32M: from},
 				Amount: &primitivev1.Uint128{
 					Lo: 10,
@@ -381,8 +381,8 @@ func TestDecodeActions(t *testing.T) {
 			Data: map[string]any{
 				"to":        from,
 				"amount":    "10",
-				"asset":     message.TransferAction.GetAsset(),
-				"fee_asset": message.TransferAction.GetFeeAsset(),
+				"asset":     message.Transfer.GetAsset(),
+				"fee_asset": message.Transfer.GetFeeAsset(),
 			},
 			Addresses: make([]*storage.AddressAction, 0),
 		}
@@ -404,8 +404,8 @@ func TestDecodeActions(t *testing.T) {
 
 	t.Run("validator update", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
-		message := &astria.Action_ValidatorUpdateAction{
-			ValidatorUpdateAction: &abci.ValidatorUpdate{
+		message := &astria.Action_ValidatorUpdate{
+			ValidatorUpdate: &abci.ValidatorUpdate{
 				PubKey: &crypto.PublicKey{
 					Sum: &crypto.PublicKey_Ed25519{
 						Ed25519: testsuite.RandomHash(32),
@@ -420,11 +420,11 @@ func TestDecodeActions(t *testing.T) {
 			Type:   types.ActionTypeValidatorUpdate,
 			Data: map[string]any{
 				"power":  int64(10),
-				"pubkey": message.ValidatorUpdateAction.GetPubKey().GetEd25519(),
+				"pubkey": message.ValidatorUpdate.GetPubKey().GetEd25519(),
 			},
 			Addresses: make([]*storage.AddressAction, 0),
 		}
-		address, err := AddressFromPubKey(message.ValidatorUpdateAction.GetPubKey().GetEd25519())
+		address, err := AddressFromPubKey(message.ValidatorUpdate.GetPubKey().GetEd25519())
 		require.NoError(t, err)
 
 		balance := storage.EmptyBalance()
@@ -449,16 +449,16 @@ func TestDecodeActions(t *testing.T) {
 		require.Equal(t, wantAction, action)
 
 		require.Len(t, decodeContext.Validators, 1)
-		pk := hex.EncodeToString(message.ValidatorUpdateAction.GetPubKey().GetEd25519())
+		pk := hex.EncodeToString(message.ValidatorUpdate.GetPubKey().GetEd25519())
 		v, ok := decodeContext.Validators[pk]
 		require.True(t, ok)
 		require.EqualValues(t, "10", v.Power.String())
 	})
 
 	t.Run("fee asset change: addition", func(t *testing.T) {
-		message := &astria.Action_FeeAssetChangeAction{
-			FeeAssetChangeAction: &astria.FeeAssetChangeAction{
-				Value: &astria.FeeAssetChangeAction_Addition{
+		message := &astria.Action_FeeAssetChange{
+			FeeAssetChange: &astria.FeeAssetChange{
+				Value: &astria.FeeAssetChange_Addition{
 					Addition: assetId,
 				},
 			},
@@ -481,9 +481,9 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("fee asset change: removal", func(t *testing.T) {
-		message := &astria.Action_FeeAssetChangeAction{
-			FeeAssetChangeAction: &astria.FeeAssetChangeAction{
-				Value: &astria.FeeAssetChangeAction_Removal{
+		message := &astria.Action_FeeAssetChange{
+			FeeAssetChange: &astria.FeeAssetChange{
+				Value: &astria.FeeAssetChange_Removal{
 					Removal: assetId,
 				},
 			},
@@ -511,8 +511,8 @@ func TestDecodeActions(t *testing.T) {
 		to := testsuite.RandomAddress()
 		dest := testsuite.RandomAddress()
 
-		message := &astria.Action_BridgeLockAction{
-			BridgeLockAction: &astria.BridgeLockAction{
+		message := &astria.Action_BridgeLock{
+			BridgeLock: &astria.BridgeLock{
 				FeeAsset:                feeAssetId,
 				Asset:                   assetId,
 				To:                      &primitivev1.Address{Bech32M: to},
@@ -606,8 +606,8 @@ func TestDecodeActions(t *testing.T) {
 		to := testsuite.RandomAddress()
 		dest := testsuite.RandomAddress()
 
-		message := &astria.Action_BridgeLockAction{
-			BridgeLockAction: &astria.BridgeLockAction{
+		message := &astria.Action_BridgeLock{
+			BridgeLock: &astria.BridgeLock{
 				FeeAsset:                feeAssetId,
 				Asset:                   assetId,
 				To:                      &primitivev1.Address{Bech32M: to},
@@ -669,8 +669,8 @@ func TestDecodeActions(t *testing.T) {
 
 		to := testsuite.RandomAddress()
 
-		message := &astria.Action_BridgeUnlockAction{
-			BridgeUnlockAction: &astria.BridgeUnlockAction{
+		message := &astria.Action_BridgeUnlock{
+			BridgeUnlock: &astria.BridgeUnlock{
 				FeeAsset:      feeAssetId,
 				To:            &primitivev1.Address{Bech32M: to},
 				BridgeAddress: &primitivev1.Address{Bech32M: bridge},
@@ -771,8 +771,8 @@ func TestDecodeActions(t *testing.T) {
 		sudoAddr := decodeContext.Addresses.Set(sudo, 1000, decimal.Zero, "", 1, 0)
 		wdwAddr := decodeContext.Addresses.Set(withdrawer, 1000, decimal.Zero, "", 1, 0)
 
-		message := &astria.Action_InitBridgeAccountAction{
-			InitBridgeAccountAction: &astria.InitBridgeAccountAction{
+		message := &astria.Action_InitBridgeAccount{
+			InitBridgeAccount: &astria.InitBridgeAccount{
 				RollupId:          &primitivev1.RollupId{Inner: rollupId},
 				FeeAsset:          feeAssetId,
 				Asset:             assetId,
@@ -794,7 +794,7 @@ func TestDecodeActions(t *testing.T) {
 			RollupAction: &storage.RollupAction{
 				Height: 1000,
 				Rollup: &storage.Rollup{
-					AstriaId:     message.InitBridgeAccountAction.GetRollupId().GetInner(),
+					AstriaId:     message.InitBridgeAccount.GetRollupId().GetInner(),
 					FirstHeight:  1000,
 					ActionsCount: 1,
 					BridgeCount:  1,
@@ -834,8 +834,8 @@ func TestDecodeActions(t *testing.T) {
 
 		rollupId := testsuite.RandomHash(10)
 		from := testsuite.RandomAddress()
-		message := &astria.Action_InitBridgeAccountAction{
-			InitBridgeAccountAction: &astria.InitBridgeAccountAction{
+		message := &astria.Action_InitBridgeAccount{
+			InitBridgeAccount: &astria.InitBridgeAccount{
 				RollupId:          &primitivev1.RollupId{Inner: rollupId},
 				FeeAsset:          feeAssetId,
 				Asset:             assetId,
@@ -857,7 +857,7 @@ func TestDecodeActions(t *testing.T) {
 			RollupAction: &storage.RollupAction{
 				Height: 1000,
 				Rollup: &storage.Rollup{
-					AstriaId:     message.InitBridgeAccountAction.GetRollupId().GetInner(),
+					AstriaId:     message.InitBridgeAccount.GetRollupId().GetInner(),
 					FirstHeight:  1000,
 					ActionsCount: 1,
 					BridgeCount:  1,
@@ -881,9 +881,9 @@ func TestDecodeActions(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
 		address := testsuite.RandomAddress()
-		message := &astria.Action_IbcRelayerChangeAction{
-			IbcRelayerChangeAction: &astria.IbcRelayerChangeAction{
-				Value: &astria.IbcRelayerChangeAction_Addition{
+		message := &astria.Action_IbcRelayerChange{
+			IbcRelayerChange: &astria.IbcRelayerChange{
+				Value: &astria.IbcRelayerChange_Addition{
 					Addition: &primitivev1.Address{Bech32M: address},
 				},
 			},
@@ -929,9 +929,9 @@ func TestDecodeActions(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
 		address := testsuite.RandomAddress()
-		message := &astria.Action_IbcRelayerChangeAction{
-			IbcRelayerChangeAction: &astria.IbcRelayerChangeAction{
-				Value: &astria.IbcRelayerChangeAction_Removal{
+		message := &astria.Action_IbcRelayerChange{
+			IbcRelayerChange: &astria.IbcRelayerChange{
+				Value: &astria.IbcRelayerChange_Removal{
 					Removal: &primitivev1.Address{Bech32M: address},
 				},
 			},
@@ -976,9 +976,9 @@ func TestDecodeActions(t *testing.T) {
 	t.Run("fee change: sequence_base_fee", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
-		message := &astria.Action_FeeChangeAction{
-			FeeChangeAction: &astria.FeeChangeAction{
-				Value: &astria.FeeChangeAction_SequenceBaseFee{
+		message := &astria.Action_FeeChange{
+			FeeChange: &astria.FeeChange{
+				Value: &astria.FeeChange_SequenceBaseFee{
 					SequenceBaseFee: &primitivev1.Uint128{
 						Hi: 0,
 						Lo: 10,
@@ -1003,9 +1003,9 @@ func TestDecodeActions(t *testing.T) {
 	t.Run("fee change: bridge_lock_byte_cost_multiplier", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
-		message := &astria.Action_FeeChangeAction{
-			FeeChangeAction: &astria.FeeChangeAction{
-				Value: &astria.FeeChangeAction_BridgeLockByteCostMultiplier{
+		message := &astria.Action_FeeChange{
+			FeeChange: &astria.FeeChange{
+				Value: &astria.FeeChange_BridgeLockByteCostMultiplier{
 					BridgeLockByteCostMultiplier: &primitivev1.Uint128{
 						Hi: 0,
 						Lo: 10,
@@ -1030,9 +1030,9 @@ func TestDecodeActions(t *testing.T) {
 	t.Run("fee change: bridge_sudo_change_base_fee", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
-		message := &astria.Action_FeeChangeAction{
-			FeeChangeAction: &astria.FeeChangeAction{
-				Value: &astria.FeeChangeAction_BridgeSudoChangeBaseFee{
+		message := &astria.Action_FeeChange{
+			FeeChange: &astria.FeeChange{
+				Value: &astria.FeeChange_BridgeSudoChangeBaseFee{
 					BridgeSudoChangeBaseFee: &primitivev1.Uint128{
 						Hi: 0,
 						Lo: 10,
@@ -1057,9 +1057,9 @@ func TestDecodeActions(t *testing.T) {
 	t.Run("fee change: ics20_withdrawal_base_fee", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
-		message := &astria.Action_FeeChangeAction{
-			FeeChangeAction: &astria.FeeChangeAction{
-				Value: &astria.FeeChangeAction_Ics20WithdrawalBaseFee{
+		message := &astria.Action_FeeChange{
+			FeeChange: &astria.FeeChange{
+				Value: &astria.FeeChange_Ics20WithdrawalBaseFee{
 					Ics20WithdrawalBaseFee: &primitivev1.Uint128{
 						Hi: 0,
 						Lo: 10,
@@ -1084,9 +1084,9 @@ func TestDecodeActions(t *testing.T) {
 	t.Run("fee change: init_bridge_account_base_fee", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
-		message := &astria.Action_FeeChangeAction{
-			FeeChangeAction: &astria.FeeChangeAction{
-				Value: &astria.FeeChangeAction_InitBridgeAccountBaseFee{
+		message := &astria.Action_FeeChange{
+			FeeChange: &astria.FeeChange{
+				Value: &astria.FeeChange_InitBridgeAccountBaseFee{
 					InitBridgeAccountBaseFee: &primitivev1.Uint128{
 						Hi: 0,
 						Lo: 10,
@@ -1111,9 +1111,9 @@ func TestDecodeActions(t *testing.T) {
 	t.Run("fee change: sequence_byte_cost_multiplier", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
-		message := &astria.Action_FeeChangeAction{
-			FeeChangeAction: &astria.FeeChangeAction{
-				Value: &astria.FeeChangeAction_SequenceByteCostMultiplier{
+		message := &astria.Action_FeeChange{
+			FeeChange: &astria.FeeChange{
+				Value: &astria.FeeChange_SequenceByteCostMultiplier{
 					SequenceByteCostMultiplier: &primitivev1.Uint128{
 						Hi: 0,
 						Lo: 10,
@@ -1138,9 +1138,9 @@ func TestDecodeActions(t *testing.T) {
 	t.Run("fee change: transfer_base_fee", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
-		message := &astria.Action_FeeChangeAction{
-			FeeChangeAction: &astria.FeeChangeAction{
-				Value: &astria.FeeChangeAction_TransferBaseFee{
+		message := &astria.Action_FeeChange{
+			FeeChange: &astria.FeeChange{
+				Value: &astria.FeeChange_TransferBaseFee{
 					TransferBaseFee: &primitivev1.Uint128{
 						Hi: 0,
 						Lo: 10,
@@ -1168,8 +1168,8 @@ func TestDecodeActions(t *testing.T) {
 		sudo := testsuite.RandomAddress()
 		withdrawer := testsuite.RandomAddress()
 
-		message := &astria.Action_BridgeSudoChangeAction{
-			BridgeSudoChangeAction: &astria.BridgeSudoChangeAction{
+		message := &astria.Action_BridgeSudoChange{
+			BridgeSudoChange: &astria.BridgeSudoChange{
 				FeeAsset:             feeAssetId,
 				BridgeAddress:        &primitivev1.Address{Bech32M: bridge},
 				NewWithdrawerAddress: &primitivev1.Address{Bech32M: withdrawer},
@@ -1250,8 +1250,8 @@ func TestDecodeActions(t *testing.T) {
 		sudo := bridge
 		withdrawer := testsuite.RandomAddress()
 
-		message := &astria.Action_BridgeSudoChangeAction{
-			BridgeSudoChangeAction: &astria.BridgeSudoChangeAction{
+		message := &astria.Action_BridgeSudoChange{
+			BridgeSudoChange: &astria.BridgeSudoChange{
 				FeeAsset:             feeAssetId,
 				BridgeAddress:        &primitivev1.Address{Bech32M: bridge},
 				NewWithdrawerAddress: &primitivev1.Address{Bech32M: withdrawer},
@@ -1317,8 +1317,8 @@ func TestDecodeActions(t *testing.T) {
 		sudo := testsuite.RandomAddress()
 		withdrawer := bridge
 
-		message := &astria.Action_BridgeSudoChangeAction{
-			BridgeSudoChangeAction: &astria.BridgeSudoChangeAction{
+		message := &astria.Action_BridgeSudoChange{
+			BridgeSudoChange: &astria.BridgeSudoChange{
 				FeeAsset:             feeAssetId,
 				BridgeAddress:        &primitivev1.Address{Bech32M: bridge},
 				NewWithdrawerAddress: &primitivev1.Address{Bech32M: withdrawer},
@@ -1384,8 +1384,8 @@ func TestDecodeActions(t *testing.T) {
 		sudo := testsuite.RandomAddress()
 		withdrawer := sudo
 
-		message := &astria.Action_BridgeSudoChangeAction{
-			BridgeSudoChangeAction: &astria.BridgeSudoChangeAction{
+		message := &astria.Action_BridgeSudoChange{
+			BridgeSudoChange: &astria.BridgeSudoChange{
 				FeeAsset:             feeAssetId,
 				BridgeAddress:        &primitivev1.Address{Bech32M: bridge},
 				NewWithdrawerAddress: &primitivev1.Address{Bech32M: withdrawer},
@@ -1451,8 +1451,8 @@ func TestDecodeActions(t *testing.T) {
 		sudo := bridge
 		withdrawer := bridge
 
-		message := &astria.Action_BridgeSudoChangeAction{
-			BridgeSudoChangeAction: &astria.BridgeSudoChangeAction{
+		message := &astria.Action_BridgeSudoChange{
+			BridgeSudoChange: &astria.BridgeSudoChange{
 				FeeAsset:             feeAssetId,
 				BridgeAddress:        &primitivev1.Address{Bech32M: bridge},
 				NewWithdrawerAddress: &primitivev1.Address{Bech32M: withdrawer},
@@ -1501,8 +1501,8 @@ func TestDecodeActions(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
 		newAddress := testsuite.RandomAddress()
-		message := &astria.Action_IbcSudoChangeAction{
-			IbcSudoChangeAction: &astria.IbcSudoChangeAction{
+		message := &astria.Action_IbcSudoChange{
+			IbcSudoChange: &astria.IbcSudoChange{
 				NewAddress: &primitivev1.Address{Bech32M: newAddress},
 			},
 		}

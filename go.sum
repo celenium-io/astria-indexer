@@ -2,10 +2,14 @@ buf.build/gen/go/astria/primitives/protocolbuffers/go v1.34.2-20240626163506-691
 buf.build/gen/go/astria/primitives/protocolbuffers/go v1.34.2-20240626163506-691883836b9e.2/go.mod h1:J0Tk7JAHcrhzWNEf1lbePSfFZ1Kp78eAlnO8Cs2ELKg=
 buf.build/gen/go/astria/primitives/protocolbuffers/go v1.34.2-20240911152449-eeebd3decdce.2 h1:/0WgnbNMJ+M5bs1vHE52VMz7SfmNVjxOXkNbCAnguMc=
 buf.build/gen/go/astria/primitives/protocolbuffers/go v1.34.2-20240911152449-eeebd3decdce.2/go.mod h1:J0Tk7JAHcrhzWNEf1lbePSfFZ1Kp78eAlnO8Cs2ELKg=
+buf.build/gen/go/astria/primitives/protocolbuffers/go v1.35.1-20240911152449-eeebd3decdce.1 h1:kG4riHqlF9X6iZ1Oxs5/6ul6aue7MS+A6DK6HAchuTk=
+buf.build/gen/go/astria/primitives/protocolbuffers/go v1.35.1-20240911152449-eeebd3decdce.1/go.mod h1:n9L7X3VAj4od4VHf2ScJuHARUUQTSxJqtRHZk/7Ptt0=
 buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.34.2-20240627184145-2eaea785eb7d.2 h1:+ihOgxxuevFtaVi7C86TVHg8Nusp1J6ARLqR0pEnR04=
 buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.34.2-20240627184145-2eaea785eb7d.2/go.mod h1:Ko8az8QN6eXRnIJUUTjTLJUw4htfXfhGxBONXyJPy60=
 buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.34.2-20240925140414-60292a6c635a.2 h1:W3G0kaW9pQoyAwaA5zY/ACu7Nw8Ua8Ba+vKkj+m5eTs=
 buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.34.2-20240925140414-60292a6c635a.2/go.mod h1:QhdZCN3ol1WttbaK/8j3SKlisGdX6g038qWctKCBwdQ=
+buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.35.1-20241008161740-d1f14cf7d8a3.1 h1:jMugQNsVkNsCEd1ARvl5aHhipIGAr8b6vsDj9xRrsVI=
+buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.35.1-20241008161740-d1f14cf7d8a3.1/go.mod h1:XtXAwi+0M8MZWFDcda/0ShK1PKcFsLmdQOA6VKZdKVg=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 dario.cat/mergo v1.0.0 h1:AGCNq9Evsj31mOgNPcLyXc+4PNABt905YmuqPYYpBWk=
 dario.cat/mergo v1.0.0/go.mod h1:uNxQE+84aUszobStD9th8a29P2fMDhsBdgRYvZOxGmk=
@@ -543,6 +547,8 @@ google.golang.org/protobuf v1.26.0-rc.1/go.mod h1:jlhhOSvTdKEhbULTjvd4ARK9grFBp0
 google.golang.org/protobuf v1.27.1/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQnmE0givc=
 google.golang.org/protobuf v1.34.2 h1:6xV6lTsCfpGD21XK49h7MhtcApnLqkfYgPcdHftf6hg=
 google.golang.org/protobuf v1.34.2/go.mod h1:qYOHts0dSfpeUzUFpOMr/WGzszTmLH+DiWniOlNbLDw=
+google.golang.org/protobuf v1.35.1 h1:m3LfL6/Ca+fqnjnlqQXNpFPABW1UD7mjh8KO2mKFytA=
+google.golang.org/protobuf v1.35.1/go.mod h1:9fA7Ob0pmnwhb644+1+CVWFRbNajQ6iRojtC/QF5bRE=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
