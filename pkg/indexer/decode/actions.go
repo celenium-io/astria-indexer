@@ -776,6 +776,8 @@ func parseFeeChange(body *astria.Action_FeeChange, ctx *Context, action *storage
 	action.Data = make(map[string]any)
 	if body.FeeChange != nil {
 		switch t := body.FeeChange.GetValue().(type) {
+
+		// TODO: update astria package and rewrite on FeeComponents
 		case *astria.FeeChange_BridgeLockByteCostMultiplier:
 			val := uint128ToString(t.BridgeLockByteCostMultiplier)
 			action.Data["bridge_lock_byte_cost_multiplier"] = val
