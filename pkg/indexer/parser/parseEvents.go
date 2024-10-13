@@ -5,6 +5,8 @@ package parser
 
 import (
 	"context"
+	"encoding/base64"
+	"strconv"
 	"strings"
 	"time"
 
@@ -25,6 +27,8 @@ func parseEvents(ctx context.Context, events []types.Event, decodeCtx *decode.Co
 		switch events[i].Type {
 		case "tx.fees":
 			err = parseTxFees(ctx, events[i].Attributes, decodeCtx, api)
+		case "tx.deposit":
+			err = parseTxDeposit(events[i].Attributes, decodeCtx)
 		default:
 			continue
 		}
@@ -93,5 +97,49 @@ func parseTxFees(ctx context.Context, attrs []types.EventAttribute, decodeCtx *d
 	}
 
 	decodeCtx.AddFee(fee)
+	return nil
+}
+
+func parseTxDeposit(attrs []types.EventAttribute, decodeCtx *decode.Context) error {
+	deposit := new(storage.Deposit)
+	var idx int64
+
+	for i := range attrs {
+		switch attrs[i].Key {
+		case "bridgeAddress":
+			deposit.Bridge = &storage.Bridge{
+				Address: &storage.Address{
+					Hash: attrs[i].Value,
+				},
+			}
+		case "rollupId":
+			hash, err := base64.StdEncoding.DecodeString(attrs[i].Value)
+			if err != nil {
+				return err
+			}
+			deposit.Rollup = &storage.Rollup{
+				AstriaId: hash,
+			}
+		case "amount":
+			amount, err := decimal.NewFromString(attrs[i].Value)
+			if err != nil {
+				return err
+			}
+			deposit.Amount = amount
+		case "asset":
+			deposit.Asset = attrs[i].Value
+		case "destinationChainAddress":
+			deposit.DestinationChainAddress = attrs[i].Value
+		case "sourceTransactionId":
+		case "sourceActionIndex":
+			actionIndex, err := strconv.ParseInt(attrs[i].Value, 10, 64)
+			if err != nil {
+				return err
+			}
+			idx = actionIndex
+		}
+	}
+
+	decodeCtx.AddDeposit(idx, deposit)
 	return nil
 }

@@ -213,7 +213,8 @@ const docTemplate = `{
                             "bridge_lock",
                             "bridge_unlock",
                             "bridge_sudo_change_action",
-                            "fee_change"
+                            "fee_change",
+                            "ibc_sudo_change_action"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -228,6 +229,76 @@ const docTemplate = `{
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/responses.Action"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/address/{hash}/deposits": {
+            "get": {
+                "description": "Get bridge deposits",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Get bridge deposits",
+                "operationId": "get-address-deposits",
+                "parameters": [
+                    {
+                        "maxLength": 48,
+                        "minLength": 48,
+                        "type": "string",
+                        "description": "Hash",
+                        "name": "hash",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "type": "integer",
+                        "description": "Count of requested entities",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "description": "Sort order",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.Deposit"
                             }
                         }
                     },
@@ -508,7 +579,8 @@ const docTemplate = `{
                             "bridge_lock",
                             "bridge_unlock",
                             "bridge_sudo_change_action",
-                            "fee_change"
+                            "fee_change",
+                            "ibc_sudo_change_action"
                         ],
                         "type": "string",
                         "description": "Comma-separated message types list",
@@ -1396,7 +1468,8 @@ const docTemplate = `{
                             "bridge_lock",
                             "bridge_unlock",
                             "bridge_sudo_change_action",
-                            "fee_change"
+                            "fee_change",
+                            "ibc_sudo_change_action"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -1493,6 +1566,74 @@ const docTemplate = `{
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/responses.Bridge"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/rollup/{hash}/deposits": {
+            "get": {
+                "description": "Get rollup deposits",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rollup"
+                ],
+                "summary": "Get rollup deposits",
+                "operationId": "get-rollup-deposits",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Base64Url encoded rollup id",
+                        "name": "hash",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "type": "integer",
+                        "description": "Count of requested entities",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "description": "Sort order",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.Deposit"
                             }
                         }
                     },
@@ -1957,7 +2098,8 @@ const docTemplate = `{
                             "bridge_lock",
                             "bridge_unlock",
                             "bridge_sudo_change_action",
-                            "fee_change"
+                            "fee_change",
+                            "ibc_sudo_change_action"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -2811,6 +2953,56 @@ const docTemplate = `{
                     "additionalProperties": {
                         "$ref": "#/definitions/responses.Params"
                     }
+                }
+            }
+        },
+        "responses.Deposit": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "1000"
+                },
+                "asset": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "nria"
+                },
+                "bridge": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2"
+                },
+                "destination_chain_address": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "0x8bAec8896775DDa83796eda3e7E67217b5E3C5dA"
+                },
+                "height": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 100
+                },
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 321
+                },
+                "rolluo": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc="
+                },
+                "time": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2023-07-04T03:10:57+00:00"
+                },
+                "tx_hash": {
+                    "type": "string",
+                    "format": "binary",
+                    "example": "652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF"
                 }
             }
         },

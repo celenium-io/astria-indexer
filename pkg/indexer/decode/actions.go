@@ -147,6 +147,12 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 				feeCounter++
 			}
 		}
+
+		if deposit, ok := ctx.Deposits[int64(i)]; ok {
+			deposit.Height = height
+			deposit.Time = blockTime
+			actions[i].Deposit = deposit
+		}
 	}
 
 	return actions, nil

@@ -258,6 +258,11 @@ func Test_rollbackBlock(t *testing.T) {
 			Times(1)
 
 		tx.EXPECT().
+			RollbackDeposits(ctx, height).
+			Return(nil).
+			Times(1)
+
+		tx.EXPECT().
 			RollbackTransfers(ctx, height).
 			Return(nil).
 			Times(1)

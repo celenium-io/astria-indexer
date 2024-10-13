@@ -15,6 +15,7 @@ func saveAction(
 	tx storage.Transaction,
 	actions []*storage.Action,
 	addrToId map[string]uint64,
+	rollups map[string]*storage.Rollup,
 ) error {
 	if len(actions) == 0 {
 		return nil
@@ -29,6 +30,7 @@ func saveAction(
 		addrActions    = make([]*storage.AddressAction, 0)
 		balanceUpdates = make([]storage.BalanceUpdate, 0)
 		fees           = make([]*storage.Fee, 0)
+		deposits       = make([]*storage.Deposit, 0)
 	)
 	for i := range actions {
 		if actions[i].RollupAction != nil {
@@ -60,6 +62,29 @@ func saveAction(
 			}
 			fees = append(fees, actions[i].Fee)
 		}
+
+		if actions[i].Deposit != nil {
+			actions[i].Deposit.ActionId = actions[i].Id
+			actions[i].Deposit.TxId = actions[i].TxId
+
+			if addrId, ok := addrToId[actions[i].Deposit.Bridge.Address.Hash]; ok {
+				bridgeId, err := tx.GetBridgeIdByAddressId(ctx, addrId)
+				if err != nil {
+					return errors.Wrap(err, "receiving deposit bridge id")
+				}
+				actions[i].Deposit.BridgeId = bridgeId
+			} else {
+				return errors.Errorf("unknown payer id")
+			}
+
+			if rollup, ok := rollups[actions[i].Deposit.Rollup.String()]; ok {
+				actions[i].Deposit.RollupId = rollup.Id
+			} else {
+				return errors.Errorf("unknown deposit rollup id")
+			}
+
+			deposits = append(deposits, actions[i].Deposit)
+		}
 	}
 
 	if err := tx.SaveRollupActions(ctx, rollupActions...); err != nil {
@@ -72,6 +97,9 @@ func saveAction(
 		return err
 	}
 	if err := tx.SaveFees(ctx, fees...); err != nil {
+		return err
+	}
+	if err := tx.SaveDeposits(ctx, deposits...); err != nil {
 		return err
 	}
 

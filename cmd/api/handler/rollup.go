@@ -19,6 +19,7 @@ type RollupHandler struct {
 	rollups     storage.IRollup
 	actions     storage.IAction
 	bridge      storage.IBridge
+	deposits    storage.IDeposit
 	state       storage.IState
 	indexerName string
 }
@@ -27,6 +28,7 @@ func NewRollupHandler(
 	rollups storage.IRollup,
 	actions storage.IAction,
 	bridge storage.IBridge,
+	deposits storage.IDeposit,
 	state storage.IState,
 	indexerName string,
 ) *RollupHandler {
@@ -34,6 +36,7 @@ func NewRollupHandler(
 		rollups:     rollups,
 		actions:     actions,
 		bridge:      bridge,
+		deposits:    deposits,
 		state:       state,
 		indexerName: indexerName,
 	}
@@ -400,5 +403,64 @@ func (handler *RollupHandler) AllActions(c echo.Context) error {
 		response[i] = responses.NewActionWithTx(actions[i])
 	}
 
+	return returnArray(c, response)
+}
+
+type getRollupDeposits struct {
+	Hash   string `param:"hash"   validate:"required,base64url"`
+	Limit  int    `query:"limit"  validate:"omitempty,min=1,max=100"`
+	Offset int    `query:"offset" validate:"omitempty,min=0"`
+	Sort   string `query:"sort"   validate:"omitempty,oneof=asc desc"`
+}
+
+func (p *getRollupDeposits) SetDefault() {
+	if p.Limit == 0 {
+		p.Limit = 10
+	}
+	if p.Sort == "" {
+		p.Sort = desc
+	}
+}
+
+// Deposits godoc
+//
+//	@Summary		Get rollup deposits
+//	@Description	Get rollup deposits
+//	@Tags			rollup
+//	@ID				get-rollup-deposits
+//	@Param			hash		path	string	true	"Base64Url encoded rollup id"
+//	@Param			limit		query	integer	false	"Count of requested entities"	mininum(1)	maximum(100)
+//	@Param			offset		query	integer	false	"Offset"						mininum(1)
+//	@Param			sort		query	string	false	"Sort order"					Enums(asc, desc)
+//	@Produce		json
+//	@Success		200	{array}		responses.Deposit
+//	@Failure		400	{object}	Error
+//	@Failure		500	{object}	Error
+//	@Router			/v1/rollup/{hash}/deposits [get]
+func (handler *RollupHandler) Deposits(c echo.Context) error {
+	req, err := bindAndValidate[getRollupDeposits](c)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+	req.SetDefault()
+
+	hash, err := base64.URLEncoding.DecodeString(req.Hash)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+
+	rollup, err := handler.rollups.ByHash(c.Request().Context(), hash)
+	if err != nil {
+		return handleError(c, err, handler.rollups)
+	}
+
+	deposits, err := handler.deposits.ByRollupId(c.Request().Context(), rollup.Id, req.Limit, req.Offset, pgSort(req.Sort))
+	if err != nil {
+		return handleError(c, err, handler.rollups)
+	}
+	response := make([]responses.Deposit, len(deposits))
+	for i := range deposits {
+		response[i] = responses.NewDeposit(deposits[i])
+	}
 	return returnArray(c, response)
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/labstack/echo/v4"
+	"github.com/pkg/errors"
 )
 
 type AddressHandler struct {
@@ -20,6 +21,7 @@ type AddressHandler struct {
 	rollups     storage.IRollup
 	fees        storage.IFee
 	bridge      storage.IBridge
+	deposits    storage.IDeposit
 	state       storage.IState
 	indexerName string
 }
@@ -31,6 +33,7 @@ func NewAddressHandler(
 	rollups storage.IRollup,
 	fees storage.IFee,
 	bridge storage.IBridge,
+	deposits storage.IDeposit,
 	state storage.IState,
 	indexerName string,
 ) *AddressHandler {
@@ -41,6 +44,7 @@ func NewAddressHandler(
 		rollups:     rollups,
 		fees:        fees,
 		bridge:      bridge,
+		deposits:    deposits,
 		state:       state,
 		indexerName: indexerName,
 	}
@@ -460,6 +464,69 @@ func (handler *AddressHandler) Fees(c echo.Context) error {
 	response := make([]responses.FullFee, len(fees))
 	for i := range fees {
 		response[i] = responses.NewFullFee(fees[i])
+	}
+	return returnArray(c, response)
+}
+
+type getAddressDeposits struct {
+	Hash   string `param:"hash"   validate:"required,address"`
+	Limit  int    `query:"limit"  validate:"omitempty,min=1,max=100"`
+	Offset int    `query:"offset" validate:"omitempty,min=0"`
+	Sort   string `query:"sort"   validate:"omitempty,oneof=asc desc"`
+}
+
+func (p *getAddressDeposits) SetDefault() {
+	if p.Limit == 0 {
+		p.Limit = 10
+	}
+	if p.Sort == "" {
+		p.Sort = desc
+	}
+}
+
+// Deposits godoc
+//
+//	@Summary		Get bridge deposits
+//	@Description	Get bridge deposits
+//	@Tags			address
+//	@ID				get-address-deposits
+//	@Param			hash		path	string	true	"Hash"								minlength(48)	maxlength(48)
+//	@Param			limit		query	integer	false	"Count of requested entities"		mininum(1)	maximum(100)
+//	@Param			offset		query	integer	false	"Offset"							mininum(1)
+//	@Param			sort		query	string		false	"Sort order"					Enums(asc, desc)
+//	@Produce		json
+//	@Success		200	{array}		responses.Deposit
+//	@Failure		400	{object}	Error
+//	@Failure		500	{object}	Error
+//	@Router			/v1/address/{hash}/deposits [get]
+func (handler *AddressHandler) Deposits(c echo.Context) error {
+	req, err := bindAndValidate[getAddressDeposits](c)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+	req.SetDefault()
+
+	address, err := handler.address.ByHash(c.Request().Context(), req.Hash)
+	if err != nil {
+		return handleError(c, err, handler.address)
+	}
+
+	if address.IsBridge {
+		return handleError(c, errors.Errorf("address %s is not bridge", req.Hash), handler.address)
+	}
+
+	bridge, err := handler.bridge.ByAddress(c.Request().Context(), address.Id)
+	if err != nil {
+		return handleError(c, err, handler.address)
+	}
+
+	deposits, err := handler.deposits.ByBridgeId(c.Request().Context(), bridge.Id, req.Limit, req.Offset, pgSort(req.Sort))
+	if err != nil {
+		return handleError(c, err, handler.address)
+	}
+	response := make([]responses.Deposit, len(deposits))
+	for i := range deposits {
+		response[i] = responses.NewDeposit(deposits[i])
 	}
 	return returnArray(c, response)
 }
