@@ -25,7 +25,7 @@ func (s *StorageTestSuite) TestActionByBlock() {
 	s.Require().EqualValues(1, action.Id)
 	s.Require().EqualValues(0, action.Position)
 	s.Require().EqualValues(1, action.TxId)
-	s.Require().EqualValues(types.ActionTypeSequence, action.Type)
+	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Type)
 	s.Require().NotNil(action.Data)
 	s.Require().NotNil(action.Fee)
 	s.Require().NotNil(action.Tx)
@@ -45,7 +45,7 @@ func (s *StorageTestSuite) TestActionByTxId() {
 	s.Require().EqualValues(1, action.Id)
 	s.Require().EqualValues(0, action.Position)
 	s.Require().EqualValues(1, action.TxId)
-	s.Require().EqualValues(types.ActionTypeSequence, action.Type)
+	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Type)
 	s.Require().NotNil(action.Data)
 	s.Require().NotNil(action.Fee)
 }
@@ -57,7 +57,7 @@ func (s *StorageTestSuite) TestActionByAddress() {
 	actions, err := s.storage.Action.ByAddress(ctx, 1, storage.AddressActionsFilter{
 		Sort:        sdk.SortOrderAsc,
 		Limit:       1,
-		ActionTypes: types.NewActionTypeMask(types.ActionTypeSequence.String()),
+		ActionTypes: types.NewActionTypeMask(types.ActionTypeRollupDataSubmission.String()),
 	})
 	s.Require().NoError(err)
 	s.Require().Len(actions, 1)
@@ -69,7 +69,7 @@ func (s *StorageTestSuite) TestActionByAddress() {
 	s.Require().NotNil(action.Tx)
 	s.Require().NotNil(action.Action)
 	s.Require().EqualValues(1, action.Action.TxId)
-	s.Require().EqualValues(types.ActionTypeSequence, action.Action.Type)
+	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Action.Type)
 	s.Require().NotNil(action.Action.Data)
 	s.Require().NotNil(action.Action.Fee)
 }
@@ -89,7 +89,7 @@ func (s *StorageTestSuite) TestActionByRollup() {
 	s.Require().NotNil(action.Tx)
 	s.Require().NotNil(action.Action)
 	s.Require().EqualValues(1, action.Action.TxId)
-	s.Require().EqualValues(types.ActionTypeSequence, action.Action.Type)
+	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Action.Type)
 	s.Require().NotNil(action.Action.Data)
 	s.Require().NotNil(action.Action.Fee)
 }
@@ -113,7 +113,7 @@ func (s *StorageTestSuite) TestActionByRollupAndBridge() {
 	s.Require().NotNil(action.Tx)
 	s.Require().NotNil(action.Action)
 	s.Require().EqualValues(1, action.Action.TxId)
-	s.Require().EqualValues(types.ActionTypeSequence, action.Action.Type)
+	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Action.Type)
 	s.Require().NotNil(action.Action.Data)
 	s.Require().NotNil(action.Action.Fee)
 }
@@ -137,7 +137,7 @@ func (s *StorageTestSuite) TestActionByRollupAndBridgeWithoutRollupActions() {
 	s.Require().NotNil(action.Tx)
 	s.Require().NotNil(action.Action)
 	s.Require().EqualValues(1, action.Action.TxId)
-	s.Require().EqualValues(types.ActionTypeSequence, action.Action.Type)
+	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Action.Type)
 	s.Require().NotNil(action.Action.Data)
 	s.Require().NotNil(action.Action.Fee)
 }

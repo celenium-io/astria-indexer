@@ -202,7 +202,7 @@ const docTemplate = `{
                     {
                         "enum": [
                             "transfer",
-                            "sequence",
+                            "rollup_data_submission",
                             "validator_update",
                             "sudo_address_change",
                             "ibc_relay",
@@ -568,7 +568,7 @@ const docTemplate = `{
                     {
                         "enum": [
                             "transfer",
-                            "sequence",
+                            "rollup_data_submission",
                             "validator_update",
                             "sudo_address_change",
                             "ibc_relay",
@@ -1457,7 +1457,7 @@ const docTemplate = `{
                     {
                         "enum": [
                             "transfer",
-                            "sequence",
+                            "rollup_data_submission",
                             "validator_update",
                             "sudo_address_change",
                             "ibc_relay",
@@ -2087,7 +2087,7 @@ const docTemplate = `{
                     {
                         "enum": [
                             "transfer",
-                            "sequence",
+                            "rollup_data_submission",
                             "validator_update",
                             "sudo_address_change",
                             "ibc_relay",
@@ -2746,7 +2746,7 @@ const docTemplate = `{
                 "type": {
                     "type": "string",
                     "format": "string",
-                    "example": "sequence"
+                    "example": "rollup_data_submission"
                 }
             }
         },
@@ -2812,7 +2812,7 @@ const docTemplate = `{
             "properties": {
                 "action_types": {
                     "type": "string",
-                    "example": "sequence,transfer"
+                    "example": "rollup_data_submission,transfer"
                 },
                 "app_hash": {
                     "type": "string",
@@ -3304,7 +3304,7 @@ const docTemplate = `{
                 "type": {
                     "type": "string",
                     "format": "string",
-                    "example": "sequence"
+                    "example": "rollup_data_submission"
                 }
             }
         },
@@ -3481,7 +3481,7 @@ const docTemplate = `{
                 "action_types": {
                     "type": "string",
                     "format": "string",
-                    "example": "sequence,transfer"
+                    "example": "rollup_data_submission,transfer"
                 },
                 "actions": {
                     "type": "array",

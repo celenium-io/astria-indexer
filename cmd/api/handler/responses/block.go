@@ -28,7 +28,7 @@ type Block struct {
 	AppHash            pkgTypes.Hex    `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"app_hash"             swaggertype:"string"`
 	LastResultsHash    pkgTypes.Hex    `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"last_results_hash"    swaggertype:"string"`
 	EvidenceHash       pkgTypes.Hex    `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" json:"evidence_hash"        swaggertype:"string"`
-	ActionTypes        []string        `example:"sequence,transfer"                                                json:"action_types"         swaggertype:"string"`
+	ActionTypes        []string        `example:"rollup_data_submission,transfer"                                  json:"action_types"         swaggertype:"string"`
 	Proposer           *ShortValidator `json:"proposer,omitempty"`
 
 	Stats *BlockStats `json:"stats,omitempty"`

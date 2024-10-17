@@ -76,155 +76,155 @@ func (module *Module) parseConstants(appState nodeTypes.AppState, consensus pkgT
 
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "bridge_lock_base_fee",
+		Name:   "bridge_lock_base",
 		Value:  appState.Fees.BridgeLock.BaseFee.String(),
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "bridge_lock_computed_cost_multiplier",
+		Name:   "bridge_lock_multiplier",
 		Value:  appState.Fees.BridgeLock.ComputedCostMultiplier.String(),
 	})
 
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "bridge_unlock_base_fee",
+		Name:   "bridge_unlock_base",
 		Value:  appState.Fees.BridgeUnlock.BaseFee.String(),
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "bridge_unlock_computed_cost_multiplier",
+		Name:   "bridge_unlock_multiplier",
 		Value:  appState.Fees.BridgeUnlock.ComputedCostMultiplier.String(),
 	})
 
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "transfer_base_fee",
+		Name:   "transfer_base",
 		Value:  appState.Fees.Transfer.BaseFee.String(),
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "transfer_computed_cost_multiplier",
+		Name:   "transfer_multiplier",
 		Value:  appState.Fees.Transfer.ComputedCostMultiplier.String(),
 	})
 
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "sequence_base_fee",
+		Name:   "rollup_data_submission_base",
 		Value:  appState.Fees.Sequence.BaseFee.String(),
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "sequence_computed_cost_multiplier",
+		Name:   "rollup_data_submission_computed_multiplier",
 		Value:  appState.Fees.Sequence.ComputedCostMultiplier.String(),
 	})
 
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "ics20_withdrawal_base_fee",
+		Name:   "ics20_withdrawal_base",
 		Value:  appState.Fees.Ics20Withdrawal.BaseFee.String(),
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "ics20_withdrawal_computed_cost_multiplier",
+		Name:   "ics20_withdrawal_multiplier",
 		Value:  appState.Fees.Ics20Withdrawal.ComputedCostMultiplier.String(),
 	})
 
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "init_bridge_account_base_fee",
+		Name:   "init_bridge_account_base",
 		Value:  appState.Fees.InitBridgeAccount.BaseFee.String(),
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "init_bridge_account_computed_cost_multiplier",
+		Name:   "init_bridge_account_multiplier",
 		Value:  appState.Fees.InitBridgeAccount.ComputedCostMultiplier.String(),
 	})
 
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "bridge_sudo_change_base_fee",
+		Name:   "bridge_sudo_change_base",
 		Value:  appState.Fees.BridgeSudoChange.BaseFee.String(),
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "bridge_sudo_change_computed_cost_multiplier",
+		Name:   "bridge_sudo_change_multiplier",
 		Value:  appState.Fees.BridgeSudoChange.ComputedCostMultiplier.String(),
 	})
 
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "ibc_relay_base_fee",
+		Name:   "ibc_relay_base",
 		Value:  appState.Fees.IbcRelay.BaseFee.String(),
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "ibc_relay_computed_cost_multiplier",
+		Name:   "ibc_relay_multiplier",
 		Value:  appState.Fees.IbcRelay.ComputedCostMultiplier.String(),
 	})
 
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "validator_update_base_fee",
+		Name:   "validator_update_base",
 		Value:  appState.Fees.ValidatorUpdate.BaseFee.String(),
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "validator_update_computed_cost_multiplier",
+		Name:   "validator_update_multiplier",
 		Value:  appState.Fees.ValidatorUpdate.ComputedCostMultiplier.String(),
 	})
 
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "fee_asset_change_base_fee",
+		Name:   "fee_asset_change_base",
 		Value:  appState.Fees.FeeAssetChange.BaseFee.String(),
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "fee_asset_change_computed_cost_multiplier",
+		Name:   "fee_asset_change_multiplier",
 		Value:  appState.Fees.FeeAssetChange.ComputedCostMultiplier.String(),
 	})
 
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "fee_change_base_fee",
+		Name:   "fee_change_base",
 		Value:  appState.Fees.FeeChange.BaseFee.String(),
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "fee_change_computed_cost_multiplier",
+		Name:   "fee_change_multiplier",
 		Value:  appState.Fees.FeeChange.ComputedCostMultiplier.String(),
 	})
 
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "ibc_relayer_change_base_fee",
+		Name:   "ibc_relayer_change_base",
 		Value:  appState.Fees.IbcRelayerChange.BaseFee.String(),
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "ibc_relayer_change_computed_cost_multiplier",
+		Name:   "ibc_relayer_change_multiplier",
 		Value:  appState.Fees.IbcRelayerChange.ComputedCostMultiplier.String(),
 	})
 
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "sudo_address_change_base_fee",
+		Name:   "sudo_address_change_base",
 		Value:  appState.Fees.SudoAddressChange.BaseFee.String(),
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "sudo_address_change_computed_cost_multiplier",
+		Name:   "sudo_address_change_multiplier",
 		Value:  appState.Fees.SudoAddressChange.ComputedCostMultiplier.String(),
 	})
 
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "ibc_sudo_change_base_fee",
+		Name:   "ibc_sudo_change_base",
 		Value:  appState.Fees.IbcSudoChange.BaseFee.String(),
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "ibc_sudo_change_computed_cost_multiplier",
+		Name:   "ibc_sudo_change_multiplier",
 		Value:  appState.Fees.IbcSudoChange.ComputedCostMultiplier.String(),
 	})
 }

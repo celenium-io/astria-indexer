@@ -192,7 +192,7 @@
                     {
                         "enum": [
                             "transfer",
-                            "sequence",
+                            "rollup_data_submission",
                             "validator_update",
                             "sudo_address_change",
                             "ibc_relay",
@@ -558,7 +558,7 @@
                     {
                         "enum": [
                             "transfer",
-                            "sequence",
+                            "rollup_data_submission",
                             "validator_update",
                             "sudo_address_change",
                             "ibc_relay",
@@ -1447,7 +1447,7 @@
                     {
                         "enum": [
                             "transfer",
-                            "sequence",
+                            "rollup_data_submission",
                             "validator_update",
                             "sudo_address_change",
                             "ibc_relay",
@@ -2077,7 +2077,7 @@
                     {
                         "enum": [
                             "transfer",
-                            "sequence",
+                            "rollup_data_submission",
                             "validator_update",
                             "sudo_address_change",
                             "ibc_relay",
@@ -2736,7 +2736,7 @@
                 "type": {
                     "type": "string",
                     "format": "string",
-                    "example": "sequence"
+                    "example": "rollup_data_submission"
                 }
             }
         },
@@ -2802,7 +2802,7 @@
             "properties": {
                 "action_types": {
                     "type": "string",
-                    "example": "sequence,transfer"
+                    "example": "rollup_data_submission,transfer"
                 },
                 "app_hash": {
                     "type": "string",
@@ -3294,7 +3294,7 @@
                 "type": {
                     "type": "string",
                     "format": "string",
-                    "example": "sequence"
+                    "example": "rollup_data_submission"
                 }
             }
         },
@@ -3471,7 +3471,7 @@
                 "action_types": {
                     "type": "string",
                     "format": "string",
-                    "example": "sequence,transfer"
+                    "example": "rollup_data_submission,transfer"
                 },
                 "actions": {
                     "type": "array",

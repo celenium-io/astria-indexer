@@ -5,9 +5,11 @@ package decode
 
 import (
 	"encoding/base64"
+	"fmt"
 	"time"
 
-	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transactions/v1alpha1"
+	primitive "buf.build/gen/go/astria/primitives/protocolbuffers/go/astria/primitive/v1"
+	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transaction/v1alpha1"
 	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
@@ -42,72 +44,72 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 		case *astria.Action_Ibc:
 			tx.ActionTypes.Set(storageTypes.ActionTypeIbcRelayBits)
 			err = parseIbcAction(val, &actions[i])
-			feeType = "penumbra.core.component.ibc.v1.IbcAction"
+			feeType = "penumbra.core.component.ibc.v1.IbcRelay"
 
 		case *astria.Action_Ics20Withdrawal:
 			tx.ActionTypes.Set(storageTypes.ActionTypeIcs20WithdrawalBits)
 			err = parseIcs20Withdrawal(val, from, height, ctx, &actions[i])
-			feeType = "astria.protocol.transactions.v1alpha1.Ics20Withdrawal"
+			feeType = "astria.protocol.transaction.v1alpha1.Ics20Withdrawal"
 
-		case *astria.Action_Sequence:
-			tx.ActionTypes.Set(storageTypes.ActionTypeSequenceBits)
-			err = parseSequenceAction(val, from, height, ctx, &actions[i])
-			feeType = "astria.protocol.transactions.v1alpha1.SequenceAction"
+		case *astria.Action_RollupDataSubmission:
+			tx.ActionTypes.Set(storageTypes.ActionTypeRollupDataSubmissionBits)
+			err = parseRollupDataSubmission(val, from, height, ctx, &actions[i])
+			feeType = "astria.protocol.transaction.v1alpha1.RollupDataSubmission"
 
 		case *astria.Action_SudoAddressChange:
 			tx.ActionTypes.Set(storageTypes.ActionTypeSudoAddressChangeBits)
 			err = parseSudoAddressChangeAction(val, ctx, &actions[i])
-			feeType = "astria.protocol.transactions.v1alpha1.SudoAddressChangeAction"
+			feeType = "astria.protocol.transaction.v1alpha1.SudoAddressChange"
 
 		case *astria.Action_Transfer:
 			tx.ActionTypes.Set(storageTypes.ActionTypeTransferBits)
 			err = parseTransferAction(val, from, height, ctx, &actions[i])
-			feeType = "astria.protocol.transactions.v1alpha1.TransferAction"
+			feeType = "astria.protocol.transaction.v1alpha1.Transfer"
 
 		case *astria.Action_ValidatorUpdate:
 			tx.ActionTypes.Set(storageTypes.ActionTypeValidatorUpdateBits)
 			err = parseValidatorUpdateAction(val, height, ctx, &actions[i])
-			feeType = "tendermint.abci.ValidatorUpdateAction"
+			feeType = "tendermint.abci.ValidatorUpdate"
 
 		case *astria.Action_BridgeLock:
 			tx.ActionTypes.Set(storageTypes.ActionTypeBridgeLockBits)
 			err = parseBridgeLock(val, from, height, ctx, &actions[i])
-			feeType = "astria.protocol.transactions.v1alpha1.BridgeLockAction"
+			feeType = "astria.protocol.transaction.v1alpha1.BridgeLock"
 
 		case *astria.Action_FeeAssetChange:
 			tx.ActionTypes.Set(storageTypes.ActionTypeFeeAssetChangeBits)
 			err = parseFeeAssetChange(val, &actions[i])
-			feeType = "astria.protocol.transactions.v1alpha1.FeeAssetChangeAction"
+			feeType = "astria.protocol.transaction.v1alpha1.FeeAssetChange"
 
 		case *astria.Action_IbcRelayerChange:
 			tx.ActionTypes.Set(storageTypes.ActionTypeIbcRelayerChangeBits)
 			err = parseIbcRelayerChange(val, height, ctx, &actions[i])
-			feeType = "astria.protocol.transactions.v1alpha1.IbcRelayerChangeAction"
+			feeType = "astria.protocol.transaction.v1alpha1.IbcRelayerChange"
 
 		case *astria.Action_InitBridgeAccount:
 			tx.ActionTypes.Set(storageTypes.ActionTypeInitBridgeAccountBits)
 			err = parseInitBridgeAccount(val, from, height, ctx, &actions[i])
-			feeType = "astria.protocol.transactions.v1alpha1.InitBridgeAccountAction"
+			feeType = "astria.protocol.transaction.v1alpha1.InitBridgeAccount"
 
 		case *astria.Action_BridgeSudoChange:
 			tx.ActionTypes.Set(storageTypes.ActionTypeBridgeSudoChangeBits)
 			err = parseBridgeSudoChange(val, height, ctx, &actions[i])
-			feeType = "astria.protocol.transactions.v1alpha1.BridgeSudoChangeAction"
+			feeType = "astria.protocol.transaction.v1alpha1.BridgeSudoChange"
 
 		case *astria.Action_BridgeUnlock:
 			tx.ActionTypes.Set(storageTypes.ActionTypeBridgeUnlockBits)
 			err = parseBridgeUnlock(val, from, height, ctx, &actions[i])
-			feeType = "astria.protocol.transactions.v1alpha1.BridgeUnlockAction"
+			feeType = "astria.protocol.transaction.v1alpha1.BridgeUnlock"
 
 		case *astria.Action_FeeChange:
 			tx.ActionTypes.Set(storageTypes.ActionTypeFeeChangeBits)
 			err = parseFeeChange(val, ctx, &actions[i])
-			feeType = "astria.protocol.transactions.v1alpha1.FeeChangeAction"
+			feeType = "astria.protocol.transaction.v1alpha1.FeeChange"
 
 		case *astria.Action_IbcSudoChange:
 			tx.ActionTypes.Set(storageTypes.ActionTypeIbcSudoChangeBits)
 			err = parseIbcSudoChangeAction(val, ctx, &actions[i])
-			feeType = "astria.protocol.transactions.v1alpha1.IbcSudoChangeAction"
+			feeType = "astria.protocol.transaction.v1alpha1.IbcSudoChange"
 
 		default:
 			return nil, errors.Errorf(
@@ -272,15 +274,15 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, from string, heig
 	return nil
 }
 
-func parseSequenceAction(body *astria.Action_Sequence, from string, height types.Level, ctx *Context, action *storage.Action) error {
-	action.Type = storageTypes.ActionTypeSequence
+func parseRollupDataSubmission(body *astria.Action_RollupDataSubmission, from string, height types.Level, ctx *Context, action *storage.Action) error {
+	action.Type = storageTypes.ActionTypeRollupDataSubmission
 	action.Data = make(map[string]any)
-	if body.Sequence != nil {
-		rollupId := body.Sequence.GetRollupId().GetInner()
+	if body.RollupDataSubmission != nil {
+		rollupId := body.RollupDataSubmission.GetRollupId().GetInner()
 		action.Data["rollup_id"] = rollupId
-		action.Data["data"] = body.Sequence.GetData()
-		action.Data["fee_asset"] = body.Sequence.GetFeeAsset()
-		dataSize := len(body.Sequence.GetData())
+		action.Data["data"] = body.RollupDataSubmission.GetData()
+		action.Data["fee_asset"] = body.RollupDataSubmission.GetFeeAsset()
+		dataSize := len(body.RollupDataSubmission.GetData())
 
 		rollup := ctx.Rollups.Set(rollupId, height, dataSize)
 		fromAddress := ctx.Addresses.Set(from, height, decimal.Zero, "", 1, 0)
@@ -781,43 +783,49 @@ func parseFeeChange(body *astria.Action_FeeChange, ctx *Context, action *storage
 	action.Type = storageTypes.ActionTypeFeeChange
 	action.Data = make(map[string]any)
 	if body.FeeChange != nil {
-		switch t := body.FeeChange.GetValue().(type) {
+		switch t := body.FeeChange.GetFeeComponents().(type) {
 
-		// TODO: update astria package and rewrite on FeeComponents
-		case *astria.FeeChange_BridgeLockByteCostMultiplier:
-			val := uint128ToString(t.BridgeLockByteCostMultiplier)
-			action.Data["bridge_lock_byte_cost_multiplier"] = val
-			ctx.AddGenericConstant("bridge_lock_byte_cost_multiplier", val)
+		case *astria.FeeChange_BridgeLock:
+			processFeeComponent("bridge_lock", t.BridgeLock.GetMultiplier(), t.BridgeLock.GetBase(), action.Data, ctx)
 
-		case *astria.FeeChange_BridgeSudoChangeBaseFee:
-			val := uint128ToString(t.BridgeSudoChangeBaseFee)
-			action.Data["bridge_sudo_change_base_fee"] = val
-			ctx.AddGenericConstant("bridge_sudo_change_fee", val)
+		case *astria.FeeChange_BridgeSudoChange:
+			processFeeComponent("bridge_sudo_change", t.BridgeSudoChange.GetMultiplier(), t.BridgeSudoChange.GetBase(), action.Data, ctx)
 
-		case *astria.FeeChange_Ics20WithdrawalBaseFee:
-			val := uint128ToString(t.Ics20WithdrawalBaseFee)
-			action.Data["ics20_withdrawal_base_fee"] = val
-			ctx.AddGenericConstant("ics20_withdrawal_base_fee", val)
+		case *astria.FeeChange_BridgeUnlock:
+			processFeeComponent("bridge_unlock", t.BridgeUnlock.GetMultiplier(), t.BridgeUnlock.GetBase(), action.Data, ctx)
 
-		case *astria.FeeChange_InitBridgeAccountBaseFee:
-			val := uint128ToString(t.InitBridgeAccountBaseFee)
-			action.Data["init_bridge_account_base_fee"] = val
-			ctx.AddGenericConstant("init_bridge_account_base_fee", val)
+		case *astria.FeeChange_FeeAssetChange:
+			processFeeComponent("fee_asset_change", t.FeeAssetChange.GetMultiplier(), t.FeeAssetChange.GetBase(), action.Data, ctx)
 
-		case *astria.FeeChange_SequenceBaseFee:
-			val := uint128ToString(t.SequenceBaseFee)
-			action.Data["sequence_base_fee"] = val
-			ctx.AddGenericConstant("sequence_base_fee", val)
+		case *astria.FeeChange_FeeChange:
+			processFeeComponent("fee_change", t.FeeChange.GetMultiplier(), t.FeeChange.GetBase(), action.Data, ctx)
 
-		case *astria.FeeChange_SequenceByteCostMultiplier:
-			val := uint128ToString(t.SequenceByteCostMultiplier)
-			action.Data["sequence_byte_cost_multiplier"] = val
-			ctx.AddGenericConstant("sequence_byte_cost_multiplier", val)
+		case *astria.FeeChange_IbcRelay:
+			processFeeComponent("ibc_relay", t.IbcRelay.GetMultiplier(), t.IbcRelay.GetBase(), action.Data, ctx)
 
-		case *astria.FeeChange_TransferBaseFee:
-			val := uint128ToString(t.TransferBaseFee)
-			action.Data["transfer_base_fee"] = val
-			ctx.AddGenericConstant("transfer_base_fee", val)
+		case *astria.FeeChange_IbcRelayerChange:
+			processFeeComponent("ibc_relay_change", t.IbcRelayerChange.GetMultiplier(), t.IbcRelayerChange.GetBase(), action.Data, ctx)
+
+		case *astria.FeeChange_IbcSudoChange:
+			processFeeComponent("ibc_sudo_change", t.IbcSudoChange.GetMultiplier(), t.IbcSudoChange.GetBase(), action.Data, ctx)
+
+		case *astria.FeeChange_Ics20Withdrawal:
+			processFeeComponent("ics20_withdrawal", t.Ics20Withdrawal.GetMultiplier(), t.Ics20Withdrawal.GetBase(), action.Data, ctx)
+
+		case *astria.FeeChange_InitBridgeAccount:
+			processFeeComponent("init_bridge_account", t.InitBridgeAccount.GetMultiplier(), t.InitBridgeAccount.GetBase(), action.Data, ctx)
+
+		case *astria.FeeChange_RollupDataSubmission:
+			processFeeComponent("rollup_data_submission", t.RollupDataSubmission.GetMultiplier(), t.RollupDataSubmission.GetBase(), action.Data, ctx)
+
+		case *astria.FeeChange_SudoAddressChange:
+			processFeeComponent("sudo_address_change", t.SudoAddressChange.GetMultiplier(), t.SudoAddressChange.GetBase(), action.Data, ctx)
+
+		case *astria.FeeChange_Transfer:
+			processFeeComponent("transfer", t.Transfer.GetMultiplier(), t.Transfer.GetBase(), action.Data, ctx)
+
+		case *astria.FeeChange_ValidatorUpdate:
+			processFeeComponent("validator_update", t.ValidatorUpdate.GetMultiplier(), t.ValidatorUpdate.GetBase(), action.Data, ctx)
 		}
 	}
 	return nil
@@ -843,4 +851,16 @@ func parseIbcSudoChangeAction(body *astria.Action_IbcSudoChange, ctx *Context, a
 	}
 
 	return nil
+}
+
+func processFeeComponent(name string, multiplier, base *primitive.Uint128, data map[string]any, ctx *Context) {
+	m := uint128ToString(multiplier)
+	mKey := fmt.Sprintf("%s_multiplier", name)
+	data[mKey] = m
+	ctx.AddGenericConstant(mKey, m)
+
+	b := uint128ToString(base)
+	bKey := fmt.Sprintf("%s_base", name)
+	data[bKey] = b
+	ctx.AddGenericConstant(bKey, b)
 }

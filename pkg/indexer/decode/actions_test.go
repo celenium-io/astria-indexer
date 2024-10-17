@@ -8,7 +8,8 @@ import (
 	"testing"
 
 	primitivev1 "buf.build/gen/go/astria/primitives/protocolbuffers/go/astria/primitive/v1"
-	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transactions/v1alpha1"
+	feesv1alpha1 "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/fees/v1alpha1"
+	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transaction/v1alpha1"
 	v1 "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria_vendored/penumbra/core/component/ibc/v1"
 	abci "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria_vendored/tendermint/abci"
 	crypto "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria_vendored/tendermint/crypto"
@@ -168,14 +169,14 @@ func TestDecodeActions(t *testing.T) {
 		require.Equal(t, wantAction, action)
 	})
 
-	t.Run("sequence", func(t *testing.T) {
+	t.Run("rollup data submission", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
 		from := testsuite.RandomAddress()
 		addressModel := decodeContext.Addresses.Set(from, 1000, decimal.Zero, "", 0, 1)
 
-		message := &astria.Action_Sequence{
-			Sequence: &astria.Sequence{
+		message := &astria.Action_RollupDataSubmission{
+			RollupDataSubmission: &astria.RollupDataSubmission{
 				RollupId: &primitivev1.RollupId{Inner: testsuite.RandomHash(10)},
 				Data:     testsuite.RandomHash(10),
 				FeeAsset: feeAssetId,
@@ -184,10 +185,10 @@ func TestDecodeActions(t *testing.T) {
 
 		wantAction := storage.Action{
 			Height: 1000,
-			Type:   types.ActionTypeSequence,
+			Type:   types.ActionTypeRollupDataSubmission,
 			Data: map[string]any{
-				"rollup_id": message.Sequence.GetRollupId().GetInner(),
-				"data":      message.Sequence.GetData(),
+				"rollup_id": message.RollupDataSubmission.GetRollupId().GetInner(),
+				"data":      message.RollupDataSubmission.GetData(),
 				"fee_asset": feeAssetId,
 			},
 			Addresses: make([]*storage.AddressAction, 0),
@@ -195,19 +196,19 @@ func TestDecodeActions(t *testing.T) {
 				Size:   10,
 				Height: 1000,
 				Rollup: &storage.Rollup{
-					AstriaId:     message.Sequence.GetRollupId().GetInner(),
+					AstriaId:     message.RollupDataSubmission.GetRollupId().GetInner(),
 					FirstHeight:  1000,
 					ActionsCount: 1,
 					Size:         10,
 				},
-				ActionType: types.ActionTypeSequence,
+				ActionType: types.ActionTypeRollupDataSubmission,
 			},
 		}
 		wantAction.RollupAction.Action = &wantAction
 		addressAction := storage.AddressAction{
 			Height:     1000,
 			Address:    addressModel,
-			ActionType: types.ActionTypeSequence,
+			ActionType: types.ActionTypeRollupDataSubmission,
 			Action:     &wantAction,
 		}
 		wantAction.Addresses = append(wantAction.Addresses, &addressAction)
@@ -215,7 +216,7 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		err := parseSequenceAction(message, from, 1000, &decodeContext, &action)
+		err := parseRollupDataSubmission(message, from, 1000, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
@@ -973,15 +974,21 @@ func TestDecodeActions(t *testing.T) {
 		require.Equal(t, wantAction, action)
 	})
 
-	t.Run("fee change: sequence_base_fee", func(t *testing.T) {
+	t.Run("fee change: rollup_data_submission", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
 		message := &astria.Action_FeeChange{
 			FeeChange: &astria.FeeChange{
-				Value: &astria.FeeChange_SequenceBaseFee{
-					SequenceBaseFee: &primitivev1.Uint128{
-						Hi: 0,
-						Lo: 10,
+				FeeComponents: &astria.FeeChange_RollupDataSubmission{
+					RollupDataSubmission: &feesv1alpha1.RollupDataSubmissionFeeComponents{
+						Base: &primitivev1.Uint128{
+							Hi: 0,
+							Lo: 10,
+						},
+						Multiplier: &primitivev1.Uint128{
+							Hi: 0,
+							Lo: 10,
+						},
 					},
 				},
 			},
@@ -990,7 +997,8 @@ func TestDecodeActions(t *testing.T) {
 		wantAction := storage.Action{
 			Type: types.ActionTypeFeeChange,
 			Data: map[string]any{
-				"sequence_base_fee": "10",
+				"rollup_data_submission_base":       "10",
+				"rollup_data_submission_multiplier": "10",
 			},
 		}
 
@@ -1000,15 +1008,21 @@ func TestDecodeActions(t *testing.T) {
 		require.Equal(t, wantAction, action)
 	})
 
-	t.Run("fee change: bridge_lock_byte_cost_multiplier", func(t *testing.T) {
+	t.Run("fee change: bridge_lock", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
 		message := &astria.Action_FeeChange{
 			FeeChange: &astria.FeeChange{
-				Value: &astria.FeeChange_BridgeLockByteCostMultiplier{
-					BridgeLockByteCostMultiplier: &primitivev1.Uint128{
-						Hi: 0,
-						Lo: 10,
+				FeeComponents: &astria.FeeChange_BridgeLock{
+					BridgeLock: &feesv1alpha1.BridgeLockFeeComponents{
+						Base: &primitivev1.Uint128{
+							Hi: 0,
+							Lo: 10,
+						},
+						Multiplier: &primitivev1.Uint128{
+							Hi: 0,
+							Lo: 10,
+						},
 					},
 				},
 			},
@@ -1017,7 +1031,8 @@ func TestDecodeActions(t *testing.T) {
 		wantAction := storage.Action{
 			Type: types.ActionTypeFeeChange,
 			Data: map[string]any{
-				"bridge_lock_byte_cost_multiplier": "10",
+				"bridge_lock_base":       "10",
+				"bridge_lock_multiplier": "10",
 			},
 		}
 
@@ -1027,15 +1042,21 @@ func TestDecodeActions(t *testing.T) {
 		require.Equal(t, wantAction, action)
 	})
 
-	t.Run("fee change: bridge_sudo_change_base_fee", func(t *testing.T) {
+	t.Run("fee change: bridge_sudo_change", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
 		message := &astria.Action_FeeChange{
 			FeeChange: &astria.FeeChange{
-				Value: &astria.FeeChange_BridgeSudoChangeBaseFee{
-					BridgeSudoChangeBaseFee: &primitivev1.Uint128{
-						Hi: 0,
-						Lo: 10,
+				FeeComponents: &astria.FeeChange_BridgeSudoChange{
+					BridgeSudoChange: &feesv1alpha1.BridgeSudoChangeFeeComponents{
+						Base: &primitivev1.Uint128{
+							Hi: 0,
+							Lo: 10,
+						},
+						Multiplier: &primitivev1.Uint128{
+							Hi: 0,
+							Lo: 10,
+						},
 					},
 				},
 			},
@@ -1044,7 +1065,8 @@ func TestDecodeActions(t *testing.T) {
 		wantAction := storage.Action{
 			Type: types.ActionTypeFeeChange,
 			Data: map[string]any{
-				"bridge_sudo_change_base_fee": "10",
+				"bridge_sudo_change_base":       "10",
+				"bridge_sudo_change_multiplier": "10",
 			},
 		}
 
@@ -1054,15 +1076,21 @@ func TestDecodeActions(t *testing.T) {
 		require.Equal(t, wantAction, action)
 	})
 
-	t.Run("fee change: ics20_withdrawal_base_fee", func(t *testing.T) {
+	t.Run("fee change: ics20_withdrawal", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
 		message := &astria.Action_FeeChange{
 			FeeChange: &astria.FeeChange{
-				Value: &astria.FeeChange_Ics20WithdrawalBaseFee{
-					Ics20WithdrawalBaseFee: &primitivev1.Uint128{
-						Hi: 0,
-						Lo: 10,
+				FeeComponents: &astria.FeeChange_Ics20Withdrawal{
+					Ics20Withdrawal: &feesv1alpha1.Ics20WithdrawalFeeComponents{
+						Base: &primitivev1.Uint128{
+							Hi: 0,
+							Lo: 10,
+						},
+						Multiplier: &primitivev1.Uint128{
+							Hi: 0,
+							Lo: 10,
+						},
 					},
 				},
 			},
@@ -1071,7 +1099,8 @@ func TestDecodeActions(t *testing.T) {
 		wantAction := storage.Action{
 			Type: types.ActionTypeFeeChange,
 			Data: map[string]any{
-				"ics20_withdrawal_base_fee": "10",
+				"ics20_withdrawal_base":       "10",
+				"ics20_withdrawal_multiplier": "10",
 			},
 		}
 
@@ -1081,15 +1110,21 @@ func TestDecodeActions(t *testing.T) {
 		require.Equal(t, wantAction, action)
 	})
 
-	t.Run("fee change: init_bridge_account_base_fee", func(t *testing.T) {
+	t.Run("fee change: init_bridge_account", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
 		message := &astria.Action_FeeChange{
 			FeeChange: &astria.FeeChange{
-				Value: &astria.FeeChange_InitBridgeAccountBaseFee{
-					InitBridgeAccountBaseFee: &primitivev1.Uint128{
-						Hi: 0,
-						Lo: 10,
+				FeeComponents: &astria.FeeChange_InitBridgeAccount{
+					InitBridgeAccount: &feesv1alpha1.InitBridgeAccountFeeComponents{
+						Base: &primitivev1.Uint128{
+							Hi: 0,
+							Lo: 10,
+						},
+						Multiplier: &primitivev1.Uint128{
+							Hi: 0,
+							Lo: 10,
+						},
 					},
 				},
 			},
@@ -1098,7 +1133,8 @@ func TestDecodeActions(t *testing.T) {
 		wantAction := storage.Action{
 			Type: types.ActionTypeFeeChange,
 			Data: map[string]any{
-				"init_bridge_account_base_fee": "10",
+				"init_bridge_account_base":       "10",
+				"init_bridge_account_multiplier": "10",
 			},
 		}
 
@@ -1108,15 +1144,21 @@ func TestDecodeActions(t *testing.T) {
 		require.Equal(t, wantAction, action)
 	})
 
-	t.Run("fee change: sequence_byte_cost_multiplier", func(t *testing.T) {
+	t.Run("fee change: transfer", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 
 		message := &astria.Action_FeeChange{
 			FeeChange: &astria.FeeChange{
-				Value: &astria.FeeChange_SequenceByteCostMultiplier{
-					SequenceByteCostMultiplier: &primitivev1.Uint128{
-						Hi: 0,
-						Lo: 10,
+				FeeComponents: &astria.FeeChange_Transfer{
+					Transfer: &feesv1alpha1.TransferFeeComponents{
+						Base: &primitivev1.Uint128{
+							Hi: 0,
+							Lo: 10,
+						},
+						Multiplier: &primitivev1.Uint128{
+							Hi: 0,
+							Lo: 10,
+						},
 					},
 				},
 			},
@@ -1125,34 +1167,8 @@ func TestDecodeActions(t *testing.T) {
 		wantAction := storage.Action{
 			Type: types.ActionTypeFeeChange,
 			Data: map[string]any{
-				"sequence_byte_cost_multiplier": "10",
-			},
-		}
-
-		action := storage.Action{}
-		err := parseFeeChange(message, &decodeContext, &action)
-		require.NoError(t, err)
-		require.Equal(t, wantAction, action)
-	})
-
-	t.Run("fee change: transfer_base_fee", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
-
-		message := &astria.Action_FeeChange{
-			FeeChange: &astria.FeeChange{
-				Value: &astria.FeeChange_TransferBaseFee{
-					TransferBaseFee: &primitivev1.Uint128{
-						Hi: 0,
-						Lo: 10,
-					},
-				},
-			},
-		}
-
-		wantAction := storage.Action{
-			Type: types.ActionTypeFeeChange,
-			Data: map[string]any{
-				"transfer_base_fee": "10",
+				"transfer_base":       "10",
+				"transfer_multiplier": "10",
 			},
 		}
 

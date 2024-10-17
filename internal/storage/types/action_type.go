@@ -7,7 +7,7 @@ package types
 /*
 	ENUM(
 		transfer,
-		sequence,
+		rollup_data_submission,
 		validator_update,
 		sudo_address_change,
 		ibc_relay,

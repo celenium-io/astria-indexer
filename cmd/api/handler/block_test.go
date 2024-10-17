@@ -93,7 +93,7 @@ var (
 			Height:   100,
 			Time:     testTime,
 			Position: 1,
-			Type:     types.ActionTypeSequence,
+			Type:     types.ActionTypeRollupDataSubmission,
 			TxId:     1,
 			Data: map[string]any{
 				"rollup_id": hex.EncodeToString(testRollup.AstriaId),
@@ -120,7 +120,7 @@ var (
 		Signature:    testsuite.RandomHash(32),
 		Signer:       &testAddress,
 		SignerId:     testAddress.Id,
-		ActionTypes:  types.ActionTypeSequenceBits,
+		ActionTypes:  types.ActionTypeRollupDataSubmissionBits,
 		Actions: []storage.Action{
 			*testRollupAction.Action,
 		},
@@ -371,7 +371,7 @@ func (s *BlockTestSuite) TestGetActions() {
 					Height:   100,
 					Time:     testTime,
 					Position: 2,
-					Type:     types.ActionTypeSequence,
+					Type:     types.ActionTypeRollupDataSubmission,
 					TxId:     10,
 					Data: map[string]any{
 						"test": "value",
@@ -392,7 +392,7 @@ func (s *BlockTestSuite) TestGetActions() {
 	s.Require().EqualValues(100, actions[0].Height)
 	s.Require().EqualValues(2, actions[0].Position)
 	s.Require().Equal(testTime, actions[0].Time)
-	s.Require().Equal(types.ActionTypeSequence, actions[0].Type)
+	s.Require().Equal(types.ActionTypeRollupDataSubmission, actions[0].Type)
 	s.Require().Equal(hex.EncodeToString(testTx.Hash), actions[0].TxHash)
 }
 
@@ -443,7 +443,7 @@ func (s *BlockTestSuite) TestGetRollupActions() {
 	s.Require().EqualValues(100, action.Height)
 	s.Require().EqualValues(1, action.Position)
 	s.Require().Equal(testTime, action.Time)
-	s.Require().EqualValues(string(types.ActionTypeSequence), action.Type)
+	s.Require().EqualValues(string(types.ActionTypeRollupDataSubmission), action.Type)
 }
 
 func (s *BlockTestSuite) TestGetRollupActionsCount() {

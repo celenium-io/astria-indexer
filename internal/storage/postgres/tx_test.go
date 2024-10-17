@@ -69,7 +69,7 @@ func (s *StorageTestSuite) TestTxFilter() {
 		WithActions: true,
 		TimeFrom:    time.Date(2023, 11, 30, 23, 52, 23, 0, time.UTC),
 		Sort:        sdk.SortOrderAsc,
-		ActionTypes: types.NewActionTypeMask(types.ActionTypeSequence.String()),
+		ActionTypes: types.NewActionTypeMask(types.ActionTypeRollupDataSubmission.String()),
 	})
 	s.Require().NoError(err)
 	s.Require().Len(txs, 1)
@@ -102,7 +102,7 @@ func (s *StorageTestSuite) TestTxByAddress() {
 		WithActions: true,
 		TimeFrom:    time.Date(2023, 11, 30, 23, 52, 23, 0, time.UTC),
 		Sort:        sdk.SortOrderAsc,
-		ActionTypes: types.NewActionTypeMask(types.ActionTypeSequence.String()),
+		ActionTypes: types.NewActionTypeMask(types.ActionTypeRollupDataSubmission.String()),
 	})
 	s.Require().NoError(err)
 	s.Require().Len(txs, 1)

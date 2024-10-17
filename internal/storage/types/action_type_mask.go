@@ -5,7 +5,7 @@ package types
 
 const (
 	ActionTypeTransferBits Bits = 1 << iota
-	ActionTypeSequenceBits
+	ActionTypeRollupDataSubmissionBits
 	ActionTypeValidatorUpdateBits
 	ActionTypeSudoAddressChangeBits
 	ActionTypeIbcRelayBits
@@ -24,7 +24,7 @@ var (
 	actionTypesMap = map[ActionType]Bits{
 		ActionTypeIbcRelay:               ActionTypeIbcRelayBits,
 		ActionTypeIcs20Withdrawal:        ActionTypeIcs20WithdrawalBits,
-		ActionTypeSequence:               ActionTypeSequenceBits,
+		ActionTypeRollupDataSubmission:   ActionTypeRollupDataSubmissionBits,
 		ActionTypeSudoAddressChange:      ActionTypeSudoAddressChangeBits,
 		ActionTypeTransfer:               ActionTypeTransferBits,
 		ActionTypeValidatorUpdate:        ActionTypeValidatorUpdateBits,
@@ -51,8 +51,8 @@ func NewActionTypeMask(vals ...string) ActionTypeMask {
 			mask.Set(ActionTypeIbcRelayBits)
 		case string(ActionTypeIcs20Withdrawal):
 			mask.Set(ActionTypeIcs20WithdrawalBits)
-		case string(ActionTypeSequence):
-			mask.Set(ActionTypeSequenceBits)
+		case string(ActionTypeRollupDataSubmission):
+			mask.Set(ActionTypeRollupDataSubmissionBits)
 		case string(ActionTypeSudoAddressChange):
 			mask.Set(ActionTypeSudoAddressChangeBits)
 		case string(ActionTypeTransfer):
@@ -100,8 +100,8 @@ func (mask ActionTypeMask) Strings() []string {
 			vals = append(vals, string(ActionTypeIbcRelay))
 		case ActionTypeIcs20WithdrawalBits:
 			vals = append(vals, string(ActionTypeIcs20Withdrawal))
-		case ActionTypeSequenceBits:
-			vals = append(vals, string(ActionTypeSequence))
+		case ActionTypeRollupDataSubmissionBits:
+			vals = append(vals, string(ActionTypeRollupDataSubmission))
 		case ActionTypeSudoAddressChangeBits:
 			vals = append(vals, string(ActionTypeSudoAddressChange))
 		case ActionTypeTransferBits:

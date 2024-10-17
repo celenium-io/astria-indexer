@@ -32,7 +32,7 @@ definitions:
         format: binary
         type: string
       type:
-        example: sequence
+        example: rollup_data_submission
         format: string
         type: string
     type: object
@@ -80,7 +80,7 @@ definitions:
   responses.Block:
     properties:
       action_types:
-        example: sequence,transfer
+        example: rollup_data_submission,transfer
         type: string
       app_hash:
         example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
@@ -449,7 +449,7 @@ definitions:
         format: binary
         type: string
       type:
-        example: sequence
+        example: rollup_data_submission
         format: string
         type: string
     type: object
@@ -581,7 +581,7 @@ definitions:
   responses.Tx:
     properties:
       action_types:
-        example: sequence,transfer
+        example: rollup_data_submission,transfer
         format: string
         type: string
       actions:
@@ -789,7 +789,7 @@ paths:
       - description: Comma-separated action types list
         enum:
         - transfer
-        - sequence
+        - rollup_data_submission
         - validator_update
         - sudo_address_change
         - ibc_relay
@@ -1045,7 +1045,7 @@ paths:
       - description: Comma-separated message types list
         enum:
         - transfer
-        - sequence
+        - rollup_data_submission
         - validator_update
         - sudo_address_change
         - ibc_relay
@@ -1650,7 +1650,7 @@ paths:
       - description: Comma-separated action types list
         enum:
         - transfer
-        - sequence
+        - rollup_data_submission
         - validator_update
         - sudo_address_change
         - ibc_relay
@@ -2103,7 +2103,7 @@ paths:
       - description: Comma-separated action types list
         enum:
         - transfer
-        - sequence
+        - rollup_data_submission
         - validator_update
         - sudo_address_change
         - ibc_relay

@@ -4,7 +4,7 @@ go 1.23
 
 require (
 	buf.build/gen/go/astria/primitives/protocolbuffers/go v1.35.1-20240911152449-eeebd3decdce.1
-	buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.35.1-20241008161740-d1f14cf7d8a3.1
+	buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.35.1-20241016184443-c3b7ab6e57dc.1
 	github.com/cometbft/cometbft v0.38.12
 	github.com/dipdup-io/workerpool v0.0.4
 	github.com/dipdup-net/go-lib v0.3.6

@@ -202,7 +202,7 @@ func (s *AddressTestSuite) TestTransactions() {
 	q.Set("offset", "0")
 	q.Set("sort", "desc")
 	q.Set("status", "success")
-	q.Set("action_types", "sequence")
+	q.Set("action_types", "rollup_data_submission")
 	q.Set("height", "1000")
 
 	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
@@ -242,7 +242,7 @@ func (s *AddressTestSuite) TestTransactions() {
 	s.Require().EqualValues(10, tx.GasWanted)
 	s.Require().EqualValues(8, tx.GasUsed)
 	s.Require().EqualValues(10, tx.Nonce)
-	s.Require().EqualValues([]string{types.ActionTypeSequence.String()}, tx.ActionTypes)
+	s.Require().EqualValues([]string{types.ActionTypeRollupDataSubmission.String()}, tx.ActionTypes)
 	s.Require().EqualValues(1, tx.ActionsCount)
 	s.Require().Equal("codespace", tx.Codespace)
 	s.Require().Equal(types.StatusSuccess, tx.Status)
@@ -273,7 +273,7 @@ func (s *AddressTestSuite) TestActions() {
 				AddressId:  1,
 				ActionId:   1,
 				TxId:       1,
-				ActionType: types.ActionTypeSequence,
+				ActionType: types.ActionTypeRollupDataSubmission,
 				Height:     100,
 				Time:       testTime,
 				Address:    &testAddress,
@@ -298,7 +298,7 @@ func (s *AddressTestSuite) TestActions() {
 	s.Require().EqualValues(1, action.Id)
 	s.Require().EqualValues(100, action.Height)
 	s.Require().EqualValues(1, action.Position)
-	s.Require().EqualValues(types.ActionTypeSequence, action.Type)
+	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Type)
 }
 
 func (s *AddressTestSuite) TestCount() {

@@ -167,7 +167,7 @@ func (s *RollupTestSuite) TestActions() {
 				Action: &storage.Action{
 					Data:     map[string]any{},
 					Position: 1,
-					Type:     types.ActionTypeSequence,
+					Type:     types.ActionTypeRollupDataSubmission,
 					Id:       1,
 					Height:   100,
 				},
@@ -188,7 +188,7 @@ func (s *RollupTestSuite) TestActions() {
 	s.Require().EqualValues(1, action.Id)
 	s.Require().EqualValues(100, action.Height)
 	s.Require().EqualValues(1, action.Position)
-	s.Require().EqualValues(types.ActionTypeSequence, action.Type)
+	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Type)
 }
 
 func (s *RollupTestSuite) TestCount() {
@@ -333,7 +333,7 @@ func (s *RollupTestSuite) TestAllActions() {
 				Action: storage.Action{
 					Data:     map[string]any{},
 					Position: 1,
-					Type:     types.ActionTypeSequence,
+					Type:     types.ActionTypeRollupDataSubmission,
 					Id:       1,
 					Height:   100,
 				},
@@ -354,7 +354,7 @@ func (s *RollupTestSuite) TestAllActions() {
 	s.Require().EqualValues(1, action.Id)
 	s.Require().EqualValues(100, action.Height)
 	s.Require().EqualValues(1, action.Position)
-	s.Require().EqualValues(types.ActionTypeSequence, action.Type)
+	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Type)
 }
 
 func (s *RollupTestSuite) TestDeposits() {

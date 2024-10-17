@@ -2,7 +2,7 @@
   height: 7316
   time: '2023-11-30T23:52:23.265Z'
   position: 0
-  type: sequence
+  type: rollup_data_submission
   tx_id: 1
   data: 
     data: "+G6AhDuaygeCUgiUaN0ig7sPHLWZae8gW9rtKb4FEKSIiscjBInoAACAgxvZgqDlaFLJ2rb9OUtQRsM/meiHSoW2nSkIGJiW6fhUti+v16Ani2wgQDfXhYkgZylMwLhCXtawIhnoA8eVSnnsg/7jGQ=="

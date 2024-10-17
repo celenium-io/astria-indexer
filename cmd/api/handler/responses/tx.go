@@ -28,7 +28,7 @@ type Tx struct {
 	Signer       string         `example:"115F94D8C98FFD73FE65182611140F0EDC7C3C94"                         format:"string"    json:"signer"              swaggertype:"string"`
 	Time         time.Time      `example:"2023-07-04T03:10:57+00:00"                                        format:"date-time" json:"time"                swaggertype:"string"`
 	Status       types.Status   `example:"success"                                                          format:"string"    json:"status"              swaggertype:"string"`
-	ActionTypes  []string       `example:"sequence,transfer"                                                format:"string"    json:"action_types"        swaggertype:"string"`
+	ActionTypes  []string       `example:"rollup_data_submission,transfer"                                  format:"string"    json:"action_types"        swaggertype:"string"`
 
 	Actions []Action `json:"actions,omitempty"`
 }
