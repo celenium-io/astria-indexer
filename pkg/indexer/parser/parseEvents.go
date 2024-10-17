@@ -113,7 +113,7 @@ func parseTxDeposit(attrs []types.EventAttribute, decodeCtx *decode.Context) err
 				},
 			}
 		case "rollupId":
-			hash, err := base64.StdEncoding.DecodeString(attrs[i].Value)
+			hash, err := base64.URLEncoding.DecodeString(attrs[i].Value)
 			if err != nil {
 				return err
 			}

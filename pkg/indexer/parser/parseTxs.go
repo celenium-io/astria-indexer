@@ -34,7 +34,7 @@ func parseTxs(ctx context.Context, b types.BlockData, decodeCtx *decode.Context,
 			return nil, errors.Wrap(err, "parse events")
 		}
 
-		t, err := parseTx(b, i, b.TxsResults[i], decodeCtx)
+		t, err := parseTx(b, i, decodeCtx)
 		if err != nil {
 			return nil, err
 		}
@@ -47,21 +47,23 @@ func parseTxs(ctx context.Context, b types.BlockData, decodeCtx *decode.Context,
 	return txs, nil
 }
 
-func parseTx(b types.BlockData, index int, txRes *types.ResponseDeliverTx, ctx *decode.Context) (storage.Tx, error) {
+func parseTx(b types.BlockData, index int, ctx *decode.Context) (storage.Tx, error) {
 	d, err := decode.Tx(b, index, ctx)
 	if err != nil {
 		return storage.Tx{}, errors.Wrapf(err, "while parsing Tx on index %d", index)
 	}
 
+	result := b.TxsResults[index]
+
 	t := storage.Tx{
 		Height:       b.Height,
 		Time:         b.Block.Time,
 		Position:     int64(index),
-		GasWanted:    txRes.GasWanted,
-		GasUsed:      txRes.GasUsed,
+		GasWanted:    result.GasWanted,
+		GasUsed:      result.GasUsed,
 		ActionsCount: int64(len(d.Actions)),
 		Status:       storageTypes.StatusSuccess,
-		Codespace:    txRes.Codespace,
+		Codespace:    result.Codespace,
 		Hash:         b.Block.Txs[index].Hash(),
 		Signature:    d.Tx.GetSignature(),
 		Nonce:        d.UnsignedTx.GetParams().GetNonce(),
@@ -69,12 +71,12 @@ func parseTx(b types.BlockData, index int, txRes *types.ResponseDeliverTx, ctx *
 		ActionTypes:  d.ActionTypes,
 
 		Actions:   d.Actions,
-		BytesSize: int64(len(txRes.Data)),
+		BytesSize: int64(len(result.Data)),
 	}
 
-	if txRes.IsFailed() {
+	if result.IsFailed() {
 		t.Status = storageTypes.StatusFailed
-		t.Error = txRes.Log
+		t.Error = result.Log
 	}
 
 	return t, nil
