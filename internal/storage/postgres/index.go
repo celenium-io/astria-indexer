@@ -335,6 +335,42 @@ func createIndices(ctx context.Context, conn *database.Bun) error {
 			return err
 		}
 
+		// Deposit
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Deposit)(nil)).
+			Index("deposit_height_idx").
+			Column("height").
+			Using("BRIN").
+			Exec(ctx); err != nil {
+			return err
+		}
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Deposit)(nil)).
+			Index("deposit_action_id_idx").
+			Column("action_id").
+			Using("BRIN").
+			Exec(ctx); err != nil {
+			return err
+		}
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Deposit)(nil)).
+			Index("deposit_rollup_id_idx").
+			Column("rollup_id").
+			Exec(ctx); err != nil {
+			return err
+		}
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Deposit)(nil)).
+			Index("deposit_bridge_id_idx").
+			Column("bridge_id").
+			Exec(ctx); err != nil {
+			return err
+		}
+
 		return nil
 	})
 }

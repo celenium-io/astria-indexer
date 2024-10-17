@@ -26,7 +26,7 @@ func Test_getActionSize(t *testing.T) {
 				Height:   1000,
 				Time:     time.Now(),
 				Position: 2,
-				Type:     types.ActionTypeSequence,
+				Type:     types.ActionTypeRollupDataSubmission,
 				TxId:     1,
 				Data: map[string]any{
 					"data":      "+G6AhDuaygeCUgiUaN0ig7sPHLWZae8gW9rtKb4FEKSIiscjBInoAACAgxvZgqDlaFLJ2rb9OUtQRsM/meiHSoW2nSkIGJiW6fhUti+v16Ani2wgQDfXhYkgZylMwLhCXtawIhnoA8eVSnnsg/7jGQ==",
@@ -41,7 +41,7 @@ func Test_getActionSize(t *testing.T) {
 				Height:   1000,
 				Time:     time.Now(),
 				Position: 2,
-				Type:     types.ActionTypeSequence,
+				Type:     types.ActionTypeRollupDataSubmission,
 				TxId:     1,
 				Data: map[string]any{
 					"rollup_id": "GbqKuz5LVqMJ32dWxHuX4pjjpy2IRJ02oPrbHKc2ZTk=",
@@ -55,7 +55,7 @@ func Test_getActionSize(t *testing.T) {
 				Height:   1000,
 				Time:     time.Now(),
 				Position: 2,
-				Type:     types.ActionTypeSequence,
+				Type:     types.ActionTypeRollupDataSubmission,
 				TxId:     1,
 				Data: map[string]any{
 					"rollup_id": "GbqKuz5LVqMJ32dWxHuX4pjjpy2IRJ02oPrbHKc2ZTk=",
@@ -70,7 +70,7 @@ func Test_getActionSize(t *testing.T) {
 				Height:   1000,
 				Time:     time.Now(),
 				Position: 2,
-				Type:     types.ActionTypeSequence,
+				Type:     types.ActionTypeRollupDataSubmission,
 				TxId:     1,
 				Data: map[string]any{
 					"rollup_id": "GbqKuz5LVqMJ32dWxHuX4pjjpy2IRJ02oPrbHKc2ZTk=",

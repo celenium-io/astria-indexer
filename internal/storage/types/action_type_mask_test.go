@@ -37,8 +37,8 @@ func TestActionTypeMask(t *testing.T) {
 		require.Equal(t, arr, mask.Strings())
 	})
 
-	t.Run("sequence", func(t *testing.T) {
-		arr := []string{string(ActionTypeSequence)}
+	t.Run("rollup data submission", func(t *testing.T) {
+		arr := []string{string(ActionTypeRollupDataSubmission)}
 
 		mask := NewActionTypeMask(arr...)
 		require.Equal(t, arr, mask.Strings())
@@ -95,6 +95,13 @@ func TestActionTypeMask(t *testing.T) {
 
 	t.Run("ibc relayer change", func(t *testing.T) {
 		arr := []string{string(ActionTypeIbcRelayerChange)}
+
+		mask := NewActionTypeMask(arr...)
+		require.Equal(t, arr, mask.Strings())
+	})
+
+	t.Run("ibc sudo change", func(t *testing.T) {
+		arr := []string{string(ActionTypeIbcSudoChangeAction)}
 
 		mask := NewActionTypeMask(arr...)
 		require.Equal(t, arr, mask.Strings())

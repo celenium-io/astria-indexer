@@ -77,7 +77,7 @@ func Test_rollbackBlock(t *testing.T) {
 					Height:   height,
 					Time:     blockTime,
 					Position: 0,
-					Type:     types.ActionTypeSequence,
+					Type:     types.ActionTypeRollupDataSubmission,
 					TxId:     1,
 					Data: map[string]any{
 						"rollup_id": "deadbeaf",
@@ -99,7 +99,7 @@ func Test_rollbackBlock(t *testing.T) {
 					Height:   height,
 					Time:     blockTime,
 					Position: 2,
-					Type:     types.ActionTypeSequence,
+					Type:     types.ActionTypeRollupDataSubmission,
 					TxId:     1,
 					Data: map[string]any{
 						"data":      "+G6AhDuaygeCUgiUaN0ig7sPHLWZae8gW9rtKb4FEKSIiscjBInoAACAgxvZgqDlaFLJ2rb9OUtQRsM/meiHSoW2nSkIGJiW6fhUti+v16Ani2wgQDfXhYkgZylMwLhCXtawIhnoA8eVSnnsg/7jGQ==",
@@ -116,7 +116,7 @@ func Test_rollbackBlock(t *testing.T) {
 				{
 					Height:     height,
 					Time:       blockTime,
-					ActionType: types.ActionTypeSequence,
+					ActionType: types.ActionTypeRollupDataSubmission,
 					ActionId:   1,
 					AddressId:  1,
 				}, {
@@ -134,7 +134,7 @@ func Test_rollbackBlock(t *testing.T) {
 				}, {
 					Height:     height,
 					Time:       blockTime,
-					ActionType: types.ActionTypeSequence,
+					ActionType: types.ActionTypeRollupDataSubmission,
 					ActionId:   3,
 					AddressId:  1,
 				},
@@ -254,6 +254,11 @@ func Test_rollbackBlock(t *testing.T) {
 
 		tx.EXPECT().
 			RollbackFees(ctx, height).
+			Return(nil).
+			Times(1)
+
+		tx.EXPECT().
+			RollbackDeposits(ctx, height).
 			Return(nil).
 			Times(1)
 

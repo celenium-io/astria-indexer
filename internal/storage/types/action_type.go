@@ -7,7 +7,7 @@ package types
 /*
 	ENUM(
 		transfer,
-		sequence,
+		rollup_data_submission,
 		validator_update,
 		sudo_address_change,
 		ibc_relay,
@@ -18,7 +18,8 @@ package types
 		bridge_lock,
 		bridge_unlock,
 		bridge_sudo_change_action,
-		fee_change
+		fee_change,
+		ibc_sudo_change_action
 	)
 */
 //go:generate go-enum --marshal --sql --values --names

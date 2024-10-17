@@ -19,8 +19,8 @@ import (
 const (
 	// ActionTypeTransfer is a ActionType of type transfer.
 	ActionTypeTransfer ActionType = "transfer"
-	// ActionTypeSequence is a ActionType of type sequence.
-	ActionTypeSequence ActionType = "sequence"
+	// ActionTypeRollupDataSubmission is a ActionType of type rollup_data_submission.
+	ActionTypeRollupDataSubmission ActionType = "rollup_data_submission"
 	// ActionTypeValidatorUpdate is a ActionType of type validator_update.
 	ActionTypeValidatorUpdate ActionType = "validator_update"
 	// ActionTypeSudoAddressChange is a ActionType of type sudo_address_change.
@@ -43,13 +43,15 @@ const (
 	ActionTypeBridgeSudoChangeAction ActionType = "bridge_sudo_change_action"
 	// ActionTypeFeeChange is a ActionType of type fee_change.
 	ActionTypeFeeChange ActionType = "fee_change"
+	// ActionTypeIbcSudoChangeAction is a ActionType of type ibc_sudo_change_action.
+	ActionTypeIbcSudoChangeAction ActionType = "ibc_sudo_change_action"
 )
 
 var ErrInvalidActionType = fmt.Errorf("not a valid ActionType, try [%s]", strings.Join(_ActionTypeNames, ", "))
 
 var _ActionTypeNames = []string{
 	string(ActionTypeTransfer),
-	string(ActionTypeSequence),
+	string(ActionTypeRollupDataSubmission),
 	string(ActionTypeValidatorUpdate),
 	string(ActionTypeSudoAddressChange),
 	string(ActionTypeIbcRelay),
@@ -61,6 +63,7 @@ var _ActionTypeNames = []string{
 	string(ActionTypeBridgeUnlock),
 	string(ActionTypeBridgeSudoChangeAction),
 	string(ActionTypeFeeChange),
+	string(ActionTypeIbcSudoChangeAction),
 }
 
 // ActionTypeNames returns a list of possible string values of ActionType.
@@ -74,7 +77,7 @@ func ActionTypeNames() []string {
 func ActionTypeValues() []ActionType {
 	return []ActionType{
 		ActionTypeTransfer,
-		ActionTypeSequence,
+		ActionTypeRollupDataSubmission,
 		ActionTypeValidatorUpdate,
 		ActionTypeSudoAddressChange,
 		ActionTypeIbcRelay,
@@ -86,6 +89,7 @@ func ActionTypeValues() []ActionType {
 		ActionTypeBridgeUnlock,
 		ActionTypeBridgeSudoChangeAction,
 		ActionTypeFeeChange,
+		ActionTypeIbcSudoChangeAction,
 	}
 }
 
@@ -103,7 +107,7 @@ func (x ActionType) IsValid() bool {
 
 var _ActionTypeValue = map[string]ActionType{
 	"transfer":                  ActionTypeTransfer,
-	"sequence":                  ActionTypeSequence,
+	"rollup_data_submission":    ActionTypeRollupDataSubmission,
 	"validator_update":          ActionTypeValidatorUpdate,
 	"sudo_address_change":       ActionTypeSudoAddressChange,
 	"ibc_relay":                 ActionTypeIbcRelay,
@@ -115,6 +119,7 @@ var _ActionTypeValue = map[string]ActionType{
 	"bridge_unlock":             ActionTypeBridgeUnlock,
 	"bridge_sudo_change_action": ActionTypeBridgeSudoChangeAction,
 	"fee_change":                ActionTypeFeeChange,
+	"ibc_sudo_change_action":    ActionTypeIbcSudoChangeAction,
 }
 
 // ParseActionType attempts to convert a string to a ActionType.

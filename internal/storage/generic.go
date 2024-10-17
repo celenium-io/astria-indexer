@@ -37,6 +37,7 @@ var Models = []any{
 	&Bridge{},
 	&Fee{},
 	&Transfer{},
+	&Deposit{},
 }
 
 //go:generate mockgen -source=$GOFILE -destination=mock/$GOFILE -package=mock -typed
@@ -58,6 +59,7 @@ type Transaction interface {
 	SaveValidators(ctx context.Context, validators ...*Validator) error
 	SaveFees(ctx context.Context, fees ...*Fee) error
 	SaveTransfers(ctx context.Context, transfers ...*Transfer) error
+	SaveDeposits(ctx context.Context, deposits ...*Deposit) error
 	RetentionBlockSignatures(ctx context.Context, height types.Level) error
 
 	RollbackActions(ctx context.Context, height types.Level) (actions []Action, err error)
@@ -75,6 +77,7 @@ type Transaction interface {
 	RollbackTxs(ctx context.Context, height types.Level) (txs []Tx, err error)
 	RollbackValidators(ctx context.Context, height types.Level) (err error)
 	RollbackFees(ctx context.Context, height types.Level) (err error)
+	RollbackDeposits(ctx context.Context, height types.Level) (err error)
 	RollbackTransfers(ctx context.Context, height types.Level) (err error)
 	UpdateAddresses(ctx context.Context, address ...*Address) error
 	UpdateConstants(ctx context.Context, constants ...*Constant) error
@@ -86,6 +89,7 @@ type Transaction interface {
 	GetProposerId(ctx context.Context, address string) (uint64, error)
 	GetRollup(ctx context.Context, rollupId []byte) (Rollup, error)
 	Validators(ctx context.Context) ([]Validator, error)
+	GetBridgeIdByAddressId(ctx context.Context, id uint64) (uint64, error)
 }
 
 type SearchResult struct {

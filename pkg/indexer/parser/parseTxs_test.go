@@ -39,17 +39,29 @@ func TestParseTxs_SuccessTx(t *testing.T) {
 		GasUsed:   1000,
 		Events: []types.Event{
 			{
-				Type: "tx.fees",
+				Type: "tx.deposit",
 				Attributes: []types.EventAttribute{
 					{
+						Key:   "bridgeAddress",
+						Value: "astria1yqdjnnmrp7w5ygwj0dkldsgzjhv5vcakp7yeu9",
+					}, {
+						Key:   "rollupId",
+						Value: "xuzPaQ1qQbu1wl5oBdEiP-Xl977xEmJOVjVpqNrktnU=",
+					}, {
+						Key:   "amount",
+						Value: "1000000000",
+					}, {
 						Key:   "asset",
-						Value: "ibc/704031c868fd3d3c84a1cfa8cb45deba4ea746b44697f7f4a6ed1b8f6c239b82",
+						Value: "nria",
 					}, {
-						Key:   "feeAmount",
-						Value: "153",
+						Key:   "destinationChainAddress",
+						Value: "0x9d0CEC7BEB948Ab046e8b64E9aa6Cc9b731A9613",
 					}, {
-						Key:   "actionType",
-						Value: "astria.protocol.transactions.v1alpha1.FeeAssetChangeAction",
+						Key:   "sourceTransactionId",
+						Value: "c8c58bfd5d4745c08149da81c24df6738659634507c3eb535fa803c69d6a2b46",
+					}, {
+						Key:   "sourceActionIndex",
+						Value: "0",
 					},
 				},
 			},

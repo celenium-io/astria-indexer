@@ -40,7 +40,7 @@ type AppState struct {
 
 type Account struct {
 	Address Bech32m `json:"address"`
-	Balance BigInt  `json:"balance"`
+	Balance UInt128 `json:"balance"`
 }
 
 type Bech32m struct {
@@ -52,21 +52,34 @@ type Prefixes struct {
 }
 
 type Fees struct {
-	TransferBaseFee              BigInt `json:"transfer_base_fee"`
-	SequenceBaseFee              BigInt `json:"sequence_base_fee"`
-	SequenceByteCostMultiplier   BigInt `json:"sequence_byte_cost_multiplier"`
-	InitBridgeAccountBaseFee     BigInt `json:"init_bridge_account_base_fee"`
-	BridgeLockByteCostMultiplier BigInt `json:"bridge_lock_byte_cost_multiplier"`
-	Ics20WithdrawalBaseFee       BigInt `json:"ics20_withdrawal_base_fee"`
-	BridgeSudoChangeFee          BigInt `json:"bridge_sudo_change_fee"`
+	Transfer          Fee `json:"transfer"`
+	Sequence          Fee `json:"sequence"`
+	Ics20Withdrawal   Fee `json:"ics20_withdrawal"`
+	InitBridgeAccount Fee `json:"init_bridge_account"`
+	BridgeLock        Fee `json:"bridge_lock"`
+	BridgeUnlock      Fee `json:"bridge_unlock"`
+	BridgeSudoChange  Fee `json:"bridge_sudo_change"`
+
+	IbcRelay          Fee `json:"ibc_relay"`
+	ValidatorUpdate   Fee `json:"validator_update"`
+	FeeAssetChange    Fee `json:"fee_asset_change"`
+	FeeChange         Fee `json:"fee_change"`
+	IbcRelayerChange  Fee `json:"ibc_relayer_change"`
+	SudoAddressChange Fee `json:"sudo_address_change"`
+	IbcSudoChange     Fee `json:"ibc_sudo_change"`
 }
 
-type BigInt struct {
+type Fee struct {
+	Base       UInt128 `json:"base"`
+	Multiplier UInt128 `json:"multiplier"`
+}
+
+type UInt128 struct {
 	Low  uint64 `json:"lo"`
 	High uint64 `json:"hi"`
 }
 
-func (bi BigInt) String() string {
+func (bi UInt128) String() string {
 	b := new(big.Int)
 	b = b.SetUint64(bi.High)
 	b = b.Lsh(b, 64)

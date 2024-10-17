@@ -114,7 +114,7 @@ func (s *TxTestSuite) TestList() {
 	q.Set("offset", "0")
 	q.Set("sort", "desc")
 	q.Set("status", "success")
-	q.Set("action_types", "sequence,transfer")
+	q.Set("action_types", "rollup_data_submission,transfer")
 
 	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
 	rec := httptest.NewRecorder()
@@ -127,7 +127,7 @@ func (s *TxTestSuite) TestList() {
 			Offset:      0,
 			Sort:        pgSort(desc),
 			Status:      []string{"success"},
-			ActionTypes: types.NewActionTypeMask(types.ActionTypeSequence.String(), types.ActionTypeTransfer.String()),
+			ActionTypes: types.NewActionTypeMask(types.ActionTypeRollupDataSubmission.String(), types.ActionTypeTransfer.String()),
 		}).
 		Return([]storage.Tx{
 			testTx,
@@ -163,7 +163,7 @@ func (s *TxTestSuite) TestListValidationStatusError() {
 	q.Set("offset", "0")
 	q.Set("sort", "desc")
 	q.Set("status", "invalid")
-	q.Set("action_types", "sequence,transfer")
+	q.Set("action_types", "rollup_data_submission,transfer")
 
 	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
 	rec := httptest.NewRecorder()
@@ -207,7 +207,7 @@ func (s *TxTestSuite) TestListTime() {
 	q.Set("offset", "0")
 	q.Set("sort", "desc")
 	q.Set("status", "success")
-	q.Set("action_types", "sequence")
+	q.Set("action_types", "rollup_data_submission")
 	q.Set("from", "1692880000")
 	q.Set("to", "1692890000")
 
@@ -222,7 +222,7 @@ func (s *TxTestSuite) TestListTime() {
 			Offset:      0,
 			Sort:        pgSort(desc),
 			Status:      []string{"success"},
-			ActionTypes: types.NewActionTypeMask(types.ActionTypeSequence.String()),
+			ActionTypes: types.NewActionTypeMask(types.ActionTypeRollupDataSubmission.String()),
 			TimeFrom:    time.Unix(1692880000, 0).UTC(),
 			TimeTo:      time.Unix(1692890000, 0).UTC(),
 		}).
@@ -261,7 +261,7 @@ func (s *TxTestSuite) TestListWithActions() {
 	q.Set("sort", "desc")
 	q.Set("status", "success")
 	q.Set("height", "100")
-	q.Set("action_types", "sequence")
+	q.Set("action_types", "rollup_data_submission")
 	q.Set("with_actions", "true")
 
 	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
@@ -276,7 +276,7 @@ func (s *TxTestSuite) TestListWithActions() {
 			Sort:        pgSort(desc),
 			Status:      []string{"success"},
 			Height:      100,
-			ActionTypes: types.NewActionTypeMask(types.ActionTypeSequence.String()),
+			ActionTypes: types.NewActionTypeMask(types.ActionTypeRollupDataSubmission.String()),
 			WithActions: true,
 		}).
 		Return([]storage.Tx{
@@ -342,7 +342,7 @@ func (s *TxTestSuite) TestGetActions() {
 	s.Require().EqualValues(100, actions[0].Height)
 	s.Require().EqualValues(1, actions[0].Position)
 	s.Require().Equal(testTime, actions[0].Time)
-	s.Require().EqualValues(string(types.ActionTypeSequence), actions[0].Type)
+	s.Require().EqualValues(string(types.ActionTypeRollupDataSubmission), actions[0].Type)
 }
 
 func (s *TxTestSuite) TestCount() {
@@ -389,7 +389,7 @@ func (s *TxTestSuite) TestRollupActions() {
 				RollupId: 1,
 				Rollup:   &testRollup,
 				Action: &storage.Action{
-					Type: types.ActionTypeSequence,
+					Type: types.ActionTypeRollupDataSubmission,
 				},
 			},
 		}, nil).

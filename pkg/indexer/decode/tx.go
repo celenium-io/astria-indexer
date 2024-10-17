@@ -4,7 +4,7 @@
 package decode
 
 import (
-	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transactions/v1alpha1"
+	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transaction/v1alpha1"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/celenium-io/astria-indexer/pkg/types"
@@ -14,8 +14,8 @@ import (
 )
 
 type DecodedTx struct {
-	Tx          *astria.SignedTransaction
-	UnsignedTx  *astria.UnsignedTransaction
+	Tx          *astria.Transaction
+	UnsignedTx  *astria.TransactionBody
 	Actions     []storage.Action
 	Signer      *storage.Address
 	ActionTypes storageTypes.Bits
@@ -26,17 +26,18 @@ func Tx(b types.BlockData, index int, ctx *Context) (d DecodedTx, err error) {
 
 	ctx.BytesInBlock += int64(len(raw))
 
-	d.Tx = new(astria.SignedTransaction)
+	d.Tx = new(astria.Transaction)
 	if err := proto.Unmarshal(raw, d.Tx); err != nil {
 		return d, errors.Wrap(err, "tx decoding")
 	}
 
-	if d.Tx.GetTransaction() == nil {
+	body := d.Tx.GetBody()
+	if body == nil {
 		return d, errors.Wrap(err, "nil decoded tx")
 	}
 
-	d.UnsignedTx = new(astria.UnsignedTransaction)
-	if err := proto.Unmarshal(d.Tx.GetTransaction().GetValue(), d.UnsignedTx); err != nil {
+	d.UnsignedTx = new(astria.TransactionBody)
+	if err := proto.Unmarshal(body.GetValue(), d.UnsignedTx); err != nil {
 		return d, errors.Wrap(err, "tx decoding")
 	}
 

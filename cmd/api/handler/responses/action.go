@@ -17,7 +17,7 @@ type Action struct {
 	Height   pkgTypes.Level   `example:"1000"                                                             format:"int64"     json:"height"            swaggertype:"integer"`
 	Time     time.Time        `example:"2023-07-04T03:10:57+00:00"                                        format:"date-time" json:"time"              swaggertype:"string"`
 	Position int64            `example:"1"                                                                format:"int64"     json:"position"          swaggertype:"integer"`
-	Type     types.ActionType `example:"sequence"                                                         format:"string"    json:"type"              swaggertype:"string"`
+	Type     types.ActionType `example:"rollup_data_submission"                                           format:"string"    json:"type"              swaggertype:"string"`
 	TxHash   string           `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" format:"binary"    json:"tx_hash,omitempty" swaggertype:"string"`
 
 	Fee  *Fee           `json:"fee,omitempty"`

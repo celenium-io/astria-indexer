@@ -67,6 +67,7 @@ type Action struct {
 	BalanceUpdates []BalanceUpdate  `bun:"-"`
 	RollupAction   *RollupAction    `bun:"-"`
 	Fee            *Fee             `bun:"rel:has-one,join:id=action_id"`
+	Deposit        *Deposit         `bun:"rel:has-one,join:id=action_id"`
 }
 
 // TableName -
