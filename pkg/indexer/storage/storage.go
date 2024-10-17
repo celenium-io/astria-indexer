@@ -199,7 +199,7 @@ func (module *Module) processBlockInTransaction(ctx context.Context, tx storage.
 		}
 	}
 
-	if err := saveAction(ctx, tx, actions, addrToId, block.Rollups); err != nil {
+	if err := saveAction(ctx, tx, actions, addrToId); err != nil {
 		return state, err
 	}
 

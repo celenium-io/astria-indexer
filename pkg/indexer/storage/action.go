@@ -15,7 +15,6 @@ func saveAction(
 	tx storage.Transaction,
 	actions []*storage.Action,
 	addrToId map[string]uint64,
-	rollups map[string]*storage.Rollup,
 ) error {
 	if len(actions) == 0 {
 		return nil
@@ -77,11 +76,11 @@ func saveAction(
 				return errors.Errorf("unknown payer id")
 			}
 
-			if rollup, ok := rollups[actions[i].Deposit.Rollup.String()]; ok {
-				actions[i].Deposit.RollupId = rollup.Id
-			} else {
-				return errors.Errorf("unknown deposit rollup id")
+			rollup, err := tx.GetRollup(ctx, actions[i].Deposit.Rollup.AstriaId)
+			if err != nil {
+				return errors.Errorf("unknown deposit rollup id: %x", actions[i].Deposit.Rollup.AstriaId)
 			}
+			actions[i].Deposit.RollupId = rollup.Id
 
 			deposits = append(deposits, actions[i].Deposit)
 		}

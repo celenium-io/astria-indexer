@@ -70,8 +70,8 @@ type Fees struct {
 }
 
 type Fee struct {
-	BaseFee                UInt128 `json:"base_fee"`
-	ComputedCostMultiplier UInt128 `json:"computed_cost_multiplier"`
+	Base       UInt128 `json:"base"`
+	Multiplier UInt128 `json:"multiplier"`
 }
 
 type UInt128 struct {
