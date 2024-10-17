@@ -2979,7 +2979,7 @@
                     "format": "int64",
                     "example": 321
                 },
-                "rolluo": {
+                "rollup": {
                     "type": "string",
                     "format": "string",
                     "example": "O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc="

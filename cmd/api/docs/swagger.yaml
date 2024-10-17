@@ -211,7 +211,7 @@ definitions:
         example: 321
         format: int64
         type: integer
-      rolluo:
+      rollup:
         example: O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc=
         format: string
         type: string
