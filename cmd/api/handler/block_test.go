@@ -35,6 +35,7 @@ var (
 		Nonce:         10,
 		ActionsCount:  1,
 		SignedTxCount: 1,
+		IsBridge:      true,
 		Balance: []*storage.Balance{
 			{
 				Currency: currency.DefaultCurrency,

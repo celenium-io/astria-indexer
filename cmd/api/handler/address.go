@@ -511,7 +511,7 @@ func (handler *AddressHandler) Deposits(c echo.Context) error {
 		return handleError(c, err, handler.address)
 	}
 
-	if address.IsBridge {
+	if !address.IsBridge {
 		return handleError(c, errors.Errorf("address %s is not bridge", req.Hash), handler.address)
 	}
 
