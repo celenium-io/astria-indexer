@@ -111,6 +111,15 @@ func (tx Transaction) SaveFees(ctx context.Context, fees ...*models.Fee) error {
 	return err
 }
 
+func (tx Transaction) SaveDeposits(ctx context.Context, deposits ...*models.Deposit) error {
+	if len(deposits) == 0 {
+		return nil
+	}
+
+	_, err := tx.Tx().NewInsert().Model(&deposits).Returning("id").Exec(ctx)
+	return err
+}
+
 func (tx Transaction) SaveTransfers(ctx context.Context, transfers ...*models.Transfer) error {
 	if len(transfers) == 0 {
 		return nil
@@ -358,6 +367,14 @@ func (tx Transaction) RollbackFees(ctx context.Context, height types.Level) (err
 	return
 }
 
+func (tx Transaction) RollbackDeposits(ctx context.Context, height types.Level) (err error) {
+	_, err = tx.Tx().NewDelete().
+		Model((*models.Deposit)(nil)).
+		Where("height = ?", height).
+		Exec(ctx)
+	return
+}
+
 func (tx Transaction) RollbackTransfers(ctx context.Context, height types.Level) (err error) {
 	_, err = tx.Tx().NewDelete().
 		Model((*models.Transfer)(nil)).
@@ -472,5 +489,14 @@ func (tx Transaction) GetRollup(ctx context.Context, rollupId []byte) (rollup mo
 		Model(&rollup).
 		Where("astria_id = ?", rollupId).
 		Scan(ctx)
+	return
+}
+
+func (tx Transaction) GetBridgeIdByAddressId(ctx context.Context, id uint64) (bridgeId uint64, err error) {
+	err = tx.Tx().NewSelect().
+		Column("id").
+		Model((*models.Bridge)(nil)).
+		Where("address_id = ?", id).
+		Scan(ctx, &bridgeId)
 	return
 }

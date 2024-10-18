@@ -263,7 +263,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 	searchHandler := handler.NewSearchHandler(db.Search, db.Address, db.Blocks, db.Tx, db.Rollup, db.Bridges, db.Validator)
 	v1.GET("/search", searchHandler.Search)
 
-	addressHandlers := handler.NewAddressHandler(db.Address, db.Tx, db.Action, db.Rollup, db.Fee, db.Bridges, db.State, cfg.Indexer.Name)
+	addressHandlers := handler.NewAddressHandler(db.Address, db.Tx, db.Action, db.Rollup, db.Fee, db.Bridges, db.Deposit, db.State, cfg.Indexer.Name)
 	addressesGroup := v1.Group("/address")
 	{
 		addressesGroup.GET("", addressHandlers.List)
@@ -276,6 +276,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 			addressGroup.GET("/rollups", addressHandlers.Rollups)
 			addressGroup.GET("/roles", addressHandlers.Roles)
 			addressGroup.GET("/fees", addressHandlers.Fees)
+			addressGroup.GET("/deposits", addressHandlers.Deposits)
 		}
 	}
 
@@ -310,7 +311,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 		}
 	}
 
-	rollupsHandler := handler.NewRollupHandler(db.Rollup, db.Action, db.Bridges, db.State, cfg.Indexer.Name)
+	rollupsHandler := handler.NewRollupHandler(db.Rollup, db.Action, db.Bridges, db.Deposit, db.State, cfg.Indexer.Name)
 	rollupsGroup := v1.Group("/rollup")
 	{
 		rollupsGroup.GET("", rollupsHandler.List)
@@ -323,6 +324,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 			rollupGroup.GET("/all_actions", rollupsHandler.AllActions)
 			rollupGroup.GET("/addresses", rollupsHandler.Addresses)
 			rollupGroup.GET("/bridges", rollupsHandler.Bridges)
+			rollupGroup.GET("/deposits", rollupsHandler.Deposits)
 		}
 	}
 

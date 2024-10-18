@@ -28,16 +28,17 @@ import (
 // AddressTestSuite -
 type AddressTestSuite struct {
 	suite.Suite
-	address *mock.MockIAddress
-	txs     *mock.MockITx
-	actions *mock.MockIAction
-	rollups *mock.MockIRollup
-	fees    *mock.MockIFee
-	bridge  *mock.MockIBridge
-	state   *mock.MockIState
-	echo    *echo.Echo
-	handler *AddressHandler
-	ctrl    *gomock.Controller
+	address  *mock.MockIAddress
+	txs      *mock.MockITx
+	actions  *mock.MockIAction
+	rollups  *mock.MockIRollup
+	fees     *mock.MockIFee
+	bridge   *mock.MockIBridge
+	deposits *mock.MockIDeposit
+	state    *mock.MockIState
+	echo     *echo.Echo
+	handler  *AddressHandler
+	ctrl     *gomock.Controller
 }
 
 // SetupSuite -
@@ -51,8 +52,9 @@ func (s *AddressTestSuite) SetupSuite() {
 	s.rollups = mock.NewMockIRollup(s.ctrl)
 	s.fees = mock.NewMockIFee(s.ctrl)
 	s.bridge = mock.NewMockIBridge(s.ctrl)
+	s.deposits = mock.NewMockIDeposit(s.ctrl)
 	s.state = mock.NewMockIState(s.ctrl)
-	s.handler = NewAddressHandler(s.address, s.txs, s.actions, s.rollups, s.fees, s.bridge, s.state, testIndexerName)
+	s.handler = NewAddressHandler(s.address, s.txs, s.actions, s.rollups, s.fees, s.bridge, s.deposits, s.state, testIndexerName)
 }
 
 // TearDownSuite -
@@ -249,7 +251,7 @@ func (s *AddressTestSuite) TestTransactions() {
 	q.Set("offset", "0")
 	q.Set("sort", "desc")
 	q.Set("status", "success")
-	q.Set("action_types", "sequence")
+	q.Set("action_types", "rollup_data_submission")
 	q.Set("height", "1000")
 
 	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
@@ -289,7 +291,7 @@ func (s *AddressTestSuite) TestTransactions() {
 	s.Require().EqualValues(10, tx.GasWanted)
 	s.Require().EqualValues(8, tx.GasUsed)
 	s.Require().EqualValues(10, tx.Nonce)
-	s.Require().EqualValues([]string{types.ActionTypeSequence.String()}, tx.ActionTypes)
+	s.Require().EqualValues([]string{types.ActionTypeRollupDataSubmission.String()}, tx.ActionTypes)
 	s.Require().EqualValues(1, tx.ActionsCount)
 	s.Require().Equal("codespace", tx.Codespace)
 	s.Require().Equal(types.StatusSuccess, tx.Status)
@@ -320,7 +322,7 @@ func (s *AddressTestSuite) TestActions() {
 				AddressId:  1,
 				ActionId:   1,
 				TxId:       1,
-				ActionType: types.ActionTypeSequence,
+				ActionType: types.ActionTypeRollupDataSubmission,
 				Height:     100,
 				Time:       testTime,
 				Address:    &testAddress,
@@ -345,7 +347,7 @@ func (s *AddressTestSuite) TestActions() {
 	s.Require().EqualValues(1, action.Id)
 	s.Require().EqualValues(100, action.Height)
 	s.Require().EqualValues(1, action.Position)
-	s.Require().EqualValues(types.ActionTypeSequence, action.Type)
+	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Type)
 }
 
 func (s *AddressTestSuite) TestCount() {
@@ -495,4 +497,53 @@ func (s *AddressTestSuite) TestFees() {
 	err := json.NewDecoder(rec.Body).Decode(&fees)
 	s.Require().NoError(err)
 	s.Require().Len(fees, 1)
+}
+
+func (s *AddressTestSuite) TestDeposits() {
+	q := make(url.Values)
+	q.Set("limit", "10")
+	q.Set("offset", "0")
+
+	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/address/:hash/deposits")
+	c.SetParamNames("hash")
+	c.SetParamValues(testAddressHash)
+
+	s.address.EXPECT().
+		ByHash(gomock.Any(), testAddress.Hash).
+		Return(testAddress, nil).
+		Times(1)
+
+	s.bridge.EXPECT().
+		ByAddress(gomock.Any(), testAddress.Id).
+		Return(storage.Bridge{
+			Id: 1,
+		}, nil).
+		Times(1)
+
+	s.deposits.EXPECT().
+		ByBridgeId(gomock.Any(), uint64(1), 10, 0, sdk.SortOrderDesc).
+		Return([]storage.Deposit{
+			{
+				TxId:     testTx.Id,
+				Time:     testTime,
+				Height:   1000,
+				ActionId: 1,
+				Amount:   decimal.RequireFromString("1000"),
+				Asset:    currency.DefaultCurrency,
+				BridgeId: 1,
+				Tx:       &testTx,
+			},
+		}, nil).
+		Times(1)
+
+	s.Require().NoError(s.handler.Deposits(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var deposits []responses.Deposit
+	err := json.NewDecoder(rec.Body).Decode(&deposits)
+	s.Require().NoError(err)
+	s.Require().Len(deposits, 1)
 }

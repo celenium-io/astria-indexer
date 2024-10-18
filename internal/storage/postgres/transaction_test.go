@@ -309,6 +309,54 @@ func (s *TransactionTestSuite) TestSaveRollupAddresses() {
 	s.Require().NoError(tx.Close(ctx))
 }
 
+func (s *TransactionTestSuite) TestSaveFees() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	fees := make([]*storage.Fee, 5)
+	for i := 0; i < 5; i++ {
+		fees[i] = &storage.Fee{
+			PayerId:  uint64(i + 1),
+			TxId:     uint64(5 - i),
+			ActionId: uint64(5 - i),
+			Height:   10000,
+		}
+	}
+
+	err = tx.SaveFees(ctx, fees...)
+	s.Require().NoError(err)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
+}
+
+func (s *TransactionTestSuite) TestSaveDeposits() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	deposits := make([]*storage.Deposit, 5)
+	for i := 0; i < 5; i++ {
+		deposits[i] = &storage.Deposit{
+			BridgeId: uint64(i + 1),
+			RollupId: uint64(5 - i),
+			ActionId: uint64(5 - i),
+			Height:   10000,
+		}
+	}
+
+	err = tx.SaveDeposits(ctx, deposits...)
+	s.Require().NoError(err)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
+}
+
 func (s *TransactionTestSuite) TestSaveMsgAddresses() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
@@ -546,6 +594,34 @@ func (s *TransactionTestSuite) TestRollbackBridge() {
 	count, err := tx.RollbackBridges(ctx, 7316)
 	s.Require().NoError(err)
 	s.Require().EqualValues(1, count)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
+}
+
+func (s *TransactionTestSuite) TestRollbackFees() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	err = tx.RollbackFees(ctx, 7316)
+	s.Require().NoError(err)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
+}
+
+func (s *TransactionTestSuite) TestRollbackDeposits() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	err = tx.RollbackDeposits(ctx, 7965)
+	s.Require().NoError(err)
 
 	s.Require().NoError(tx.Flush(ctx))
 	s.Require().NoError(tx.Close(ctx))
@@ -853,4 +929,19 @@ func (s *TransactionTestSuite) TestUpdateConstants() {
 	c, err := s.storage.Constants.Get(ctx, types.ModuleNameGeneric, "authority_sudo_key")
 	s.Require().NoError(err)
 	s.Require().EqualValues("100", c.Value)
+}
+
+func (s *TransactionTestSuite) TestGetBridgeIdByAddressId() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	id, err := tx.GetBridgeIdByAddressId(ctx, 1)
+	s.Require().NoError(err)
+	s.Require().EqualValues(1, id)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
 }

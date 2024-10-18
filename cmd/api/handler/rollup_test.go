@@ -18,6 +18,7 @@ import (
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/labstack/echo/v4"
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"
 )
@@ -25,13 +26,14 @@ import (
 // RollupTestSuite -
 type RollupTestSuite struct {
 	suite.Suite
-	rollups *mock.MockIRollup
-	actions *mock.MockIAction
-	bridge  *mock.MockIBridge
-	state   *mock.MockIState
-	echo    *echo.Echo
-	handler *RollupHandler
-	ctrl    *gomock.Controller
+	rollups  *mock.MockIRollup
+	actions  *mock.MockIAction
+	bridge   *mock.MockIBridge
+	deposits *mock.MockIDeposit
+	state    *mock.MockIState
+	echo     *echo.Echo
+	handler  *RollupHandler
+	ctrl     *gomock.Controller
 }
 
 // SetupSuite -
@@ -42,8 +44,9 @@ func (s *RollupTestSuite) SetupSuite() {
 	s.rollups = mock.NewMockIRollup(s.ctrl)
 	s.actions = mock.NewMockIAction(s.ctrl)
 	s.bridge = mock.NewMockIBridge(s.ctrl)
+	s.deposits = mock.NewMockIDeposit(s.ctrl)
 	s.state = mock.NewMockIState(s.ctrl)
-	s.handler = NewRollupHandler(s.rollups, s.actions, s.bridge, s.state, testIndexerName)
+	s.handler = NewRollupHandler(s.rollups, s.actions, s.bridge, s.deposits, s.state, testIndexerName)
 }
 
 // TearDownSuite -
@@ -164,7 +167,7 @@ func (s *RollupTestSuite) TestActions() {
 				Action: &storage.Action{
 					Data:     map[string]any{},
 					Position: 1,
-					Type:     types.ActionTypeSequence,
+					Type:     types.ActionTypeRollupDataSubmission,
 					Id:       1,
 					Height:   100,
 				},
@@ -185,7 +188,7 @@ func (s *RollupTestSuite) TestActions() {
 	s.Require().EqualValues(1, action.Id)
 	s.Require().EqualValues(100, action.Height)
 	s.Require().EqualValues(1, action.Position)
-	s.Require().EqualValues(types.ActionTypeSequence, action.Type)
+	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Type)
 }
 
 func (s *RollupTestSuite) TestCount() {
@@ -330,7 +333,7 @@ func (s *RollupTestSuite) TestAllActions() {
 				Action: storage.Action{
 					Data:     map[string]any{},
 					Position: 1,
-					Type:     types.ActionTypeSequence,
+					Type:     types.ActionTypeRollupDataSubmission,
 					Id:       1,
 					Height:   100,
 				},
@@ -351,5 +354,50 @@ func (s *RollupTestSuite) TestAllActions() {
 	s.Require().EqualValues(1, action.Id)
 	s.Require().EqualValues(100, action.Height)
 	s.Require().EqualValues(1, action.Position)
-	s.Require().EqualValues(types.ActionTypeSequence, action.Type)
+	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Type)
+}
+
+func (s *RollupTestSuite) TestDeposits() {
+	q := make(url.Values)
+	q.Set("limit", "10")
+	q.Set("offset", "0")
+
+	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/rollup/:hash/deposits")
+	c.SetParamNames("hash")
+	c.SetParamValues(testRollupURLHash)
+
+	s.rollups.EXPECT().
+		ByHash(gomock.Any(), testRollup.AstriaId).
+		Return(testRollup, nil).
+		Times(1)
+
+	s.deposits.EXPECT().
+		ByRollupId(gomock.Any(), uint64(1), 10, 0, sdk.SortOrderDesc).
+		Return([]storage.Deposit{
+			{
+				TxId:     testTx.Id,
+				Time:     testTime,
+				Height:   1000,
+				ActionId: 1,
+				Amount:   decimal.RequireFromString("1000"),
+				Asset:    currency.DefaultCurrency,
+				BridgeId: 1,
+				Tx:       &testTx,
+				Bridge: &storage.Bridge{
+					Address: &testAddress,
+				},
+			},
+		}, nil).
+		Times(1)
+
+	s.Require().NoError(s.handler.Deposits(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var deposits []responses.Deposit
+	err := json.NewDecoder(rec.Body).Decode(&deposits)
+	s.Require().NoError(err)
+	s.Require().Len(deposits, 1)
 }

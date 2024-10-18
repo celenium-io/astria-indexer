@@ -18,7 +18,7 @@ func EmptyBlock() (types.BlockData, time.Time) {
 var txs = []string{
 	"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=",
 	"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=",
-	"CkATSNqP3ZBN+DgYi3anxjPcVt14d55cFq5k2hD4bZ+3iblkQ9JDam0MxTFC7osXFM/WFrrVSopirkV50xYGyh8PEiBzAhb1xqe9xHmqHiernziq508EQ6u4fVdyVFwH1Ctz2RpaCjovYXN0cmlhLnByb3RvY29sLnRyYW5zYWN0aW9ucy52MWFscGhhMS5VbnNpZ25lZFRyYW5zYWN0aW9uEhwKCaoDBgoEbnJpYRIPEg1hc3RyaWEtZHVzay04",
+	"CkCBcBs4ojg/IV1xLhFs5RNGSMwrlPQTuNSZB2WpfR1HD8AQF72Vdr/VhCKn2ppL4KBGgiKp+FqzchZdUIqTCy8IEiD1A4vkUMma1i1j6Mq95eIjQWn290avEMhbIEaK5psMmRq7AQovL2FzdHJpYS5wcm90b2NvbC50cmFuc2FjdGlvbi52MS5UcmFuc2FjdGlvbkJvZHkShwEKEBIOYXN0cmlhLWR1c2stMTESc2JxCi8SLWFzdHJpYTF5cWRqbm5tcnA3dzV5Z3dqMGRrbGRzZ3pqaHY1dmNha3A3eWV1ORIGCICU69wDGgRucmlhIgRucmlhKioweDlkMENFQzdCRUI5NDhBYjA0NmU4YjY0RTlhYTZDYzliNzMxQTk2MTM=",
 }
 
 func CreateTestBlock(tx types.ResponseDeliverTx, withTxs bool) (types.BlockData, time.Time) {

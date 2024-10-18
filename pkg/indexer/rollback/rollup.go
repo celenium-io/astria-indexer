@@ -70,7 +70,7 @@ func rollbackRollups(
 }
 
 func updateRollups(updates map[uint64]*storage.Rollup, rollupId uint64, action storage.Action) error {
-	if action.Type != storageTypes.ActionTypeSequence {
+	if action.Type != storageTypes.ActionTypeRollupDataSubmission {
 		return errors.Errorf("invalid action type: %s", action.Type)
 	}
 	size, err := getActionSize(action)
