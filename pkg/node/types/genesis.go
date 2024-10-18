@@ -52,13 +52,13 @@ type Prefixes struct {
 }
 
 type Fees struct {
-	Transfer          Fee `json:"transfer"`
-	Sequence          Fee `json:"sequence"`
-	Ics20Withdrawal   Fee `json:"ics20_withdrawal"`
-	InitBridgeAccount Fee `json:"init_bridge_account"`
-	BridgeLock        Fee `json:"bridge_lock"`
-	BridgeUnlock      Fee `json:"bridge_unlock"`
-	BridgeSudoChange  Fee `json:"bridge_sudo_change"`
+	Transfer             Fee `json:"transfer"`
+	RollupDataSubmission Fee `json:"rollup_data_submission"`
+	Ics20Withdrawal      Fee `json:"ics20_withdrawal"`
+	InitBridgeAccount    Fee `json:"init_bridge_account"`
+	BridgeLock           Fee `json:"bridge_lock"`
+	BridgeUnlock         Fee `json:"bridge_unlock"`
+	BridgeSudoChange     Fee `json:"bridge_sudo_change"`
 
 	IbcRelay          Fee `json:"ibc_relay"`
 	ValidatorUpdate   Fee `json:"validator_update"`

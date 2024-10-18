@@ -110,12 +110,12 @@ func (module *Module) parseConstants(appState nodeTypes.AppState, consensus pkgT
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
 		Name:   "rollup_data_submission_base",
-		Value:  appState.Fees.Sequence.Base.String(),
+		Value:  appState.Fees.RollupDataSubmission.Base.String(),
 	})
 	data.constants = append(data.constants, storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
-		Name:   "rollup_data_submission_computed_multiplier",
-		Value:  appState.Fees.Sequence.Multiplier.String(),
+		Name:   "rollup_data_submission_multiplier",
+		Value:  appState.Fees.RollupDataSubmission.Multiplier.String(),
 	})
 
 	data.constants = append(data.constants, storage.Constant{
