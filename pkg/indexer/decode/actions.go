@@ -18,9 +18,8 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func parseActions(height types.Level, blockTime time.Time, from string, tx *DecodedTx, ctx *Context) ([]storage.Action, error) {
+func parseActions(height types.Level, blockTime time.Time, from, hash string, tx *DecodedTx, ctx *Context) ([]storage.Action, error) {
 	var (
-		feeCounter = 0
 		rawActions = tx.UnsignedTx.GetActions()
 		actions    = make([]storage.Action, len(rawActions))
 	)
@@ -36,80 +35,65 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 		actions[i].BalanceUpdates = make([]storage.BalanceUpdate, 0)
 
 		var (
-			err     error
-			feeType string
+			err error
 		)
 
 		switch val := rawActions[i].GetValue().(type) {
 		case *astria.Action_Ibc:
 			tx.ActionTypes.Set(storageTypes.ActionTypeIbcRelayBits)
 			err = parseIbcAction(val, &actions[i])
-			feeType = "penumbra.core.component.ibc.v1.IbcRelay"
 
 		case *astria.Action_Ics20Withdrawal:
 			tx.ActionTypes.Set(storageTypes.ActionTypeIcs20WithdrawalBits)
 			err = parseIcs20Withdrawal(val, from, height, ctx, &actions[i])
-			feeType = "astria.protocol.transaction.v1alpha1.Ics20Withdrawal"
 
 		case *astria.Action_RollupDataSubmission:
 			tx.ActionTypes.Set(storageTypes.ActionTypeRollupDataSubmissionBits)
 			err = parseRollupDataSubmission(val, from, height, ctx, &actions[i])
-			feeType = "astria.protocol.transaction.v1alpha1.RollupDataSubmission"
 
 		case *astria.Action_SudoAddressChange:
 			tx.ActionTypes.Set(storageTypes.ActionTypeSudoAddressChangeBits)
 			err = parseSudoAddressChangeAction(val, ctx, &actions[i])
-			feeType = "astria.protocol.transaction.v1alpha1.SudoAddressChange"
 
 		case *astria.Action_Transfer:
 			tx.ActionTypes.Set(storageTypes.ActionTypeTransferBits)
 			err = parseTransferAction(val, from, height, ctx, &actions[i])
-			feeType = "astria.protocol.transaction.v1alpha1.Transfer"
 
 		case *astria.Action_ValidatorUpdate:
 			tx.ActionTypes.Set(storageTypes.ActionTypeValidatorUpdateBits)
 			err = parseValidatorUpdateAction(val, height, ctx, &actions[i])
-			feeType = "tendermint.abci.ValidatorUpdate"
 
 		case *astria.Action_BridgeLock:
 			tx.ActionTypes.Set(storageTypes.ActionTypeBridgeLockBits)
 			err = parseBridgeLock(val, from, height, ctx, &actions[i])
-			feeType = "astria.protocol.transaction.v1alpha1.BridgeLock"
 
 		case *astria.Action_FeeAssetChange:
 			tx.ActionTypes.Set(storageTypes.ActionTypeFeeAssetChangeBits)
 			err = parseFeeAssetChange(val, &actions[i])
-			feeType = "astria.protocol.transaction.v1alpha1.FeeAssetChange"
 
 		case *astria.Action_IbcRelayerChange:
 			tx.ActionTypes.Set(storageTypes.ActionTypeIbcRelayerChangeBits)
 			err = parseIbcRelayerChange(val, height, ctx, &actions[i])
-			feeType = "astria.protocol.transaction.v1alpha1.IbcRelayerChange"
 
 		case *astria.Action_InitBridgeAccount:
 			tx.ActionTypes.Set(storageTypes.ActionTypeInitBridgeAccountBits)
 			err = parseInitBridgeAccount(val, from, height, ctx, &actions[i])
-			feeType = "astria.protocol.transaction.v1alpha1.InitBridgeAccount"
 
 		case *astria.Action_BridgeSudoChange:
 			tx.ActionTypes.Set(storageTypes.ActionTypeBridgeSudoChangeBits)
 			err = parseBridgeSudoChange(val, height, ctx, &actions[i])
-			feeType = "astria.protocol.transaction.v1alpha1.BridgeSudoChange"
 
 		case *astria.Action_BridgeUnlock:
 			tx.ActionTypes.Set(storageTypes.ActionTypeBridgeUnlockBits)
 			err = parseBridgeUnlock(val, from, height, ctx, &actions[i])
-			feeType = "astria.protocol.transaction.v1alpha1.BridgeUnlock"
 
 		case *astria.Action_FeeChange:
 			tx.ActionTypes.Set(storageTypes.ActionTypeFeeChangeBits)
 			err = parseFeeChange(val, ctx, &actions[i])
-			feeType = "astria.protocol.transaction.v1alpha1.FeeChange"
 
 		case *astria.Action_IbcSudoChange:
 			tx.ActionTypes.Set(storageTypes.ActionTypeIbcSudoChangeBits)
 			err = parseIbcSudoChangeAction(val, ctx, &actions[i])
-			feeType = "astria.protocol.transaction.v1alpha1.IbcSudoChange"
 
 		default:
 			return nil, errors.Errorf(
@@ -121,32 +105,31 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 			return nil, err
 		}
 
-		// merge fees
-		if len(ctx.Fees) > feeCounter {
-			if ctx.Fees[feeCounter].ActionType == feeType {
-				ctx.Fees[feeCounter].Height = height
-				ctx.Fees[feeCounter].Time = blockTime
-				ctx.Fees[feeCounter].Payer = &storage.Address{
+		if txFees, ok := ctx.Fees[hash]; ok {
+			if actionFee, ok := txFees[int64(i)]; ok {
+				actionFee.Height = height
+				actionFee.Time = blockTime
+				actionFee.Payer = &storage.Address{
 					Hash: from,
 				}
-				actions[i].Fee = ctx.Fees[feeCounter]
-				fromAmount := ctx.Fees[feeCounter].Amount.Neg()
-				addr := ctx.Addresses.Set(from, height, fromAmount, ctx.Fees[feeCounter].Asset, 0, 0)
+				actions[i].Fee = actionFee
+
+				fromAmount := actionFee.Amount.Neg()
+				addr := ctx.Addresses.Set(from, height, fromAmount, actionFee.Asset, 0, 0)
 				actions[i].BalanceUpdates = append(actions[i].BalanceUpdates, storage.BalanceUpdate{
 					Address:  addr,
 					Height:   actions[i].Height,
-					Currency: ctx.Fees[feeCounter].Asset,
+					Currency: actionFee.Asset,
 					Update:   fromAmount,
 				})
 
-				to := ctx.Addresses.Set(ctx.Proposer, height, ctx.Fees[feeCounter].Amount, ctx.Fees[feeCounter].Asset, 0, 0)
+				to := ctx.Addresses.Set(ctx.Proposer, height, actionFee.Amount, actionFee.Asset, 0, 0)
 				actions[i].BalanceUpdates = append(actions[i].BalanceUpdates, storage.BalanceUpdate{
 					Address:  to,
 					Height:   actions[i].Height,
-					Currency: ctx.Fees[feeCounter].Asset,
-					Update:   ctx.Fees[feeCounter].Amount,
+					Currency: actionFee.Asset,
+					Update:   actionFee.Amount,
 				})
-				feeCounter++
 			}
 		}
 

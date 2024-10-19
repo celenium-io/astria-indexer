@@ -31,6 +31,10 @@ func (p *Module) parse(ctx context.Context, b types.BlockData) error {
 	decodeCtx := decode.NewContext(p.bridgeAssets)
 	decodeCtx.Proposer = proposer
 
+	if err := parseEvents(ctx, b.FinalizeBlockEvents, &decodeCtx, p.api); err != nil {
+		return errors.Wrap(err, "parse finalize events")
+	}
+
 	txs, err := parseTxs(ctx, b, &decodeCtx, p.api)
 	if err != nil {
 		return errors.Wrapf(err, "while parsing block on level=%d", b.Height)

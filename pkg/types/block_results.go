@@ -13,7 +13,7 @@ type ResultBlockResults struct {
 	Height                Level                `json:"height,string"`
 	TxsResults            []*ResponseDeliverTx `json:"txs_results"`
 	BeginBlockEvents      []Event              `json:"begin_block_events"`
-	EndBlockEvents        []Event              `json:"end_block_events"`
+	FinalizeBlockEvents   []Event              `json:"finalize_block_events"`
 	ValidatorUpdates      []ValidatorUpdate    `json:"validator_updates"`
 	ConsensusParamUpdates *ConsensusParams     `json:"consensus_param_updates"`
 }

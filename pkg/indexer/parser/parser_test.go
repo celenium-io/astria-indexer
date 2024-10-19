@@ -112,11 +112,11 @@ func getBlock() types.BlockData {
 			},
 		},
 		ResultBlockResults: types.ResultBlockResults{
-			Height:           100,
-			TxsResults:       nil,
-			BeginBlockEvents: nil,
-			EndBlockEvents:   nil,
-			ValidatorUpdates: nil,
+			Height:              100,
+			TxsResults:          nil,
+			BeginBlockEvents:    nil,
+			FinalizeBlockEvents: nil,
+			ValidatorUpdates:    nil,
 			ConsensusParamUpdates: &types.ConsensusParams{
 				Block: &types.BlockParams{
 					MaxBytes: 0,
