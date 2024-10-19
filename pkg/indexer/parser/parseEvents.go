@@ -74,8 +74,10 @@ func getAsset(ctx context.Context, api node.Api, val string) (string, error) {
 
 func parseTxFees(ctx context.Context, attrs []types.EventAttribute, decodeCtx *decode.Context, api node.Api) error {
 	var (
-		fee = new(storage.Fee)
-		err error
+		fee  = new(storage.Fee)
+		err  error
+		idx  int64
+		hash string
 	)
 	for i := range attrs {
 		switch attrs[i].Key {
@@ -92,11 +94,19 @@ func parseTxFees(ctx context.Context, attrs []types.EventAttribute, decodeCtx *d
 			}
 		case "actionType":
 			fee.ActionType = attrs[i].Value
+		case "sourceTransactionId":
+			hash = attrs[i].Value
+		case "sourceActionIndex":
+			actionIndex, err := strconv.ParseInt(attrs[i].Value, 10, 64)
+			if err != nil {
+				return err
+			}
+			idx = actionIndex
 		default:
 		}
 	}
 
-	decodeCtx.AddFee(fee)
+	decodeCtx.AddFee(hash, idx, fee)
 	return nil
 }
 

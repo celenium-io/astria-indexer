@@ -4,6 +4,8 @@
 package decode
 
 import (
+	"encoding/hex"
+
 	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transaction/v1alpha1"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
@@ -48,7 +50,8 @@ func Tx(b types.BlockData, index int, ctx *Context) (d DecodedTx, err error) {
 	d.Signer = ctx.Addresses.Set(address, b.Height, decimal.Zero, "", 0, 1)
 	ctx.Addresses.UpdateNonce(address, d.UnsignedTx.GetParams().GetNonce())
 
-	d.Actions, err = parseActions(b.Height, b.Block.Time, address, &d, ctx)
+	hash := hex.EncodeToString(b.Block.Txs[index].Hash())
+	d.Actions, err = parseActions(b.Height, b.Block.Time, address, hash, &d, ctx)
 	if err != nil {
 		return d, errors.Wrap(err, "parsing actions")
 	}
