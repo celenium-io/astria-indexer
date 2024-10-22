@@ -10,10 +10,14 @@ import (
 
 	primitive "buf.build/gen/go/astria/primitives/protocolbuffers/go/astria/primitive/v1"
 	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transaction/v1alpha1"
+	internalAstria "github.com/celenium-io/astria-indexer/internal/astria"
 	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/celenium-io/astria-indexer/pkg/types"
+	channelTypes "github.com/cosmos/ibc-go/v9/modules/core/04-channel/types"
+	"github.com/goccy/go-json"
+	"github.com/gogo/protobuf/proto"
 	"github.com/pkg/errors"
 	"github.com/shopspring/decimal"
 )
@@ -41,7 +45,7 @@ func parseActions(height types.Level, blockTime time.Time, from, hash string, tx
 		switch val := rawActions[i].GetValue().(type) {
 		case *astria.Action_Ibc:
 			tx.ActionTypes.Set(storageTypes.ActionTypeIbcRelayBits)
-			err = parseIbcAction(val, &actions[i])
+			err = parseIbcAction(val, ctx, &actions[i])
 
 		case *astria.Action_Ics20Withdrawal:
 			tx.ActionTypes.Set(storageTypes.ActionTypeIcs20WithdrawalBits)
@@ -143,14 +147,46 @@ func parseActions(height types.Level, blockTime time.Time, from, hash string, tx
 	return actions, nil
 }
 
-func parseIbcAction(body *astria.Action_Ibc, action *storage.Action) error {
+func parseIbcAction(body *astria.Action_Ibc, ctx *Context, action *storage.Action) error {
 	action.Type = storageTypes.ActionTypeIbcRelay
 	action.Data = make(map[string]any)
 
 	if body.Ibc != nil && body.Ibc.GetRawAction() != nil {
 		data := body.Ibc.GetRawAction().GetValue()
+		typ := body.Ibc.GetRawAction().GetTypeUrl()
 		action.Data["raw"] = base64.StdEncoding.EncodeToString(data)
-		action.Data["type"] = body.Ibc.GetRawAction().GetTypeUrl()
+		action.Data["type"] = typ
+
+		switch typ {
+		case "/ibc.core.channel.v1.MsgRecvPacket":
+			var msg channelTypes.MsgRecvPacket
+			if err := proto.Unmarshal(data, &msg); err != nil {
+				return err
+			}
+			var transfer IbcTransfer
+			if err := json.Unmarshal(msg.Packet.Data, &transfer); err != nil {
+				return nil
+			}
+			asset := fmt.Sprintf("%s/%s/%s", msg.Packet.GetDestPort(), msg.Packet.GetDestChannel(), transfer.Denom)
+			var addr string
+			var amount decimal.Decimal
+			if internalAstria.IsAddress(transfer.Receiver) {
+				addr = transfer.Receiver
+				amount = transfer.Amount.Copy()
+			} else if internalAstria.IsAddress(transfer.Sender) {
+				addr = transfer.Sender
+				amount = transfer.Amount.Neg()
+			}
+
+			address := ctx.Addresses.Set(addr, action.Height, amount, asset, 0, 0)
+			action.BalanceUpdates = append(action.BalanceUpdates, storage.BalanceUpdate{
+				Address:  address,
+				Height:   action.Height,
+				Currency: asset,
+				Update:   amount,
+			})
+		default:
+		}
 	}
 	return nil
 }

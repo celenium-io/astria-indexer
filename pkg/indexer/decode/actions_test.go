@@ -4,6 +4,7 @@
 package decode
 
 import (
+	"encoding/base64"
 	"encoding/hex"
 	"testing"
 
@@ -51,9 +52,60 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		err := parseIbcAction(message, &action)
+
+		ctx := NewContext(nil)
+		err := parseIbcAction(message, &ctx, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
+	})
+
+	t.Run("ibc action: MsgRecvPacket", func(t *testing.T) {
+		data, err := base64.StdEncoding.DecodeString("CtwBCA4SCHRyYW5zZmVyGgtjaGFubmVsLTE2MCIIdHJhbnNmZXIqCWNoYW5uZWwtMDKZAXsiYW1vdW50IjoiMTAwMDAwMCIsImRlbm9tIjoidXRpYSIsInJlY2VpdmVyIjoiYXN0cmlhMTNuazlnZnA3dDVxZDc3dXZmZ3RwZG04czZ0a2xzMmE5c2ZhN2NnIiwic2VuZGVyIjoiY2VsZXN0aWExNzNreDM1ZmxsbHZ1N2NuOWpnc2hxaHQ0NXpjeG55dXBnOWZ6M2QifToGCAEQhYcKQMi7iqqh96WAGBKhCQqdBwqaBwo8Y29tbWl0bWVudHMvcG9ydHMvdHJhbnNmZXIvY2hhbm5lbHMvY2hhbm5lbC0xNjAvc2VxdWVuY2VzLzE0EiDF/8Kt2IYZocp1frOVz7thvZ9lSc04VMXjjLd6TK3h2RoOCAEYASABKgYAAry/6gIiLAgBEigCBLy/6gIgLuSKhXE31+NU/81ooA5xyV/6RDhuiyoe6ISY557QdaUgIiwIARIoBAi8v+oCILmZik8suYT5PZBngmPEpVktKyMnXMQzQE8YiER7SQOZICIuCAESBwYMvL/qAiAaISDgSzqseZ2lK1iNp5HRNfuNi1E9C+afiTBIs9ElhhtWwCIsCAESKAgYvL/qAiD4SeyplPW835TS+ME0s7y0cPoXAiZWt9JDmJDVva/kfCAiLAgBEigKMLy/6gIgnReiffi6CTiFzdWHcVLV/bhDaWAVHmVUXkEQMtF4tYcgIi4IARIHDEi8v+oCIBohIA/CHKbG7a3mZSMnQnluPclvDtFlK0MQOEOkEE11kMMyIiwIARIoDmy8v+oCIHGSSADA9gkQgvKY7BmqfmKhpI94B8otqcgsKK8W9a0JICItCAESKRD2Aby/6gIgVrDJq95UwgiLSMHQ6bozBYHacAjcybOGddwm4ud/1nogIi8IARIIEvoCvL/qAiAaISBF3QfuSqRYINaQrZr/Ryka+Ee8MfoX3wgs1Jdw2In1JiIvCAESCBS8B7y/6gIgGiEgaY4SsHsxSMaQXR9+PNkPiML7WAIVH6ZGO4aLcyeM60YiLQgBEikW6gu8v+oCIID4Tiv4C3/tNFDmn4z5X6L9yVKsBfWyuaem+X52G6pPICIvCAESCBjMEry/6gIgGiEgxR4SceAkaiHu5rJg+IRmypwDwhDXEVQlGh4q1gKBmdgiLQgBEikcukC8v+oCIEMbaafJ5iGvjw98CnJvovD9+tBTxW06GkmCDWIa9BFpICIuCAESKh6CkAG8v+oCIBhX60I7dKkHLhCsblc4i25nsRH8aoEvnlosHfLiLgjMICIwCAESCSCOsQK8v+oCIBohIGjAlyFlC1aoLcdXCj8BZ6fbvAH8RsZHqiNTNzTf6UXrIi4IARIqJOS3Bby/6gIgD1M0oseDXxLVDSRkj7fEJCd7U4dg4uWMNwpGaxNKqeMgIjAIARIJJpq/Cby/6gIgGiEgYCM0Ij2+xQpYwRKJ52NzrFcVppMbJ1/VvNDDvNHZHuAK/gEK+wEKA2liYxIgDKSZICeXaQVzlcNE0Cv/QOlU2nDreTxbpslXZibxQTYaCQgBGAEgASoBACIlCAESIQFc8LCXIH/ReynuGPU2hd+7XpwozF25Cg2lAmKb/BmnHCInCAESAQEaIGCg+C171gjmvrp9OkKH5uaMMYv2ZUNybiq88hDdeRCWIicIARIBARogJ4+4wexaAIVpe77Od5f2bnkfbkxl8rV3F3GeFMa/QlMiJQgBEiEBbwCFwIFOC8GpODyVT+os/fDZA2h1eLy2LHVjXhdhVGciJwgBEgEBGiAO17o0UZMScdg7UmBLYNIruHT5zwW1KsRdxrWjek9IoRoHCAQQ35+1ASItYXN0cmlhMWp4ZjY3bTlhOHcyMG55anI0ZTZtY3N5NTZjbWNrdnpqMGQ4ZzA3")
+		require.NoError(t, err)
+
+		message := &astria.Action_Ibc{
+			Ibc: &v1.IbcRelay{
+				RawAction: &anypb.Any{
+					Value:   data,
+					TypeUrl: "/ibc.core.channel.v1.MsgRecvPacket",
+				},
+			},
+		}
+
+		wantAction := storage.Action{
+			Height: 1000,
+			Type:   types.ActionTypeIbcRelay,
+			Data: map[string]any{
+				"raw":  "CtwBCA4SCHRyYW5zZmVyGgtjaGFubmVsLTE2MCIIdHJhbnNmZXIqCWNoYW5uZWwtMDKZAXsiYW1vdW50IjoiMTAwMDAwMCIsImRlbm9tIjoidXRpYSIsInJlY2VpdmVyIjoiYXN0cmlhMTNuazlnZnA3dDVxZDc3dXZmZ3RwZG04czZ0a2xzMmE5c2ZhN2NnIiwic2VuZGVyIjoiY2VsZXN0aWExNzNreDM1ZmxsbHZ1N2NuOWpnc2hxaHQ0NXpjeG55dXBnOWZ6M2QifToGCAEQhYcKQMi7iqqh96WAGBKhCQqdBwqaBwo8Y29tbWl0bWVudHMvcG9ydHMvdHJhbnNmZXIvY2hhbm5lbHMvY2hhbm5lbC0xNjAvc2VxdWVuY2VzLzE0EiDF/8Kt2IYZocp1frOVz7thvZ9lSc04VMXjjLd6TK3h2RoOCAEYASABKgYAAry/6gIiLAgBEigCBLy/6gIgLuSKhXE31+NU/81ooA5xyV/6RDhuiyoe6ISY557QdaUgIiwIARIoBAi8v+oCILmZik8suYT5PZBngmPEpVktKyMnXMQzQE8YiER7SQOZICIuCAESBwYMvL/qAiAaISDgSzqseZ2lK1iNp5HRNfuNi1E9C+afiTBIs9ElhhtWwCIsCAESKAgYvL/qAiD4SeyplPW835TS+ME0s7y0cPoXAiZWt9JDmJDVva/kfCAiLAgBEigKMLy/6gIgnReiffi6CTiFzdWHcVLV/bhDaWAVHmVUXkEQMtF4tYcgIi4IARIHDEi8v+oCIBohIA/CHKbG7a3mZSMnQnluPclvDtFlK0MQOEOkEE11kMMyIiwIARIoDmy8v+oCIHGSSADA9gkQgvKY7BmqfmKhpI94B8otqcgsKK8W9a0JICItCAESKRD2Aby/6gIgVrDJq95UwgiLSMHQ6bozBYHacAjcybOGddwm4ud/1nogIi8IARIIEvoCvL/qAiAaISBF3QfuSqRYINaQrZr/Ryka+Ee8MfoX3wgs1Jdw2In1JiIvCAESCBS8B7y/6gIgGiEgaY4SsHsxSMaQXR9+PNkPiML7WAIVH6ZGO4aLcyeM60YiLQgBEikW6gu8v+oCIID4Tiv4C3/tNFDmn4z5X6L9yVKsBfWyuaem+X52G6pPICIvCAESCBjMEry/6gIgGiEgxR4SceAkaiHu5rJg+IRmypwDwhDXEVQlGh4q1gKBmdgiLQgBEikcukC8v+oCIEMbaafJ5iGvjw98CnJvovD9+tBTxW06GkmCDWIa9BFpICIuCAESKh6CkAG8v+oCIBhX60I7dKkHLhCsblc4i25nsRH8aoEvnlosHfLiLgjMICIwCAESCSCOsQK8v+oCIBohIGjAlyFlC1aoLcdXCj8BZ6fbvAH8RsZHqiNTNzTf6UXrIi4IARIqJOS3Bby/6gIgD1M0oseDXxLVDSRkj7fEJCd7U4dg4uWMNwpGaxNKqeMgIjAIARIJJpq/Cby/6gIgGiEgYCM0Ij2+xQpYwRKJ52NzrFcVppMbJ1/VvNDDvNHZHuAK/gEK+wEKA2liYxIgDKSZICeXaQVzlcNE0Cv/QOlU2nDreTxbpslXZibxQTYaCQgBGAEgASoBACIlCAESIQFc8LCXIH/ReynuGPU2hd+7XpwozF25Cg2lAmKb/BmnHCInCAESAQEaIGCg+C171gjmvrp9OkKH5uaMMYv2ZUNybiq88hDdeRCWIicIARIBARogJ4+4wexaAIVpe77Od5f2bnkfbkxl8rV3F3GeFMa/QlMiJQgBEiEBbwCFwIFOC8GpODyVT+os/fDZA2h1eLy2LHVjXhdhVGciJwgBEgEBGiAO17o0UZMScdg7UmBLYNIruHT5zwW1KsRdxrWjek9IoRoHCAQQ35+1ASItYXN0cmlhMWp4ZjY3bTlhOHcyMG55anI0ZTZtY3N5NTZjbWNrdnpqMGQ4ZzA3",
+				"type": "/ibc.core.channel.v1.MsgRecvPacket",
+			},
+			BalanceUpdates: []storage.BalanceUpdate{
+				{
+					Height:   1000,
+					Currency: "transfer/channel-0/utia",
+					Address: &storage.Address{
+						Hash:   "astria13nk9gfp7t5qd77uvfgtpdm8s6tkls2a9sfa7cg",
+						Height: 1000,
+						Balance: []*storage.Balance{
+							{
+								Currency: "transfer/channel-0/utia",
+								Total:    decimal.RequireFromString("1000000"),
+							},
+						},
+					},
+					Update: decimal.RequireFromString("1000000"),
+				},
+			},
+		}
+
+		action := storage.Action{
+			Height: 1000,
+		}
+		ctx := NewContext(nil)
+		err = parseIbcAction(message, &ctx, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+		require.Len(t, ctx.Addresses, 1)
 	})
 
 	t.Run("ics 20 withdrawal", func(t *testing.T) {
