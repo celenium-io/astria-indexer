@@ -500,3 +500,12 @@ func (tx Transaction) GetBridgeIdByAddressId(ctx context.Context, id uint64) (br
 		Scan(ctx, &bridgeId)
 	return
 }
+
+func (tx Transaction) GetAddressId(ctx context.Context, hash string) (addrId uint64, err error) {
+	err = tx.Tx().NewSelect().
+		Column("id").
+		Model((*models.Address)(nil)).
+		Where("hash = ?", hash).
+		Scan(ctx, &addrId)
+	return
+}

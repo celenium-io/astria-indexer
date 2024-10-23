@@ -57,7 +57,7 @@ func saveAction(
 			if payerId, ok := addrToId[actions[i].Fee.Payer.Hash]; ok {
 				actions[i].Fee.PayerId = payerId
 			} else {
-				return errors.Errorf("unknown payer id")
+				return errors.Errorf("unknown payer id: %s", actions[i].Fee.Payer.Hash)
 			}
 			fees = append(fees, actions[i].Fee)
 		}
@@ -66,15 +66,20 @@ func saveAction(
 			actions[i].Deposit.ActionId = actions[i].Id
 			actions[i].Deposit.TxId = actions[i].TxId
 
-			if addrId, ok := addrToId[actions[i].Deposit.Bridge.Address.Hash]; ok {
-				bridgeId, err := tx.GetBridgeIdByAddressId(ctx, addrId)
+			addrId, ok := addrToId[actions[i].Deposit.Bridge.Address.Hash]
+			if !ok {
+				id, err := tx.GetAddressId(ctx, actions[i].Deposit.Bridge.Address.Hash)
 				if err != nil {
-					return errors.Wrap(err, "receiving deposit bridge id")
+					return errors.Wrapf(err, "receiving deposit bridge address: %s", actions[i].Deposit.Bridge.Address.Hash)
 				}
-				actions[i].Deposit.BridgeId = bridgeId
-			} else {
-				return errors.Errorf("unknown payer id")
+				addrId = id
 			}
+
+			bridgeId, err := tx.GetBridgeIdByAddressId(ctx, addrId)
+			if err != nil {
+				return errors.Wrap(err, "receiving deposit bridge id")
+			}
+			actions[i].Deposit.BridgeId = bridgeId
 
 			rollup, err := tx.GetRollup(ctx, actions[i].Deposit.Rollup.AstriaId)
 			if err != nil {
