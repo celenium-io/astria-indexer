@@ -90,6 +90,7 @@ type Transaction interface {
 	GetRollup(ctx context.Context, rollupId []byte) (Rollup, error)
 	Validators(ctx context.Context) ([]Validator, error)
 	GetBridgeIdByAddressId(ctx context.Context, id uint64) (uint64, error)
+	GetAddressId(ctx context.Context, hash string) (uint64, error)
 }
 
 type SearchResult struct {

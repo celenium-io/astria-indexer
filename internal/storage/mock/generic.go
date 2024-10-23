@@ -281,6 +281,45 @@ func (c *MockTransactionFlushCall) DoAndReturn(f func(context.Context) error) *M
 	return c
 }
 
+// GetAddressId mocks base method.
+func (m *MockTransaction) GetAddressId(ctx context.Context, hash string) (uint64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAddressId", ctx, hash)
+	ret0, _ := ret[0].(uint64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAddressId indicates an expected call of GetAddressId.
+func (mr *MockTransactionMockRecorder) GetAddressId(ctx, hash any) *MockTransactionGetAddressIdCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAddressId", reflect.TypeOf((*MockTransaction)(nil).GetAddressId), ctx, hash)
+	return &MockTransactionGetAddressIdCall{Call: call}
+}
+
+// MockTransactionGetAddressIdCall wrap *gomock.Call
+type MockTransactionGetAddressIdCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockTransactionGetAddressIdCall) Return(arg0 uint64, arg1 error) *MockTransactionGetAddressIdCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockTransactionGetAddressIdCall) Do(f func(context.Context, string) (uint64, error)) *MockTransactionGetAddressIdCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockTransactionGetAddressIdCall) DoAndReturn(f func(context.Context, string) (uint64, error)) *MockTransactionGetAddressIdCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // GetBridgeIdByAddressId mocks base method.
 func (m *MockTransaction) GetBridgeIdByAddressId(ctx context.Context, id uint64) (uint64, error) {
 	m.ctrl.T.Helper()
