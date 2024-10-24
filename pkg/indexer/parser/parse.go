@@ -31,7 +31,7 @@ func (p *Module) parse(ctx context.Context, b types.BlockData) error {
 	decodeCtx := decode.NewContext(p.bridgeAssets)
 	decodeCtx.Proposer = proposer
 
-	if err := parseEvents(ctx, b.FinalizeBlockEvents, &decodeCtx, p.api); err != nil {
+	if err := parseEvents(ctx, b.FinalizeBlockEvents, b.Height, &decodeCtx, p.api); err != nil {
 		return errors.Wrap(err, "parse finalize events")
 	}
 

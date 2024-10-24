@@ -21,14 +21,14 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func parseEvents(ctx context.Context, events []types.Event, decodeCtx *decode.Context, api node.Api) error {
+func parseEvents(ctx context.Context, events []types.Event, height types.Level, decodeCtx *decode.Context, api node.Api) error {
 	for i := range events {
 		var err error
 		switch events[i].Type {
 		case "tx.fees":
 			err = parseTxFees(ctx, events[i].Attributes, decodeCtx, api)
 		case "tx.deposit":
-			err = parseTxDeposit(events[i].Attributes, decodeCtx)
+			err = parseTxDeposit(events[i].Attributes, height, decodeCtx)
 		default:
 			continue
 		}
@@ -110,17 +110,16 @@ func parseTxFees(ctx context.Context, attrs []types.EventAttribute, decodeCtx *d
 	return nil
 }
 
-func parseTxDeposit(attrs []types.EventAttribute, decodeCtx *decode.Context) error {
+func parseTxDeposit(attrs []types.EventAttribute, height types.Level, decodeCtx *decode.Context) error {
 	deposit := new(storage.Deposit)
 	var idx int64
 
 	for i := range attrs {
 		switch attrs[i].Key {
 		case "bridgeAddress":
+			addr := decodeCtx.Addresses.Set(attrs[i].Value, height, decimal.Zero, currency.DefaultCurrency, 0, 0)
 			deposit.Bridge = &storage.Bridge{
-				Address: &storage.Address{
-					Hash: attrs[i].Value,
-				},
+				Address: addr,
 			}
 		case "rollupId":
 			hash, err := base64.URLEncoding.DecodeString(attrs[i].Value)

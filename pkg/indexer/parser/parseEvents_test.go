@@ -39,7 +39,7 @@ func Test_parseTxDeposit(t *testing.T) {
 		}
 
 		ctx := decode.NewContext(map[string]string{})
-		err := parseTxDeposit(attrs, &ctx)
+		err := parseTxDeposit(attrs, 100, &ctx)
 		require.NoError(t, err)
 		require.Len(t, ctx.Deposits, 1)
 
