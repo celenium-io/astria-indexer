@@ -30,7 +30,7 @@ func parseTxs(ctx context.Context, b types.BlockData, decodeCtx *decode.Context,
 	txs := make([]*storage.Tx, count)
 
 	for i := index; i < len(b.TxsResults); i++ {
-		if err := parseEvents(ctx, b.TxsResults[i].Events, decodeCtx, api); err != nil {
+		if err := parseEvents(ctx, b.TxsResults[i].Events, b.Height, decodeCtx, api); err != nil {
 			return nil, errors.Wrap(err, "parse events")
 		}
 
