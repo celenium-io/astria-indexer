@@ -22,7 +22,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func parseActions(height types.Level, blockTime time.Time, from, hash string, tx *DecodedTx, ctx *Context) ([]storage.Action, error) {
+func parseActions(height types.Level, blockTime time.Time, from string, tx *DecodedTx, ctx *Context) ([]storage.Action, error) {
 	var (
 		rawActions = tx.UnsignedTx.GetActions()
 		actions    = make([]storage.Action, len(rawActions))
@@ -109,32 +109,30 @@ func parseActions(height types.Level, blockTime time.Time, from, hash string, tx
 			return nil, err
 		}
 
-		if txFees, ok := ctx.Fees[hash]; ok {
-			if actionFee, ok := txFees[int64(i)]; ok {
-				actionFee.Height = height
-				actionFee.Time = blockTime
-				actionFee.Payer = &storage.Address{
-					Hash: from,
-				}
-				actions[i].Fee = actionFee
-
-				fromAmount := actionFee.Amount.Neg()
-				addr := ctx.Addresses.Set(from, height, fromAmount, actionFee.Asset, 0, 0)
-				actions[i].BalanceUpdates = append(actions[i].BalanceUpdates, storage.BalanceUpdate{
-					Address:  addr,
-					Height:   actions[i].Height,
-					Currency: actionFee.Asset,
-					Update:   fromAmount,
-				})
-
-				to := ctx.Addresses.Set(ctx.Proposer, height, actionFee.Amount, actionFee.Asset, 0, 0)
-				actions[i].BalanceUpdates = append(actions[i].BalanceUpdates, storage.BalanceUpdate{
-					Address:  to,
-					Height:   actions[i].Height,
-					Currency: actionFee.Asset,
-					Update:   actionFee.Amount,
-				})
+		if actionFee, ok := ctx.Fees[int64(i)]; ok {
+			actionFee.Height = height
+			actionFee.Time = blockTime
+			actionFee.Payer = &storage.Address{
+				Hash: from,
 			}
+			actions[i].Fee = actionFee
+
+			fromAmount := actionFee.Amount.Neg()
+			addr := ctx.Addresses.Set(from, height, fromAmount, actionFee.Asset, 0, 0)
+			actions[i].BalanceUpdates = append(actions[i].BalanceUpdates, storage.BalanceUpdate{
+				Address:  addr,
+				Height:   actions[i].Height,
+				Currency: actionFee.Asset,
+				Update:   fromAmount,
+			})
+
+			to := ctx.Addresses.Set(ctx.Proposer, height, actionFee.Amount, actionFee.Asset, 0, 0)
+			actions[i].BalanceUpdates = append(actions[i].BalanceUpdates, storage.BalanceUpdate{
+				Address:  to,
+				Height:   actions[i].Height,
+				Currency: actionFee.Asset,
+				Update:   actionFee.Amount,
+			})
 		}
 
 		if deposit, ok := ctx.Deposits[int64(i)]; ok {
