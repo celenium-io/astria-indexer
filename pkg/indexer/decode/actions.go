@@ -176,13 +176,15 @@ func parseIbcAction(body *astria.Action_Ibc, ctx *Context, action *storage.Actio
 				amount = transfer.Amount.Neg()
 			}
 
-			address := ctx.Addresses.Set(addr, action.Height, amount, asset, 0, 0)
-			action.BalanceUpdates = append(action.BalanceUpdates, storage.BalanceUpdate{
-				Address:  address,
-				Height:   action.Height,
-				Currency: asset,
-				Update:   amount,
-			})
+			if addr != "" {
+				address := ctx.Addresses.Set(addr, action.Height, amount, asset, 0, 0)
+				action.BalanceUpdates = append(action.BalanceUpdates, storage.BalanceUpdate{
+					Address:  address,
+					Height:   action.Height,
+					Currency: asset,
+					Update:   amount,
+				})
+			}
 		default:
 		}
 	}
