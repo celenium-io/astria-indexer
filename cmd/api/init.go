@@ -365,7 +365,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 	}
 
 	if cfg.ApiConfig.Prometheus {
-		v1.GET("/metrics", echoprometheus.NewHandler())
+		e.GET("/metrics", echoprometheus.NewHandler())
 	}
 
 	v1.GET("/swagger/*", echoSwagger.WrapHandler)
