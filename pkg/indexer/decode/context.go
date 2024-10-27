@@ -25,7 +25,7 @@ type Context struct {
 	ActionTypes    storageTypes.Bits
 	Constants      map[string]*storage.Constant
 	Bridges        map[string]*storage.Bridge
-	Fees           map[string]map[int64]*storage.Fee
+	Fees           map[int64]*storage.Fee
 	Transfers      []*storage.Transfer
 	Deposits       map[int64]*storage.Deposit
 	Proposer       string
@@ -42,7 +42,7 @@ func NewContext(bridgeAssets map[string]string) Context {
 		Validators:    NewValidators(),
 		Constants:     make(map[string]*storage.Constant),
 		Bridges:       make(map[string]*storage.Bridge),
-		Fees:          make(map[string]map[int64]*storage.Fee),
+		Fees:          make(map[int64]*storage.Fee),
 		Transfers:     make([]*storage.Transfer, 0),
 		Deposits:      make(map[int64]*storage.Deposit),
 
@@ -79,14 +79,8 @@ func (ctx *Context) BridgesArray() []*storage.Bridge {
 	return arr
 }
 
-func (ctx *Context) AddFee(hash string, idx int64, fee *storage.Fee) {
-	if txFees, ok := ctx.Fees[hash]; ok {
-		txFees[idx] = fee
-	} else {
-		ctx.Fees[hash] = map[int64]*storage.Fee{
-			idx: fee,
-		}
-	}
+func (ctx *Context) AddFee(idx int64, fee *storage.Fee) {
+	ctx.Fees[idx] = fee
 }
 
 func (ctx *Context) AddBridgeAsset(bridge, asset string) {
