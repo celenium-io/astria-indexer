@@ -16,6 +16,7 @@ type AddressListFilter struct {
 	Limit  int
 	Offset int
 	Sort   storage.SortOrder
+	Asset  string
 }
 
 //go:generate mockgen -source=$GOFILE -destination=mock/$GOFILE -package=mock -typed

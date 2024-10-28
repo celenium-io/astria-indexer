@@ -89,6 +89,22 @@ func (handler *AddressHandler) Get(c echo.Context) error {
 	return c.JSON(http.StatusOK, responses.NewAddress(address, &bridge))
 }
 
+type listAddressRequest struct {
+	Limit  uint64 `query:"limit"  validate:"omitempty,min=1,max=100"`
+	Offset uint64 `query:"offset" validate:"omitempty,min=0"`
+	Sort   string `query:"sort"   validate:"omitempty,oneof=asc desc"`
+	Asset  string `query:"asset"  validate:"omitempty"`
+}
+
+func (p *listAddressRequest) SetDefault() {
+	if p.Limit == 0 {
+		p.Limit = 10
+	}
+	if p.Sort == "" {
+		p.Sort = asc
+	}
+}
+
 // List godoc
 //
 //	@Summary		List address info
@@ -98,13 +114,14 @@ func (handler *AddressHandler) Get(c echo.Context) error {
 //	@Param			limit		query	integer	false	"Count of requested entities"		mininum(1)	maximum(100)
 //	@Param			offset		query	integer	false	"Offset"							mininum(1)
 //	@Param			sort		query	string	false	"Sort order"						Enums(asc, desc)
+//	@Param			asset		query	string	false	"Required balance asset"
 //	@Produce		json
 //	@Success		200	{array}		responses.Address
 //	@Failure		400	{object}	Error
 //	@Failure		500	{object}	Error
 //	@Router			/v1/address [get]
 func (handler *AddressHandler) List(c echo.Context) error {
-	req, err := bindAndValidate[listRequest](c)
+	req, err := bindAndValidate[listAddressRequest](c)
 	if err != nil {
 		return badRequestError(c, err)
 	}
@@ -114,6 +131,7 @@ func (handler *AddressHandler) List(c echo.Context) error {
 		Limit:  int(req.Limit),
 		Offset: int(req.Offset),
 		Sort:   pgSort(req.Sort),
+		Asset:  req.Asset,
 	}
 
 	address, err := handler.address.ListWithBalance(c.Request().Context(), fltrs)
