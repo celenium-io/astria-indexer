@@ -37,10 +37,17 @@ func (a *Address) ByHash(ctx context.Context, hash string) (address storage.Addr
 func (a *Address) ListWithBalance(ctx context.Context, fltrs storage.AddressListFilter) (address []storage.Address, err error) {
 	query := a.DB().NewSelect().
 		Model(&address).
-		Offset(fltrs.Offset).
-		Relation("Balance", func(sq *bun.SelectQuery) *bun.SelectQuery {
+		Offset(fltrs.Offset)
+
+	if fltrs.Asset != "" {
+		query = query.Relation("Balance", func(sq *bun.SelectQuery) *bun.SelectQuery {
+			return sq.Where("currency = ?", fltrs.Asset)
+		})
+	} else {
+		query = query.Relation("Balance", func(sq *bun.SelectQuery) *bun.SelectQuery {
 			return sq.Where("currency = 'nria'")
 		})
+	}
 
 	query = addressListFilter(query, fltrs)
 

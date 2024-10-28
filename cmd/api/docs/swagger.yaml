@@ -704,6 +704,10 @@ paths:
         in: query
         name: sort
         type: string
+      - description: Required balance asset
+        in: query
+        name: asset
+        type: string
       produces:
       - application/json
       responses:

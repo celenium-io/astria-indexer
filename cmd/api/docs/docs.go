@@ -52,6 +52,12 @@ const docTemplate = `{
                         "description": "Sort order",
                         "name": "sort",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Required balance asset",
+                        "name": "asset",
+                        "in": "query"
                     }
                 ],
                 "responses": {

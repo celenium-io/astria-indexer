@@ -43,18 +43,3 @@ func (s *StringArray) UnmarshalParam(param string) error {
 	*s = StringArray(strings.Split(param, ","))
 	return nil
 }
-
-type listRequest struct {
-	Limit  uint64 `query:"limit"  validate:"omitempty,min=1,max=100"`
-	Offset uint64 `query:"offset" validate:"omitempty,min=0"`
-	Sort   string `query:"sort"   validate:"omitempty,oneof=asc desc"`
-}
-
-func (p *listRequest) SetDefault() {
-	if p.Limit == 0 {
-		p.Limit = 10
-	}
-	if p.Sort == "" {
-		p.Sort = asc
-	}
-}
