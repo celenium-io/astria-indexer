@@ -49,6 +49,26 @@ func TestIsAddress(t *testing.T) {
 	}
 }
 
+func TestIsCompatAddress(t *testing.T) {
+	tests := []struct {
+		name string
+		s    string
+		want bool
+	}{
+		{
+			name: "astriacompat1eg8hhey0n4untdvqqdvlyl0e7zx8wfcaz3l6wu",
+			s:    "astriacompat1eg8hhey0n4untdvqqdvlyl0e7zx8wfcaz3l6wu",
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := IsCompatAddress(tt.s)
+			require.Equal(t, tt.want, got)
+		})
+	}
+}
+
 func TestEncodeFromHex(t *testing.T) {
 	tests := []struct {
 		name string
@@ -64,6 +84,27 @@ func TestEncodeFromHex(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := EncodeFromHex(tt.s)
+			require.NoError(t, err)
+			require.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestCompatToAstria(t *testing.T) {
+	tests := []struct {
+		name string
+		s    string
+		want string
+	}{
+		{
+			name: "astriacompat1eg8hhey0n4untdvqqdvlyl0e7zx8wfcaz3l6wu",
+			s:    "astriacompat1eg8hhey0n4untdvqqdvlyl0e7zx8wfcaz3l6wu",
+			want: "astria1eg8hhey0n4untdvqqdvlyl0e7zx8wfca48kglh",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := CompatToAstria(tt.s)
 			require.NoError(t, err)
 			require.Equal(t, tt.want, got)
 		})
