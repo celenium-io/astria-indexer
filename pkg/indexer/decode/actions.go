@@ -168,11 +168,27 @@ func parseIbcAction(body *astria.Action_Ibc, ctx *Context, action *storage.Actio
 			asset := fmt.Sprintf("%s/%s/%s", msg.Packet.GetDestPort(), msg.Packet.GetDestChannel(), transfer.Denom)
 			var addr string
 			var amount decimal.Decimal
-			if internalAstria.IsAddress(transfer.Receiver) {
+
+			switch {
+			case internalAstria.IsAddress(transfer.Receiver):
 				addr = transfer.Receiver
 				amount = transfer.Amount.Copy()
-			} else if internalAstria.IsAddress(transfer.Sender) {
+			case internalAstria.IsCompatAddress(transfer.Receiver):
+				a, err := internalAstria.CompatToAstria(transfer.Receiver)
+				if err != nil {
+					return err
+				}
+				addr = a
+				amount = transfer.Amount.Copy()
+			case internalAstria.IsAddress(transfer.Sender):
 				addr = transfer.Sender
+				amount = transfer.Amount.Neg()
+			case internalAstria.IsCompatAddress(transfer.Sender):
+				a, err := internalAstria.CompatToAstria(transfer.Sender)
+				if err != nil {
+					return err
+				}
+				addr = a
 				amount = transfer.Amount.Neg()
 			}
 
@@ -246,14 +262,14 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, from string, heig
 					Address:  returnAddr,
 					Height:   action.Height,
 					Currency: body.Ics20Withdrawal.GetDenom(),
-					Update:   decAmount,
+					Update:   decAmount.Copy().Neg(),
 				})
 			} else {
 				action.BalanceUpdates = append(action.BalanceUpdates, storage.BalanceUpdate{
 					Address:  addr,
 					Height:   action.Height,
 					Currency: body.Ics20Withdrawal.GetDenom(),
-					Update:   decAmount,
+					Update:   decAmount.Copy().Neg(),
 				})
 			}
 		} else {
@@ -278,14 +294,14 @@ func parseIcs20Withdrawal(body *astria.Action_Ics20Withdrawal, from string, heig
 					Address:  returnAddr,
 					Height:   action.Height,
 					Currency: body.Ics20Withdrawal.GetDenom(),
-					Update:   decAmount,
+					Update:   decAmount.Copy().Neg(),
 				})
 			} else {
 				action.BalanceUpdates = append(action.BalanceUpdates, storage.BalanceUpdate{
 					Address:  addr,
 					Height:   action.Height,
 					Currency: body.Ics20Withdrawal.GetDenom(),
-					Update:   decAmount,
+					Update:   decAmount.Copy().Neg(),
 				})
 			}
 		}
