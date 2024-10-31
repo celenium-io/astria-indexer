@@ -83,6 +83,10 @@ func (ctx *Context) AddFee(idx int64, fee *storage.Fee) {
 	ctx.Fees[idx] = fee
 }
 
+func (ctx *Context) ClearFee() {
+	clear(ctx.Fees)
+}
+
 func (ctx *Context) AddBridgeAsset(bridge, asset string) {
 	ctx.bridgeAssets[bridge] = asset
 }

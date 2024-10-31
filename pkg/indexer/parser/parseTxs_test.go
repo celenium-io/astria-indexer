@@ -31,12 +31,10 @@ func TestParseTxs_EmptyTxsResults(t *testing.T) {
 
 func TestParseTxs_SuccessTx(t *testing.T) {
 	txRes := types.ResponseDeliverTx{
-		Code:      0,
-		Data:      []byte{},
-		Log:       "[]",
-		Info:      "info",
-		GasWanted: 12000,
-		GasUsed:   1000,
+		Code: 0,
+		Data: []byte{},
+		Log:  "[]",
+		Info: "info",
 		Events: []types.Event{
 			{
 				Type: "tx.deposit",
@@ -83,8 +81,6 @@ func TestParseTxs_SuccessTx(t *testing.T) {
 	assert.Equal(t, now, f.Time)
 	assert.Equal(t, storageTypes.StatusSuccess, f.Status)
 	assert.Equal(t, "", f.Error)
-	assert.Equal(t, int64(12000), f.GasWanted)
-	assert.Equal(t, int64(1000), f.GasUsed)
 	assert.Equal(t, "codespace", f.Codespace)
 }
 
@@ -94,8 +90,6 @@ func TestParseTxs_FailedTx(t *testing.T) {
 		Data:      []byte{},
 		Log:       "something weird happened",
 		Info:      "info",
-		GasWanted: 12000,
-		GasUsed:   1000,
 		Events:    nil,
 		Codespace: "codespace",
 	}
@@ -113,8 +107,6 @@ func TestParseTxs_FailedTx(t *testing.T) {
 	assert.Equal(t, now, f.Time)
 	assert.Equal(t, storageTypes.StatusFailed, f.Status)
 	assert.Equal(t, "something weird happened", f.Error)
-	assert.Equal(t, int64(12000), f.GasWanted)
-	assert.Equal(t, int64(1000), f.GasUsed)
 	assert.Equal(t, "codespace", f.Codespace)
 }
 
@@ -124,8 +116,6 @@ func TestParseTxs_FailedTxWithNonstandardErrorCode(t *testing.T) {
 		Data:      []byte{},
 		Log:       "something unusual happened",
 		Info:      "info",
-		GasWanted: 12000,
-		GasUsed:   1000,
 		Events:    nil,
 		Codespace: "codespace",
 	}
@@ -143,7 +133,5 @@ func TestParseTxs_FailedTxWithNonstandardErrorCode(t *testing.T) {
 	assert.Equal(t, now, f.Time)
 	assert.Equal(t, storageTypes.StatusFailed, f.Status)
 	assert.Equal(t, "something unusual happened", f.Error)
-	assert.Equal(t, int64(12000), f.GasWanted)
-	assert.Equal(t, int64(1000), f.GasUsed)
 	assert.Equal(t, "codespace", f.Codespace)
 }

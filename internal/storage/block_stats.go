@@ -26,8 +26,6 @@ type BlockStats struct {
 
 	TxCount      int64           `bun:"tx_count"         comment:"Count of transactions in block"`
 	BlockTime    uint64          `bun:"block_time"       comment:"Time in milliseconds between current and previous block"`
-	GasWanted    int64           `bun:"gas_wanted"       comment:"Total gas limit in the block"`
-	GasUsed      int64           `bun:"gas_used"         comment:"Total gas used in the block"`
 	SupplyChange decimal.Decimal `bun:",type:numeric"    comment:"Change of total supply in the block"`
 	Fee          decimal.Decimal `bun:"fee,type:numeric" comment:"Summary block fee"`
 	BytesInBlock int64           `bun:"bytes_in_block"   comment:"Size of all transactions in bytes"`

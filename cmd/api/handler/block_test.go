@@ -111,8 +111,6 @@ var (
 		Height:       100,
 		Time:         testTime,
 		Position:     1,
-		GasWanted:    10,
-		GasUsed:      8,
 		ActionsCount: 1,
 		Status:       types.StatusSuccess,
 		Nonce:        10,
@@ -519,8 +517,6 @@ func (s *BlockTestSuite) TestGetTransactions() {
 	s.Require().Equal(testTime, tx.Time)
 	s.Require().Equal(testTxHash, tx.Hash)
 	s.Require().EqualValues(1, tx.Position)
-	s.Require().EqualValues(10, tx.GasWanted)
-	s.Require().EqualValues(8, tx.GasUsed)
 	s.Require().EqualValues(1, tx.ActionsCount)
 	s.Require().EqualValues(10, tx.Nonce)
 	s.Require().EqualValues(testAddress.Hash, tx.Signer)

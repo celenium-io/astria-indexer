@@ -40,8 +40,7 @@ func parseTxs(ctx context.Context, b types.BlockData, decodeCtx *decode.Context,
 		}
 		txs[i-index] = &t
 
-		decodeCtx.GasWanted += b.TxsResults[i].GasWanted
-		decodeCtx.GasUsed += b.TxsResults[i].GasUsed
+		decodeCtx.ClearFee()
 	}
 
 	return txs, nil
@@ -59,8 +58,6 @@ func parseTx(b types.BlockData, index int, ctx *decode.Context) (storage.Tx, err
 		Height:       b.Height,
 		Time:         b.Block.Time,
 		Position:     int64(index),
-		GasWanted:    result.GasWanted,
-		GasUsed:      result.GasUsed,
 		ActionsCount: int64(len(d.Actions)),
 		Status:       storageTypes.StatusSuccess,
 		Codespace:    result.Codespace,

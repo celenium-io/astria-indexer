@@ -1849,11 +1849,7 @@ const docTemplate = `{
                             "supply_change",
                             "block_time",
                             "tx_count",
-                            "bytes_in_block",
-                            "gas_price",
-                            "gas_efficiency",
-                            "gas_used",
-                            "gas_wanted"
+                            "bytes_in_block"
                         ],
                         "type": "string",
                         "description": "Series name",
@@ -2907,14 +2903,6 @@ const docTemplate = `{
                     "type": "string",
                     "example": "28347628346"
                 },
-                "gas_used": {
-                    "type": "integer",
-                    "example": 1234
-                },
-                "gas_wanted": {
-                    "type": "integer",
-                    "example": 1234
-                },
                 "supply_change": {
                     "type": "string",
                     "example": "8635234"
@@ -3513,16 +3501,6 @@ const docTemplate = `{
                     "type": "string",
                     "format": "string",
                     "example": "some error text"
-                },
-                "gas_used": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 4253
-                },
-                "gas_wanted": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 9348
                 },
                 "hash": {
                     "type": "string",

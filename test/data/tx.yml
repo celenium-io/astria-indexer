@@ -2,8 +2,6 @@
   height: 7316
   time: '2023-11-30T23:52:23.265Z'
   position: 2
-  gas_wanted: 0
-  gas_used: 0
   actions_count: 1
   action_types: 2
   status: success
@@ -17,8 +15,6 @@
   height: 7965
   time: '2023-12-01T00:18:07.575Z'
   position: 2
-  gas_wanted: 0
-  gas_used: 0
   actions_count: 1
   action_types: 1
   status: success

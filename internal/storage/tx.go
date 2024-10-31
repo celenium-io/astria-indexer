@@ -44,8 +44,6 @@ type Tx struct {
 	Height       pkgTypes.Level `bun:",notnull"                    comment:"The number (height) of this block"`
 	Time         time.Time      `bun:"time,pk,notnull"             comment:"The time of block"`
 	Position     int64          `bun:"position"                    comment:"Position in block"`
-	GasWanted    int64          `bun:"gas_wanted"                  comment:"Gas wanted"`
-	GasUsed      int64          `bun:"gas_used"                    comment:"Gas used"`
 	ActionsCount int64          `bun:"actions_count"               comment:"Actions count in transaction"`
 	Status       types.Status   `bun:"status,type:status"          comment:"Transaction status"`
 

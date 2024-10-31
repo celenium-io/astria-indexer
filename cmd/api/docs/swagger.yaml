@@ -146,12 +146,6 @@ definitions:
       fee:
         example: "28347628346"
         type: string
-      gas_used:
-        example: 1234
-        type: integer
-      gas_wanted:
-        example: 1234
-        type: integer
       supply_change:
         example: "8635234"
         type: string
@@ -603,14 +597,6 @@ definitions:
         example: some error text
         format: string
         type: string
-      gas_used:
-        example: 4253
-        format: int64
-        type: integer
-      gas_wanted:
-        example: 9348
-        format: int64
-        type: integer
       hash:
         example: 652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF
         format: binary
@@ -1945,10 +1931,6 @@ paths:
         - block_time
         - tx_count
         - bytes_in_block
-        - gas_price
-        - gas_efficiency
-        - gas_used
-        - gas_wanted
         in: path
         name: name
         required: true

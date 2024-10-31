@@ -55,19 +55,15 @@ type SeriesItem struct {
 }
 
 const (
-	SeriesDataSize      = "data_size"
-	SeriesTPS           = "tps"
-	SeriesBPS           = "bps"
-	SeriesRBPS          = "rbps"
-	SeriesFee           = "fee"
-	SeriesSupplyChange  = "supply_change"
-	SeriesBlockTime     = "block_time"
-	SeriesTxCount       = "tx_count"
-	SeriesBytesInBlock  = "bytes_in_block"
-	SeriesGasPrice      = "gas_price"
-	SeriesGasUsed       = "gas_used"
-	SeriesGasWanted     = "gas_wanted"
-	SeriesGasEfficiency = "gas_efficiency"
+	SeriesDataSize     = "data_size"
+	SeriesTPS          = "tps"
+	SeriesBPS          = "bps"
+	SeriesRBPS         = "rbps"
+	SeriesFee          = "fee"
+	SeriesSupplyChange = "supply_change"
+	SeriesBlockTime    = "block_time"
+	SeriesTxCount      = "tx_count"
+	SeriesBytesInBlock = "bytes_in_block"
 
 	RollupSeriesActionsCount = "actions_count"
 	RollupSeriesSize         = "size"

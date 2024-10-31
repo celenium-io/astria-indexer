@@ -17,8 +17,6 @@ type Tx struct {
 	Id           uint64         `example:"321"                                                              format:"int64"     json:"id"                  swaggertype:"integer"`
 	Height       pkgTypes.Level `example:"100"                                                              format:"int64"     json:"height"              swaggertype:"integer"`
 	Position     int64          `example:"11"                                                               format:"int64"     json:"position"            swaggertype:"integer"`
-	GasWanted    int64          `example:"9348"                                                             format:"int64"     json:"gas_wanted"          swaggertype:"integer"`
-	GasUsed      int64          `example:"4253"                                                             format:"int64"     json:"gas_used"            swaggertype:"integer"`
 	ActionsCount int64          `example:"1"                                                                format:"int64"     json:"actions_count"       swaggertype:"integer"`
 	Nonce        uint32         `example:"1"                                                                format:"int64"     json:"nonce"               swaggertype:"integer"`
 	Hash         string         `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" format:"binary"    json:"hash"                swaggertype:"string"`
@@ -39,8 +37,6 @@ func NewTx(tx storage.Tx) Tx {
 		Height:       tx.Height,
 		Time:         tx.Time,
 		Position:     tx.Position,
-		GasWanted:    tx.GasWanted,
-		GasUsed:      tx.GasUsed,
 		ActionsCount: tx.ActionsCount,
 		Nonce:        tx.Nonce,
 		Status:       tx.Status,
