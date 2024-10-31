@@ -31,13 +31,14 @@ type IAddress interface {
 type Address struct {
 	bun.BaseModel `bun:"address" comment:"Table with addresses."`
 
-	Id            uint64      `bun:"id,pk,notnull,autoincrement" comment:"Unique internal identity"`
-	Height        types.Level `bun:"height"                      comment:"Block number of the first address occurrence."`
-	Hash          string      `bun:"hash,unique:address_hash"    comment:"Address hash"`
-	Nonce         uint32      `bun:"nonce"                       comment:"Nonce"`
-	ActionsCount  int64       `bun:"actions_count"               comment:"Count of actions in which the address was involved"`
-	SignedTxCount int64       `bun:"signed_tx_count"             comment:"Count of signed transactions"`
-	IsBridge      bool        `bun:"is_bridge"                   comment:"Indicate whether the account is a bridge or not"`
+	Id            uint64      `bun:"id,pk,notnull,autoincrement"  comment:"Unique internal identity"`
+	Height        types.Level `bun:"height"                       comment:"Block number of the first address occurrence."`
+	Hash          string      `bun:"hash,unique:address_hash"     comment:"Address hash"`
+	Nonce         uint32      `bun:"nonce"                        comment:"Nonce"`
+	ActionsCount  int64       `bun:"actions_count"                comment:"Count of actions in which the address was involved"`
+	SignedTxCount int64       `bun:"signed_tx_count"              comment:"Count of signed transactions"`
+	IsBridge      bool        `bun:"is_bridge"                    comment:"Indicate whether the account is a bridge or not"`
+	IsIbcRelayer  *bool       `bun:"is_ibc_relayer,default:false" comment:"Indicate whether the account is a IBC realyer or not"`
 
 	Balance []*Balance `bun:"rel:has-many,join:id=id"`
 }

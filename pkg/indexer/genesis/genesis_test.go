@@ -9,6 +9,7 @@ import (
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
+	testsuite "github.com/celenium-io/astria-indexer/internal/test_suite"
 	"github.com/celenium-io/astria-indexer/pkg/indexer/config"
 	"github.com/celenium-io/astria-indexer/pkg/node/types"
 	"github.com/goccy/go-json"
@@ -33,6 +34,9 @@ func TestParseAccounts(t *testing.T) {
 	require.NoError(t, err)
 
 	err = module.parseValidators(g.Validators, 1, &data)
+	require.NoError(t, err)
+
+	err = module.parseIbcRelayerAddresses(g.AppState.IbcRelayerAddresses, 1, &data)
 	require.NoError(t, err)
 
 	want := map[string]*storage.Address{
@@ -90,6 +94,7 @@ func TestParseAccounts(t *testing.T) {
 					Currency: "nria",
 				},
 			},
+			IsIbcRelayer: testsuite.Ptr(true),
 		},
 		"astria10cgc54dxh3sdetsr03rkhhkt3vsn3r7j46yvqh": {
 			Height: 1,
@@ -145,6 +150,18 @@ func TestParseAccounts(t *testing.T) {
 					Currency: "nria",
 				},
 			},
+		},
+		"astria1x62tjjddjspjquk503ww6l2nck46vxjaz6nq4f": {
+			Height: 1,
+			Hash:   "astria1x62tjjddjspjquk503ww6l2nck46vxjaz6nq4f",
+			Balance: []*storage.Balance{
+				{
+					Id:       0,
+					Total:    decimal.Zero,
+					Currency: "nria",
+				},
+			},
+			IsIbcRelayer: testsuite.Ptr(true),
 		},
 	}
 	require.Equal(t, want, data.addresses)

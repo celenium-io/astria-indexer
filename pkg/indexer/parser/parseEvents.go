@@ -99,6 +99,12 @@ func parseTxFees(ctx context.Context, attrs []types.EventAttribute, decodeCtx *d
 				return err
 			}
 			idx = actionIndex
+		case "sourceActionIndex":
+			actionIndex, err := strconv.ParseInt(attrs[i].Value, 10, 64)
+			if err != nil {
+				return err
+			}
+			idx = actionIndex
 		default:
 		}
 	}

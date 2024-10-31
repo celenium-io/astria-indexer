@@ -6,6 +6,7 @@ package decode
 import (
 	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
+	testsuite "github.com/celenium-io/astria-indexer/internal/test_suite"
 	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/shopspring/decimal"
 )
@@ -66,4 +67,16 @@ func (a Addresses) UpdateNonce(address string, nonce uint32) {
 func (a Addresses) Get(address string) (*storage.Address, bool) {
 	addr, ok := a[address]
 	return addr, ok
+}
+
+func (a Addresses) AddIbcRelayer(address string) {
+	if address, ok := a[address]; ok {
+		address.IsIbcRelayer = testsuite.Ptr(true)
+	}
+}
+
+func (a Addresses) RemoveIbcRelayer(address string) {
+	if address, ok := a[address]; ok {
+		address.IsIbcRelayer = testsuite.Ptr(false)
+	}
 }

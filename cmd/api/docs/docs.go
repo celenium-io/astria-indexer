@@ -2789,6 +2789,10 @@ const docTemplate = `{
                     "type": "boolean",
                     "example": false
                 },
+                "is_ibc_relayer": {
+                    "type": "boolean",
+                    "example": false
+                },
                 "nonce": {
                     "type": "integer",
                     "example": 10

@@ -153,6 +153,13 @@
         "ibc_sudo_address": {
             "bech32m": "astria1x62tjjddjspjquk503ww6l2nck46vxjaz6nq4f"
         },
-        "ibc_relayer_addresses": []
+        "ibc_relayer_addresses": [
+            {
+                "bech32m": "astria1je48an7fhxfl70nv5x4s4mphe7nszm6t0fryy7"
+            },
+            {
+                 "bech32m": "astria1x62tjjddjspjquk503ww6l2nck46vxjaz6nq4f"
+            }
+        ]
     }
 }
