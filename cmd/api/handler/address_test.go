@@ -288,8 +288,6 @@ func (s *AddressTestSuite) TestTransactions() {
 	s.Require().Equal(testTime, tx.Time)
 	s.Require().Equal(testTxHash, tx.Hash)
 	s.Require().EqualValues(1, tx.Position)
-	s.Require().EqualValues(10, tx.GasWanted)
-	s.Require().EqualValues(8, tx.GasUsed)
 	s.Require().EqualValues(10, tx.Nonce)
 	s.Require().EqualValues([]string{types.ActionTypeRollupDataSubmission.String()}, tx.ActionTypes)
 	s.Require().EqualValues(1, tx.ActionsCount)

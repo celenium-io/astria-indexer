@@ -60,10 +60,6 @@ func (s *StatsTestSuite) TestBlockStatsHistogram() {
 		storage.SeriesSupplyChange,
 		storage.SeriesTPS,
 		storage.SeriesTxCount,
-		storage.SeriesGasEfficiency,
-		storage.SeriesGasWanted,
-		storage.SeriesGasPrice,
-		storage.SeriesGasUsed,
 	} {
 
 		for _, tf := range []storage.Timeframe{

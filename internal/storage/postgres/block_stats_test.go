@@ -20,7 +20,5 @@ func (s *StorageTestSuite) TestBlockStatsByHeight() {
 	s.Require().EqualValues(1, stats.TxCount)
 	s.Require().EqualValues(2317, stats.BlockTime)
 	s.Require().EqualValues(266, stats.BytesInBlock)
-	s.Require().EqualValues(0, stats.GasUsed)
-	s.Require().EqualValues(0, stats.GasWanted)
 	s.Require().EqualValues("0", stats.SupplyChange.String())
 }

@@ -76,8 +76,6 @@ func (p *Module) parse(ctx context.Context, b types.BlockData) error {
 			Fee:          decimal.Zero,
 			SupplyChange: decodeCtx.SupplyChange,
 			BytesInBlock: decodeCtx.BytesInBlock,
-			GasWanted:    decodeCtx.GasWanted,
-			GasUsed:      decodeCtx.GasUsed,
 			DataSize:     decodeCtx.DataSize,
 		},
 	}
