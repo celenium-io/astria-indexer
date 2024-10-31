@@ -1037,6 +1037,7 @@ func TestDecodeActions(t *testing.T) {
 					Total:    decimal.Zero,
 				},
 			},
+			IsIbcRelayer: testsuite.Ptr(true),
 		}
 
 		wantAction := storage.Action{
@@ -1085,6 +1086,7 @@ func TestDecodeActions(t *testing.T) {
 					Total:    decimal.Zero,
 				},
 			},
+			IsIbcRelayer: testsuite.Ptr(false),
 		}
 
 		wantAction := storage.Action{

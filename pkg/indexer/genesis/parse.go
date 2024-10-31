@@ -7,6 +7,7 @@ import (
 	"github.com/celenium-io/astria-indexer/internal/astria"
 	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
+	testsuite "github.com/celenium-io/astria-indexer/internal/test_suite"
 	"github.com/celenium-io/astria-indexer/pkg/node/types"
 	pkgTypes "github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/pkg/errors"
@@ -55,6 +56,9 @@ func (module *Module) parse(genesis types.Genesis) (parsedData, error) {
 	}
 	if err := module.parseValidators(genesis.Validators, block.Height, &data); err != nil {
 		return data, errors.Wrap(err, "parse genesis validators")
+	}
+	if err := module.parseIbcRelayerAddresses(genesis.AppState.IbcRelayerAddresses, block.Height, &data); err != nil {
+		return data, errors.Wrap(err, "parse ibc relayer addresses")
 	}
 
 	block.Stats.SupplyChange = data.supply
@@ -117,6 +121,28 @@ func (module *Module) parseValidators(validators []types.Validator, height pkgTy
 			}
 
 			data.addresses[addr] = &address
+		}
+	}
+	return nil
+}
+
+func (module *Module) parseIbcRelayerAddresses(addresses []types.Bech32m, height pkgTypes.Level, data *parsedData) error {
+	for i := range addresses {
+		b32m := addresses[i].Value
+		if addr, ok := data.addresses[b32m]; ok {
+			addr.IsIbcRelayer = testsuite.Ptr(true)
+		} else {
+			data.addresses[b32m] = &storage.Address{
+				Height: height,
+				Balance: []*storage.Balance{
+					{
+						Total:    decimal.Zero,
+						Currency: currency.DefaultCurrency,
+					},
+				},
+				IsIbcRelayer: testsuite.Ptr(true),
+				Hash:         addresses[i].Value,
+			}
 		}
 	}
 	return nil

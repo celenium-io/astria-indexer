@@ -19,6 +19,7 @@ type Address struct {
 	Nonce         uint32         `example:"10"                                            json:"nonce"           swaggertype:"integer"`
 	Hash          string         `example:"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2" json:"hash"            swaggertype:"string"`
 	IsBridge      bool           `example:"false"                                         json:"is_bridge"       swaggertype:"boolean"`
+	IsIbcRelayer  bool           `example:"false"                                         json:"is_ibc_relayer"  swaggertype:"boolean"`
 
 	Balance []Balance `json:"balances"`
 	Bridge  *Bridge   `json:"bridge,omitempty"`
@@ -46,6 +47,9 @@ func NewAddress(addr storage.Address, bridge *storage.Bridge) Address {
 	if bridge != nil {
 		b := NewBridge(*bridge)
 		result.Bridge = &b
+	}
+	if addr.IsIbcRelayer != nil {
+		result.IsIbcRelayer = *addr.IsIbcRelayer
 	}
 
 	return result

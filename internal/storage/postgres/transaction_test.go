@@ -94,19 +94,25 @@ func (s *TransactionTestSuite) TestSaveAddresses() {
 	tx, err := BeginTransaction(ctx, s.storage.Transactable)
 	s.Require().NoError(err)
 
-	replyAddress := storage.Address{}
-	addresses := make([]*storage.Address, 0, 5)
-	for i := 0; i < 5; i++ {
-		addresses = append(addresses, &storage.Address{
-			Height: pkgTypes.Level(10000 + i),
+	addresses := []*storage.Address{
+		{
+			Height:       1000,
+			Hash:         testsuite.RandomAddress(),
+			IsIbcRelayer: testsuite.Ptr(true),
+		}, {
+			Height: 1000,
 			Hash:   testsuite.RandomAddress(),
-			Id:     uint64(i),
-		})
-
-		if i == 2 {
-			replyAddress.Hash = addresses[i].Hash
-			replyAddress.Height = addresses[i].Height + 1
-		}
+		}, {
+			Height:       1000,
+			Hash:         testsuite.RandomAddress(),
+			IsIbcRelayer: testsuite.Ptr(false),
+		}, {
+			Height: 1000,
+			Hash:   testsuite.RandomAddress(),
+		}, {
+			Height: 1000,
+			Hash:   testsuite.RandomAddress(),
+		},
 	}
 
 	count1, err := tx.SaveAddresses(ctx, addresses...)
@@ -119,6 +125,13 @@ func (s *TransactionTestSuite) TestSaveAddresses() {
 	s.Require().Greater(addresses[0].Id, uint64(0))
 	s.Require().Greater(addresses[1].Id, uint64(0))
 
+	replyAddress := storage.Address{
+		Height:       1000,
+		Hash:         addresses[1].Hash,
+		Id:           2,
+		IsIbcRelayer: testsuite.Ptr(true),
+	}
+
 	tx2, err := BeginTransaction(ctx, s.storage.Transactable)
 	s.Require().NoError(err)
 
@@ -128,7 +141,14 @@ func (s *TransactionTestSuite) TestSaveAddresses() {
 
 	s.Require().NoError(tx2.Flush(ctx))
 	s.Require().NoError(tx2.Close(ctx))
-	s.Require().Equal(replyAddress.Id, addresses[2].Id)
+	s.Require().Equal(replyAddress.Id, addresses[1].Id)
+
+	response, err := s.storage.Address.List(ctx, 10, 6, sdk.SortOrderAsc)
+	s.Require().NoError(err)
+	s.Require().Len(response, 5)
+
+	s.Require().Equal(addresses[0], response[0])
+	s.Require().Equal(replyAddress, *response[1])
 }
 
 func (s *TransactionTestSuite) TestSaveConstants() {

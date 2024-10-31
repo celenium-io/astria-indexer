@@ -483,9 +483,10 @@ func parseIbcRelayerChange(body *astria.Action_IbcRelayerChange, height types.Le
 	action.Data = make(map[string]any)
 	if body.IbcRelayerChange != nil {
 		if addition := body.IbcRelayerChange.GetAddition(); len(addition.GetBech32M()) > 0 {
-			action.Data["addition"] = addition.GetBech32M()
+			b32m := addition.GetBech32M()
+			action.Data["addition"] = b32m
 
-			addr := ctx.Addresses.Set(addition.GetBech32M(), height, decimal.Zero, "", 1, 0)
+			addr := ctx.Addresses.Set(b32m, height, decimal.Zero, "", 1, 0)
 			action.Addresses = append(action.Addresses, &storage.AddressAction{
 				Address:    addr,
 				Action:     action,
@@ -493,12 +494,14 @@ func parseIbcRelayerChange(body *astria.Action_IbcRelayerChange, height types.Le
 				Height:     action.Height,
 				ActionType: action.Type,
 			})
+			ctx.Addresses.AddIbcRelayer(b32m)
 		}
 
 		if removal := body.IbcRelayerChange.GetRemoval(); len(removal.GetBech32M()) > 0 {
-			action.Data["removal"] = removal.GetBech32M()
+			b32m := removal.GetBech32M()
+			action.Data["removal"] = b32m
 
-			addr := ctx.Addresses.Set(removal.GetBech32M(), height, decimal.Zero, "", 1, 0)
+			addr := ctx.Addresses.Set(b32m, height, decimal.Zero, "", 1, 0)
 			action.Addresses = append(action.Addresses, &storage.AddressAction{
 				Address:    addr,
 				Action:     action,
@@ -506,6 +509,7 @@ func parseIbcRelayerChange(body *astria.Action_IbcRelayerChange, height types.Le
 				Height:     action.Height,
 				ActionType: action.Type,
 			})
+			ctx.Addresses.RemoveIbcRelayer(b32m)
 		}
 	}
 	return nil
