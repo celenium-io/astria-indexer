@@ -64,7 +64,7 @@ func (tx Transaction) SaveAddresses(ctx context.Context, addresses ...*models.Ad
 		Set("signed_tx_count = added_address.signed_tx_count + EXCLUDED.signed_tx_count").
 		Set("nonce = GREATEST(EXCLUDED.nonce, added_address.nonce)").
 		Set("is_bridge = EXCLUDED.is_bridge OR added_address.is_bridge").
-		Set("is_ibc_relayer = CASE WHEN EXCLUDED.is_ibc_relayer IS NOT NULL THEN EXCLUDED.is_ibc_relayer END").
+		Set("is_ibc_relayer = CASE WHEN EXCLUDED.is_ibc_relayer IS NOT NULL THEN EXCLUDED.is_ibc_relayer ELSE added_address.is_ibc_relayer END").
 		Returning("xmax, id").
 		Exec(ctx)
 	if err != nil {
