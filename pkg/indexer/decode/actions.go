@@ -886,7 +886,7 @@ func parseIbcSudoChangeAction(body *astria.Action_IbcSudoChange, ctx *Context, a
 			ActionType: action.Type,
 		})
 
-		ctx.AddGenericConstant("ibc_sudo_change", address)
+		ctx.AddGenericConstant("ibc_sudo_address", address)
 	}
 
 	return nil

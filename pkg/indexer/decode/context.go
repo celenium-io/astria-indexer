@@ -51,7 +51,7 @@ func NewContext(bridgeAssets map[string]string) Context {
 }
 
 func (ctx *Context) AddGenericConstant(key, value string) {
-	k := fmt.Sprintf("%s-%s", key, value)
+	k := fmt.Sprintf("%s-%s", key, storageTypes.ModuleNameGeneric)
 	ctx.Constants[k] = &storage.Constant{
 		Module: storageTypes.ModuleNameGeneric,
 		Name:   key,
