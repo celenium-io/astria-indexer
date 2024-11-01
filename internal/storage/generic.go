@@ -13,9 +13,10 @@ import (
 )
 
 const (
-	ChannelBlock = "blocks"
-	ChannelHead  = "head"
-	ChannelTx    = "tx"
+	ChannelBlock    = "blocks"
+	ChannelHead     = "head"
+	ChannelTx       = "tx"
+	ChannelConstant = "constant"
 )
 
 var Models = []any{

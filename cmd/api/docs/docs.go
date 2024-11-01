@@ -2789,6 +2789,14 @@ const docTemplate = `{
                     "type": "boolean",
                     "example": false
                 },
+                "is_ibc_sudo": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "is_sudo": {
+                    "type": "boolean",
+                    "example": false
+                },
                 "nonce": {
                     "type": "integer",
                     "example": 10

@@ -87,7 +87,7 @@ func (d *Dispatcher) listen(ctx context.Context) {
 				return
 			}
 			if notification == nil {
-				log.Warn().Str("channel", notification.Channel).Msg("nil notification")
+				log.Warn().Msg("nil notification")
 				continue
 			}
 			if err := d.handleNotification(ctx, notification); err != nil {
@@ -107,7 +107,9 @@ func (d *Dispatcher) handleNotification(ctx context.Context, notification *pq.No
 
 		return d.handleBlock(ctx, id)
 	case storage.ChannelHead:
-		return d.handleHead(ctx, notification.Extra)
+		return d.handleHead(notification.Extra)
+	case storage.ChannelConstant:
+		return d.handleConstant(notification.Extra)
 	default:
 		return errors.Errorf("unknown channel name: %s", notification.Channel)
 	}
@@ -126,7 +128,7 @@ func (d *Dispatcher) handleBlock(ctx context.Context, id uint64) error {
 	return nil
 }
 
-func (d *Dispatcher) handleHead(ctx context.Context, msg string) error {
+func (d *Dispatcher) handleHead(msg string) error {
 	var state storage.State
 	if err := json.Unmarshal([]byte(msg), &state); err != nil {
 		return err
@@ -135,6 +137,20 @@ func (d *Dispatcher) handleHead(ctx context.Context, msg string) error {
 	d.mx.RLock()
 	for i := range d.observers {
 		d.observers[i].notifyState(&state)
+	}
+	d.mx.RUnlock()
+	return nil
+}
+
+func (d *Dispatcher) handleConstant(msg string) error {
+	var c storage.Constant
+	if err := json.Unmarshal([]byte(msg), &c); err != nil {
+		return err
+	}
+
+	d.mx.RLock()
+	for i := range d.observers {
+		d.observers[i].notifyConstants(&c)
 	}
 	d.mx.RUnlock()
 	return nil

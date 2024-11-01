@@ -67,6 +67,11 @@ func main() {
 			e.Logger.Fatal(err)
 		}
 	}
+	if constantCache != nil {
+		if err := constantCache.Close(); err != nil {
+			e.Logger.Fatal(err)
+		}
+	}
 	if dispatcher != nil {
 		if err := dispatcher.Close(); err != nil {
 			e.Logger.Fatal(err)

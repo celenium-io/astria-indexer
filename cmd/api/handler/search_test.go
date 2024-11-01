@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/celenium-io/astria-indexer/cmd/api/cache"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/mock"
@@ -46,7 +47,8 @@ func (s *SearchTestSuite) SetupSuite() {
 	s.rollups = mock.NewMockIRollup(s.ctrl)
 	s.validators = mock.NewMockIValidator(s.ctrl)
 	s.bridges = mock.NewMockIBridge(s.ctrl)
-	s.handler = NewSearchHandler(s.search, s.address, s.blocks, s.txs, s.rollups, s.bridges, s.validators)
+	cc := cache.NewConstantsCache(nil)
+	s.handler = NewSearchHandler(cc, s.search, s.address, s.blocks, s.txs, s.rollups, s.bridges, s.validators)
 }
 
 // TearDownSuite -

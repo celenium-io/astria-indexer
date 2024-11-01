@@ -4,22 +4,26 @@
 package handler
 
 import (
+	"github.com/celenium-io/astria-indexer/cmd/api/cache"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/labstack/echo/v4"
 )
 
 type SearchHandler struct {
-	search     storage.ISearch
-	address    storage.IAddress
-	blocks     storage.IBlock
-	txs        storage.ITx
-	rollups    storage.IRollup
-	bridges    storage.IBridge
-	validators storage.IValidator
+	constantCache *cache.ConstantsCache
+	search        storage.ISearch
+	address       storage.IAddress
+	blocks        storage.IBlock
+	txs           storage.ITx
+	rollups       storage.IRollup
+	bridges       storage.IBridge
+	validators    storage.IValidator
 }
 
 func NewSearchHandler(
+	constantCache *cache.ConstantsCache,
 	search storage.ISearch,
 	address storage.IAddress,
 	blocks storage.IBlock,
@@ -29,13 +33,14 @@ func NewSearchHandler(
 	validators storage.IValidator,
 ) *SearchHandler {
 	return &SearchHandler{
-		search:     search,
-		address:    address,
-		blocks:     blocks,
-		txs:        txs,
-		rollups:    rollups,
-		bridges:    bridges,
-		validators: validators,
+		constantCache: constantCache,
+		search:        search,
+		address:       address,
+		blocks:        blocks,
+		txs:           txs,
+		rollups:       rollups,
+		bridges:       bridges,
+		validators:    validators,
 	}
 }
 
@@ -93,7 +98,9 @@ func (s *SearchHandler) Search(c echo.Context) error {
 			if err != nil {
 				return handleError(c, err, s.address)
 			}
-			body = responses.NewAddress(*address, nil)
+			sudoAddress, _ := s.constantCache.Get(types.ModuleNameGeneric, "authority_sudo_address")
+			ibcSudoAddress, _ := s.constantCache.Get(types.ModuleNameGeneric, "ibc_sudo_address")
+			body = responses.NewAddress(*address, nil, sudoAddress, ibcSudoAddress)
 		case "validator":
 			validator, err := s.validators.GetByID(c.Request().Context(), results[i].Id)
 			if err != nil {

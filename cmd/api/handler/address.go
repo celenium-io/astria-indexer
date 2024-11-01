@@ -7,26 +7,29 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/celenium-io/astria-indexer/cmd/api/cache"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
-	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
+	"github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 )
 
 type AddressHandler struct {
-	address     storage.IAddress
-	txs         storage.ITx
-	actions     storage.IAction
-	rollups     storage.IRollup
-	fees        storage.IFee
-	bridge      storage.IBridge
-	deposits    storage.IDeposit
-	state       storage.IState
-	indexerName string
+	constantCache *cache.ConstantsCache
+	address       storage.IAddress
+	txs           storage.ITx
+	actions       storage.IAction
+	rollups       storage.IRollup
+	fees          storage.IFee
+	bridge        storage.IBridge
+	deposits      storage.IDeposit
+	state         storage.IState
+	indexerName   string
 }
 
 func NewAddressHandler(
+	constantCache *cache.ConstantsCache,
 	address storage.IAddress,
 	txs storage.ITx,
 	actions storage.IAction,
@@ -38,15 +41,16 @@ func NewAddressHandler(
 	indexerName string,
 ) *AddressHandler {
 	return &AddressHandler{
-		address:     address,
-		txs:         txs,
-		actions:     actions,
-		rollups:     rollups,
-		fees:        fees,
-		bridge:      bridge,
-		deposits:    deposits,
-		state:       state,
-		indexerName: indexerName,
+		constantCache: constantCache,
+		address:       address,
+		txs:           txs,
+		actions:       actions,
+		rollups:       rollups,
+		fees:          fees,
+		bridge:        bridge,
+		deposits:      deposits,
+		state:         state,
+		indexerName:   indexerName,
 	}
 }
 
@@ -78,15 +82,19 @@ func (handler *AddressHandler) Get(c echo.Context) error {
 		return handleError(c, err, handler.address)
 	}
 
+	sudoAddress, _ := handler.constantCache.Get(types.ModuleNameGeneric, "authority_sudo_address")
+	ibcSudoAddress, _ := handler.constantCache.Get(types.ModuleNameGeneric, "ibc_sudo_address")
+
 	bridge, err := handler.bridge.ByAddress(c.Request().Context(), address.Id)
 	if err != nil {
 		if !handler.bridge.IsNoRows(err) {
 			return handleError(c, err, handler.address)
 		}
-		return c.JSON(http.StatusOK, responses.NewAddress(address, nil))
+
+		return c.JSON(http.StatusOK, responses.NewAddress(address, nil, sudoAddress, ibcSudoAddress))
 	}
 
-	return c.JSON(http.StatusOK, responses.NewAddress(address, &bridge))
+	return c.JSON(http.StatusOK, responses.NewAddress(address, &bridge, sudoAddress, ibcSudoAddress))
 }
 
 type listAddressRequest struct {
@@ -139,9 +147,12 @@ func (handler *AddressHandler) List(c echo.Context) error {
 		return handleError(c, err, handler.address)
 	}
 
+	sudoAddress, _ := handler.constantCache.Get(types.ModuleNameGeneric, "authority_sudo_address")
+	ibcSudoAddress, _ := handler.constantCache.Get(types.ModuleNameGeneric, "ibc_sudo_address")
+
 	response := make([]responses.Address, len(address))
 	for i := range address {
-		response[i] = responses.NewAddress(address[i], nil)
+		response[i] = responses.NewAddress(address[i], nil, sudoAddress, ibcSudoAddress)
 	}
 
 	return returnArray(c, response)
@@ -179,8 +190,8 @@ func (p *addressTxRequest) SetDefault() {
 //	@Param			limit		query	integer					false	"Count of requested entities"	minimum(1)		maximum(100)
 //	@Param			offset		query	integer					false	"Offset"						minimum(1)
 //	@Param			sort		query	string					false	"Sort order"					Enums(asc, desc)
-//	@Param			status		query	storageTypes.Status		false	"Comma-separated status list"
-//	@Param			msg_type	query	storageTypes.ActionType	false	"Comma-separated message types list"
+//	@Param			status		query	types.Status	    	false	"Comma-separated status list"
+//	@Param			msg_type	query	types.ActionType	    false	"Comma-separated message types list"
 //	@Param			from		query	integer					false	"Time from in unix timestamp"	minimum(1)
 //	@Param			to			query	integer					false	"Time to in unix timestamp"		minimum(1)
 //	@Param			height		query	integer					false	"Block number"					minimum(1)
@@ -207,7 +218,7 @@ func (handler *AddressHandler) Transactions(c echo.Context) error {
 		Sort:        pgSort(req.Sort),
 		Status:      req.Status,
 		Height:      req.Height,
-		ActionTypes: storageTypes.NewActionTypeMask(),
+		ActionTypes: types.NewActionTypeMask(),
 	}
 	if req.From > 0 {
 		fltrs.TimeFrom = time.Unix(req.From, 0).UTC()
@@ -216,7 +227,7 @@ func (handler *AddressHandler) Transactions(c echo.Context) error {
 		fltrs.TimeTo = time.Unix(req.To, 0).UTC()
 	}
 	for i := range req.ActionTypes {
-		fltrs.ActionTypes.SetType(storageTypes.ActionType(req.ActionTypes[i]))
+		fltrs.ActionTypes.SetType(types.ActionType(req.ActionTypes[i]))
 	}
 
 	txs, err := handler.txs.ByAddress(c.Request().Context(), address.Id, fltrs)
@@ -255,11 +266,11 @@ func (p *getAddressMessages) ToFilters() storage.AddressActionsFilter {
 		Limit:       int(p.Limit),
 		Offset:      int(p.Offset),
 		Sort:        pgSort(p.Sort),
-		ActionTypes: storageTypes.NewActionTypeMask(),
+		ActionTypes: types.NewActionTypeMask(),
 	}
 
 	for i := range p.ActionTypes {
-		fltrs.ActionTypes.SetType(storageTypes.ActionType(p.ActionTypes[i]))
+		fltrs.ActionTypes.SetType(types.ActionType(p.ActionTypes[i]))
 	}
 
 	return fltrs
@@ -275,7 +286,7 @@ func (p *getAddressMessages) ToFilters() storage.AddressActionsFilter {
 //	@Param			limit			query	integer					false	"Count of requested entities"			minimum(1)		maximum(100)
 //	@Param			offset			query	integer					false	"Offset"								minimum(1)
 //	@Param			sort			query	string					false	"Sort order"							Enums(asc, desc)
-//	@Param			action_types	query	storageTypes.ActionType	false	"Comma-separated action types list"
+//	@Param			action_types	query	types.ActionType     	false	"Comma-separated action types list"
 //	@Produce		json
 //	@Success		200	{array}		responses.Action
 //	@Failure		400	{object}	Error

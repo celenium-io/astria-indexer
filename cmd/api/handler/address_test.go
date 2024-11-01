@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/celenium-io/astria-indexer/cmd/api/cache"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
@@ -54,7 +55,8 @@ func (s *AddressTestSuite) SetupSuite() {
 	s.bridge = mock.NewMockIBridge(s.ctrl)
 	s.deposits = mock.NewMockIDeposit(s.ctrl)
 	s.state = mock.NewMockIState(s.ctrl)
-	s.handler = NewAddressHandler(s.address, s.txs, s.actions, s.rollups, s.fees, s.bridge, s.deposits, s.state, testIndexerName)
+	cc := cache.NewConstantsCache(nil)
+	s.handler = NewAddressHandler(cc, s.address, s.txs, s.actions, s.rollups, s.fees, s.bridge, s.deposits, s.state, testIndexerName)
 }
 
 // TearDownSuite -
