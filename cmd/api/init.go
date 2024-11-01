@@ -251,6 +251,8 @@ func initDatabase(cfg config.Database, viewsDir string) postgres.Storage {
 	return db
 }
 
+var constantCache *cache.ConstantsCache
+
 func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Storage) {
 	v1 := e.Group("v1")
 
@@ -260,23 +262,29 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 	v1.GET("/constants", constantsHandler.Get)
 	v1.GET("/enums", constantsHandler.Enums)
 
-	searchHandler := handler.NewSearchHandler(db.Search, db.Address, db.Blocks, db.Tx, db.Rollup, db.Bridges, db.Validator)
+	searchHandler := handler.NewSearchHandler(constantCache, db.Search, db.Address, db.Blocks, db.Tx, db.Rollup, db.Bridges, db.Validator)
 	v1.GET("/search", searchHandler.Search)
 
-	addressHandlers := handler.NewAddressHandler(db.Address, db.Tx, db.Action, db.Rollup, db.Fee, db.Bridges, db.Deposit, db.State, cfg.Indexer.Name)
+	constantObserver := dispatcher.Observe(storage.ChannelConstant)
+	constantCache = cache.NewConstantsCache(constantObserver)
+	if err := constantCache.Start(ctx, db.Constants); err != nil {
+		panic(err)
+	}
+
+	addressHandler := handler.NewAddressHandler(constantCache, db.Address, db.Tx, db.Action, db.Rollup, db.Fee, db.Bridges, db.Deposit, db.State, cfg.Indexer.Name)
 	addressesGroup := v1.Group("/address")
 	{
-		addressesGroup.GET("", addressHandlers.List)
-		addressesGroup.GET("/count", addressHandlers.Count)
+		addressesGroup.GET("", addressHandler.List)
+		addressesGroup.GET("/count", addressHandler.Count)
 		addressGroup := addressesGroup.Group("/:hash")
 		{
-			addressGroup.GET("", addressHandlers.Get)
-			addressGroup.GET("/txs", addressHandlers.Transactions)
-			addressGroup.GET("/actions", addressHandlers.Actions)
-			addressGroup.GET("/rollups", addressHandlers.Rollups)
-			addressGroup.GET("/roles", addressHandlers.Roles)
-			addressGroup.GET("/fees", addressHandlers.Fees)
-			addressGroup.GET("/deposits", addressHandlers.Deposits)
+			addressGroup.GET("", addressHandler.Get)
+			addressGroup.GET("/txs", addressHandler.Transactions)
+			addressGroup.GET("/actions", addressHandler.Actions)
+			addressGroup.GET("/rollups", addressHandler.Rollups)
+			addressGroup.GET("/roles", addressHandler.Roles)
+			addressGroup.GET("/fees", addressHandler.Fees)
+			addressGroup.GET("/deposits", addressHandler.Deposits)
 		}
 	}
 
@@ -311,7 +319,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 		}
 	}
 
-	rollupsHandler := handler.NewRollupHandler(db.Rollup, db.Action, db.Bridges, db.Deposit, db.State, cfg.Indexer.Name)
+	rollupsHandler := handler.NewRollupHandler(constantCache, db.Rollup, db.Action, db.Bridges, db.Deposit, db.State, cfg.Indexer.Name)
 	rollupsGroup := v1.Group("/rollup")
 	{
 		rollupsGroup.GET("", rollupsHandler.List)

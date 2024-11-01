@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/celenium-io/astria-indexer/cmd/api/cache"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
@@ -46,7 +47,8 @@ func (s *RollupTestSuite) SetupSuite() {
 	s.bridge = mock.NewMockIBridge(s.ctrl)
 	s.deposits = mock.NewMockIDeposit(s.ctrl)
 	s.state = mock.NewMockIState(s.ctrl)
-	s.handler = NewRollupHandler(s.rollups, s.actions, s.bridge, s.deposits, s.state, testIndexerName)
+	cc := cache.NewConstantsCache(nil)
+	s.handler = NewRollupHandler(cc, s.rollups, s.actions, s.bridge, s.deposits, s.state, testIndexerName)
 }
 
 // TearDownSuite -

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/celenium-io/astria-indexer/cmd/api/cache"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
@@ -16,15 +17,17 @@ import (
 )
 
 type RollupHandler struct {
-	rollups     storage.IRollup
-	actions     storage.IAction
-	bridge      storage.IBridge
-	deposits    storage.IDeposit
-	state       storage.IState
-	indexerName string
+	constantCache *cache.ConstantsCache
+	rollups       storage.IRollup
+	actions       storage.IAction
+	bridge        storage.IBridge
+	deposits      storage.IDeposit
+	state         storage.IState
+	indexerName   string
 }
 
 func NewRollupHandler(
+	constantCache *cache.ConstantsCache,
 	rollups storage.IRollup,
 	actions storage.IAction,
 	bridge storage.IBridge,
@@ -33,12 +36,13 @@ func NewRollupHandler(
 	indexerName string,
 ) *RollupHandler {
 	return &RollupHandler{
-		rollups:     rollups,
-		actions:     actions,
-		bridge:      bridge,
-		deposits:    deposits,
-		state:       state,
-		indexerName: indexerName,
+		constantCache: constantCache,
+		rollups:       rollups,
+		actions:       actions,
+		bridge:        bridge,
+		deposits:      deposits,
+		state:         state,
+		indexerName:   indexerName,
 	}
 }
 
@@ -253,7 +257,9 @@ func (handler *RollupHandler) Addresses(c echo.Context) error {
 	response := make([]responses.Address, len(addresses))
 	for i := range addresses {
 		if addresses[i].Address != nil {
-			response[i] = responses.NewAddress(*addresses[i].Address, nil)
+			sudoAddress, _ := handler.constantCache.Get(types.ModuleNameGeneric, "authority_sudo_address")
+			ibcSudoAddress, _ := handler.constantCache.Get(types.ModuleNameGeneric, "ibc_sudo_address")
+			response[i] = responses.NewAddress(*addresses[i].Address, nil, sudoAddress, ibcSudoAddress)
 		}
 	}
 

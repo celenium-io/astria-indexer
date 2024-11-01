@@ -63,6 +63,12 @@ definitions:
       is_ibc_relayer:
         example: false
         type: boolean
+      is_ibc_sudo:
+        example: false
+        type: boolean
+      is_sudo:
+        example: false
+        type: boolean
       nonce:
         example: 10
         type: integer

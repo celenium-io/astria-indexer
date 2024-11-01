@@ -20,12 +20,14 @@ type Address struct {
 	Hash          string         `example:"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2" json:"hash"            swaggertype:"string"`
 	IsBridge      bool           `example:"false"                                         json:"is_bridge"       swaggertype:"boolean"`
 	IsIbcRelayer  bool           `example:"false"                                         json:"is_ibc_relayer"  swaggertype:"boolean"`
+	IsSudo        bool           `example:"false"                                         json:"is_sudo"         swaggertype:"boolean"`
+	IsIbcSudo     bool           `example:"false"                                         json:"is_ibc_sudo"     swaggertype:"boolean"`
 
 	Balance []Balance `json:"balances"`
 	Bridge  *Bridge   `json:"bridge,omitempty"`
 }
 
-func NewAddress(addr storage.Address, bridge *storage.Bridge) Address {
+func NewAddress(addr storage.Address, bridge *storage.Bridge, sudoAddr, ibcSudoAddr string) Address {
 	result := Address{
 		Id:            addr.Id,
 		Height:        addr.Height,
@@ -36,6 +38,9 @@ func NewAddress(addr storage.Address, bridge *storage.Bridge) Address {
 		Hash:          addr.String(),
 		Balance:       make([]Balance, 0),
 	}
+
+	result.IsSudo = sudoAddr == result.Hash
+	result.IsIbcSudo = ibcSudoAddr == result.Hash
 
 	for i := range addr.Balance {
 		result.Balance = append(result.Balance, Balance{

@@ -21,9 +21,9 @@ type IConstant interface {
 type Constant struct {
 	bun.BaseModel `bun:"table:constant" comment:"Table with constants"`
 
-	Module types.ModuleName `bun:"module,pk,type:module_name" comment:"Module name which declares constant"`
-	Name   string           `bun:"name,pk,type:text"          comment:"Constant name"`
-	Value  string           `bun:"value,type:text"            comment:"Constant value"`
+	Module types.ModuleName `bun:"module,pk,type:module_name" comment:"Module name which declares constant" json:"module"`
+	Name   string           `bun:"name,pk,type:text"          comment:"Constant name"                       json:"name"`
+	Value  string           `bun:"value,type:text"            comment:"Constant value"                      json:"value"`
 }
 
 func (Constant) TableName() string {
