@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/hex"
+	"strconv"
 
 	"github.com/celenium-io/astria-indexer/internal/astria"
 	"github.com/celenium-io/astria-indexer/internal/storage"
@@ -38,6 +39,15 @@ func (s *Search) Search(ctx context.Context, query string) (results []storage.Se
 		Where("asset ILIKE ?", text)
 
 	searchQuery = searchQuery.UnionAll(bridgeQuery)
+
+	if height, err := strconv.ParseInt(query, 10, 64); err == nil {
+		heightQuery := s.db.DB().NewSelect().
+			Model((*storage.Block)(nil)).
+			ColumnExpr("id, encode(hash, 'hex') as value, 'block' as type").
+			Where("height = ?", height)
+
+		searchQuery = searchQuery.UnionAll(heightQuery)
+	}
 
 	if hash, err := hex.DecodeString(query); err == nil {
 		blockQuery := s.db.DB().NewSelect().
