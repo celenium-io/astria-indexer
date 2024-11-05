@@ -21,6 +21,19 @@ func (s *StorageTestSuite) TestSearchBlock() {
 	s.Require().EqualValues("block", result.Type)
 }
 
+func (s *StorageTestSuite) TestSearchBlockByHeight() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	results, err := s.storage.Search.Search(ctx, "7965")
+	s.Require().NoError(err)
+	s.Require().Len(results, 1)
+
+	result := results[0]
+	s.Require().EqualValues("b15d072afc508558b3e962060c701a695af5d6a041d4a25c63240bbff5064b3b", result.Value)
+	s.Require().EqualValues("block", result.Type)
+}
+
 func (s *StorageTestSuite) TestSearchTx() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
