@@ -262,14 +262,14 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 	v1.GET("/constants", constantsHandler.Get)
 	v1.GET("/enums", constantsHandler.Enums)
 
-	searchHandler := handler.NewSearchHandler(constantCache, db.Search, db.Address, db.Blocks, db.Tx, db.Rollup, db.Bridges, db.Validator)
-	v1.GET("/search", searchHandler.Search)
-
 	constantObserver := dispatcher.Observe(storage.ChannelConstant)
 	constantCache = cache.NewConstantsCache(constantObserver)
 	if err := constantCache.Start(ctx, db.Constants); err != nil {
 		panic(err)
 	}
+
+	searchHandler := handler.NewSearchHandler(constantCache, db.Search, db.Address, db.Blocks, db.Tx, db.Rollup, db.Bridges, db.Validator)
+	v1.GET("/search", searchHandler.Search)
 
 	addressHandler := handler.NewAddressHandler(constantCache, db.Address, db.Tx, db.Action, db.Rollup, db.Fee, db.Bridges, db.Deposit, db.State, cfg.Indexer.Name)
 	addressesGroup := v1.Group("/address")
