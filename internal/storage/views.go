@@ -16,4 +16,5 @@ const (
 	ViewTransferStatsByHour  = "transfer_stats_by_hour"
 	ViewTransferStatsByDay   = "transfer_stats_by_day"
 	ViewTransferStatsByMonth = "transfer_stats_by_month"
+	ViewLeaderboard          = "leaderboard"
 )

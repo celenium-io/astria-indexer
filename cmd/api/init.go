@@ -244,7 +244,7 @@ func initDispatcher(ctx context.Context, db postgres.Storage) {
 func initDatabase(cfg config.Database, viewsDir string) postgres.Storage {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	db, err := postgres.Create(ctx, cfg, viewsDir)
+	db, err := postgres.Create(ctx, cfg, viewsDir, false)
 	if err != nil {
 		panic(err)
 	}

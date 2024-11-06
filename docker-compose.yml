@@ -32,6 +32,20 @@ services:
       - "127.0.0.1:9876:9876"
     logging: *astria-logging
 
+  private-api:
+    restart: always
+    image: ghcr.io/celenium-io/astria-indexer-private-api:${TAG:-main}
+    build:
+      context: .
+      dockerfile: build/private_api/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - db
+    ports:
+      - "127.0.0.1:9877:9877"
+    logging: *astria-logging
+
   db:
     command:
       - -cshared_preload_libraries=timescaledb,pg_stat_statements

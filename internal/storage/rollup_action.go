@@ -17,14 +17,16 @@ type RollupAction struct {
 	RollupId   uint64           `bun:"rollup_id,pk"                 comment:"Rollup internal id"`
 	ActionId   uint64           `bun:"action_id,pk"                 comment:"Action internal id"`
 	Time       time.Time        `bun:"time,notnull,pk"              comment:"Action time"`
+	SenderId   uint64           `bun:"sender_id,notnull"            comment:"Internal id of sender address"`
 	ActionType types.ActionType `bun:"action_type,type:action_type" comment:"Action type"`
 	Height     pkgTypes.Level   `bun:"height"                       comment:"Action block height"`
 	TxId       uint64           `bun:"tx_id"                        comment:"Transaction internal id"`
 	Size       int64            `bun:"size"                         comment:"Count bytes which was pushed to the rollup"`
 
-	Action *Action `bun:"rel:belongs-to,join:action_id=id"`
-	Rollup *Rollup `bun:"rel:belongs-to,join:rollup_id=id"`
-	Tx     *Tx     `bun:"rel:belongs-to,join:tx_id=id"`
+	Action *Action  `bun:"rel:belongs-to,join:action_id=id"`
+	Rollup *Rollup  `bun:"rel:belongs-to,join:rollup_id=id"`
+	Tx     *Tx      `bun:"rel:belongs-to,join:tx_id=id"`
+	Sender *Address `bun:"rel:belongs-to,join:sender_id=id"`
 }
 
 func (RollupAction) TableName() string {

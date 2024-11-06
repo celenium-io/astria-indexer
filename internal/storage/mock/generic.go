@@ -199,6 +199,120 @@ func (c *MockTransactionCopyFromCall) DoAndReturn(f func(context.Context, string
 	return c
 }
 
+// DeleteApp mocks base method.
+func (m *MockTransaction) DeleteApp(ctx context.Context, appId uint64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteApp", ctx, appId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteApp indicates an expected call of DeleteApp.
+func (mr *MockTransactionMockRecorder) DeleteApp(ctx, appId any) *MockTransactionDeleteAppCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteApp", reflect.TypeOf((*MockTransaction)(nil).DeleteApp), ctx, appId)
+	return &MockTransactionDeleteAppCall{Call: call}
+}
+
+// MockTransactionDeleteAppCall wrap *gomock.Call
+type MockTransactionDeleteAppCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockTransactionDeleteAppCall) Return(arg0 error) *MockTransactionDeleteAppCall {
+	c.Call = c.Call.Return(arg0)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockTransactionDeleteAppCall) Do(f func(context.Context, uint64) error) *MockTransactionDeleteAppCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockTransactionDeleteAppCall) DoAndReturn(f func(context.Context, uint64) error) *MockTransactionDeleteAppCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
+// DeleteAppBridges mocks base method.
+func (m *MockTransaction) DeleteAppBridges(ctx context.Context, appId uint64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteAppBridges", ctx, appId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteAppBridges indicates an expected call of DeleteAppBridges.
+func (mr *MockTransactionMockRecorder) DeleteAppBridges(ctx, appId any) *MockTransactionDeleteAppBridgesCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAppBridges", reflect.TypeOf((*MockTransaction)(nil).DeleteAppBridges), ctx, appId)
+	return &MockTransactionDeleteAppBridgesCall{Call: call}
+}
+
+// MockTransactionDeleteAppBridgesCall wrap *gomock.Call
+type MockTransactionDeleteAppBridgesCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockTransactionDeleteAppBridgesCall) Return(arg0 error) *MockTransactionDeleteAppBridgesCall {
+	c.Call = c.Call.Return(arg0)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockTransactionDeleteAppBridgesCall) Do(f func(context.Context, uint64) error) *MockTransactionDeleteAppBridgesCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockTransactionDeleteAppBridgesCall) DoAndReturn(f func(context.Context, uint64) error) *MockTransactionDeleteAppBridgesCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
+// DeleteAppId mocks base method.
+func (m *MockTransaction) DeleteAppId(ctx context.Context, appId uint64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteAppId", ctx, appId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteAppId indicates an expected call of DeleteAppId.
+func (mr *MockTransactionMockRecorder) DeleteAppId(ctx, appId any) *MockTransactionDeleteAppIdCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAppId", reflect.TypeOf((*MockTransaction)(nil).DeleteAppId), ctx, appId)
+	return &MockTransactionDeleteAppIdCall{Call: call}
+}
+
+// MockTransactionDeleteAppIdCall wrap *gomock.Call
+type MockTransactionDeleteAppIdCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockTransactionDeleteAppIdCall) Return(arg0 error) *MockTransactionDeleteAppIdCall {
+	c.Call = c.Call.Return(arg0)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockTransactionDeleteAppIdCall) Do(f func(context.Context, uint64) error) *MockTransactionDeleteAppIdCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockTransactionDeleteAppIdCall) DoAndReturn(f func(context.Context, uint64) error) *MockTransactionDeleteAppIdCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // Exec mocks base method.
 func (m *MockTransaction) Exec(ctx context.Context, query string, params ...any) (int64, error) {
 	m.ctrl.T.Helper()
@@ -549,6 +663,44 @@ func (c *MockTransactionLastNonceCall) Do(f func(context.Context, uint64) (uint3
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
 func (c *MockTransactionLastNonceCall) DoAndReturn(f func(context.Context, uint64) (uint32, error)) *MockTransactionLastNonceCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
+// RefreshLeaderboard mocks base method.
+func (m *MockTransaction) RefreshLeaderboard(ctx context.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RefreshLeaderboard", ctx)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RefreshLeaderboard indicates an expected call of RefreshLeaderboard.
+func (mr *MockTransactionMockRecorder) RefreshLeaderboard(ctx any) *MockTransactionRefreshLeaderboardCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshLeaderboard", reflect.TypeOf((*MockTransaction)(nil).RefreshLeaderboard), ctx)
+	return &MockTransactionRefreshLeaderboardCall{Call: call}
+}
+
+// MockTransactionRefreshLeaderboardCall wrap *gomock.Call
+type MockTransactionRefreshLeaderboardCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockTransactionRefreshLeaderboardCall) Return(arg0 error) *MockTransactionRefreshLeaderboardCall {
+	c.Call = c.Call.Return(arg0)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockTransactionRefreshLeaderboardCall) Do(f func(context.Context) error) *MockTransactionRefreshLeaderboardCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockTransactionRefreshLeaderboardCall) DoAndReturn(f func(context.Context) error) *MockTransactionRefreshLeaderboardCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }
@@ -1414,6 +1566,130 @@ func (c *MockTransactionSaveAddressesCall) DoAndReturn(f func(context.Context, .
 	return c
 }
 
+// SaveApp mocks base method.
+func (m *MockTransaction) SaveApp(ctx context.Context, app *storage.App) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SaveApp", ctx, app)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SaveApp indicates an expected call of SaveApp.
+func (mr *MockTransactionMockRecorder) SaveApp(ctx, app any) *MockTransactionSaveAppCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveApp", reflect.TypeOf((*MockTransaction)(nil).SaveApp), ctx, app)
+	return &MockTransactionSaveAppCall{Call: call}
+}
+
+// MockTransactionSaveAppCall wrap *gomock.Call
+type MockTransactionSaveAppCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockTransactionSaveAppCall) Return(arg0 error) *MockTransactionSaveAppCall {
+	c.Call = c.Call.Return(arg0)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockTransactionSaveAppCall) Do(f func(context.Context, *storage.App) error) *MockTransactionSaveAppCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockTransactionSaveAppCall) DoAndReturn(f func(context.Context, *storage.App) error) *MockTransactionSaveAppCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
+// SaveAppBridges mocks base method.
+func (m *MockTransaction) SaveAppBridges(ctx context.Context, bridges ...storage.AppBridge) error {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx}
+	for _, a := range bridges {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "SaveAppBridges", varargs...)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SaveAppBridges indicates an expected call of SaveAppBridges.
+func (mr *MockTransactionMockRecorder) SaveAppBridges(ctx any, bridges ...any) *MockTransactionSaveAppBridgesCall {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx}, bridges...)
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveAppBridges", reflect.TypeOf((*MockTransaction)(nil).SaveAppBridges), varargs...)
+	return &MockTransactionSaveAppBridgesCall{Call: call}
+}
+
+// MockTransactionSaveAppBridgesCall wrap *gomock.Call
+type MockTransactionSaveAppBridgesCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockTransactionSaveAppBridgesCall) Return(arg0 error) *MockTransactionSaveAppBridgesCall {
+	c.Call = c.Call.Return(arg0)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockTransactionSaveAppBridgesCall) Do(f func(context.Context, ...storage.AppBridge) error) *MockTransactionSaveAppBridgesCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockTransactionSaveAppBridgesCall) DoAndReturn(f func(context.Context, ...storage.AppBridge) error) *MockTransactionSaveAppBridgesCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
+// SaveAppId mocks base method.
+func (m *MockTransaction) SaveAppId(ctx context.Context, ids ...storage.AppId) error {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx}
+	for _, a := range ids {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "SaveAppId", varargs...)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SaveAppId indicates an expected call of SaveAppId.
+func (mr *MockTransactionMockRecorder) SaveAppId(ctx any, ids ...any) *MockTransactionSaveAppIdCall {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx}, ids...)
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveAppId", reflect.TypeOf((*MockTransaction)(nil).SaveAppId), varargs...)
+	return &MockTransactionSaveAppIdCall{Call: call}
+}
+
+// MockTransactionSaveAppIdCall wrap *gomock.Call
+type MockTransactionSaveAppIdCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockTransactionSaveAppIdCall) Return(arg0 error) *MockTransactionSaveAppIdCall {
+	c.Call = c.Call.Return(arg0)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockTransactionSaveAppIdCall) Do(f func(context.Context, ...storage.AppId) error) *MockTransactionSaveAppIdCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockTransactionSaveAppIdCall) DoAndReturn(f func(context.Context, ...storage.AppId) error) *MockTransactionSaveAppIdCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // SaveBalanceUpdates mocks base method.
 func (m *MockTransaction) SaveBalanceUpdates(ctx context.Context, updates ...storage.BalanceUpdate) error {
 	m.ctrl.T.Helper()
@@ -2129,6 +2405,44 @@ func (c *MockTransactionUpdateAddressesCall) Do(f func(context.Context, ...*stor
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
 func (c *MockTransactionUpdateAddressesCall) DoAndReturn(f func(context.Context, ...*storage.Address) error) *MockTransactionUpdateAddressesCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
+// UpdateApp mocks base method.
+func (m *MockTransaction) UpdateApp(ctx context.Context, app *storage.App) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateApp", ctx, app)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateApp indicates an expected call of UpdateApp.
+func (mr *MockTransactionMockRecorder) UpdateApp(ctx, app any) *MockTransactionUpdateAppCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateApp", reflect.TypeOf((*MockTransaction)(nil).UpdateApp), ctx, app)
+	return &MockTransactionUpdateAppCall{Call: call}
+}
+
+// MockTransactionUpdateAppCall wrap *gomock.Call
+type MockTransactionUpdateAppCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockTransactionUpdateAppCall) Return(arg0 error) *MockTransactionUpdateAppCall {
+	c.Call = c.Call.Return(arg0)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockTransactionUpdateAppCall) Do(f func(context.Context, *storage.App) error) *MockTransactionUpdateAppCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockTransactionUpdateAppCall) DoAndReturn(f func(context.Context, *storage.App) error) *MockTransactionUpdateAppCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }

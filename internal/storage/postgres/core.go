@@ -7,12 +7,14 @@ import (
 	"context"
 
 	models "github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/postgres/migrations"
 	"github.com/dipdup-net/go-lib/config"
 	"github.com/dipdup-net/go-lib/database"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/pkg/errors"
 	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/migrate"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -39,12 +41,17 @@ type Storage struct {
 	State           models.IState
 	Search          models.ISearch
 	Stats           models.IStats
+	App             models.IApp
 	Notificator     *Notificator
 }
 
 // Create -
-func Create(ctx context.Context, cfg config.Database, scriptsDir string) (Storage, error) {
-	strg, err := postgres.Create(ctx, cfg, initDatabase)
+func Create(ctx context.Context, cfg config.Database, scriptsDir string, withMigrations bool) (Storage, error) {
+	init := initDatabase
+	if withMigrations {
+		init = initDatabaseWithMigrations
+	}
+	strg, err := postgres.Create(ctx, cfg, init)
 	if err != nil {
 		return Storage{}, err
 	}
@@ -68,6 +75,7 @@ func Create(ctx context.Context, cfg config.Database, scriptsDir string) (Storag
 		Validator:       NewValidator(strg.Connection()),
 		State:           NewState(strg.Connection()),
 		Search:          NewSearch(strg.Connection()),
+		App:             NewApp(strg.Connection()),
 		Stats:           NewStats(strg.Connection()),
 		Notificator:     NewNotificator(cfg, strg.Connection().DB()),
 	}
@@ -96,6 +104,8 @@ func initDatabase(ctx context.Context, conn *database.Bun) error {
 		(*models.RollupAction)(nil),
 		(*models.RollupAddress)(nil),
 		(*models.AddressAction)(nil),
+		(*models.AppId)(nil),
+		(*models.AppBridge)(nil),
 	)
 
 	if err := database.CreateTables(ctx, conn, models.Models...); err != nil {
@@ -120,6 +130,27 @@ func initDatabase(ctx context.Context, conn *database.Bun) error {
 	}
 
 	return createIndices(ctx, conn)
+}
+
+func initDatabaseWithMigrations(ctx context.Context, conn *database.Bun) error {
+	if err := initDatabase(ctx, conn); err != nil {
+		return err
+	}
+	return migrateDatabase(ctx, conn)
+}
+
+func migrateDatabase(ctx context.Context, db *database.Bun) error {
+	migrator := migrate.NewMigrator(db.DB(), migrations.Migrations)
+	if err := migrator.Init(ctx); err != nil {
+		return err
+	}
+	if err := migrator.Lock(ctx); err != nil {
+		return err
+	}
+	defer migrator.Unlock(ctx) //nolint:errcheck
+
+	_, err := migrator.Migrate(ctx)
+	return err
 }
 
 func createHypertables(ctx context.Context, conn *database.Bun) error {
