@@ -25,7 +25,7 @@ func NewApp(db *database.Bun) *App {
 	}
 }
 
-func (app *App) Leaderboard(ctx context.Context, fltrs storage.LeaderboardFilters) (rollups []storage.RollupWithStats, err error) {
+func (app *App) Leaderboard(ctx context.Context, fltrs storage.LeaderboardFilters) (rollups []storage.AppWithStats, err error) {
 	switch fltrs.SortField {
 	case columnTime:
 		fltrs.SortField = "last_time"
@@ -48,5 +48,14 @@ func (app *App) Leaderboard(ctx context.Context, fltrs storage.LeaderboardFilter
 	query = sortScope(query, fltrs.SortField, fltrs.Sort)
 	query = limitScope(query, fltrs.Limit)
 	err = query.Scan(ctx, &rollups)
+	return
+}
+
+func (app *App) BySlug(ctx context.Context, slug string) (result storage.AppWithStats, err error) {
+	err = app.DB().NewSelect().
+		Table(storage.ViewLeaderboard).
+		Where("slug = ?", slug).
+		Limit(1).
+		Scan(ctx, &result)
 	return
 }

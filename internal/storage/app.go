@@ -24,7 +24,8 @@ type LeaderboardFilters struct {
 type IApp interface {
 	storage.Table[*App]
 
-	Leaderboard(ctx context.Context, fltrs LeaderboardFilters) ([]RollupWithStats, error)
+	Leaderboard(ctx context.Context, fltrs LeaderboardFilters) ([]AppWithStats, error)
+	BySlug(ctx context.Context, slug string) (AppWithStats, error)
 }
 
 type App struct {
@@ -75,7 +76,7 @@ func (app App) IsEmpty() bool {
 		app.Category == ""
 }
 
-type RollupWithStats struct {
+type AppWithStats struct {
 	App
 	AppStats
 }

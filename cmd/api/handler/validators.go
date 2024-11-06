@@ -27,6 +27,9 @@ func NewApiValidator() *ApiValidator {
 	if err := v.RegisterValidation("action_type", actionTypeValidator()); err != nil {
 		panic(err)
 	}
+	if err := v.RegisterValidation("app_category", categoryValidator()); err != nil {
+		panic(err)
+	}
 	return &ApiValidator{validator: v}
 }
 
@@ -57,6 +60,13 @@ func statusValidator() validator.Func {
 func actionTypeValidator() validator.Func {
 	return func(fl validator.FieldLevel) bool {
 		_, err := types.ParseActionType(fl.Field().String())
+		return err == nil
+	}
+}
+
+func categoryValidator() validator.Func {
+	return func(fl validator.FieldLevel) bool {
+		_, err := types.ParseAppCategory(fl.Field().String())
 		return err == nil
 	}
 }

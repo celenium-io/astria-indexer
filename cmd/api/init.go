@@ -372,6 +372,16 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 		}
 	}
 
+	appHandler := handler.NewAppHandler(db.App)
+	apps := v1.Group("/app")
+	{
+		apps.GET("", appHandler.Leaderboard)
+		app := apps.Group("/:slug")
+		{
+			app.GET("", appHandler.Get)
+		}
+	}
+
 	if cfg.ApiConfig.Prometheus {
 		e.GET("/metrics", echoprometheus.NewHandler())
 	}

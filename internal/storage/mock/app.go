@@ -44,6 +44,45 @@ func (m *MockIApp) EXPECT() *MockIAppMockRecorder {
 	return m.recorder
 }
 
+// BySlug mocks base method.
+func (m *MockIApp) BySlug(ctx context.Context, slug string) (storage.AppWithStats, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "BySlug", ctx, slug)
+	ret0, _ := ret[0].(storage.AppWithStats)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// BySlug indicates an expected call of BySlug.
+func (mr *MockIAppMockRecorder) BySlug(ctx, slug any) *MockIAppBySlugCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BySlug", reflect.TypeOf((*MockIApp)(nil).BySlug), ctx, slug)
+	return &MockIAppBySlugCall{Call: call}
+}
+
+// MockIAppBySlugCall wrap *gomock.Call
+type MockIAppBySlugCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockIAppBySlugCall) Return(arg0 storage.AppWithStats, arg1 error) *MockIAppBySlugCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockIAppBySlugCall) Do(f func(context.Context, string) (storage.AppWithStats, error)) *MockIAppBySlugCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockIAppBySlugCall) DoAndReturn(f func(context.Context, string) (storage.AppWithStats, error)) *MockIAppBySlugCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // CursorList mocks base method.
 func (m *MockIApp) CursorList(ctx context.Context, id, limit uint64, order storage0.SortOrder, cmp storage0.Comparator) ([]*storage.App, error) {
 	m.ctrl.T.Helper()
@@ -200,10 +239,10 @@ func (c *MockIAppLastIDCall) DoAndReturn(f func(context.Context) (uint64, error)
 }
 
 // Leaderboard mocks base method.
-func (m *MockIApp) Leaderboard(ctx context.Context, fltrs storage.LeaderboardFilters) ([]storage.RollupWithStats, error) {
+func (m *MockIApp) Leaderboard(ctx context.Context, fltrs storage.LeaderboardFilters) ([]storage.AppWithStats, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Leaderboard", ctx, fltrs)
-	ret0, _ := ret[0].([]storage.RollupWithStats)
+	ret0, _ := ret[0].([]storage.AppWithStats)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -221,19 +260,19 @@ type MockIAppLeaderboardCall struct {
 }
 
 // Return rewrite *gomock.Call.Return
-func (c *MockIAppLeaderboardCall) Return(arg0 []storage.RollupWithStats, arg1 error) *MockIAppLeaderboardCall {
+func (c *MockIAppLeaderboardCall) Return(arg0 []storage.AppWithStats, arg1 error) *MockIAppLeaderboardCall {
 	c.Call = c.Call.Return(arg0, arg1)
 	return c
 }
 
 // Do rewrite *gomock.Call.Do
-func (c *MockIAppLeaderboardCall) Do(f func(context.Context, storage.LeaderboardFilters) ([]storage.RollupWithStats, error)) *MockIAppLeaderboardCall {
+func (c *MockIAppLeaderboardCall) Do(f func(context.Context, storage.LeaderboardFilters) ([]storage.AppWithStats, error)) *MockIAppLeaderboardCall {
 	c.Call = c.Call.Do(f)
 	return c
 }
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *MockIAppLeaderboardCall) DoAndReturn(f func(context.Context, storage.LeaderboardFilters) ([]storage.RollupWithStats, error)) *MockIAppLeaderboardCall {
+func (c *MockIAppLeaderboardCall) DoAndReturn(f func(context.Context, storage.LeaderboardFilters) ([]storage.AppWithStats, error)) *MockIAppLeaderboardCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }
