@@ -5,3 +5,4 @@
   tx_id: 1
   sender_id: 1
   size: 34
+  action_type: rollup_data_submission

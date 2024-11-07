@@ -26,6 +26,7 @@ type IApp interface {
 
 	Leaderboard(ctx context.Context, fltrs LeaderboardFilters) ([]AppWithStats, error)
 	BySlug(ctx context.Context, slug string) (AppWithStats, error)
+	Actions(ctx context.Context, slug string, limit, offset int, sort storage.SortOrder) ([]RollupAction, error)
 }
 
 type App struct {

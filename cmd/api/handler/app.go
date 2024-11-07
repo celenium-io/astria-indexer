@@ -119,3 +119,53 @@ func (handler AppHandler) Get(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, responses.NewAppWithStats(rollup))
 }
+
+type getAppActionsRequest struct {
+	Slug   string `param:"slug"   validate:"required"`
+	Limit  int    `query:"limit"  validate:"omitempty,min=1,max=100"`
+	Offset int    `query:"offset" validate:"omitempty,min=0"`
+	Sort   string `query:"sort"   validate:"omitempty,oneof=asc desc"`
+}
+
+func (p *getAppActionsRequest) SetDefault() {
+	if p.Limit == 0 {
+		p.Limit = 10
+	}
+	if p.Sort == "" {
+		p.Sort = asc
+	}
+}
+
+// Get godoc
+//
+//	@Summary		Get application info
+//	@Description	Get application info
+//	@Tags			applications
+//	@ID				get-application-actions
+//	@Param			slug		path	string	true	"Slug"
+//	@Param			limit		query	integer	false	"Count of requested entities"	minimum(1)		maximum(100)
+//	@Param			offset		query	integer	false	"Offset"						minimum(1)
+//	@Param			sort		query	string	false	"Sort order"					Enums(asc, desc)
+//	@Produce		json
+//	@Success		200	{array}		responses.Action
+//	@Failure		400	{object}	Error
+//	@Failure		500	{object}	Error
+//	@Router			/app/{slug}/actions [get]
+func (handler AppHandler) Actions(c echo.Context) error {
+	req, err := bindAndValidate[getAppActionsRequest](c)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+	req.SetDefault()
+
+	actions, err := handler.apps.Actions(c.Request().Context(), req.Slug, req.Limit, req.Offset, pgSort(req.Sort))
+	if err != nil {
+		return handleError(c, err, handler.apps)
+	}
+
+	result := make([]responses.Action, len(actions))
+	for i := range actions {
+		result[i] = responses.NewActionFromRollupAction(actions[i])
+	}
+	return returnArray(c, result)
+}

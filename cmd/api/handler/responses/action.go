@@ -90,3 +90,23 @@ func NewAddressAction(action storage.AddressAction) Action {
 
 	return result
 }
+
+func NewActionFromRollupAction(action storage.RollupAction) Action {
+	result := Action{
+		Id:     action.ActionId,
+		Height: action.Height,
+		Time:   action.Time,
+		Type:   action.ActionType,
+	}
+
+	if action.Tx != nil {
+		result.TxHash = hex.EncodeToString(action.Tx.Hash)
+	}
+	if action.Action != nil {
+		result.Data = action.Action.Data
+		result.Position = action.Action.Position
+		result.Fee = NewFee(action.Action.Fee)
+	}
+
+	return result
+}

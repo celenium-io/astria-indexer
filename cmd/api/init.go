@@ -379,6 +379,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 		app := apps.Group("/:slug")
 		{
 			app.GET("", appHandler.Get)
+			app.GET("/actions", appHandler.Actions)
 		}
 	}
 
