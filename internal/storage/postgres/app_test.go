@@ -115,3 +115,23 @@ func (s *StorageTestSuite) TestAppActions() {
 	s.Require().NotNil(action.Action.Data)
 	s.Require().NotNil(action.Action.Fee)
 }
+
+func (s *StorageTestSuite) TestAppSeries() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	for _, tf := range []storage.Timeframe{
+		"day", "hour", "month",
+	} {
+		for _, column := range []string{
+			"size", "actions_count", "size_per_action",
+		} {
+			series, err := s.storage.App.Series(ctx, "app-1", tf, column, storage.SeriesRequest{
+				From: time.Date(2023, 1, 1, 1, 1, 1, 1, time.UTC),
+			})
+			s.Require().NoError(err, column, tf)
+			s.Require().Len(series, 1, column, tf)
+
+		}
+	}
+}

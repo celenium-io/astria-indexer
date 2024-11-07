@@ -136,10 +136,10 @@ func (p *getAppActionsRequest) SetDefault() {
 	}
 }
 
-// Get godoc
+// Actions godoc
 //
-//	@Summary		Get application info
-//	@Description	Get application info
+//	@Summary		Get application actions
+//	@Description	Get application actions
 //	@Tags			applications
 //	@ID				get-application-actions
 //	@Param			slug		path	string	true	"Slug"
@@ -168,4 +168,52 @@ func (handler AppHandler) Actions(c echo.Context) error {
 		result[i] = responses.NewActionFromRollupAction(actions[i])
 	}
 	return returnArray(c, result)
+}
+
+type appStatsRequest struct {
+	Slug       string            `example:"app"        param:"slug"      swaggertype:"string"  validate:"required"`
+	Timeframe  storage.Timeframe `example:"hour"       param:"timeframe" swaggertype:"string"  validate:"required,oneof=hour day month"`
+	SeriesName string            `example:"size"       param:"name"      swaggertype:"string"  validate:"required,oneof=actions_count size size_per_action"`
+	From       int64             `example:"1692892095" query:"from"      swaggertype:"integer" validate:"omitempty,min=1"`
+	To         int64             `example:"1692892095" query:"to"        swaggertype:"integer" validate:"omitempty,min=1"`
+}
+
+// Series godoc
+//
+//	@Summary		Get application series
+//	@Description	Get application series
+//	@Tags			applications
+//	@ID				get-application-series
+//	@Param			slug		path	string	true	"Slug"
+//	@Param			name		path	string	true	"Series name"					Enums(actions_count, size, size_per_action)
+//	@Param			timeframe	path	string	true	"Timeframe"						Enums(hour, day, month)
+//	@Param			from		query	integer	false	"Time from in unix timestamp"	mininum(1)
+//	@Param			to			query	integer	false	"Time to in unix timestamp"		mininum(1)
+//	@Produce		json
+//	@Success		200	{array}		responses.SeriesItem
+//	@Failure		400	{object}	Error
+//	@Failure		500	{object}	Error
+//	@Router			/app/{slug}/series/{name}/{timeframe} [get]
+func (handler AppHandler) Series(c echo.Context) error {
+	req, err := bindAndValidate[appStatsRequest](c)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+
+	histogram, err := handler.apps.Series(
+		c.Request().Context(),
+		req.Slug,
+		req.Timeframe,
+		req.SeriesName,
+		storage.NewSeriesRequest(req.From, req.To),
+	)
+	if err != nil {
+		return handleError(c, err, handler.apps)
+	}
+
+	response := make([]responses.SeriesItem, len(histogram))
+	for i := range histogram {
+		response[i] = responses.NewSeriesItem(histogram[i])
+	}
+	return returnArray(c, response)
 }

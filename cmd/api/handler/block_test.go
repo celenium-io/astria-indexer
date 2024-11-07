@@ -101,9 +101,12 @@ var (
 				"data":      testsuite.MustHexDecode("deadbeaf"),
 			},
 		},
-		Rollup:   &testRollup,
-		RollupId: testRollup.Id,
-		ActionId: 1,
+		Rollup:     &testRollup,
+		RollupId:   testRollup.Id,
+		ActionId:   1,
+		ActionType: types.ActionTypeRollupDataSubmission,
+		Height:     100,
+		Time:       testTime,
 	}
 
 	testTx = storage.Tx{

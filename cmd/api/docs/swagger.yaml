@@ -854,7 +854,7 @@ paths:
       - applications
   /app/{slug}/actions:
     get:
-      description: Get application info
+      description: Get application actions
       operationId: get-application-actions
       parameters:
       - description: Slug
@@ -897,7 +897,63 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.Error'
-      summary: Get application info
+      summary: Get application actions
+      tags:
+      - applications
+  /app/{slug}/series/{name}/{timeframe}:
+    get:
+      description: Get application series
+      operationId: get-application-series
+      parameters:
+      - description: Slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: Series name
+        enum:
+        - actions_count
+        - size
+        - size_per_action
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Timeframe
+        enum:
+        - hour
+        - day
+        - month
+        in: path
+        name: timeframe
+        required: true
+        type: string
+      - description: Time from in unix timestamp
+        in: query
+        name: from
+        type: integer
+      - description: Time to in unix timestamp
+        in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.SeriesItem'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get application series
       tags:
       - applications
   /v1/address:

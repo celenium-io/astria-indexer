@@ -80,8 +80,22 @@ func (app *App) Actions(ctx context.Context, slug string, limit, offset int, sor
 		return
 	}
 
+	if len(appIds) == 0 {
+		return
+	}
+
 	subQuery := app.DB().NewSelect().
 		Model((*storage.RollupAction)(nil))
+
+	subQuery.WhereGroup(" AND ", func(sq *bun.SelectQuery) *bun.SelectQuery {
+		for i := range appIds {
+			sq = sq.WhereGroup(" OR ", func(q *bun.SelectQuery) *bun.SelectQuery {
+				return q.Where("rollup_id = ?", appIds[i].RolllupId).Where("sender_id = ?", appIds[i].AddressId)
+			})
+		}
+
+		return sq
+	})
 
 	subQuery = limitScope(subQuery, limit)
 	subQuery = offsetScope(subQuery, offset)
@@ -97,6 +111,75 @@ func (app *App) Actions(ctx context.Context, slug string, limit, offset int, sor
 		Join("left join action on action.id = rollup_action.action_id").
 		Join("left join tx on tx.id = rollup_action.tx_id").
 		Scan(ctx, &result)
+
+	return
+}
+
+func (app *App) Series(ctx context.Context, slug string, timeframe storage.Timeframe, column string, req storage.SeriesRequest) (items []storage.SeriesItem, err error) {
+	var id uint64
+	if err = app.DB().NewSelect().
+		Column("id").
+		Model((*storage.App)(nil)).
+		Where("slug = ?", slug).
+		Limit(1).
+		Scan(ctx, &id); err != nil {
+		return
+	}
+
+	var appIds []storage.AppId
+	if err = app.DB().NewSelect().
+		Model(&appIds).
+		Where("app_id = ?", id).
+		Scan(ctx); err != nil {
+		return
+	}
+
+	if len(appIds) == 0 {
+		return
+	}
+
+	query := app.DB().NewSelect().Order("time desc").Limit(100).Group("time")
+
+	switch timeframe {
+	case storage.TimeframeHour:
+		query = query.Table("app_stats_by_hour")
+	case storage.TimeframeDay:
+		query = query.Table("app_stats_by_day")
+	case storage.TimeframeMonth:
+		query = query.Table("app_stats_by_month")
+	default:
+		return nil, errors.Errorf("invalid timeframe: %s", timeframe)
+	}
+
+	switch column {
+	case "actions_count":
+		query = query.ColumnExpr("sum(actions_count) as value, time as ts")
+	case "size":
+		query = query.ColumnExpr("sum(size) as value, time as ts")
+	case "size_per_action":
+		query = query.ColumnExpr("(sum(size) / sum(actions_count)) as value, time as ts")
+	default:
+		return nil, errors.Errorf("invalid column: %s", column)
+	}
+
+	if !req.From.IsZero() {
+		query = query.Where("time >= ?", req.From)
+	}
+	if !req.To.IsZero() {
+		query = query.Where("time < ?", req.To)
+	}
+
+	query.WhereGroup(" AND ", func(sq *bun.SelectQuery) *bun.SelectQuery {
+		for i := range appIds {
+			sq = sq.WhereGroup(" OR ", func(q *bun.SelectQuery) *bun.SelectQuery {
+				return q.Where("rollup_id = ?", appIds[i].RolllupId).Where("sender_id = ?", appIds[i].AddressId)
+			})
+		}
+
+		return sq
+	})
+
+	err = query.Scan(ctx, &items)
 
 	return
 }

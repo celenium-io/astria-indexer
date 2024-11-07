@@ -393,6 +393,45 @@ func (c *MockIAppSaveCall) DoAndReturn(f func(context.Context, *storage.App) err
 	return c
 }
 
+// Series mocks base method.
+func (m *MockIApp) Series(ctx context.Context, slug string, timeframe storage.Timeframe, column string, req storage.SeriesRequest) ([]storage.SeriesItem, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Series", ctx, slug, timeframe, column, req)
+	ret0, _ := ret[0].([]storage.SeriesItem)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Series indicates an expected call of Series.
+func (mr *MockIAppMockRecorder) Series(ctx, slug, timeframe, column, req any) *MockIAppSeriesCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Series", reflect.TypeOf((*MockIApp)(nil).Series), ctx, slug, timeframe, column, req)
+	return &MockIAppSeriesCall{Call: call}
+}
+
+// MockIAppSeriesCall wrap *gomock.Call
+type MockIAppSeriesCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockIAppSeriesCall) Return(items []storage.SeriesItem, err error) *MockIAppSeriesCall {
+	c.Call = c.Call.Return(items, err)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockIAppSeriesCall) Do(f func(context.Context, string, storage.Timeframe, string, storage.SeriesRequest) ([]storage.SeriesItem, error)) *MockIAppSeriesCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockIAppSeriesCall) DoAndReturn(f func(context.Context, string, storage.Timeframe, string, storage.SeriesRequest) ([]storage.SeriesItem, error)) *MockIAppSeriesCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // Update mocks base method.
 func (m_2 *MockIApp) Update(ctx context.Context, m *storage.App) error {
 	m_2.ctrl.T.Helper()
