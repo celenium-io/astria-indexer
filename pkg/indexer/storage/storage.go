@@ -195,9 +195,6 @@ func (module *Module) processBlockInTransaction(ctx context.Context, tx storage.
 	for i := range block.Txs {
 		for j := range block.Txs[i].Actions {
 			block.Txs[i].Actions[j].TxId = block.Txs[i].Id
-			if block.Txs[i].Actions[j].RollupAction != nil {
-				block.Txs[i].Actions[j].RollupAction.SenderId = block.Txs[i].SignerId
-			}
 			actions = append(actions, &block.Txs[i].Actions[j])
 		}
 	}

@@ -14,3 +14,5 @@
   provider: best
   vm: SVM
   slug: app-1
+  rollup_id: 1
+  native_bridge_id: 1

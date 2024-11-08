@@ -39,8 +39,10 @@ func (s *StorageTestSuite) TestLeaderboard() {
 		s.Require().EqualValues(1, app.ActionsCount, column)
 		s.Require().False(app.LastActionTime.IsZero())
 		s.Require().False(app.FirstActionTime.IsZero())
-		s.Require().EqualValues(1, app.ActionsCountPct)
-		s.Require().EqualValues(1, app.SizePct)
+		s.Require().NotNil(app.Bridge)
+		s.Require().EqualValues("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", app.Bridge.Hash)
+		s.Require().NotNil(app.Rollup)
+		s.Require().EqualValues("19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539", hex.EncodeToString(app.Rollup.AstriaId))
 	}
 }
 
@@ -71,8 +73,10 @@ func (s *StorageTestSuite) TestLeaderboardWithCategory() {
 		s.Require().EqualValues(1, app.ActionsCount, column)
 		s.Require().False(app.LastActionTime.IsZero())
 		s.Require().False(app.FirstActionTime.IsZero())
-		s.Require().EqualValues(1, app.ActionsCountPct)
-		s.Require().EqualValues(1, app.SizePct)
+		s.Require().NotNil(app.Bridge)
+		s.Require().EqualValues("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", app.Bridge.Hash)
+		s.Require().NotNil(app.Rollup)
+		s.Require().EqualValues("19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539", hex.EncodeToString(app.Rollup.AstriaId))
 	}
 }
 
@@ -91,47 +95,8 @@ func (s *StorageTestSuite) TestAppBySlug() {
 	s.Require().EqualValues(1, app.ActionsCount)
 	s.Require().False(app.LastActionTime.IsZero())
 	s.Require().False(app.FirstActionTime.IsZero())
-	s.Require().EqualValues(1, app.ActionsCountPct)
-	s.Require().EqualValues(1, app.SizePct)
-}
-
-func (s *StorageTestSuite) TestAppActions() {
-	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer ctxCancel()
-
-	actions, err := s.storage.App.Actions(ctx, "app-1", 10, 0, sdk.SortOrderAsc)
-	s.Require().NoError(err)
-	s.Require().Len(actions, 1)
-
-	action := actions[0]
-	s.Require().EqualValues(1, action.RollupId)
-	s.Require().EqualValues(1, action.ActionId)
-	s.Require().EqualValues(1, action.TxId)
-	s.Require().EqualValues(1, action.SenderId)
-	s.Require().EqualValues(34, action.Size)
-	s.Require().EqualValues(7316, action.Height)
-	s.Require().EqualValues("20b0e6310801e7b2a16c69aace7b1a1d550e5c49c80f546941bb1ac747487fe5", hex.EncodeToString(action.Tx.Hash))
-	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.ActionType)
-	s.Require().NotNil(action.Action.Data)
-	s.Require().NotNil(action.Action.Fee)
-}
-
-func (s *StorageTestSuite) TestAppSeries() {
-	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer ctxCancel()
-
-	for _, tf := range []storage.Timeframe{
-		"day", "hour", "month",
-	} {
-		for _, column := range []string{
-			"size", "actions_count", "size_per_action",
-		} {
-			series, err := s.storage.App.Series(ctx, "app-1", tf, column, storage.SeriesRequest{
-				From: time.Date(2023, 1, 1, 1, 1, 1, 1, time.UTC),
-			})
-			s.Require().NoError(err, column, tf)
-			s.Require().Len(series, 1, column, tf)
-
-		}
-	}
+	s.Require().NotNil(app.Bridge)
+	s.Require().EqualValues("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", app.Bridge.Hash)
+	s.Require().NotNil(app.Rollup)
+	s.Require().EqualValues("19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539", hex.EncodeToString(app.Rollup.AstriaId))
 }

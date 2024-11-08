@@ -40,8 +40,6 @@ var (
 			Size:            1000,
 			LastActionTime:  testTime,
 			FirstActionTime: testTime,
-			ActionsCountPct: 0.1,
-			SizePct:         0.3,
 		},
 	}
 )
@@ -120,8 +118,6 @@ func (s *AppTestSuite) TestLeaderboard() {
 		s.Require().EqualValues(1000, rollup.Size)
 		s.Require().EqualValues(testTime, rollup.LastAction)
 		s.Require().EqualValues(testTime, rollup.FirstAction)
-		s.Require().EqualValues(0.1, rollup.ActionsCountPct)
-		s.Require().EqualValues(0.3, rollup.SizePct)
 	}
 }
 
@@ -152,72 +148,4 @@ func (s *AppTestSuite) TestGet() {
 	s.Require().EqualValues(1000, rollup.Size)
 	s.Require().EqualValues(testTime, rollup.LastAction)
 	s.Require().EqualValues(testTime, rollup.FirstAction)
-	s.Require().EqualValues(0.1, rollup.ActionsCountPct)
-	s.Require().EqualValues(0.3, rollup.SizePct)
-}
-
-func (s *AppTestSuite) TestActions() {
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	rec := httptest.NewRecorder()
-	c := s.echo.NewContext(req, rec)
-	c.SetPath("/app/:slug/actions")
-	c.SetParamNames("slug")
-	c.SetParamValues("test-app")
-
-	s.apps.EXPECT().
-		Actions(gomock.Any(), "test-app", 10, 0, sdk.SortOrderAsc).
-		Return([]storage.RollupAction{
-			testRollupAction,
-		}, nil).
-		Times(1)
-
-	s.Require().NoError(s.handler.Actions(c))
-	s.Require().Equal(http.StatusOK, rec.Code)
-
-	var actions []responses.Action
-	err := json.NewDecoder(rec.Body).Decode(&actions)
-	s.Require().NoError(err)
-	s.Require().Len(actions, 1)
-	s.Require().EqualValues(1, actions[0].Id)
-	s.Require().EqualValues(100, actions[0].Height)
-	s.Require().EqualValues(1, actions[0].Position)
-	s.Require().Equal(testTime, actions[0].Time)
-	s.Require().EqualValues(string(types.ActionTypeRollupDataSubmission), actions[0].Type)
-}
-
-func (s *AppTestSuite) TestSeries() {
-	for _, name := range []string{
-		"size", "actions_count", "size_per_action",
-	} {
-		for _, tf := range []storage.Timeframe{
-			"hour", "day", "month",
-		} {
-			req := httptest.NewRequest(http.MethodGet, "/", nil)
-			rec := httptest.NewRecorder()
-			c := s.echo.NewContext(req, rec)
-			c.SetPath("/app/:slug/stats/:name/:timeframe")
-			c.SetParamNames("slug", "name", "timeframe")
-			c.SetParamValues("test-app", name, string(tf))
-
-			s.apps.EXPECT().
-				Series(gomock.Any(), "test-app", tf, name, storage.NewSeriesRequest(0, 0)).
-				Return([]storage.SeriesItem{
-					{
-						Value: "10000",
-						Time:  testTime,
-					},
-				}, nil).
-				Times(1)
-
-			s.Require().NoError(s.handler.Series(c))
-			s.Require().Equal(http.StatusOK, rec.Code, name, tf)
-
-			var items []responses.SeriesItem
-			err := json.NewDecoder(rec.Body).Decode(&items)
-			s.Require().NoError(err, name, tf)
-			s.Require().Len(items, 1, name, tf)
-			s.Require().EqualValues("10000", items[0].Value, name, tf)
-			s.Require().EqualValues(testTime.UTC(), items[0].Time.UTC(), name, tf)
-		}
-	}
 }

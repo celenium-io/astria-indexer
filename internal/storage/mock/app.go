@@ -44,45 +44,6 @@ func (m *MockIApp) EXPECT() *MockIAppMockRecorder {
 	return m.recorder
 }
 
-// Actions mocks base method.
-func (m *MockIApp) Actions(ctx context.Context, slug string, limit, offset int, sort storage0.SortOrder) ([]storage.RollupAction, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Actions", ctx, slug, limit, offset, sort)
-	ret0, _ := ret[0].([]storage.RollupAction)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Actions indicates an expected call of Actions.
-func (mr *MockIAppMockRecorder) Actions(ctx, slug, limit, offset, sort any) *MockIAppActionsCall {
-	mr.mock.ctrl.T.Helper()
-	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Actions", reflect.TypeOf((*MockIApp)(nil).Actions), ctx, slug, limit, offset, sort)
-	return &MockIAppActionsCall{Call: call}
-}
-
-// MockIAppActionsCall wrap *gomock.Call
-type MockIAppActionsCall struct {
-	*gomock.Call
-}
-
-// Return rewrite *gomock.Call.Return
-func (c *MockIAppActionsCall) Return(arg0 []storage.RollupAction, arg1 error) *MockIAppActionsCall {
-	c.Call = c.Call.Return(arg0, arg1)
-	return c
-}
-
-// Do rewrite *gomock.Call.Do
-func (c *MockIAppActionsCall) Do(f func(context.Context, string, int, int, storage0.SortOrder) ([]storage.RollupAction, error)) *MockIAppActionsCall {
-	c.Call = c.Call.Do(f)
-	return c
-}
-
-// DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *MockIAppActionsCall) DoAndReturn(f func(context.Context, string, int, int, storage0.SortOrder) ([]storage.RollupAction, error)) *MockIAppActionsCall {
-	c.Call = c.Call.DoAndReturn(f)
-	return c
-}
-
 // BySlug mocks base method.
 func (m *MockIApp) BySlug(ctx context.Context, slug string) (storage.AppWithStats, error) {
 	m.ctrl.T.Helper()
@@ -389,45 +350,6 @@ func (c *MockIAppSaveCall) Do(f func(context.Context, *storage.App) error) *Mock
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
 func (c *MockIAppSaveCall) DoAndReturn(f func(context.Context, *storage.App) error) *MockIAppSaveCall {
-	c.Call = c.Call.DoAndReturn(f)
-	return c
-}
-
-// Series mocks base method.
-func (m *MockIApp) Series(ctx context.Context, slug string, timeframe storage.Timeframe, column string, req storage.SeriesRequest) ([]storage.SeriesItem, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Series", ctx, slug, timeframe, column, req)
-	ret0, _ := ret[0].([]storage.SeriesItem)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Series indicates an expected call of Series.
-func (mr *MockIAppMockRecorder) Series(ctx, slug, timeframe, column, req any) *MockIAppSeriesCall {
-	mr.mock.ctrl.T.Helper()
-	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Series", reflect.TypeOf((*MockIApp)(nil).Series), ctx, slug, timeframe, column, req)
-	return &MockIAppSeriesCall{Call: call}
-}
-
-// MockIAppSeriesCall wrap *gomock.Call
-type MockIAppSeriesCall struct {
-	*gomock.Call
-}
-
-// Return rewrite *gomock.Call.Return
-func (c *MockIAppSeriesCall) Return(items []storage.SeriesItem, err error) *MockIAppSeriesCall {
-	c.Call = c.Call.Return(items, err)
-	return c
-}
-
-// Do rewrite *gomock.Call.Do
-func (c *MockIAppSeriesCall) Do(f func(context.Context, string, storage.Timeframe, string, storage.SeriesRequest) ([]storage.SeriesItem, error)) *MockIAppSeriesCall {
-	c.Call = c.Call.Do(f)
-	return c
-}
-
-// DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *MockIAppSeriesCall) DoAndReturn(f func(context.Context, string, storage.Timeframe, string, storage.SeriesRequest) ([]storage.SeriesItem, error)) *MockIAppSeriesCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }

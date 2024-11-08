@@ -575,46 +575,11 @@ func (tx Transaction) UpdateApp(ctx context.Context, app *models.App) error {
 	if app.VM != "" {
 		query = query.Set("vm = ?", app.VM)
 	}
+	if app.RollupId > 0 {
+		query = query.Set("rollup_id = ?", app.RollupId)
+	}
 
 	_, err := query.Exec(ctx)
-	return err
-}
-
-func (tx Transaction) SaveAppId(ctx context.Context, ids ...models.AppId) error {
-	if len(ids) == 0 {
-		return nil
-	}
-	_, err := tx.Tx().NewInsert().Model(&ids).Exec(ctx)
-	return err
-}
-
-func (tx Transaction) DeleteAppId(ctx context.Context, appId uint64) error {
-	if appId == 0 {
-		return nil
-	}
-	_, err := tx.Tx().NewDelete().
-		Model((*models.AppId)(nil)).
-		Where("app_id = ?", appId).
-		Exec(ctx)
-	return err
-}
-
-func (tx Transaction) SaveAppBridges(ctx context.Context, bridges ...models.AppBridge) error {
-	if len(bridges) == 0 {
-		return nil
-	}
-	_, err := tx.Tx().NewInsert().Model(&bridges).Exec(ctx)
-	return err
-}
-
-func (tx Transaction) DeleteAppBridges(ctx context.Context, appId uint64) error {
-	if appId == 0 {
-		return nil
-	}
-	_, err := tx.Tx().NewDelete().
-		Model((*models.AppBridge)(nil)).
-		Where("app_id = ?", appId).
-		Exec(ctx)
 	return err
 }
 

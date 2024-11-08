@@ -7,7 +7,6 @@ import (
 	"context"
 	"encoding/base64"
 
-	"github.com/celenium-io/astria-indexer/internal/astria"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
@@ -20,7 +19,6 @@ import (
 type AppHandler struct {
 	apps    storage.IApp
 	address storage.IAddress
-	bridge  storage.IBridge
 	rollup  storage.IRollup
 	tx      sdk.Transactable
 }
@@ -28,48 +26,35 @@ type AppHandler struct {
 func NewAppHandler(
 	apps storage.IApp,
 	address storage.IAddress,
-	bridge storage.IBridge,
 	rollup storage.IRollup,
 	tx sdk.Transactable,
 ) AppHandler {
 	return AppHandler{
 		apps:    apps,
 		address: address,
-		bridge:  bridge,
 		rollup:  rollup,
 		tx:      tx,
 	}
 }
 
 type createAppRequest struct {
-	Group       string   `json:"group"       validate:"omitempty,min=1"`
-	Name        string   `json:"name"        validate:"required,min=1"`
-	Description string   `json:"description" validate:"required,min=1"`
-	Website     string   `json:"website"     validate:"omitempty,url"`
-	GitHub      string   `json:"github"      validate:"omitempty,url"`
-	Twitter     string   `json:"twitter"     validate:"omitempty,url"`
-	Logo        string   `json:"logo"        validate:"omitempty,url"`
-	L2Beat      string   `json:"l2beat"      validate:"omitempty,url"`
-	Explorer    string   `json:"explorer"    validate:"omitempty,url"`
-	Stack       string   `json:"stack"       validate:"omitempty"`
-	Links       []string `json:"links"       validate:"omitempty,dive,url"`
-	Category    string   `json:"category"    validate:"omitempty,app_category"`
-	Type        string   `json:"type"        validate:"omitempty,app_type"`
-	VM          string   `json:"vm"          validate:"omitempty"`
-	Provider    string   `json:"provider"    validate:"omitempty"`
-
-	AppIds  []appId  `json:"app_ids" validate:"required,min=1"`
-	Bridges []bridge `json:"bridges" validate:"omitempty"`
-}
-
-type appId struct {
-	Rollup  string `json:"rollup"  validate:"omitempty,base64"`
-	Address string `json:"address" validate:"required,address"`
-}
-
-type bridge struct {
-	Address string `json:"address" validate:"required,address"`
-	Native  bool   `json:"native"  validate:"omitempty"`
+	Group        string   `json:"group"         validate:"omitempty,min=1"`
+	Name         string   `json:"name"          validate:"required,min=1"`
+	Description  string   `json:"description"   validate:"required,min=1"`
+	Website      string   `json:"website"       validate:"omitempty,url"`
+	GitHub       string   `json:"github"        validate:"omitempty,url"`
+	Twitter      string   `json:"twitter"       validate:"omitempty,url"`
+	Logo         string   `json:"logo"          validate:"omitempty,url"`
+	L2Beat       string   `json:"l2beat"        validate:"omitempty,url"`
+	Explorer     string   `json:"explorer"      validate:"omitempty,url"`
+	Stack        string   `json:"stack"         validate:"omitempty"`
+	Links        []string `json:"links"         validate:"omitempty,dive,url"`
+	Category     string   `json:"category"      validate:"omitempty,app_category"`
+	Type         string   `json:"type"          validate:"omitempty,app_type"`
+	VM           string   `json:"vm"            validate:"omitempty"`
+	Provider     string   `json:"provider"      validate:"omitempty"`
+	Rollup       string   `json:"rollup"        validate:"required,base64"`
+	NativeBridge string   `json:"native_bridge" validate:"omitempty,address"`
 }
 
 func (handler AppHandler) Create(c echo.Context) error {
@@ -91,7 +76,16 @@ func (handler AppHandler) createApp(ctx context.Context, req *createAppRequest) 
 		return err
 	}
 
-	rollup := storage.App{
+	hash, err := base64.StdEncoding.DecodeString(req.Rollup)
+	if err != nil {
+		return err
+	}
+	rollup, err := handler.rollup.ByHash(ctx, hash)
+	if err != nil {
+		return err
+	}
+
+	app := storage.App{
 		Group:       req.Group,
 		Name:        req.Name,
 		Description: req.Description,
@@ -108,27 +102,22 @@ func (handler AppHandler) createApp(ctx context.Context, req *createAppRequest) 
 		Type:        types.AppType(req.Type),
 		Category:    types.AppCategory(req.Category),
 		Slug:        slug.Make(req.Name),
+		RollupId:    rollup.Id,
 	}
 
-	if err := tx.SaveApp(ctx, &rollup); err != nil {
-		return tx.HandleError(ctx, err)
+	if req.NativeBridge != "" {
+		addr, err := handler.address.ByHash(ctx, req.NativeBridge)
+		if err != nil {
+			return err
+		}
+		if !addr.IsBridge {
+			return tx.HandleError(ctx, errors.Errorf("address %s is not a bridge", req.NativeBridge))
+		}
+
+		app.NativeBridgeId = addr.Id
 	}
 
-	appIds, err := handler.createAppIds(ctx, rollup.Id, req.AppIds...)
-	if err != nil {
-		return tx.HandleError(ctx, err)
-	}
-
-	if err := tx.SaveAppId(ctx, appIds...); err != nil {
-		return tx.HandleError(ctx, err)
-	}
-
-	bridges, err := handler.createBridges(ctx, rollup.Id, req.Bridges...)
-	if err != nil {
-		return tx.HandleError(ctx, err)
-	}
-
-	if err := tx.SaveAppBridges(ctx, bridges...); err != nil {
+	if err := tx.SaveApp(ctx, &app); err != nil {
 		return tx.HandleError(ctx, err)
 	}
 
@@ -139,81 +128,26 @@ func (handler AppHandler) createApp(ctx context.Context, req *createAppRequest) 
 	return tx.Flush(ctx)
 }
 
-func (handler AppHandler) createAppIds(ctx context.Context, id uint64, data ...appId) ([]storage.AppId, error) {
-	providers := make([]storage.AppId, len(data))
-	for i := range data {
-		providers[i].AppId = id
-
-		if !astria.IsAddress(data[i].Address) {
-			return nil, errors.Wrap(errInvalidAddress, data[i].Address)
-		}
-
-		address, err := handler.address.ByHash(ctx, data[i].Address)
-		if err != nil {
-			return nil, err
-		}
-		providers[i].AddressId = address.Id
-
-		if data[i].Rollup != "" {
-			hashRollup, err := base64.StdEncoding.DecodeString(data[i].Rollup)
-			if err != nil {
-				return nil, err
-			}
-			rollup, err := handler.rollup.ByHash(ctx, hashRollup)
-			if err != nil {
-				return nil, err
-			}
-			providers[i].RolllupId = rollup.Id
-		}
-	}
-	return providers, nil
-}
-
-func (handler AppHandler) createBridges(ctx context.Context, id uint64, data ...bridge) ([]storage.AppBridge, error) {
-	bridges := make([]storage.AppBridge, len(data))
-	for i := range data {
-		bridges[i].AppId = id
-
-		if !astria.IsAddress(data[i].Address) {
-			return nil, errors.Wrap(errInvalidAddress, data[i].Address)
-		}
-
-		address, err := handler.address.ByHash(ctx, data[i].Address)
-		if err != nil {
-			return nil, err
-		}
-
-		b, err := handler.bridge.ByAddress(ctx, address.Id)
-		if err != nil {
-			return nil, err
-		}
-		bridges[i].BridgeId = b.Id
-		bridges[i].Native = data[i].Native
-	}
-	return bridges, nil
-}
-
 type updateAppRequest struct {
 	Id uint64 `param:"id" validate:"required,min=1"`
 
-	Group       string   `json:"group"       validate:"omitempty,min=1"`
-	Name        string   `json:"name"        validate:"omitempty,min=1"`
-	Description string   `json:"description" validate:"omitempty,min=1"`
-	Website     string   `json:"website"     validate:"omitempty,url"`
-	GitHub      string   `json:"github"      validate:"omitempty,url"`
-	Twitter     string   `json:"twitter"     validate:"omitempty,url"`
-	Logo        string   `json:"logo"        validate:"omitempty,url"`
-	L2Beat      string   `json:"l2beat"      validate:"omitempty,url"`
-	Explorer    string   `json:"explorer"    validate:"omitempty,url"`
-	Stack       string   `json:"stack"       validate:"omitempty"`
-	Links       []string `json:"links"       validate:"omitempty,dive,url"`
-	Category    string   `json:"category"    validate:"omitempty,app_category"`
-	Type        string   `json:"type"        validate:"omitempty,app_type"`
-	VM          string   `json:"vm"          validate:"omitempty"`
-	Provider    string   `json:"provider"    validate:"omitempty"`
-
-	AppIds  []appId  `json:"app_ids" validate:"omitempty,min=1"`
-	Bridges []bridge `json:"bridges" validate:"omitempty"`
+	Group        string   `json:"group"         validate:"omitempty,min=1"`
+	Name         string   `json:"name"          validate:"omitempty,min=1"`
+	Description  string   `json:"description"   validate:"omitempty,min=1"`
+	Website      string   `json:"website"       validate:"omitempty,url"`
+	GitHub       string   `json:"github"        validate:"omitempty,url"`
+	Twitter      string   `json:"twitter"       validate:"omitempty,url"`
+	Logo         string   `json:"logo"          validate:"omitempty,url"`
+	L2Beat       string   `json:"l2beat"        validate:"omitempty,url"`
+	Explorer     string   `json:"explorer"      validate:"omitempty,url"`
+	Stack        string   `json:"stack"         validate:"omitempty"`
+	Links        []string `json:"links"         validate:"omitempty,dive,url"`
+	Category     string   `json:"category"      validate:"omitempty,app_category"`
+	Type         string   `json:"type"          validate:"omitempty,app_type"`
+	VM           string   `json:"vm"            validate:"omitempty"`
+	Provider     string   `json:"provider"      validate:"omitempty"`
+	Rollup       string   `json:"rollup"        validate:"omitempty,base64"`
+	NativeBridge string   `json:"native_bridge" validate:"omitempty,address"`
 }
 
 func (handler AppHandler) Update(c echo.Context) error {
@@ -258,38 +192,32 @@ func (handler AppHandler) updateRollup(ctx context.Context, req *updateAppReques
 		Links:       req.Links,
 	}
 
+	if req.Rollup != "" {
+		hash, err := base64.StdEncoding.DecodeString(req.Rollup)
+		if err != nil {
+			return err
+		}
+		rollup, err := handler.rollup.ByHash(ctx, hash)
+		if err != nil {
+			return err
+		}
+		app.RollupId = rollup.Id
+	}
+
+	if req.NativeBridge != "" {
+		addr, err := handler.address.ByHash(ctx, req.NativeBridge)
+		if err != nil {
+			return err
+		}
+		if !addr.IsBridge {
+			return tx.HandleError(ctx, errors.Errorf("address %s is not a bridge", req.NativeBridge))
+		}
+
+		app.NativeBridgeId = addr.Id
+	}
+
 	if err := tx.UpdateApp(ctx, &app); err != nil {
 		return tx.HandleError(ctx, err)
-	}
-
-	if len(req.AppIds) > 0 {
-		if err := tx.DeleteAppId(ctx, req.Id); err != nil {
-			return tx.HandleError(ctx, err)
-		}
-
-		appIds, err := handler.createAppIds(ctx, app.Id, req.AppIds...)
-		if err != nil {
-			return tx.HandleError(ctx, err)
-		}
-
-		if err := tx.SaveAppId(ctx, appIds...); err != nil {
-			return tx.HandleError(ctx, err)
-		}
-	}
-
-	if len(req.Bridges) > 0 {
-		if err := tx.DeleteAppBridges(ctx, req.Id); err != nil {
-			return tx.HandleError(ctx, err)
-		}
-
-		bridges, err := handler.createBridges(ctx, app.Id, req.Bridges...)
-		if err != nil {
-			return tx.HandleError(ctx, err)
-		}
-
-		if err := tx.SaveAppBridges(ctx, bridges...); err != nil {
-			return tx.HandleError(ctx, err)
-		}
 	}
 
 	if err := tx.RefreshLeaderboard(ctx); err != nil {
@@ -320,14 +248,6 @@ func (handler AppHandler) deleteRollup(ctx context.Context, id uint64) error {
 	tx, err := postgres.BeginTransaction(ctx, handler.tx)
 	if err != nil {
 		return err
-	}
-
-	if err := tx.DeleteAppId(ctx, id); err != nil {
-		return tx.HandleError(ctx, err)
-	}
-
-	if err := tx.DeleteAppBridges(ctx, id); err != nil {
-		return tx.HandleError(ctx, err)
 	}
 
 	if err := tx.DeleteApp(ctx, id); err != nil {

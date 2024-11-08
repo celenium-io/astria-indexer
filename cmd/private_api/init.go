@@ -167,7 +167,7 @@ func initHandlers(e *echo.Echo, db postgres.Storage) {
 		},
 	})
 
-	appAuthHandler := handler.NewAppHandler(db.App, db.Address, db.Bridges, db.Rollup, db.Transactable)
+	appAuthHandler := handler.NewAppHandler(db.App, db.Address, db.Rollup, db.Transactable)
 	app := v1.Group("/app")
 	{
 		app.POST("", appAuthHandler.Create, keyMiddleware)
