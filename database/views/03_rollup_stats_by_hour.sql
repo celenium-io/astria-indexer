@@ -8,7 +8,9 @@ WITH (timescaledb.continuous, timescaledb.materialized_only=false) AS
 		min(size) as min_size,
 		max(size) as max_size,
 		avg(size) as avg_size,
-		percentile_agg(size) as size_pct
+		percentile_agg(size) as size_pct,
+		min(time) as first_time,
+		max(time) as last_time
 	from rollup_action
 	group by 1, 2
 	order by 1 desc;

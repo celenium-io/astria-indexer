@@ -21,13 +21,10 @@ func NewApiValidator() *ApiValidator {
 	if err := v.RegisterValidation("address", addressValidator()); err != nil {
 		panic(err)
 	}
-	if err := v.RegisterValidation("status", statusValidator()); err != nil {
-		panic(err)
-	}
-	if err := v.RegisterValidation("action_type", actionTypeValidator()); err != nil {
-		panic(err)
-	}
 	if err := v.RegisterValidation("app_category", categoryValidator()); err != nil {
+		panic(err)
+	}
+	if err := v.RegisterValidation("app_type", appTypeValidator()); err != nil {
 		panic(err)
 	}
 	return &ApiValidator{validator: v}
@@ -50,23 +47,16 @@ func addressValidator() validator.Func {
 	}
 }
 
-func statusValidator() validator.Func {
-	return func(fl validator.FieldLevel) bool {
-		_, err := types.ParseStatus(fl.Field().String())
-		return err == nil
-	}
-}
-
-func actionTypeValidator() validator.Func {
-	return func(fl validator.FieldLevel) bool {
-		_, err := types.ParseActionType(fl.Field().String())
-		return err == nil
-	}
-}
-
 func categoryValidator() validator.Func {
 	return func(fl validator.FieldLevel) bool {
 		_, err := types.ParseAppCategory(fl.Field().String())
+		return err == nil
+	}
+}
+
+func appTypeValidator() validator.Func {
+	return func(fl validator.FieldLevel) bool {
+		_, err := types.ParseAppType(fl.Field().String())
 		return err == nil
 	}
 }

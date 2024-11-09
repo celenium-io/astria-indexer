@@ -39,6 +39,7 @@ var Models = []any{
 	&Fee{},
 	&Transfer{},
 	&Deposit{},
+	&App{},
 }
 
 //go:generate mockgen -source=$GOFILE -destination=mock/$GOFILE -package=mock -typed
@@ -61,6 +62,9 @@ type Transaction interface {
 	SaveFees(ctx context.Context, fees ...*Fee) error
 	SaveTransfers(ctx context.Context, transfers ...*Transfer) error
 	SaveDeposits(ctx context.Context, deposits ...*Deposit) error
+	SaveApp(ctx context.Context, app *App) error
+	UpdateApp(ctx context.Context, app *App) error
+	DeleteApp(ctx context.Context, appId uint64) error
 	RetentionBlockSignatures(ctx context.Context, height types.Level) error
 
 	RollbackActions(ctx context.Context, height types.Level) (actions []Action, err error)
@@ -92,6 +96,7 @@ type Transaction interface {
 	Validators(ctx context.Context) ([]Validator, error)
 	GetBridgeIdByAddressId(ctx context.Context, id uint64) (uint64, error)
 	GetAddressId(ctx context.Context, hash string) (uint64, error)
+	RefreshLeaderboard(ctx context.Context) error
 }
 
 type SearchResult struct {

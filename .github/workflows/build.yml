@@ -68,3 +68,22 @@ jobs:
           cache-to: type=gha,mode=max
           tags: ${{ steps.meta-api.outputs.tags }}
           labels: ${{ steps.meta-api.outputs.labels }}
+
+      # Private API
+
+      - name: API image tags & labels
+        id: private-api
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_IMAGE_BASE }}-private-api
+
+      - name: Private API image build & push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: build/private_api/Dockerfile
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: ${{ steps.meta-api.outputs.tags }}
+          labels: ${{ steps.meta-api.outputs.labels }}

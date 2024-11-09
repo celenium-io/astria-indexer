@@ -54,6 +54,26 @@ func createTypes(ctx context.Context, conn *database.Bun) error {
 		); err != nil {
 			return err
 		}
+
+		if _, err := tx.ExecContext(
+			ctx,
+			createTypeQuery,
+			"app_type",
+			bun.Safe("app_type"),
+			bun.In(types.AppTypeValues()),
+		); err != nil {
+			return err
+		}
+
+		if _, err := tx.ExecContext(
+			ctx,
+			createTypeQuery,
+			"app_category",
+			bun.Safe("app_category"),
+			bun.In(types.AppCategoryValues()),
+		); err != nil {
+			return err
+		}
 		return nil
 	})
 }

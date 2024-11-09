@@ -1,0 +1,18 @@
+- id: 1
+  name: App 1
+  group: Group 1
+  description: Very interesting application
+  website: https://astrotrek.io
+  github: https://github.com/celenium-io
+  twitter: https://x.com/EclipseFND
+  logo: https://celenium.fra1.cdn.digitaloceanspaces.com/rollups/Eclipse.jpg
+  l2beat: https://l2beat.com/bridges/projects/eclipse
+  explorer: https://explorer.eclipse.xyz/
+  stack: SVM
+  type: sovereign
+  category: social
+  provider: best
+  vm: SVM
+  slug: app-1
+  rollup_id: 1
+  native_bridge_id: 1

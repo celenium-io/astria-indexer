@@ -18,6 +18,129 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/app": {
+            "get": {
+                "description": "List applications info",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "applications"
+                ],
+                "summary": "List applications info",
+                "operationId": "list-applications",
+                "parameters": [
+                    {
+                        "maximum": 100,
+                        "type": "integer",
+                        "description": "Count of requested entities",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "description": "Sort order. Default: desc",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "time",
+                            "actions_count",
+                            "size"
+                        ],
+                        "type": "string",
+                        "description": "Sort field. Default: size",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Comma-separated application category list",
+                        "name": "category",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.AppWithStats"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/app/{slug}": {
+            "get": {
+                "description": "Get application info",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "applications"
+                ],
+                "summary": "Get application info",
+                "operationId": "get-application",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Slug",
+                        "name": "slug",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.AppWithStats"
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/address": {
             "get": {
                 "description": "List address info",
@@ -2804,6 +2927,122 @@ const docTemplate = `{
                 "signed_tx_count": {
                     "type": "integer",
                     "example": 10
+                }
+            }
+        },
+        "responses.AppWithStats": {
+            "type": "object",
+            "properties": {
+                "actions_count": {
+                    "type": "integer",
+                    "format": "integer",
+                    "example": 2
+                },
+                "actions_count_pct": {
+                    "type": "number",
+                    "format": "float",
+                    "example": 0.9876
+                },
+                "category": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "nft"
+                },
+                "description": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "Long rollup description"
+                },
+                "explorer": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "https://explorer.karak.network/"
+                },
+                "first_message_time": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2023-07-04T03:10:57+00:00"
+                },
+                "github": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "https://github.com/account"
+                },
+                "id": {
+                    "type": "integer",
+                    "format": "integer",
+                    "example": 321
+                },
+                "l2_beat": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "https://l2beat.com/scaling/projects/karak"
+                },
+                "last_message_time": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2023-07-04T03:10:57+00:00"
+                },
+                "links": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "logo": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "https://some_link.com/image.png"
+                },
+                "name": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "Rollup name"
+                },
+                "provider": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "name"
+                },
+                "size": {
+                    "type": "integer",
+                    "format": "integer",
+                    "example": 1000
+                },
+                "size_pct": {
+                    "type": "number",
+                    "format": "float",
+                    "example": 0.9876
+                },
+                "slug": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "rollup_slug"
+                },
+                "stack": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "op_stack"
+                },
+                "twitter": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "https://x.com/account"
+                },
+                "type": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "settled"
+                },
+                "vm": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "evm"
+                },
+                "website": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "https://website.com"
                 }
             }
         },

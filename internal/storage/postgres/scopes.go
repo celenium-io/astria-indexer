@@ -9,6 +9,12 @@ import (
 	"github.com/uptrace/bun"
 )
 
+const (
+	columnSize         = "size"
+	columnActionsCount = "actions_count"
+	columnTime         = "time"
+)
+
 func limitScope(q *bun.SelectQuery, limit int) *bun.SelectQuery {
 	if limit < 1 || limit > 100 {
 		limit = 10

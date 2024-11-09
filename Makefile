@@ -8,6 +8,9 @@ indexer:
 api:
 	cd cmd/api && go run . -c ../../configs/dipdup.yml
 
+private_api:
+	cd cmd/private_api && go run . -c ../../configs/dipdup.yml
+
 generate:
 	go generate -v ./internal/storage ./internal/storage/types ./pkg/node
 
@@ -34,4 +37,4 @@ license-header:
 build:
 	docker-compose up -d --build
 
-.PHONY: indexer api generate test lint cover api-docs ga license-header build
+.PHONY: indexer api generate test lint cover api-docs ga license-header build private_api

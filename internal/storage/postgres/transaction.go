@@ -7,6 +7,7 @@ import (
 	"context"
 
 	"github.com/celenium-io/astria-indexer/pkg/types"
+	"github.com/lib/pq"
 	"github.com/uptrace/bun"
 
 	models "github.com/celenium-io/astria-indexer/internal/storage"
@@ -509,4 +510,91 @@ func (tx Transaction) GetAddressId(ctx context.Context, hash string) (addrId uin
 		Where("hash = ?", hash).
 		Scan(ctx, &addrId)
 	return
+}
+
+func (tx Transaction) SaveApp(ctx context.Context, app *models.App) error {
+	if app == nil {
+		return nil
+	}
+	_, err := tx.Tx().NewInsert().Model(app).Exec(ctx)
+	return err
+}
+
+func (tx Transaction) UpdateApp(ctx context.Context, app *models.App) error {
+	if app == nil || app.IsEmpty() {
+		return nil
+	}
+
+	query := tx.Tx().NewUpdate().Model(app).WherePK()
+
+	if app.Group != "" {
+		query = query.Set("group = ?", app.Group)
+	}
+	if app.Name != "" {
+		query = query.Set("name = ?", app.Name)
+	}
+	if app.Slug != "" {
+		query = query.Set("slug = ?", app.Slug)
+	}
+	if app.Description != "" {
+		query = query.Set("description = ?", app.Description)
+	}
+	if app.Twitter != "" {
+		query = query.Set("twitter = ?", app.Twitter)
+	}
+	if app.Github != "" {
+		query = query.Set("github = ?", app.Github)
+	}
+	if app.Website != "" {
+		query = query.Set("website = ?", app.Website)
+	}
+	if app.Logo != "" {
+		query = query.Set("logo = ?", app.Logo)
+	}
+	if app.L2Beat != "" {
+		query = query.Set("l2beat = ?", app.L2Beat)
+	}
+	if app.Explorer != "" {
+		query = query.Set("explorer = ?", app.Explorer)
+	}
+	if app.Stack != "" {
+		query = query.Set("stack = ?", app.Stack)
+	}
+	if app.Links != nil {
+		query = query.Set("links = ?", pq.Array(app.Links))
+	}
+	if app.Type != "" {
+		query = query.Set("type = ?", app.Type)
+	}
+	if app.Category != "" {
+		query = query.Set("category = ?", app.Category)
+	}
+	if app.Provider != "" {
+		query = query.Set("provider = ?", app.Provider)
+	}
+	if app.VM != "" {
+		query = query.Set("vm = ?", app.VM)
+	}
+	if app.RollupId > 0 {
+		query = query.Set("rollup_id = ?", app.RollupId)
+	}
+
+	_, err := query.Exec(ctx)
+	return err
+}
+
+func (tx Transaction) DeleteApp(ctx context.Context, appId uint64) error {
+	if appId == 0 {
+		return nil
+	}
+	_, err := tx.Tx().NewDelete().
+		Model((*models.App)(nil)).
+		Where("id = ?", appId).
+		Exec(ctx)
+	return err
+}
+
+func (tx Transaction) RefreshLeaderboard(ctx context.Context) error {
+	_, err := tx.Tx().ExecContext(ctx, "REFRESH MATERIALIZED VIEW leaderboard;")
+	return err
 }
