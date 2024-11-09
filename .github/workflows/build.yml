@@ -71,8 +71,8 @@ jobs:
 
       # Private API
 
-      - name: API image tags & labels
-        id: private-api
+      - name: Private API image tags & labels
+        id: meta-private-api
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_IMAGE_BASE }}-private-api
@@ -85,5 +85,5 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ${{ steps.meta-api.outputs.tags }}
-          labels: ${{ steps.meta-api.outputs.labels }}
+          tags: ${{ steps.meta-private-api.outputs.tags }}
+          labels: ${{ steps.meta-private-api.outputs.labels }}
