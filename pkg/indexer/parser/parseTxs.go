@@ -40,7 +40,7 @@ func parseTxs(ctx context.Context, b types.BlockData, decodeCtx *decode.Context,
 		}
 		txs[i-index] = &t
 
-		decodeCtx.ClearFee()
+		decodeCtx.ClearTx()
 	}
 
 	return txs, nil
