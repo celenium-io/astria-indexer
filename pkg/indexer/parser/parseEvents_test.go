@@ -98,7 +98,7 @@ func Test_parseWriteAck(t *testing.T) {
 		attrs := []types.EventAttribute{
 			{
 				Key:   "packet_ack",
-				Value: `{"error":"{\"0\": \"failed to execute ics20 transfer to bridge account\", \"1\": \"failed to parse memo as Ics20TransferDepositMemo\", \"2\": \"EOF while parsing a value at line 1 column 0\"}"}`,
+				Value: `{\"error\":\"{\"0\": \"failed to execute ics20 transfer to bridge account\", \"1\": \"failed to parse memo as Ics20TransferDepositMemo\", \"2\": \"EOF while parsing a value at line 1 column 0\"}\"}`,
 			}, {
 				Key:   "packet_data",
 				Value: `{"amount":"100000","denom":"uusdc","receiver":"astriacompat13vptdafyttpmlwppt0s844efey2cpc0mw6dhm2","sender":"noble1rmhdkl3aaw95zdecnj5paaqcjavm8sylftznrs"}`,
@@ -121,7 +121,7 @@ func Test_parseWriteAck(t *testing.T) {
 		attrs := []types.EventAttribute{
 			{
 				Key:   "packet_ack",
-				Value: `{"result":"AQ=="}`,
+				Value: `{\"result\":\"AQ==\"}`,
 			}, {
 				Key:   "packet_data",
 				Value: `{"amount":"100000","denom":"uusdc","receiver":"astriacompat13vptdafyttpmlwppt0s844efey2cpc0mw6dhm2","sender":"noble1rmhdkl3aaw95zdecnj5paaqcjavm8sylftznrs"}`,

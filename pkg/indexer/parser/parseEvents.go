@@ -16,7 +16,6 @@ import (
 	"github.com/celenium-io/astria-indexer/pkg/indexer/decode"
 	"github.com/celenium-io/astria-indexer/pkg/node"
 	"github.com/celenium-io/astria-indexer/pkg/types"
-	"github.com/goccy/go-json"
 	"github.com/pkg/errors"
 	"github.com/shopspring/decimal"
 	"google.golang.org/protobuf/proto"
@@ -159,20 +158,11 @@ func parseTxDeposit(attrs []types.EventAttribute, height types.Level, decodeCtx 
 	return nil
 }
 
-type packetAck struct {
-	Error  string `json:"error,omitempty"`
-	Result string `json:"result,omitempty"`
-}
-
 func parseWriteAck(attrs []types.EventAttribute, decodeCtx *decode.Context) error {
 	for i := range attrs {
 		switch attrs[i].Key {
 		case "packet_ack":
-			var e packetAck
-			if err := json.Unmarshal([]byte(attrs[i].Value), &e); err != nil {
-				return err
-			}
-			decodeCtx.HasWriteAckError = len(e.Error) > 0
+			decodeCtx.HasWriteAckError = strings.Contains(attrs[i].Value, "error")
 		default:
 		}
 	}
