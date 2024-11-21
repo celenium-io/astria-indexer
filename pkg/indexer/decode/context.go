@@ -12,23 +12,24 @@ import (
 )
 
 type Context struct {
-	Addresses      Addresses
-	Rollups        Rollups
-	Validators     Validators
-	RollupAddress  map[string]*storage.RollupAddress
-	AddressActions map[string]*storage.AddressAction
-	SupplyChange   decimal.Decimal
-	BytesInBlock   int64
-	GasUsed        int64
-	GasWanted      int64
-	DataSize       int64
-	ActionTypes    storageTypes.Bits
-	Constants      map[string]*storage.Constant
-	Bridges        map[string]*storage.Bridge
-	Fees           map[int64]*storage.Fee
-	Transfers      []*storage.Transfer
-	Deposits       map[int64]*storage.Deposit
-	Proposer       string
+	Addresses        Addresses
+	Rollups          Rollups
+	Validators       Validators
+	RollupAddress    map[string]*storage.RollupAddress
+	AddressActions   map[string]*storage.AddressAction
+	SupplyChange     decimal.Decimal
+	BytesInBlock     int64
+	GasUsed          int64
+	GasWanted        int64
+	DataSize         int64
+	ActionTypes      storageTypes.Bits
+	Constants        map[string]*storage.Constant
+	Bridges          map[string]*storage.Bridge
+	Fees             map[int64]*storage.Fee
+	Transfers        []*storage.Transfer
+	Deposits         map[int64]*storage.Deposit
+	HasWriteAckError bool
+	Proposer         string
 
 	bridgeAssets map[string]string
 }
@@ -83,8 +84,9 @@ func (ctx *Context) AddFee(idx int64, fee *storage.Fee) {
 	ctx.Fees[idx] = fee
 }
 
-func (ctx *Context) ClearFee() {
+func (ctx *Context) ClearTx() {
 	clear(ctx.Fees)
+	ctx.HasWriteAckError = false
 }
 
 func (ctx *Context) AddBridgeAsset(bridge, asset string) {

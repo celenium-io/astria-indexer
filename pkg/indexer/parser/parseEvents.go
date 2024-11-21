@@ -29,6 +29,8 @@ func parseEvents(ctx context.Context, events []types.Event, height types.Level, 
 			err = parseTxFees(ctx, events[i].Attributes, decodeCtx, api)
 		case "tx.deposit":
 			err = parseTxDeposit(events[i].Attributes, height, decodeCtx)
+		case "write_acknowledgement":
+			err = parseWriteAck(events[i].Attributes, decodeCtx)
 		default:
 			continue
 		}
@@ -153,5 +155,16 @@ func parseTxDeposit(attrs []types.EventAttribute, height types.Level, decodeCtx 
 	}
 
 	decodeCtx.AddDeposit(idx, deposit)
+	return nil
+}
+
+func parseWriteAck(attrs []types.EventAttribute, decodeCtx *decode.Context) error {
+	for i := range attrs {
+		switch attrs[i].Key {
+		case "packet_ack":
+			decodeCtx.HasWriteAckError = strings.Contains(attrs[i].Value, "error")
+		default:
+		}
+	}
 	return nil
 }
