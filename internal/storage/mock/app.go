@@ -44,6 +44,45 @@ func (m *MockIApp) EXPECT() *MockIAppMockRecorder {
 	return m.recorder
 }
 
+// ByRollupId mocks base method.
+func (m *MockIApp) ByRollupId(ctx context.Context, rollupId uint64) (storage.AppWithStats, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ByRollupId", ctx, rollupId)
+	ret0, _ := ret[0].(storage.AppWithStats)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ByRollupId indicates an expected call of ByRollupId.
+func (mr *MockIAppMockRecorder) ByRollupId(ctx, rollupId any) *MockIAppByRollupIdCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ByRollupId", reflect.TypeOf((*MockIApp)(nil).ByRollupId), ctx, rollupId)
+	return &MockIAppByRollupIdCall{Call: call}
+}
+
+// MockIAppByRollupIdCall wrap *gomock.Call
+type MockIAppByRollupIdCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockIAppByRollupIdCall) Return(arg0 storage.AppWithStats, arg1 error) *MockIAppByRollupIdCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockIAppByRollupIdCall) Do(f func(context.Context, uint64) (storage.AppWithStats, error)) *MockIAppByRollupIdCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockIAppByRollupIdCall) DoAndReturn(f func(context.Context, uint64) (storage.AppWithStats, error)) *MockIAppByRollupIdCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // BySlug mocks base method.
 func (m *MockIApp) BySlug(ctx context.Context, slug string) (storage.AppWithStats, error) {
 	m.ctrl.T.Helper()

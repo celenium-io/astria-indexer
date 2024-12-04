@@ -26,6 +26,7 @@ type IApp interface {
 
 	Leaderboard(ctx context.Context, fltrs LeaderboardFilters) ([]AppWithStats, error)
 	BySlug(ctx context.Context, slug string) (AppWithStats, error)
+	ByRollupId(ctx context.Context, rollupId uint64) (AppWithStats, error)
 }
 
 type App struct {

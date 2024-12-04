@@ -319,7 +319,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 		}
 	}
 
-	rollupsHandler := handler.NewRollupHandler(constantCache, db.Rollup, db.Action, db.Bridges, db.Deposit, db.State, cfg.Indexer.Name)
+	rollupsHandler := handler.NewRollupHandler(constantCache, db.Rollup, db.Action, db.Bridges, db.Deposit, db.App, db.State, cfg.Indexer.Name)
 	rollupsGroup := v1.Group("/rollup")
 	{
 		rollupsGroup.GET("", rollupsHandler.List)

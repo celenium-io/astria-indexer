@@ -33,7 +33,7 @@ var (
 		Slug:        "test-app",
 		Category:    types.AppCategoryNft,
 	}
-	testRollupWithStats = storage.AppWithStats{
+	testAppWithStats = storage.AppWithStats{
 		App: testApplication,
 		AppStats: storage.AppStats{
 			ActionsCount:    100,
@@ -98,7 +98,7 @@ func (s *AppTestSuite) TestLeaderboard() {
 					types.AppCategoryGaming,
 				},
 			}).
-			Return([]storage.AppWithStats{testRollupWithStats}, nil).
+			Return([]storage.AppWithStats{testAppWithStats}, nil).
 			Times(1)
 
 		s.Require().NoError(s.handler.Leaderboard(c))
@@ -131,7 +131,7 @@ func (s *AppTestSuite) TestGet() {
 
 	s.apps.EXPECT().
 		BySlug(gomock.Any(), "test-app").
-		Return(testRollupWithStats, nil).
+		Return(testAppWithStats, nil).
 		Times(1)
 
 	s.Require().NoError(s.handler.Get(c))

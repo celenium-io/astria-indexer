@@ -71,3 +71,15 @@ func (app *App) BySlug(ctx context.Context, slug string) (result storage.AppWith
 		Scan(ctx, &result)
 	return
 }
+
+func (app *App) ByRollupId(ctx context.Context, rollupId uint64) (result storage.AppWithStats, err error) {
+	err = app.DB().NewSelect().
+		Table(storage.ViewLeaderboard).
+		ColumnExpr("leaderboard.*").
+		ColumnExpr("address.hash as bridge__hash").
+		Where("rollup_id = ?", rollupId).
+		Join("left join address on native_bridge_id = address.id").
+		Limit(1).
+		Scan(ctx, &result)
+	return
+}
