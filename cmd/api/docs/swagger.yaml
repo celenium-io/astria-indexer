@@ -82,10 +82,10 @@ definitions:
         example: 2
         format: integer
         type: integer
-      actions_count_pct:
-        example: 0.9876
-        format: float
-        type: number
+      avg_size:
+        example: 1000
+        format: integer
+        type: integer
       category:
         example: nft
         format: string
@@ -126,22 +126,34 @@ definitions:
         example: https://some_link.com/image.png
         format: string
         type: string
+      max_size:
+        example: 1000
+        format: integer
+        type: integer
+      min_size:
+        example: 1000
+        format: integer
+        type: integer
       name:
         example: Rollup name
+        format: string
+        type: string
+      native_bridge:
+        example: astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2
         format: string
         type: string
       provider:
         example: name
         format: string
         type: string
+      rollup:
+        example: O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc=
+        format: string
+        type: string
       size:
         example: 1000
         format: integer
         type: integer
-      size_pct:
-        example: 0.9876
-        format: float
-        type: number
       slug:
         example: rollup_slug
         format: string
@@ -497,6 +509,8 @@ definitions:
       actions_count:
         example: 101
         type: integer
+      app:
+        $ref: '#/definitions/responses.AppWithStats'
       bridge_count:
         example: 2
         type: integer

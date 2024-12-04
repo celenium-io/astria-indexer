@@ -2928,10 +2928,10 @@
                     "format": "integer",
                     "example": 2
                 },
-                "actions_count_pct": {
-                    "type": "number",
-                    "format": "float",
-                    "example": 0.9876
+                "avg_size": {
+                    "type": "integer",
+                    "format": "integer",
+                    "example": 1000
                 },
                 "category": {
                     "type": "string",
@@ -2984,25 +2984,40 @@
                     "format": "string",
                     "example": "https://some_link.com/image.png"
                 },
+                "max_size": {
+                    "type": "integer",
+                    "format": "integer",
+                    "example": 1000
+                },
+                "min_size": {
+                    "type": "integer",
+                    "format": "integer",
+                    "example": 1000
+                },
                 "name": {
                     "type": "string",
                     "format": "string",
                     "example": "Rollup name"
+                },
+                "native_bridge": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2"
                 },
                 "provider": {
                     "type": "string",
                     "format": "string",
                     "example": "name"
                 },
+                "rollup": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc="
+                },
                 "size": {
                     "type": "integer",
                     "format": "integer",
                     "example": 1000
-                },
-                "size_pct": {
-                    "type": "number",
-                    "format": "float",
-                    "example": 0.9876
                 },
                 "slug": {
                     "type": "string",
@@ -3475,6 +3490,9 @@
                 "actions_count": {
                     "type": "integer",
                     "example": 101
+                },
+                "app": {
+                    "$ref": "#/definitions/responses.AppWithStats"
                 },
                 "bridge_count": {
                     "type": "integer",
