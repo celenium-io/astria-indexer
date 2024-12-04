@@ -22,6 +22,7 @@ type RollupHandler struct {
 	actions       storage.IAction
 	bridge        storage.IBridge
 	deposits      storage.IDeposit
+	app           storage.IApp
 	state         storage.IState
 	indexerName   string
 }
@@ -32,6 +33,7 @@ func NewRollupHandler(
 	actions storage.IAction,
 	bridge storage.IBridge,
 	deposits storage.IDeposit,
+	app storage.IApp,
 	state storage.IState,
 	indexerName string,
 ) *RollupHandler {
@@ -41,6 +43,7 @@ func NewRollupHandler(
 		actions:       actions,
 		bridge:        bridge,
 		deposits:      deposits,
+		app:           app,
 		state:         state,
 		indexerName:   indexerName,
 	}
@@ -79,7 +82,18 @@ func (handler *RollupHandler) Get(c echo.Context) error {
 		return handleError(c, err, handler.rollups)
 	}
 
-	return c.JSON(http.StatusOK, responses.NewRollup(&rollup))
+	response := responses.NewRollup(&rollup)
+
+	if app, err := handler.app.ByRollupId(c.Request().Context(), rollup.Id); err != nil {
+		if !handler.app.IsNoRows(err) {
+			return handleError(c, err, handler.rollups)
+		}
+	} else {
+		appResp := responses.NewAppWithStats(app)
+		response.App = &appResp
+	}
+
+	return c.JSON(http.StatusOK, response)
 }
 
 type listRollupsRequest struct {

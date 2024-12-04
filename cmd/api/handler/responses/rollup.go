@@ -15,6 +15,8 @@ type Rollup struct {
 	ActionsCount int64       `example:"101"                                          json:"actions_count" swaggertype:"integer"`
 	BridgeCount  int64       `example:"2"                                            json:"bridge_count"  swaggertype:"integer"`
 	Size         int64       `example:"100"                                          json:"size"          swaggertype:"integer"`
+
+	App *AppWithStats `json:"app,omitempty"`
 }
 
 func NewRollup(rollup *storage.Rollup) Rollup {

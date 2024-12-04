@@ -5,6 +5,7 @@ package handler
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -32,6 +33,7 @@ type RollupTestSuite struct {
 	bridge   *mock.MockIBridge
 	deposits *mock.MockIDeposit
 	state    *mock.MockIState
+	app      *mock.MockIApp
 	echo     *echo.Echo
 	handler  *RollupHandler
 	ctrl     *gomock.Controller
@@ -46,9 +48,10 @@ func (s *RollupTestSuite) SetupSuite() {
 	s.actions = mock.NewMockIAction(s.ctrl)
 	s.bridge = mock.NewMockIBridge(s.ctrl)
 	s.deposits = mock.NewMockIDeposit(s.ctrl)
+	s.app = mock.NewMockIApp(s.ctrl)
 	s.state = mock.NewMockIState(s.ctrl)
 	cc := cache.NewConstantsCache(nil)
-	s.handler = NewRollupHandler(cc, s.rollups, s.actions, s.bridge, s.deposits, s.state, testIndexerName)
+	s.handler = NewRollupHandler(cc, s.rollups, s.actions, s.bridge, s.deposits, s.app, s.state, testIndexerName)
 }
 
 // TearDownSuite -
@@ -74,6 +77,16 @@ func (s *RollupTestSuite) TestGet() {
 		Return(testRollup, nil).
 		Times(1)
 
+	s.app.EXPECT().
+		ByRollupId(gomock.Any(), testRollup.Id).
+		Return(storage.AppWithStats{}, sql.ErrNoRows).
+		Times(1)
+
+	s.app.EXPECT().
+		IsNoRows(sql.ErrNoRows).
+		Return(true).
+		Times(1)
+
 	s.Require().NoError(s.handler.Get(c))
 	s.Require().Equal(http.StatusOK, rec.Code)
 
@@ -86,6 +99,40 @@ func (s *RollupTestSuite) TestGet() {
 	s.Require().EqualValues(100, rollup.FirstHeight)
 	s.Require().EqualValues(10, rollup.Size)
 	s.Require().Equal(testRollup.AstriaId, rollup.AstriaId)
+	s.Require().Nil(rollup.App)
+}
+
+func (s *RollupTestSuite) TestGetWithApp() {
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/rollup/:hash")
+	c.SetParamNames("hash")
+	c.SetParamValues(testRollupURLHash)
+
+	s.rollups.EXPECT().
+		ByHash(gomock.Any(), testRollup.AstriaId).
+		Return(testRollup, nil).
+		Times(1)
+
+	s.app.EXPECT().
+		ByRollupId(gomock.Any(), testRollup.Id).
+		Return(testAppWithStats, nil).
+		Times(1)
+
+	s.Require().NoError(s.handler.Get(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var rollup responses.Rollup
+	err := json.NewDecoder(rec.Body).Decode(&rollup)
+	s.Require().NoError(err)
+	s.Require().EqualValues(1, rollup.Id)
+	s.Require().EqualValues(1, rollup.ActionsCount)
+	s.Require().EqualValues(1, rollup.BridgeCount)
+	s.Require().EqualValues(100, rollup.FirstHeight)
+	s.Require().EqualValues(10, rollup.Size)
+	s.Require().Equal(testRollup.AstriaId, rollup.AstriaId)
+	s.Require().NotNil(rollup.App)
 }
 
 func (s *RollupTestSuite) TestGetInvalidAddress() {

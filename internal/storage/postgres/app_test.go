@@ -100,3 +100,23 @@ func (s *StorageTestSuite) TestAppBySlug() {
 	s.Require().NotNil(app.Rollup)
 	s.Require().EqualValues("19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539", hex.EncodeToString(app.Rollup.AstriaId))
 }
+
+func (s *StorageTestSuite) TestAppByRollupId() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	_, err := s.storage.Connection().Exec(ctx, "REFRESH MATERIALIZED VIEW leaderboard;")
+	s.Require().NoError(err)
+
+	app, err := s.storage.App.ByRollupId(ctx, 1)
+	s.Require().NoError(err)
+
+	s.Require().EqualValues("App 1", app.Name)
+	s.Require().EqualValues(34, app.Size)
+	s.Require().EqualValues(1, app.ActionsCount)
+	s.Require().False(app.LastActionTime.IsZero())
+	s.Require().False(app.FirstActionTime.IsZero())
+	s.Require().NotNil(app.Bridge)
+	s.Require().EqualValues("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", app.Bridge.Hash)
+	s.Require().Nil(app.Rollup)
+}
