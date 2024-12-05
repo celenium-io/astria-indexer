@@ -709,8 +709,8 @@ const docTemplate = `{
                             "ibc_sudo_change_action"
                         ],
                         "type": "string",
-                        "description": "Comma-separated message types list",
-                        "name": "msg_type",
+                        "description": "Comma-separated action types list",
+                        "name": "action_types",
                         "in": "query"
                     },
                     {

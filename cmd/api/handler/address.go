@@ -186,15 +186,15 @@ func (p *addressTxRequest) SetDefault() {
 //	@Description	Get address transactions
 //	@Tags			address
 //	@ID				address-transactions
-//	@Param			hash		path	string					true	"Hash"							minlength(48)	maxlength(48)
-//	@Param			limit		query	integer					false	"Count of requested entities"	minimum(1)		maximum(100)
-//	@Param			offset		query	integer					false	"Offset"						minimum(1)
-//	@Param			sort		query	string					false	"Sort order"					Enums(asc, desc)
-//	@Param			status		query	types.Status	    	false	"Comma-separated status list"
-//	@Param			msg_type	query	types.ActionType	    false	"Comma-separated message types list"
-//	@Param			from		query	integer					false	"Time from in unix timestamp"	minimum(1)
-//	@Param			to			query	integer					false	"Time to in unix timestamp"		minimum(1)
-//	@Param			height		query	integer					false	"Block number"					minimum(1)
+//	@Param			hash			path	string					true	"Hash"							minlength(48)	maxlength(48)
+//	@Param			limit			query	integer					false	"Count of requested entities"	minimum(1)		maximum(100)
+//	@Param			offset			query	integer					false	"Offset"						minimum(1)
+//	@Param			sort			query	string					false	"Sort order"					Enums(asc, desc)
+//	@Param			status			query	types.Status	    	false	"Comma-separated status list"
+//	@Param			action_types	query	types.ActionType	    false	"Comma-separated action types list"
+//	@Param			from			query	integer					false	"Time from in unix timestamp"	minimum(1)
+//	@Param			to				query	integer					false	"Time to in unix timestamp"		minimum(1)
+//	@Param			height			query	integer					false	"Block number"					minimum(1)
 //	@Produce		json
 //	@Success		200	{array}		responses.Tx
 //	@Failure		400	{object}	Error

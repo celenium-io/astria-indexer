@@ -1229,7 +1229,7 @@ paths:
         in: query
         name: status
         type: string
-      - description: Comma-separated message types list
+      - description: Comma-separated action types list
         enum:
         - transfer
         - rollup_data_submission
@@ -1246,7 +1246,7 @@ paths:
         - fee_change
         - ibc_sudo_change_action
         in: query
-        name: msg_type
+        name: action_types
         type: string
       - description: Time from in unix timestamp
         in: query
