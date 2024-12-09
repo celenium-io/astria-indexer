@@ -179,6 +179,29 @@ definitions:
         format: string
         type: string
     type: object
+  responses.Asset:
+    properties:
+      asset:
+        example: nria
+        format: string
+        type: string
+      fee:
+        example: "1000"
+        format: string
+        type: string
+      fee_count:
+        example: 100
+        format: number
+        type: integer
+      transfer_count:
+        example: 100
+        format: number
+        type: integer
+      transferred:
+        example: "1000"
+        format: string
+        type: string
+    type: object
   responses.Balance:
     description: Balance of address information
     properties:
@@ -1320,6 +1343,40 @@ paths:
       summary: Get count of addresses in network
       tags:
       - address
+  /v1/asset:
+    get:
+      description: Get assets info
+      operationId: get-asset
+      parameters:
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Asset'
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get assets info
+      tags:
+      - assets
   /v1/block:
     get:
       description: List blocks info

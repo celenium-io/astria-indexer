@@ -42,6 +42,7 @@ type Storage struct {
 	Search          models.ISearch
 	Stats           models.IStats
 	App             models.IApp
+	Asset           models.IAsset
 	Notificator     *Notificator
 }
 
@@ -77,6 +78,7 @@ func Create(ctx context.Context, cfg config.Database, scriptsDir string, withMig
 		Search:          NewSearch(strg.Connection()),
 		App:             NewApp(strg.Connection()),
 		Stats:           NewStats(strg.Connection()),
+		Asset:           NewAsset(strg.Connection()),
 		Notificator:     NewNotificator(cfg, strg.Connection().DB()),
 	}
 
