@@ -3691,6 +3691,11 @@
                     "format": "int64",
                     "example": 312
                 },
+                "total_bytes": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 312
+                },
                 "total_rollups": {
                     "type": "integer",
                     "format": "int64",

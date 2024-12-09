@@ -658,6 +658,10 @@ definitions:
         example: 312
         format: int64
         type: integer
+      total_bytes:
+        example: 312
+        format: int64
+        type: integer
       total_rollups:
         example: 312
         format: int64
