@@ -16,6 +16,7 @@ func Test_updateState(t *testing.T) {
 		block         *storage.Block
 		totalAccounts int64
 		totalRollups  int64
+		totalBytes    int64
 		state         *storage.State
 	}
 
@@ -42,6 +43,7 @@ func Test_updateState(t *testing.T) {
 				},
 				totalAccounts: 10,
 				totalRollups:  11,
+				totalBytes:    12,
 				state: &storage.State{
 					Id:            1,
 					Name:          "test",
@@ -53,6 +55,7 @@ func Test_updateState(t *testing.T) {
 					TotalRollups:  12,
 					TotalSupply:   decimal.RequireFromString("1000"),
 					TotalBridges:  10,
+					TotalBytes:    12,
 				},
 			},
 			want: storage.State{
@@ -66,12 +69,13 @@ func Test_updateState(t *testing.T) {
 				TotalRollups:  23,
 				TotalSupply:   decimal.RequireFromString("1100"),
 				TotalBridges:  20,
+				TotalBytes:    24,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			updateState(tt.args.block, tt.args.totalAccounts, tt.args.totalRollups, 10, tt.args.state)
+			updateState(tt.args.block, tt.args.totalAccounts, tt.args.totalRollups, 10, tt.args.totalBytes, tt.args.state)
 		})
 	}
 }
