@@ -60,3 +60,13 @@ func (f *Fee) ByPayerId(ctx context.Context, id uint64, limit, offset int, sort 
 
 	return
 }
+
+func (f *Fee) FullTxFee(ctx context.Context, id uint64) (fees []storage.Fee, err error) {
+	err = f.DB().NewSelect().
+		Model(&fees).
+		ColumnExpr("sum(amount) as amount, asset").
+		Where("tx_id = ?", id).
+		Group("asset").
+		Scan(ctx)
+	return
+}

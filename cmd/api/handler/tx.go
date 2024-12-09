@@ -43,6 +43,8 @@ func NewTxHandler(
 
 type getTxRequest struct {
 	Hash string `param:"hash" validate:"required,hexadecimal,len=64"`
+
+	Fee bool `query:"fee" validate:"omitempty"`
 }
 
 // Get godoc
@@ -52,6 +54,7 @@ type getTxRequest struct {
 //	@Tags			transactions
 //	@ID				get-transaction
 //	@Param			hash	path	string	true	"Transaction hash in hexadecimal"	minlength(64)	maxlength(64)
+//	@Param			fee 	query	boolean	false	"Flag which indicates need join full transaction fees"
 //	@Produce		json
 //	@Success		200	{object}	responses.Tx
 //	@Success		204
@@ -73,8 +76,20 @@ func (handler *TxHandler) Get(c echo.Context) error {
 	if err != nil {
 		return handleError(c, err, handler.tx)
 	}
+	response := responses.NewTx(tx)
 
-	return c.JSON(http.StatusOK, responses.NewTx(tx))
+	if req.Fee {
+		fees, err := handler.fees.FullTxFee(c.Request().Context(), tx.Id)
+		if err != nil {
+			return handleError(c, err, handler.tx)
+		}
+		response.Fees = make([]responses.TxFee, len(fees))
+		for i := range fees {
+			response.Fees[i] = responses.NewTxFee(fees[i])
+		}
+	}
+
+	return c.JSON(http.StatusOK, response)
 }
 
 type txListRequest struct {

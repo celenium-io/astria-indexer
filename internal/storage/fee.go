@@ -19,6 +19,7 @@ type IFee interface {
 
 	ByTxId(ctx context.Context, id uint64, limit, offset int) ([]Fee, error)
 	ByPayerId(ctx context.Context, id uint64, limit, offset int, sort storage.SortOrder) ([]Fee, error)
+	FullTxFee(ctx context.Context, id uint64) ([]Fee, error)
 }
 
 type Fee struct {

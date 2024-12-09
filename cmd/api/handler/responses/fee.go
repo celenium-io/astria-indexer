@@ -38,3 +38,15 @@ func NewFullFee(fee storage.Fee) FullFee {
 
 	return ff
 }
+
+type TxFee struct {
+	Amount string `example:"1000" format:"string" json:"amount" swaggertype:"string"`
+	Asset  string `example:"nria" format:"string" json:"asset"  swaggertype:"string"`
+}
+
+func NewTxFee(fee storage.Fee) TxFee {
+	return TxFee{
+		Asset:  fee.Asset,
+		Amount: fee.Amount.String(),
+	}
+}

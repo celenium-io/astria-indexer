@@ -89,6 +89,60 @@ func (s *TxTestSuite) TestGet() {
 	s.Require().Equal(types.StatusSuccess, tx.Status)
 }
 
+func (s *TxTestSuite) TestGetWithFee() {
+	q := make(url.Values)
+	q.Add("fee", "true")
+
+	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/tx/:hash")
+	c.SetParamNames("hash")
+	c.SetParamValues(testTxHash)
+
+	s.tx.EXPECT().
+		ByHash(gomock.Any(), testTx.Hash).
+		Return(testTx, nil).
+		Times(1)
+
+	s.fees.EXPECT().
+		FullTxFee(gomock.Any(), testTx.Id).
+		Return([]storage.Fee{
+			{
+				Amount: decimal.NewFromInt(100),
+				Asset:  "asset_1",
+			}, {
+				Amount: decimal.NewFromInt(200),
+				Asset:  "asset_2",
+			},
+		}, nil).
+		Times(1)
+
+	s.Require().NoError(s.handler.Get(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var tx responses.Tx
+	err := json.NewDecoder(rec.Body).Decode(&tx)
+	s.Require().NoError(err)
+
+	s.Require().EqualValues(1, tx.Id)
+	s.Require().EqualValues(100, tx.Height)
+	s.Require().Equal(testTime, tx.Time)
+	s.Require().Equal(testTxHash, tx.Hash)
+	s.Require().EqualValues(1, tx.Position)
+	s.Require().EqualValues(1, tx.ActionsCount)
+	s.Require().EqualValues(10, tx.Nonce)
+	s.Require().EqualValues(testAddress.Hash, tx.Signer)
+	s.Require().Equal("codespace", tx.Codespace)
+	s.Require().Equal(types.StatusSuccess, tx.Status)
+
+	s.Require().Len(tx.Fees, 2)
+	s.Require().Equal("100", tx.Fees[0].Amount)
+	s.Require().Equal("asset_1", tx.Fees[0].Asset)
+	s.Require().Equal("200", tx.Fees[1].Amount)
+	s.Require().Equal("asset_2", tx.Fees[1].Asset)
+}
+
 func (s *TxTestSuite) TestGetInvalidTx() {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	rec := httptest.NewRecorder()

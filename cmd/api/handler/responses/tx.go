@@ -29,6 +29,7 @@ type Tx struct {
 	ActionTypes  []string       `example:"rollup_data_submission,transfer"                                  format:"string"    json:"action_types"        swaggertype:"string"`
 
 	Actions []Action `json:"actions,omitempty"`
+	Fees    []TxFee  `json:"fees,omitempty"`
 }
 
 func NewTx(tx storage.Tx) Tx {
