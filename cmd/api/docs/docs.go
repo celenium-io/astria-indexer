@@ -763,6 +763,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/asset": {
+            "get": {
+                "description": "Get assets info",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Get assets info",
+                "operationId": "get-asset",
+                "parameters": [
+                    {
+                        "maximum": 100,
+                        "type": "integer",
+                        "description": "Count of requested entities",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.Asset"
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/block": {
             "get": {
                 "description": "List blocks info",
@@ -3064,6 +3115,36 @@ const docTemplate = `{
                     "type": "string",
                     "format": "string",
                     "example": "https://website.com"
+                }
+            }
+        },
+        "responses.Asset": {
+            "type": "object",
+            "properties": {
+                "asset": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "nria"
+                },
+                "fee": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "1000"
+                },
+                "fee_count": {
+                    "type": "integer",
+                    "format": "number",
+                    "example": 100
+                },
+                "transfer_count": {
+                    "type": "integer",
+                    "format": "number",
+                    "example": 100
+                },
+                "transferred": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "1000"
                 }
             }
         },

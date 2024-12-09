@@ -334,6 +334,14 @@ func createIndices(ctx context.Context, conn *database.Bun) error {
 			Exec(ctx); err != nil {
 			return err
 		}
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Transfer)(nil)).
+			Index("transfer_asset_idx").
+			Column("asset").
+			Exec(ctx); err != nil {
+			return err
+		}
 
 		// Deposit
 		if _, err := tx.NewCreateIndex().

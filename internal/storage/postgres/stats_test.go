@@ -146,7 +146,7 @@ func (s *StatsTestSuite) TestFeeSummary() {
 
 	summary, err := s.storage.Stats.FeeSummary(ctx)
 	s.Require().NoError(err)
-	s.Require().Len(summary, 1)
+	s.Require().Len(summary, 2)
 }
 
 func (s *StatsTestSuite) TestTokenTransferDistribution() {
@@ -155,7 +155,7 @@ func (s *StatsTestSuite) TestTokenTransferDistribution() {
 
 	summary, err := s.storage.Stats.TokenTransferDistribution(ctx, 10)
 	s.Require().NoError(err)
-	s.Require().Len(summary, 1)
+	s.Require().Len(summary, 2)
 }
 
 func (s *StatsTestSuite) TestActiveAddressCount() {

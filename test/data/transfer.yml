@@ -5,3 +5,10 @@
   asset: nria
   src_id: 1
   dest_id: 3
+- id: 2
+  height: 7965
+  time: '2023-12-01T00:18:07.575Z'
+  amount: 1
+  asset: asset-1
+  src_id: 2
+  dest_id: 4

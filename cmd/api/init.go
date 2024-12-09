@@ -372,6 +372,12 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 		}
 	}
 
+	assetHandler := handler.NewAssetHandler(db.Asset, db.Blocks)
+	assets := v1.Group("/asset")
+	{
+		assets.GET("", assetHandler.List)
+	}
+
 	appHandler := handler.NewAppHandler(db.App)
 	apps := v1.Group("/app")
 	{

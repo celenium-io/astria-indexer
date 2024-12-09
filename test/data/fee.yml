@@ -6,3 +6,11 @@
   asset: nria
   amount: 100
   payer_id: 1
+- id: 2
+  height: 7316
+  time: '2023-11-30T23:52:23.265Z'
+  action_id: 2
+  tx_id: 2
+  asset: asset-2
+  amount: 100
+  payer_id: 2
