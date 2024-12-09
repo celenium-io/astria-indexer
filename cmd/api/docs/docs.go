@@ -2328,6 +2328,12 @@ const docTemplate = `{
                         "name": "hash",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Flag which indicates need join full transaction fees",
+                        "name": "fee",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -3772,6 +3778,12 @@ const docTemplate = `{
                     "format": "string",
                     "example": "some error text"
                 },
+                "fees": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/responses.TxFee"
+                    }
+                },
                 "hash": {
                     "type": "string",
                     "format": "binary",
@@ -3816,6 +3828,21 @@ const docTemplate = `{
                     "type": "string",
                     "format": "date-time",
                     "example": "2023-07-04T03:10:57+00:00"
+                }
+            }
+        },
+        "responses.TxFee": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "1000"
+                },
+                "asset": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "nria"
                 }
             }
         },

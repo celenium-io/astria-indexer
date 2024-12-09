@@ -161,6 +161,45 @@ func (c *MockIFeeCursorListCall) DoAndReturn(f func(context.Context, uint64, uin
 	return c
 }
 
+// FullTxFee mocks base method.
+func (m *MockIFee) FullTxFee(ctx context.Context, id uint64) ([]storage.Fee, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FullTxFee", ctx, id)
+	ret0, _ := ret[0].([]storage.Fee)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FullTxFee indicates an expected call of FullTxFee.
+func (mr *MockIFeeMockRecorder) FullTxFee(ctx, id any) *MockIFeeFullTxFeeCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FullTxFee", reflect.TypeOf((*MockIFee)(nil).FullTxFee), ctx, id)
+	return &MockIFeeFullTxFeeCall{Call: call}
+}
+
+// MockIFeeFullTxFeeCall wrap *gomock.Call
+type MockIFeeFullTxFeeCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockIFeeFullTxFeeCall) Return(arg0 []storage.Fee, arg1 error) *MockIFeeFullTxFeeCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockIFeeFullTxFeeCall) Do(f func(context.Context, uint64) ([]storage.Fee, error)) *MockIFeeFullTxFeeCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockIFeeFullTxFeeCall) DoAndReturn(f func(context.Context, uint64) ([]storage.Fee, error)) *MockIFeeFullTxFeeCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // GetByID mocks base method.
 func (m *MockIFee) GetByID(ctx context.Context, id uint64) (*storage.Fee, error) {
 	m.ctrl.T.Helper()

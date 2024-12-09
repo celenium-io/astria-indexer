@@ -47,3 +47,16 @@ func (s *StorageTestSuite) TestFeeByPayerId() {
 	s.Require().NotNil(fee.Tx)
 	s.Require().NotEmpty(fee.Tx.Hash)
 }
+
+func (s *StorageTestSuite) TestFullTxFee() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	fees, err := s.storage.Fee.FullTxFee(ctx, 1)
+	s.Require().NoError(err)
+	s.Require().Len(fees, 1)
+
+	fee := fees[0]
+	s.Require().EqualValues("100", fee.Amount.String())
+	s.Require().EqualValues("nria", fee.Asset)
+}
