@@ -7,12 +7,14 @@ import (
 	"context"
 
 	models "github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/postgres/migrations"
 	"github.com/dipdup-net/go-lib/config"
 	"github.com/dipdup-net/go-lib/database"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/pkg/errors"
 	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/migrate"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -135,19 +137,18 @@ func initDatabaseWithMigrations(ctx context.Context, conn *database.Bun) error {
 	return migrateDatabase(ctx, conn)
 }
 
-func migrateDatabase(_ context.Context, _ *database.Bun) error {
-	// migrator := migrate.NewMigrator(db.DB(), migrations.Migrations)
-	// if err := migrator.Init(ctx); err != nil {
-	// 	return err
-	// }
-	// if err := migrator.Lock(ctx); err != nil {
-	// 	return err
-	// }
-	// defer migrator.Unlock(ctx) //nolint:errcheck
+func migrateDatabase(ctx context.Context, db *database.Bun) error {
+	migrator := migrate.NewMigrator(db.DB(), migrations.Migrations)
+	if err := migrator.Init(ctx); err != nil {
+		return err
+	}
+	if err := migrator.Lock(ctx); err != nil {
+		return err
+	}
+	defer migrator.Unlock(ctx) //nolint:errcheck
 
-	// _, err := migrator.Migrate(ctx)
-	// return err
-	return nil
+	_, err := migrator.Migrate(ctx)
+	return err
 }
 
 func createHypertables(ctx context.Context, conn *database.Bun) error {

@@ -37,6 +37,7 @@ type State struct {
 	TotalValidators int             `bun:"total_validators"          comment:"Validators count"         json:"validators"`
 	TotalSupply     decimal.Decimal `bun:"total_supply,type:numeric" comment:"Total supply"             json:"supply"`
 	TotalBridges    int64           `bun:"total_bridges"             comment:"Count of bridges"         json:"bridges"`
+	TotalBytes      int64           `bun:"total_bytes"               comment:"Total rollup bytes"       json:"bytes"`
 }
 
 // TableName -

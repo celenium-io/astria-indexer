@@ -14,19 +14,22 @@ func (module *Module) saveRollup(
 	tx storage.Transaction,
 	rollups map[string]*storage.Rollup,
 	rollupAddress map[string]*storage.RollupAddress,
-) (int64, error) {
+) (int64, int64, error) {
 	if len(rollups) == 0 {
-		return 0, nil
+		return 0, 0, nil
 	}
+
+	var totalSize int64
 
 	data := make([]*storage.Rollup, 0)
 	for _, value := range rollups {
 		data = append(data, value)
+		totalSize += value.Size
 	}
 
 	count, err := tx.SaveRollups(ctx, data...)
 	if err != nil {
-		return count, err
+		return count, totalSize, err
 	}
 
 	ra := make([]*storage.RollupAddress, 0)
@@ -36,8 +39,8 @@ func (module *Module) saveRollup(
 		ra = append(ra, value)
 	}
 	if err := tx.SaveRollupAddresses(ctx, ra...); err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
-	return count, nil
+	return count, totalSize, nil
 }
