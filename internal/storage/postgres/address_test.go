@@ -58,7 +58,7 @@ func (s *StorageTestSuite) TestAddressListWithBalancesWithAsset() {
 	addresses, err := s.storage.Address.ListWithBalance(ctx, storage.AddressListFilter{
 		Sort:  sdk.SortOrderAsc,
 		Limit: 1,
-		Asset: "test",
+		Asset: "asset-1",
 	})
 	s.Require().NoError(err)
 	s.Require().Len(addresses, 1)
@@ -73,7 +73,7 @@ func (s *StorageTestSuite) TestAddressListWithBalancesWithAsset() {
 
 	balance := address.Balance[0]
 	s.Require().EqualValues("10", balance.Total.String())
-	s.Require().EqualValues("test", balance.Currency)
+	s.Require().EqualValues("asset-1", balance.Currency)
 
 	s.Require().EqualValues("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", address.Hash)
 }

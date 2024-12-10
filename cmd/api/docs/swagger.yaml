@@ -193,6 +193,10 @@ definitions:
         example: 100
         format: number
         type: integer
+      supply:
+        example: "1000"
+        format: string
+        type: string
       transfer_count:
         example: 100
         format: number
@@ -1357,6 +1361,23 @@ paths:
         in: query
         name: offset
         type: integer
+      - description: Sort order
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - description: 'Field using for sorting. Default: fee'
+        enum:
+        - fee
+        - fee_count
+        - transferred
+        - transfer_count
+        - supply
+        in: query
+        name: sort_by
+        type: string
       produces:
       - application/json
       responses:

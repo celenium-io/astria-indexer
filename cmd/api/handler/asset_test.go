@@ -13,6 +13,7 @@ import (
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/mock"
+	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/labstack/echo/v4"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/suite"
@@ -56,7 +57,7 @@ func (s *AssetTestSuite) TestList() {
 	c.SetPath("/asset")
 
 	s.asset.EXPECT().
-		List(gomock.Any(), 10, 0).
+		List(gomock.Any(), 10, 0, "", sdk.SortOrderDesc).
 		Return([]storage.Asset{
 			{
 				Asset:         "asset",

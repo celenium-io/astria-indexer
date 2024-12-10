@@ -11,6 +11,7 @@ type Asset struct {
 	Transferred   string `example:"1000" format:"string" json:"transferred"    swaggertype:"string"`
 	TransferCount int    `example:"100"  format:"number" json:"transfer_count" swaggertype:"integer"`
 	Asset         string `example:"nria" format:"string" json:"asset"          swaggertype:"string"`
+	Supply        string `example:"1000" format:"string" json:"supply"         swaggertype:"string"`
 }
 
 func NewAsset(asset storage.Asset) Asset {
@@ -20,5 +21,6 @@ func NewAsset(asset storage.Asset) Asset {
 		FeeCount:      asset.FeeCount,
 		Transferred:   asset.Transferred.String(),
 		TransferCount: asset.TransferCount,
+		Supply:        asset.Supply.String(),
 	}
 }
