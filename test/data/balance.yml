@@ -17,5 +17,8 @@
   currency: nria
   total: 1
 - id: 1
-  currency: test
+  currency: asset-1
   total: 10
+- id: 9
+  currency: asset-2
+  total: 100

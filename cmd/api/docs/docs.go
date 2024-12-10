@@ -787,6 +787,29 @@ const docTemplate = `{
                         "description": "Offset",
                         "name": "offset",
                         "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "description": "Sort order",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "fee",
+                            "fee_count",
+                            "transferred",
+                            "transfer_count",
+                            "supply"
+                        ],
+                        "type": "string",
+                        "description": "Field using for sorting. Default: fee",
+                        "name": "sort_by",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -3135,6 +3158,11 @@ const docTemplate = `{
                     "type": "integer",
                     "format": "number",
                     "example": 100
+                },
+                "supply": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "1000"
                 },
                 "transfer_count": {
                     "type": "integer",

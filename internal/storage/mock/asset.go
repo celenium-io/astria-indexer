@@ -17,6 +17,7 @@ import (
 	reflect "reflect"
 
 	storage "github.com/celenium-io/astria-indexer/internal/storage"
+	storage0 "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -44,18 +45,18 @@ func (m *MockIAsset) EXPECT() *MockIAssetMockRecorder {
 }
 
 // List mocks base method.
-func (m *MockIAsset) List(ctx context.Context, limit, offset int) ([]storage.Asset, error) {
+func (m *MockIAsset) List(ctx context.Context, limit, offset int, sortBy string, order storage0.SortOrder) ([]storage.Asset, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "List", ctx, limit, offset)
+	ret := m.ctrl.Call(m, "List", ctx, limit, offset, sortBy, order)
 	ret0, _ := ret[0].([]storage.Asset)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // List indicates an expected call of List.
-func (mr *MockIAssetMockRecorder) List(ctx, limit, offset any) *MockIAssetListCall {
+func (mr *MockIAssetMockRecorder) List(ctx, limit, offset, sortBy, order any) *MockIAssetListCall {
 	mr.mock.ctrl.T.Helper()
-	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockIAsset)(nil).List), ctx, limit, offset)
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockIAsset)(nil).List), ctx, limit, offset, sortBy, order)
 	return &MockIAssetListCall{Call: call}
 }
 
@@ -71,13 +72,13 @@ func (c *MockIAssetListCall) Return(arg0 []storage.Asset, arg1 error) *MockIAsse
 }
 
 // Do rewrite *gomock.Call.Do
-func (c *MockIAssetListCall) Do(f func(context.Context, int, int) ([]storage.Asset, error)) *MockIAssetListCall {
+func (c *MockIAssetListCall) Do(f func(context.Context, int, int, string, storage0.SortOrder) ([]storage.Asset, error)) *MockIAssetListCall {
 	c.Call = c.Call.Do(f)
 	return c
 }
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *MockIAssetListCall) DoAndReturn(f func(context.Context, int, int) ([]storage.Asset, error)) *MockIAssetListCall {
+func (c *MockIAssetListCall) DoAndReturn(f func(context.Context, int, int, string, storage0.SortOrder) ([]storage.Asset, error)) *MockIAssetListCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }

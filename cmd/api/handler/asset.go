@@ -27,13 +27,18 @@ func NewAssetHandler(
 }
 
 type assetListRequest struct {
-	Limit  uint64 `query:"limit"  validate:"omitempty,min=1,max=100"`
-	Offset uint64 `query:"offset" validate:"omitempty,min=0"`
+	Limit     uint64 `query:"limit"   validate:"omitempty,min=1,max=100"`
+	Offset    uint64 `query:"offset"  validate:"omitempty,min=0"`
+	Sort      string `query:"sort"    validate:"omitempty,oneof=asc desc"`
+	SortField string `query:"sort_by" validate:"omitempty,oneof=fee fee_count transferred transfer_count supply"`
 }
 
 func (p *assetListRequest) SetDefault() {
 	if p.Limit == 0 {
 		p.Limit = 10
+	}
+	if p.Sort == "" {
+		p.Sort = desc
 	}
 }
 
@@ -43,8 +48,10 @@ func (p *assetListRequest) SetDefault() {
 //	@Description	Get assets info
 //	@Tags			assets
 //	@ID				get-asset
-//	@Param			limit	query	integer	false	"Count of requested entities"	mininum(1)	maximum(100)
-//	@Param			offset	query	integer	false	"Offset"						mininum(1)
+//	@Param			limit	   query	integer	false	"Count of requested entities"			mininum(1)	maximum(100)
+//	@Param			offset	    query	integer	false	"Offset"								mininum(1)
+//	@Param			sort		query	string	false	"Sort order"							Enums(asc, desc)
+//	@Param			sort_by		query	string	false	"Field using for sorting. Default: fee"	Enums(fee, fee_count, transferred, transfer_count, supply)
 //	@Produce		json
 //	@Success		200	{object}	responses.Asset
 //	@Success		204
@@ -58,7 +65,7 @@ func (handler *AssetHandler) List(c echo.Context) error {
 	}
 	req.SetDefault()
 
-	assets, err := handler.asset.List(c.Request().Context(), int(req.Limit), int(req.Offset))
+	assets, err := handler.asset.List(c.Request().Context(), int(req.Limit), int(req.Offset), req.SortField, pgSort(req.Sort))
 	if err != nil {
 		return handleError(c, err, handler.blocks)
 	}
