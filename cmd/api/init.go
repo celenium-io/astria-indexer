@@ -133,7 +133,7 @@ func cacheSkipper(c echo.Context) bool {
 	return false
 }
 
-func initEcho(cfg ApiConfig, db postgres.Storage, env string) *echo.Echo {
+func initEcho(cfg ApiConfig, env string) *echo.Echo {
 	e := echo.New()
 	e.Validator = handler.NewApiValidator()
 
@@ -219,7 +219,7 @@ func initEcho(cfg ApiConfig, db postgres.Storage, env string) *echo.Echo {
 
 	}
 
-	if err := initSentry(e, db, cfg.SentryDsn, env); err != nil {
+	if err := initSentry(e, cfg.SentryDsn, env); err != nil {
 		log.Err(err).Msg("sentry")
 	}
 	e.Server.IdleTimeout = time.Second * 30
@@ -401,7 +401,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 	}
 }
 
-func initSentry(e *echo.Echo, db postgres.Storage, dsn, environment string) error {
+func initSentry(e *echo.Echo, dsn, environment string) error {
 	if dsn == "" {
 		return nil
 	}

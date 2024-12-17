@@ -221,7 +221,7 @@ require (
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.22.0 // indirect
 	github.com/tidwall/btree v1.7.0 // indirect
 	github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc // indirect
-	github.com/uptrace/bun/dialect/pgdialect v1.1.14 // indirect
+	github.com/uptrace/bun/dialect/pgdialect v1.2.6 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	github.com/vmihailenco/bufpool v0.1.11 // indirect
