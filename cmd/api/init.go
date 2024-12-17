@@ -20,7 +20,6 @@ import (
 	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
 	"github.com/dipdup-net/go-lib/config"
 	"github.com/getsentry/sentry-go"
-	sentryotel "github.com/getsentry/sentry-go/otel"
 	"github.com/grafana/pyroscope-go"
 	"github.com/labstack/echo-contrib/echoprometheus"
 	"github.com/labstack/echo/v4"
@@ -29,8 +28,6 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	echoSwagger "github.com/swaggo/echo-swagger"
-	"go.opentelemetry.io/otel"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"golang.org/x/time/rate"
 )
 
@@ -419,14 +416,6 @@ func initSentry(e *echo.Echo, db postgres.Storage, dsn, environment string) erro
 	}); err != nil {
 		return errors.Wrap(err, "initialization")
 	}
-
-	tp := sdktrace.NewTracerProvider(
-		sdktrace.WithSpanProcessor(sentryotel.NewSentrySpanProcessor()),
-	)
-	otel.SetTracerProvider(tp)
-	otel.SetTextMapPropagator(sentryotel.NewSentryPropagator())
-
-	db.SetTracer(tp)
 
 	e.Use(SentryMiddleware())
 
