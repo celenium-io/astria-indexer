@@ -12,7 +12,6 @@ require (
 	github.com/dipdup-net/go-lib v0.3.6
 	github.com/dipdup-net/indexer-sdk v0.0.5
 	github.com/getsentry/sentry-go v0.30.0
-	github.com/getsentry/sentry-go/otel v0.30.0
 	github.com/go-playground/validator/v10 v10.15.0
 	github.com/go-testfixtures/testfixtures/v3 v3.9.0
 	github.com/goccy/go-json v0.10.2
@@ -32,9 +31,8 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.1
-	github.com/uptrace/bun v1.1.14
+	github.com/uptrace/bun v1.1.17
 	go.opentelemetry.io/otel v1.27.0
-	go.opentelemetry.io/otel/sdk v1.27.0
 	go.opentelemetry.io/otel/trace v1.27.0
 	go.uber.org/mock v0.4.0
 	golang.org/x/time v0.5.0
@@ -220,7 +218,7 @@ require (
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.22.0 // indirect
 	github.com/tidwall/btree v1.7.0 // indirect
 	github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc // indirect
-	github.com/uptrace/bun/dialect/pgdialect v1.1.14 // indirect
+	github.com/uptrace/bun/dialect/pgdialect v1.1.17 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	github.com/vmihailenco/bufpool v0.1.11 // indirect
@@ -233,6 +231,7 @@ require (
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.49.0 // indirect
 	go.opentelemetry.io/otel/metric v1.27.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.27.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c // indirect
