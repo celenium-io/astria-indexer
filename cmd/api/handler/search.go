@@ -20,6 +20,7 @@ type SearchHandler struct {
 	rollups       storage.IRollup
 	bridges       storage.IBridge
 	validators    storage.IValidator
+	app           storage.IApp
 }
 
 func NewSearchHandler(
@@ -31,6 +32,7 @@ func NewSearchHandler(
 	rollups storage.IRollup,
 	bridges storage.IBridge,
 	validators storage.IValidator,
+	app storage.IApp,
 ) *SearchHandler {
 	return &SearchHandler{
 		constantCache: constantCache,
@@ -41,6 +43,7 @@ func NewSearchHandler(
 		rollups:       rollups,
 		bridges:       bridges,
 		validators:    validators,
+		app:           app,
 	}
 }
 
@@ -113,6 +116,12 @@ func (s *SearchHandler) Search(c echo.Context) error {
 				return handleError(c, err, s.address)
 			}
 			body = responses.NewBridge(bridge)
+		case "app":
+			app, err := s.app.GetByID(c.Request().Context(), results[i].Id)
+			if err != nil {
+				return handleError(c, err, s.address)
+			}
+			body = responses.NewApp(*app)
 		}
 
 		response[i] = responses.NewSearchResult(results[i].Value, results[i].Type, body)

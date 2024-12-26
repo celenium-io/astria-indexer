@@ -265,7 +265,7 @@ func initHandlers(ctx context.Context, e *echo.Echo, cfg Config, db postgres.Sto
 		panic(err)
 	}
 
-	searchHandler := handler.NewSearchHandler(constantCache, db.Search, db.Address, db.Blocks, db.Tx, db.Rollup, db.Bridges, db.Validator)
+	searchHandler := handler.NewSearchHandler(constantCache, db.Search, db.Address, db.Blocks, db.Tx, db.Rollup, db.Bridges, db.Validator, db.App)
 	v1.GET("/search", searchHandler.Search)
 
 	addressHandler := handler.NewAddressHandler(constantCache, db.Address, db.Tx, db.Action, db.Rollup, db.Fee, db.Bridges, db.Deposit, db.State, cfg.Indexer.Name)

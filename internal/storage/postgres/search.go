@@ -38,7 +38,14 @@ func (s *Search) Search(ctx context.Context, query string) (results []storage.Se
 		ColumnExpr("id, asset as value, 'bridge' as type").
 		Where("asset ILIKE ?", text)
 
-	searchQuery = searchQuery.UnionAll(bridgeQuery)
+	appQuery := s.db.DB().NewSelect().
+		Model((*storage.App)(nil)).
+		ColumnExpr("id, name as value, 'app' as type").
+		Where("name ILIKE ?", text)
+
+	searchQuery = searchQuery.
+		UnionAll(bridgeQuery).
+		UnionAll(appQuery)
 
 	if height, err := strconv.ParseInt(query, 10, 64); err == nil {
 		heightQuery := s.db.DB().NewSelect().

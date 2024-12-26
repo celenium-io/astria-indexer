@@ -76,3 +76,46 @@ func NewAppWithStats(r storage.AppWithStats) AppWithStats {
 
 	return app
 }
+
+type App struct {
+	Id          uint64 `example:"321"                                       format:"integer" json:"id"                    swaggertype:"integer"`
+	Name        string `example:"Rollup name"                               format:"string"  json:"name"                  swaggertype:"string"`
+	Description string `example:"Long rollup description"                   format:"string"  json:"description,omitempty" swaggertype:"string"`
+	Website     string `example:"https://website.com"                       format:"string"  json:"website,omitempty"     swaggertype:"string"`
+	Twitter     string `example:"https://x.com/account"                     format:"string"  json:"twitter,omitempty"     swaggertype:"string"`
+	Github      string `example:"https://github.com/account"                format:"string"  json:"github,omitempty"      swaggertype:"string"`
+	Logo        string `example:"https://some_link.com/image.png"           format:"string"  json:"logo,omitempty"        swaggertype:"string"`
+	Slug        string `example:"rollup_slug"                               format:"string"  json:"slug"                  swaggertype:"string"`
+	L2Beat      string `example:"https://l2beat.com/scaling/projects/karak" format:"string"  json:"l2_beat,omitempty"     swaggertype:"string"`
+	Explorer    string `example:"https://explorer.karak.network/"           format:"string"  json:"explorer,omitempty"    swaggertype:"string"`
+	Stack       string `example:"op_stack"                                  format:"string"  json:"stack,omitempty"       swaggertype:"string"`
+	Type        string `example:"settled"                                   format:"string"  json:"type,omitempty"        swaggertype:"string"`
+	Category    string `example:"nft"                                       format:"string"  json:"category,omitempty"    swaggertype:"string"`
+	VM          string `example:"evm"                                       format:"string"  json:"vm,omitempty"          swaggertype:"string"`
+	Provider    string `example:"name"                                      format:"string"  json:"provider,omitempty"    swaggertype:"string"`
+
+	Links []string `json:"links,omitempty"`
+}
+
+func NewApp(r storage.App) AppWithStats {
+	app := AppWithStats{
+		Id:          r.Id,
+		Name:        r.Name,
+		Description: r.Description,
+		Github:      r.Github,
+		Twitter:     r.Twitter,
+		Website:     r.Website,
+		Logo:        r.Logo,
+		L2Beat:      r.L2Beat,
+		Explorer:    r.Explorer,
+		Links:       r.Links,
+		Stack:       r.Stack,
+		Slug:        r.Slug,
+		Category:    r.Category.String(),
+		Type:        r.Type.String(),
+		Provider:    r.Provider,
+		VM:          r.VM,
+	}
+
+	return app
+}
