@@ -30,6 +30,7 @@ type SearchTestSuite struct {
 	rollups    *mock.MockIRollup
 	validators *mock.MockIValidator
 	bridges    *mock.MockIBridge
+	app        *mock.MockIApp
 	echo       *echo.Echo
 	handler    *SearchHandler
 	ctrl       *gomock.Controller
@@ -47,8 +48,9 @@ func (s *SearchTestSuite) SetupSuite() {
 	s.rollups = mock.NewMockIRollup(s.ctrl)
 	s.validators = mock.NewMockIValidator(s.ctrl)
 	s.bridges = mock.NewMockIBridge(s.ctrl)
+	s.app = mock.NewMockIApp(s.ctrl)
 	cc := cache.NewConstantsCache(nil)
-	s.handler = NewSearchHandler(cc, s.search, s.address, s.blocks, s.txs, s.rollups, s.bridges, s.validators)
+	s.handler = NewSearchHandler(cc, s.search, s.address, s.blocks, s.txs, s.rollups, s.bridges, s.validators, s.app)
 }
 
 // TearDownSuite -
@@ -301,5 +303,44 @@ func (s *SearchTestSuite) TestSearchBridge() {
 	result := results[0]
 	s.Require().Equal("bridge", result.Type)
 	s.Require().Equal("name", result.Value)
+	s.Require().NotNil(result.Body)
+}
+
+func (s *SearchTestSuite) TestSearchApp() {
+	q := make(url.Values)
+	q.Add("query", "app")
+
+	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/search")
+
+	s.search.EXPECT().
+		Search(gomock.Any(), "app").
+		Return([]storage.SearchResult{
+			{
+				Type:  "app",
+				Value: testApplication.Name,
+				Id:    1,
+			},
+		}, nil).
+		Times(1)
+
+	s.app.EXPECT().
+		GetByID(gomock.Any(), uint64(1)).
+		Return(&testApplication, nil).
+		Times(1)
+
+	s.Require().NoError(s.handler.Search(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var results []responses.SearchResult
+	err := json.NewDecoder(rec.Body).Decode(&results)
+	s.Require().NoError(err)
+	s.Require().Len(results, 1)
+
+	result := results[0]
+	s.Require().Equal("app", result.Type)
+	s.Require().Equal("test app", result.Value)
 	s.Require().NotNil(result.Body)
 }

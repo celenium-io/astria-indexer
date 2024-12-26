@@ -133,3 +133,17 @@ func (s *StorageTestSuite) TestSearchRollupByHash() {
 	s.Require().EqualValues("19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539", result.Value)
 	s.Require().EqualValues("rollup", result.Type)
 }
+
+func (s *StorageTestSuite) TestSearchApp() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	results, err := s.storage.Search.Search(ctx, "p 1")
+	s.Require().NoError(err)
+	s.Require().Len(results, 1)
+
+	result := results[0]
+	s.Require().EqualValues("App 1", result.Value)
+	s.Require().EqualValues("app", result.Type)
+	s.Require().EqualValues(1, result.Id)
+}
