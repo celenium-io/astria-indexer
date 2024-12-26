@@ -97,8 +97,8 @@ type App struct {
 	Links []string `json:"links,omitempty"`
 }
 
-func NewApp(r storage.App) AppWithStats {
-	app := AppWithStats{
+func NewApp(r storage.App) App {
+	app := App{
 		Id:          r.Id,
 		Name:        r.Name,
 		Description: r.Description,
