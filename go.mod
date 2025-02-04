@@ -1,6 +1,6 @@
 module github.com/celenium-io/astria-indexer
 
-go 1.23.2
+go 1.23.5
 
 require (
 	buf.build/gen/go/astria/primitives/protocolbuffers/go v1.35.1-20240911152449-eeebd3decdce.1
@@ -12,10 +12,11 @@ require (
 	github.com/dipdup-io/workerpool v0.0.4
 	github.com/dipdup-net/go-lib v0.3.6
 	github.com/dipdup-net/indexer-sdk v0.0.7
-	github.com/getsentry/sentry-go v0.30.0
+	github.com/fatih/structs v1.1.0
+	github.com/getsentry/sentry-go v0.28.1
 	github.com/go-playground/validator/v10 v10.15.0
 	github.com/go-testfixtures/testfixtures/v3 v3.9.0
-	github.com/goccy/go-json v0.10.2
+	github.com/goccy/go-json v0.9.11
 	github.com/gogo/protobuf v1.3.2
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.14.0

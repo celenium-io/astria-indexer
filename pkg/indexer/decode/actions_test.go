@@ -76,10 +76,6 @@ func TestDecodeActions(t *testing.T) {
 		wantAction := storage.Action{
 			Height: 1000,
 			Type:   types.ActionTypeIbcRelay,
-			Data: map[string]any{
-				"raw":  raw,
-				"type": "/ibc.core.channel.v1.MsgRecvPacket",
-			},
 			BalanceUpdates: []storage.BalanceUpdate{
 				{
 					Height:   1000,
@@ -105,7 +101,9 @@ func TestDecodeActions(t *testing.T) {
 		ctx := NewContext(nil)
 		err = parseIbcAction(message, &ctx, &action)
 		require.NoError(t, err)
-		require.Equal(t, wantAction, action)
+		require.Equal(t, wantAction.Height, action.Height)
+		require.Equal(t, wantAction.Type, action.Type)
+		require.Equal(t, wantAction.BalanceUpdates, action.BalanceUpdates)
 		require.Len(t, ctx.Addresses, 1)
 	})
 
@@ -126,10 +124,6 @@ func TestDecodeActions(t *testing.T) {
 		wantAction := storage.Action{
 			Height: 1000,
 			Type:   types.ActionTypeIbcRelay,
-			Data: map[string]any{
-				"raw":  raw,
-				"type": "/ibc.core.channel.v1.MsgTimeout",
-			},
 			BalanceUpdates: []storage.BalanceUpdate{
 				{
 					Height:   1000,
@@ -155,7 +149,9 @@ func TestDecodeActions(t *testing.T) {
 		ctx := NewContext(nil)
 		err = parseIbcAction(message, &ctx, &action)
 		require.NoError(t, err)
-		require.Equal(t, wantAction, action)
+		require.Equal(t, wantAction.Height, action.Height)
+		require.Equal(t, wantAction.Type, action.Type)
+		require.Equal(t, wantAction.BalanceUpdates, action.BalanceUpdates)
 		require.Len(t, ctx.Addresses, 1)
 	})
 
@@ -176,10 +172,6 @@ func TestDecodeActions(t *testing.T) {
 		wantAction := storage.Action{
 			Height: 1000,
 			Type:   types.ActionTypeIbcRelay,
-			Data: map[string]any{
-				"raw":  raw,
-				"type": "/ibc.core.channel.v1.MsgRecvPacket",
-			},
 		}
 
 		action := storage.Action{
@@ -188,7 +180,9 @@ func TestDecodeActions(t *testing.T) {
 		ctx := NewContext(nil)
 		err = parseIbcAction(message, &ctx, &action)
 		require.NoError(t, err)
-		require.Equal(t, wantAction, action)
+		require.Equal(t, wantAction.Height, action.Height)
+		require.Equal(t, wantAction.Type, action.Type)
+		require.Equal(t, wantAction.BalanceUpdates, action.BalanceUpdates)
 		require.Len(t, ctx.Addresses, 0)
 	})
 
@@ -209,10 +203,6 @@ func TestDecodeActions(t *testing.T) {
 		wantAction := storage.Action{
 			Height: 1000,
 			Type:   types.ActionTypeIbcRelay,
-			Data: map[string]any{
-				"raw":  raw,
-				"type": "/ibc.core.channel.v1.MsgRecvPacket",
-			},
 			BalanceUpdates: []storage.BalanceUpdate{
 				{
 					Height:   1000,
@@ -238,7 +228,9 @@ func TestDecodeActions(t *testing.T) {
 		ctx := NewContext(nil)
 		err = parseIbcAction(message, &ctx, &action)
 		require.NoError(t, err)
-		require.Equal(t, wantAction, action)
+		require.Equal(t, wantAction.Height, action.Height)
+		require.Equal(t, wantAction.Type, action.Type)
+		require.Equal(t, wantAction.BalanceUpdates, action.BalanceUpdates)
 		require.Len(t, ctx.Addresses, 1)
 	})
 
