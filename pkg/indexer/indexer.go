@@ -9,6 +9,8 @@ import (
 	"github.com/dipdup-net/indexer-sdk/pkg/modules/stopper"
 
 	"github.com/dipdup-net/indexer-sdk/pkg/modules"
+	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
+	sdkPg "github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 
 	internalStorage "github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/pkg/indexer/genesis"
@@ -27,7 +29,7 @@ import (
 )
 
 type Indexer struct {
-	cfg      config.Config
+	cfg      *config.Config
 	api      node.Api
 	receiver *receiver.Module
 	parser   *parser.Module
@@ -36,35 +38,38 @@ type Indexer struct {
 	genesis  *genesis.Module
 	stopper  modules.Module
 	log      zerolog.Logger
+
+	states  internalStorage.IState
+	bridges internalStorage.IBridge
 }
 
-func New(ctx context.Context, cfg config.Config, stopperModule modules.Module) (Indexer, error) {
-	pg, err := postgres.Create(ctx, cfg.Database, cfg.Indexer.ScriptsDir, true)
-	if err != nil {
-		return Indexer{}, errors.Wrap(err, "while creating pg context")
-	}
+func New(cfg *config.Config, pg *sdkPg.Storage, stopperModule modules.Module) (Indexer, error) {
+	states := postgres.NewState(pg)
+	blocks := postgres.NewBlocks(pg)
+	bridges := postgres.NewBridge(pg)
+	notificator := postgres.NewNotificator(cfg.Database, pg)
 
-	api, r, err := createReceiver(ctx, cfg, pg)
+	api, r, err := createReceiver(cfg)
 	if err != nil {
 		return Indexer{}, errors.Wrap(err, "while creating receiver module")
 	}
 
-	rb, err := createRollback(r, pg, &api, cfg.Indexer)
+	rb, err := createRollback(r, pg.Transactable, states, blocks, &api, cfg.Indexer)
 	if err != nil {
 		return Indexer{}, errors.Wrap(err, "while creating rollback module")
 	}
 
-	p, err := createParser(ctx, r, &api, pg)
+	p, err := createParser(r, &api)
 	if err != nil {
 		return Indexer{}, errors.Wrap(err, "while creating parser module")
 	}
 
-	s, err := createStorage(pg, cfg, p)
+	s, err := createStorage(pg.Transactable, notificator, cfg, p)
 	if err != nil {
 		return Indexer{}, errors.Wrap(err, "while creating storage module")
 	}
 
-	genesisModule, err := createGenesis(pg, cfg, r)
+	genesisModule, err := createGenesis(pg.Transactable, cfg, r)
 	if err != nil {
 		return Indexer{}, errors.Wrap(err, "while creating genesis module")
 	}
@@ -84,11 +89,25 @@ func New(ctx context.Context, cfg config.Config, stopperModule modules.Module) (
 		genesis:  genesisModule,
 		stopper:  stopperModule,
 		log:      log.With().Str("module", "indexer").Logger(),
+		states:   states,
+		bridges:  bridges,
 	}, nil
 }
 
 func (i *Indexer) Start(ctx context.Context) {
 	i.log.Info().Msg("starting...")
+
+	state, err := loadState(ctx, i.states, i.cfg.Indexer.Name)
+	if err != nil {
+		log.Err(err).Msg("load state")
+	}
+	i.receiver.Init(state)
+
+	assets, err := makeBridgeAssetsMap(ctx, i.bridges)
+	if err != nil {
+		log.Err(err).Msg("make bridge asset map")
+	}
+	i.parser.Init(ctx, assets)
 
 	i.genesis.Start(ctx)
 	i.storage.Start(ctx)
@@ -118,20 +137,15 @@ func (i *Indexer) Close() error {
 	return nil
 }
 
-func createReceiver(ctx context.Context, cfg config.Config, pg postgres.Storage) (rpc.API, *receiver.Module, error) {
-	state, err := loadState(pg, ctx, cfg.Indexer.Name)
-	if err != nil {
-		return rpc.API{}, nil, errors.Wrap(err, "while loading state")
-	}
+func createReceiver(cfg *config.Config) (rpc.API, *receiver.Module, error) {
 
 	api := rpc.NewAPI(cfg.DataSources["sequencer_rpc"])
-
-	receiverModule := receiver.NewModule(cfg.Indexer, &api, state)
+	receiverModule := receiver.NewModule(cfg.Indexer, &api)
 	return api, &receiverModule, nil
 }
 
-func createRollback(receiverModule modules.Module, pg postgres.Storage, api node.Api, cfg config.Indexer) (*rollback.Module, error) {
-	rollbackModule := rollback.NewModule(pg.Transactable, pg.State, pg.Blocks, api, cfg)
+func createRollback(receiverModule modules.Module, tx sdk.Transactable, states internalStorage.IState, blocks internalStorage.IBlock, api node.Api, cfg config.Indexer) (*rollback.Module, error) {
+	rollbackModule := rollback.NewModule(tx, states, blocks, api, cfg)
 
 	// rollback <- listen signal -- receiver
 	if err := rollbackModule.AttachTo(receiverModule, receiver.RollbackOutput, rollback.InputName); err != nil {
@@ -146,10 +160,10 @@ func createRollback(receiverModule modules.Module, pg postgres.Storage, api node
 	return &rollbackModule, nil
 }
 
-func makeBridgeAssetsMap(ctx context.Context, pg postgres.Storage) (map[string]string, error) {
+func makeBridgeAssetsMap(ctx context.Context, bridges internalStorage.IBridge) (map[string]string, error) {
 	assets := make(map[string]string)
 	for end := false; !end; {
-		data, err := pg.Bridges.ListWithAddress(ctx, 100, len(assets))
+		data, err := bridges.ListWithAddress(ctx, 100, len(assets))
 		if err != nil {
 			return nil, err
 		}
@@ -161,12 +175,8 @@ func makeBridgeAssetsMap(ctx context.Context, pg postgres.Storage) (map[string]s
 	return assets, nil
 }
 
-func createParser(ctx context.Context, receiverModule modules.Module, api node.Api, pg postgres.Storage) (*parser.Module, error) {
-	assets, err := makeBridgeAssetsMap(ctx, pg)
-	if err != nil {
-		return nil, errors.Wrap(err, "make bridge asset map")
-	}
-	parserModule := parser.NewModule(api, assets)
+func createParser(receiverModule modules.Module, api node.Api) (*parser.Module, error) {
+	parserModule := parser.NewModule(api)
 
 	if err := parserModule.AttachTo(receiverModule, receiver.BlocksOutput, parser.InputName); err != nil {
 		return nil, errors.Wrap(err, "while attaching parser to receiver")
@@ -175,8 +185,8 @@ func createParser(ctx context.Context, receiverModule modules.Module, api node.A
 	return &parserModule, nil
 }
 
-func createStorage(pg postgres.Storage, cfg config.Config, parserModule modules.Module) (*storage.Module, error) {
-	storageModule := storage.NewModule(pg.Transactable, pg.Notificator, cfg.Indexer)
+func createStorage(tx sdk.Transactable, notificator internalStorage.Notificator, cfg *config.Config, parserModule modules.Module) (*storage.Module, error) {
+	storageModule := storage.NewModule(tx, notificator, cfg.Indexer)
 
 	if err := storageModule.AttachTo(parserModule, parser.OutputName, storage.InputName); err != nil {
 		return nil, errors.Wrap(err, "while attaching storage to parser")
@@ -185,8 +195,8 @@ func createStorage(pg postgres.Storage, cfg config.Config, parserModule modules.
 	return &storageModule, nil
 }
 
-func createGenesis(pg postgres.Storage, cfg config.Config, receiverModule modules.Module) (*genesis.Module, error) {
-	genesisModule := genesis.NewModule(pg, cfg.Indexer)
+func createGenesis(tx sdk.Transactable, cfg *config.Config, receiverModule modules.Module) (*genesis.Module, error) {
+	genesisModule := genesis.NewModule(tx, cfg.Indexer)
 
 	if err := genesisModule.AttachTo(receiverModule, receiver.GenesisOutput, genesis.InputName); err != nil {
 		return nil, errors.Wrap(err, "while attaching genesis to receiver")
@@ -224,10 +234,10 @@ func attachStopper(stopperModule modules.Module, receiverModule modules.Module, 
 	return nil
 }
 
-func loadState(pg postgres.Storage, ctx context.Context, indexerName string) (*internalStorage.State, error) {
-	state, err := pg.State.ByName(ctx, indexerName)
+func loadState(ctx context.Context, states internalStorage.IState, indexerName string) (*internalStorage.State, error) {
+	state, err := states.ByName(ctx, indexerName)
 	if err != nil {
-		if pg.State.IsNoRows(err) {
+		if states.IsNoRows(err) {
 			return nil, nil
 		}
 

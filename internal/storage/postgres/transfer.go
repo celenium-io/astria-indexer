@@ -5,7 +5,6 @@ package postgres
 
 import (
 	"github.com/celenium-io/astria-indexer/internal/storage"
-	"github.com/dipdup-net/go-lib/database"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 )
 
@@ -15,8 +14,8 @@ type Transfer struct {
 }
 
 // NewTransfer -
-func NewTransfer(db *database.Bun) *Transfer {
+func NewTransfer(db *postgres.Storage) *Transfer {
 	return &Transfer{
-		Table: postgres.NewTable[*storage.Transfer](db),
+		Table: postgres.NewTable[*storage.Transfer](db.Connection()),
 	}
 }

@@ -17,10 +17,37 @@ type StatsHandler struct {
 	rollups storage.IRollup
 }
 
-func NewStatsHandler(repo storage.IStats, rollups storage.IRollup) StatsHandler {
-	return StatsHandler{
+func NewStatsHandler(repo storage.IStats, rollups storage.IRollup) *StatsHandler {
+	return &StatsHandler{
 		repo:    repo,
 		rollups: rollups,
+	}
+}
+
+var _ Handler = (*StatsHandler)(nil)
+
+func (sh *StatsHandler) InitRoutes(srvr *echo.Group) {
+	stats := srvr.Group("/stats")
+	{
+		stats.GET("/summary", sh.Summary)
+		stats.GET("/summary/:timeframe", sh.SummaryTimeframe)
+		stats.GET("/summary/active_addresses_count", sh.ActiveAddressesCount)
+		stats.GET("/series/:name/:timeframe", sh.Series)
+
+		rollup := stats.Group("/rollup")
+		{
+			rollup.GET("/series/:hash/:name/:timeframe", sh.RollupSeries)
+		}
+
+		fee := stats.Group("/fee")
+		{
+			fee.GET("/summary", sh.FeeSummary)
+		}
+
+		token := stats.Group("/token")
+		{
+			token.GET("/transfer_distribution", sh.TokenTransferDistribution)
+		}
 	}
 }
 
@@ -34,7 +61,7 @@ func NewStatsHandler(repo storage.IStats, rollups storage.IRollup) StatsHandler 
 //	@Success		200	{array}		responses.NetworkSummary
 //	@Failure		500	{object}	Error
 //	@Router			/v1/stats/summary [get]
-func (sh StatsHandler) Summary(c echo.Context) error {
+func (sh *StatsHandler) Summary(c echo.Context) error {
 	summary, err := sh.repo.Summary(c.Request().Context())
 	if err != nil {
 		return handleError(c, err, sh.rollups)
@@ -58,7 +85,7 @@ type summaryTimeframeRequest struct {
 //	@Failure		400	{object}	Error
 //	@Failure		500	{object}	Error
 //	@Router			/v1/stats/summary/{timeframe} [get]
-func (sh StatsHandler) SummaryTimeframe(c echo.Context) error {
+func (sh *StatsHandler) SummaryTimeframe(c echo.Context) error {
 	req, err := bindAndValidate[summaryTimeframeRequest](c)
 	if err != nil {
 		return badRequestError(c, err)
@@ -93,7 +120,7 @@ type seriesRequest struct {
 //	@Failure		400	{object}	Error
 //	@Failure		500	{object}	Error
 //	@Router			/v1/stats/series/{name}/{timeframe} [get]
-func (sh StatsHandler) Series(c echo.Context) error {
+func (sh *StatsHandler) Series(c echo.Context) error {
 	req, err := bindAndValidate[seriesRequest](c)
 	if err != nil {
 		return badRequestError(c, err)
@@ -140,7 +167,7 @@ type rollupSeriesRequest struct {
 //	@Failure		400	{object}	Error
 //	@Failure		500	{object}	Error
 //	@Router			/v1/stats/rollup/series/{hash}/{name}/{timeframe} [get]
-func (sh StatsHandler) RollupSeries(c echo.Context) error {
+func (sh *StatsHandler) RollupSeries(c echo.Context) error {
 	req, err := bindAndValidate[rollupSeriesRequest](c)
 	if err != nil {
 		return badRequestError(c, err)
@@ -184,7 +211,7 @@ func (sh StatsHandler) RollupSeries(c echo.Context) error {
 //	@Success		200	{array}		responses.FeeSummary
 //	@Failure		500	{object}	Error
 //	@Router			/v1/stats/fee/summary [get]
-func (sh StatsHandler) FeeSummary(c echo.Context) error {
+func (sh *StatsHandler) FeeSummary(c echo.Context) error {
 	summary, err := sh.repo.FeeSummary(c.Request().Context())
 	if err != nil {
 		return handleError(c, err, sh.rollups)
@@ -217,7 +244,7 @@ func (p *tokenTransferDistributionRequest) SetDefault() {
 //	@Success		200	{array}		responses.TokenTransferDistributionItem
 //	@Failure		500	{object}	Error
 //	@Router			/v1/stats/token/transfer_distribution [get]
-func (sh StatsHandler) TokenTransferDistribution(c echo.Context) error {
+func (sh *StatsHandler) TokenTransferDistribution(c echo.Context) error {
 	req, err := bindAndValidate[tokenTransferDistributionRequest](c)
 	if err != nil {
 		return badRequestError(c, err)
@@ -245,7 +272,7 @@ func (sh StatsHandler) TokenTransferDistribution(c echo.Context) error {
 //	@Success		200	{integer}	int64
 //	@Failure		500	{object}	Error
 //	@Router			/v1/stats/summary/active_addresses_count [get]
-func (sh StatsHandler) ActiveAddressesCount(c echo.Context) error {
+func (sh *StatsHandler) ActiveAddressesCount(c echo.Context) error {
 	count, err := sh.repo.ActiveAddressesCount(c.Request().Context())
 	if err != nil {
 		return handleError(c, err, sh.rollups)

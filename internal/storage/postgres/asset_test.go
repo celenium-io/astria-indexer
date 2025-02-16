@@ -43,7 +43,7 @@ func (s *StorageTestSuite) TestAssetList() {
 		},
 	}
 
-	assets, err := s.storage.Asset.List(ctx, 10, 0, "fee", sdk.SortOrderAsc)
+	assets, err := s.Asset.List(ctx, 10, 0, "fee", sdk.SortOrderAsc)
 	s.Require().NoError(err)
 	s.Require().Len(assets, len(m))
 

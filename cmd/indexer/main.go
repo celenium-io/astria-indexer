@@ -9,7 +9,10 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/dipdup-net/indexer-sdk/pkg/modules"
 	"github.com/dipdup-net/indexer-sdk/pkg/modules/stopper"
+	"github.com/ipfans/fxlogger"
+	"go.uber.org/fx"
 
 	"github.com/celenium-io/astria-indexer/pkg/indexer"
 
@@ -23,45 +26,35 @@ var rootCmd = &cobra.Command{
 }
 
 func main() {
-	cfg, err := initConfig()
-	if err != nil {
-		return
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+
+	app := fx.New(
+		fx.WithLogger(fxlogger.WithZerolog(log.Logger)),
+		fx.Supply(cancel),
+		fx.Provide(
+			loadConfig,
+			newProflier,
+			newDatabase,
+			fx.Annotate(
+				stopper.NewModule,
+				fx.As(new(modules.Module)),
+			),
+			indexer.New,
+			newApp,
+		),
+		fx.Invoke(func(*App) {}),
+	)
+
+	if err := app.Start(ctx); err != nil {
+		log.Err(err).Msg("start app")
+		os.Exit(1)
 	}
 
-	if err = initLogger(cfg.LogLevel); err != nil {
-		return
-	}
-	if err = initProflier(cfg.Profiler); err != nil {
-		return
-	}
-
-	ctx, cancel := context.WithCancel(context.Background())
-
-	notifyCtx, notifyCancel := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
-	defer notifyCancel()
-
-	stopperModule := stopper.NewModule(cancel)
-	indexerModule, err := indexer.New(ctx, *cfg, &stopperModule)
-	if err != nil {
-		log.Panic().Err(err).Msg("error during indexer module creation")
-		return
-	}
-
-	stopperModule.Start(ctx)
-	indexerModule.Start(ctx)
-
-	<-notifyCtx.Done()
+	<-ctx.Done()
 	cancel()
 
-	if err := indexerModule.Close(); err != nil {
-		log.Panic().Err(err).Msg("stopping indexer")
+	if err := app.Stop(ctx); err != nil {
+		log.Err(err).Msg("stop app")
+		os.Exit(1)
 	}
-
-	if prscp != nil {
-		if err := prscp.Stop(); err != nil {
-			log.Panic().Err(err).Msg("stopping pyroscope")
-		}
-	}
-
-	log.Info().Msg("stopped")
 }

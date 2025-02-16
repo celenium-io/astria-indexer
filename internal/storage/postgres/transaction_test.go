@@ -20,6 +20,7 @@ import (
 	"github.com/dipdup-net/go-lib/config"
 	"github.com/dipdup-net/go-lib/database"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
+	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/go-testfixtures/testfixtures/v3"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/suite"
@@ -29,7 +30,14 @@ import (
 type TransactionTestSuite struct {
 	suite.Suite
 	psqlContainer *database.PostgreSQLContainer
-	storage       Storage
+	storage       *postgres.Storage
+
+	Address        storage.IAddress
+	Rollup         storage.IRollup
+	BlockSignature storage.IBlockSignature
+	Blocks         storage.IBlock
+	Constants      storage.IConstant
+	Validator      storage.IValidator
 }
 
 // SetupSuite -
@@ -57,6 +65,12 @@ func (s *TransactionTestSuite) SetupSuite() {
 	}, "../../../database", false)
 	s.Require().NoError(err)
 	s.storage = strg
+	s.Address = NewAddress(s.storage)
+	s.Rollup = NewRollup(s.storage)
+	s.BlockSignature = NewBlockSignature(s.storage)
+	s.Constants = NewConstant(s.storage)
+	s.Validator = NewValidator(s.storage)
+	s.Blocks = NewBlocks(s.storage)
 }
 
 // TearDownSuite -
@@ -143,7 +157,7 @@ func (s *TransactionTestSuite) TestSaveAddresses() {
 	s.Require().NoError(tx2.Close(ctx))
 	s.Require().Equal(replyAddress.Id, addresses[1].Id)
 
-	response, err := s.storage.Address.List(ctx, 10, 6, sdk.SortOrderAsc)
+	response, err := s.Address.List(ctx, 10, 6, sdk.SortOrderAsc)
 	s.Require().NoError(err)
 	s.Require().Len(response, 5)
 
@@ -277,7 +291,7 @@ func (s *TransactionTestSuite) TestSaveRollups() {
 	s.Require().NoError(tx.Flush(ctx))
 	s.Require().NoError(tx.Close(ctx))
 
-	ret, err := s.storage.Rollup.List(ctx, 10, 0, sdk.SortOrderAsc)
+	ret, err := s.Rollup.List(ctx, 10, 0, sdk.SortOrderAsc)
 	s.Require().NoError(err)
 	s.Require().Len(ret, 7)
 }
@@ -599,7 +613,7 @@ func (s *TransactionTestSuite) TestRollbackBlock() {
 	s.Require().NoError(tx.Flush(ctx))
 	s.Require().NoError(tx.Close(ctx))
 
-	block, err := s.storage.Blocks.Last(ctx)
+	block, err := s.Blocks.Last(ctx)
 	s.Require().NoError(err)
 	s.Require().EqualValues(7964, block.Height)
 }
@@ -855,7 +869,7 @@ func (s *TransactionTestSuite) TestUpdateAddresses() {
 	s.Require().NoError(tx.Flush(ctx))
 	s.Require().NoError(tx.Close(ctx))
 
-	address, err := s.storage.Address.GetByID(ctx, 1)
+	address, err := s.Address.GetByID(ctx, 1)
 	s.Require().NoError(err)
 	s.Require().EqualValues(10, address.Nonce)
 	s.Require().EqualValues(2, address.ActionsCount)
@@ -879,7 +893,7 @@ func (s *TransactionTestSuite) TestUpdateRollup() {
 	s.Require().NoError(tx.Flush(ctx))
 	s.Require().NoError(tx.Close(ctx))
 
-	rollup, err := s.storage.Rollup.GetByID(ctx, 1)
+	rollup, err := s.Rollup.GetByID(ctx, 1)
 	s.Require().NoError(err)
 	s.Require().EqualValues(212, rollup.Size)
 	s.Require().EqualValues(2, rollup.ActionsCount)
@@ -898,7 +912,7 @@ func (s *TransactionTestSuite) TestRetentionBlockSignatures() {
 	s.Require().NoError(tx.Flush(ctx))
 	s.Require().NoError(tx.Close(ctx))
 
-	signs, err := s.storage.BlockSignatures.List(ctx, 10, 0, sdk.SortOrderDesc)
+	signs, err := s.BlockSignature.List(ctx, 10, 0, sdk.SortOrderDesc)
 	s.Require().NoError(err)
 	s.Require().Len(signs, 3)
 }
@@ -924,7 +938,7 @@ func (s *TransactionTestSuite) TestCreateValidator() {
 	s.Require().NoError(tx.Flush(ctx))
 	s.Require().NoError(tx.Close(ctx))
 
-	validator, err := s.storage.Validator.GetByID(ctx, val.Id)
+	validator, err := s.Validator.GetByID(ctx, val.Id)
 	s.Require().NoError(err)
 	s.Require().EqualValues("10000", validator.Power.String())
 }
@@ -946,7 +960,7 @@ func (s *TransactionTestSuite) TestUpdateConstants() {
 	s.Require().NoError(tx.Flush(ctx))
 	s.Require().NoError(tx.Close(ctx))
 
-	c, err := s.storage.Constants.Get(ctx, types.ModuleNameGeneric, "authority_sudo_key")
+	c, err := s.Constants.Get(ctx, types.ModuleNameGeneric, "authority_sudo_key")
 	s.Require().NoError(err)
 	s.Require().EqualValues("100", c.Value)
 }

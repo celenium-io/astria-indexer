@@ -7,7 +7,6 @@ import (
 	"context"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
-	"github.com/dipdup-net/go-lib/database"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 )
@@ -18,9 +17,9 @@ type Deposit struct {
 }
 
 // NewDeposit -
-func NewDeposit(db *database.Bun) *Deposit {
+func NewDeposit(db *postgres.Storage) *Deposit {
 	return &Deposit{
-		Table: postgres.NewTable[*storage.Deposit](db),
+		Table: postgres.NewTable[*storage.Deposit](db.Connection()),
 	}
 }
 

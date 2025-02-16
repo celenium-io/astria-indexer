@@ -47,6 +47,12 @@ func NewSearchHandler(
 	}
 }
 
+var _ Handler = (*SearchHandler)(nil)
+
+func (s *SearchHandler) InitRoutes(srvr *echo.Group) {
+	srvr.GET("/search", s.Search)
+}
+
 type searchRequest struct {
 	Search string `query:"query" validate:"required"`
 }

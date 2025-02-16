@@ -5,14 +5,19 @@ package main
 
 import (
 	"context"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/celenium-io/astria-indexer/cmd/api/bus"
 	_ "github.com/celenium-io/astria-indexer/cmd/api/docs"
-	"github.com/pkg/errors"
+	"github.com/celenium-io/astria-indexer/cmd/api/handler"
+	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
+	"github.com/ipfans/fxlogger"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+	"go.uber.org/fx"
 )
 
 var rootCmd = &cobra.Command{
@@ -23,68 +28,145 @@ var rootCmd = &cobra.Command{
 // @title					Swagger Astria Explorer API
 // @version					1.0
 // @description				This is docs of Astria Explorer API.
-// @host					api-dusk.astrotrek.io
+// @host					api.astrotrek.io
 //
 // @query.collection.format	multi
 func main() {
-	cfg, err := initConfig()
-	if err != nil {
-		return
-	}
+	app := fx.New(
+		fx.WithLogger(fxlogger.WithZerolog(log.Logger)),
+		fx.Provide(
+			loadConfig,
+			databaseConfig,
+			indexerName,
 
-	if err = initLogger(cfg.LogLevel); err != nil {
-		return
-	}
+			newProflier,
+			fx.Annotate(
+				newServer,
+				fx.ParamTags("", `group:"handlers"`),
+			),
+			bus.NewDispatcher,
+			newEndpointCache,
+			newConstantCache,
+			newWebsocket,
+			newApp,
 
-	if err := initProflier(cfg.Profiler); err != nil {
-		return
-	}
+			newDatabase,
+			fx.Annotate(
+				postgres.NewListenerFactory,
+				fx.As(new(storage.ListenerFactory)),
+			),
+			fx.Annotate(
+				postgres.NewNotificator,
+				fx.As(new(storage.Listener)),
+			),
+			fx.Annotate(
+				postgres.NewAction,
+				fx.As(new(storage.IAction)),
+			),
+			fx.Annotate(
+				postgres.NewAddress,
+				fx.As(new(storage.IAddress)),
+			),
+			fx.Annotate(
+				postgres.NewApp,
+				fx.As(new(storage.IApp)),
+			),
+			fx.Annotate(
+				postgres.NewAsset,
+				fx.As(new(storage.IAsset)),
+			),
+			fx.Annotate(
+				postgres.NewBlockSignature,
+				fx.As(new(storage.IBlockSignature)),
+			),
+			fx.Annotate(
+				postgres.NewBlockStats,
+				fx.As(new(storage.IBlockStats)),
+			),
+			fx.Annotate(
+				postgres.NewBlocks,
+				fx.As(new(storage.IBlock)),
+			),
+			fx.Annotate(
+				postgres.NewBridge,
+				fx.As(new(storage.IBridge)),
+			),
+			fx.Annotate(
+				postgres.NewConstant,
+				fx.As(new(storage.IConstant)),
+			),
+			fx.Annotate(
+				postgres.NewDeposit,
+				fx.As(new(storage.IDeposit)),
+			),
+			fx.Annotate(
+				postgres.NewFee,
+				fx.As(new(storage.IFee)),
+			),
+			fx.Annotate(
+				postgres.NewRollup,
+				fx.As(new(storage.IRollup)),
+			),
+			fx.Annotate(
+				postgres.NewSearch,
+				fx.As(new(storage.ISearch)),
+			),
+			fx.Annotate(
+				postgres.NewState,
+				fx.As(new(storage.IState)),
+			),
+			fx.Annotate(
+				postgres.NewStats,
+				fx.As(new(storage.IStats)),
+			),
+			fx.Annotate(
+				postgres.NewTransfer,
+				fx.As(new(storage.ITransfer)),
+			),
+			fx.Annotate(
+				postgres.NewTx,
+				fx.As(new(storage.ITx)),
+			),
+			fx.Annotate(
+				postgres.NewValidator,
+				fx.As(new(storage.IValidator)),
+			),
+
+			AsHandler(handler.NewAddressHandler),
+			AsHandler(handler.NewAppHandler),
+			AsHandler(handler.NewAssetHandler),
+			AsHandler(handler.NewBlockHandler),
+			AsHandler(handler.NewConstantHandler),
+			AsHandler(handler.NewRollupHandler),
+			AsHandler(handler.NewSearchHandler),
+			AsHandler(handler.NewStateHandler),
+			AsHandler(handler.NewStatsHandler),
+			AsHandler(handler.NewTxHandler),
+			AsHandler(handler.NewValidatorHandler),
+		),
+		fx.Invoke(func(*App) {}),
+	)
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 
-	db := initDatabase(cfg.Database, cfg.Indexer.ScriptsDir)
-	e := initEcho(cfg.ApiConfig, cfg.Environment)
-	initDispatcher(ctx, db)
-	initHandlers(ctx, e, *cfg, db)
-	initCache(ctx, e)
-
-	go func() {
-		if err := e.Start(cfg.ApiConfig.Bind); err != nil && errors.Is(err, http.ErrServerClosed) {
-			e.Logger.Fatal("shutting down the server")
-		}
-	}()
+	if err := app.Start(ctx); err != nil {
+		log.Err(err).Msg("start app")
+		os.Exit(1)
+	}
 
 	<-ctx.Done()
 	cancel()
 
-	if wsManager != nil {
-		if err := wsManager.Close(); err != nil {
-			e.Logger.Fatal(err)
-		}
+	if err := app.Stop(ctx); err != nil {
+		log.Err(err).Msg("stop app")
+		os.Exit(1)
 	}
-	if endpointCache != nil {
-		if err := endpointCache.Close(); err != nil {
-			e.Logger.Fatal(err)
-		}
-	}
-	if constantCache != nil {
-		if err := constantCache.Close(); err != nil {
-			e.Logger.Fatal(err)
-		}
-	}
-	if dispatcher != nil {
-		if err := dispatcher.Close(); err != nil {
-			e.Logger.Fatal(err)
-		}
-	}
+}
 
-	if err := e.Shutdown(ctx); err != nil {
-		e.Logger.Fatal(err)
-	}
-
-	if prscp != nil {
-		if err := prscp.Stop(); err != nil {
-			e.Logger.Fatal(err)
-		}
-	}
+func AsHandler(f any) any {
+	return fx.Annotate(
+		f,
+		fx.As(new(handler.Handler)),
+		fx.ResultTags(`group:"handlers"`),
+	)
 }

@@ -7,7 +7,6 @@ import (
 	"context"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
-	"github.com/dipdup-net/go-lib/database"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/uptrace/bun"
 )
@@ -18,9 +17,9 @@ type Address struct {
 }
 
 // NewAddress -
-func NewAddress(db *database.Bun) *Address {
+func NewAddress(db *postgres.Storage) *Address {
 	return &Address{
-		Table: postgres.NewTable[*storage.Address](db),
+		Table: postgres.NewTable[*storage.Address](db.Connection()),
 	}
 }
 

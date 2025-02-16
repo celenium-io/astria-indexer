@@ -24,6 +24,19 @@ func NewAppHandler(
 	}
 }
 
+var _ Handler = (*AppHandler)(nil)
+
+func (handler *AppHandler) InitRoutes(srvr *echo.Group) {
+	apps := srvr.Group("/app")
+	{
+		apps.GET("", handler.Leaderboard)
+		app := apps.Group("/:slug")
+		{
+			app.GET("", handler.Get)
+		}
+	}
+}
+
 type leaderboardRequest struct {
 	Limit    int         `query:"limit"    validate:"omitempty,min=1,max=100"`
 	Offset   int         `query:"offset"   validate:"omitempty,min=0"`

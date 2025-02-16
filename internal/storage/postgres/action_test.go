@@ -16,7 +16,7 @@ func (s *StorageTestSuite) TestActionByBlock() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	actions, err := s.storage.Action.ByBlock(ctx, 7316, 10, 0)
+	actions, err := s.Action.ByBlock(ctx, 7316, 10, 0)
 	s.Require().NoError(err)
 	s.Require().Len(actions, 1)
 
@@ -36,7 +36,7 @@ func (s *StorageTestSuite) TestActionByTxId() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	actions, err := s.storage.Action.ByTxId(ctx, 1, 10, 0)
+	actions, err := s.Action.ByTxId(ctx, 1, 10, 0)
 	s.Require().NoError(err)
 	s.Require().Len(actions, 1)
 
@@ -54,7 +54,7 @@ func (s *StorageTestSuite) TestActionByAddress() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	actions, err := s.storage.Action.ByAddress(ctx, 1, storage.AddressActionsFilter{
+	actions, err := s.Action.ByAddress(ctx, 1, storage.AddressActionsFilter{
 		Sort:        sdk.SortOrderAsc,
 		Limit:       1,
 		ActionTypes: types.NewActionTypeMask(types.ActionTypeRollupDataSubmission.String()),
@@ -78,7 +78,7 @@ func (s *StorageTestSuite) TestActionByRollup() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	actions, err := s.storage.Action.ByRollup(ctx, 1, 1, 0, sdk.SortOrderDesc)
+	actions, err := s.Action.ByRollup(ctx, 1, 1, 0, sdk.SortOrderDesc)
 	s.Require().NoError(err)
 	s.Require().Len(actions, 1)
 
@@ -98,7 +98,7 @@ func (s *StorageTestSuite) TestActionByRollupAndBridge() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	actions, err := s.storage.Action.ByRollupAndBridge(ctx, 1, storage.RollupAndBridgeActionsFilter{
+	actions, err := s.Action.ByRollupAndBridge(ctx, 1, storage.RollupAndBridgeActionsFilter{
 		Sort:          sdk.SortOrderAsc,
 		Limit:         10,
 		Offset:        0,
@@ -122,7 +122,7 @@ func (s *StorageTestSuite) TestActionByRollupAndBridgeWithoutRollupActions() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	actions, err := s.storage.Action.ByRollupAndBridge(ctx, 1, storage.RollupAndBridgeActionsFilter{
+	actions, err := s.Action.ByRollupAndBridge(ctx, 1, storage.RollupAndBridgeActionsFilter{
 		Sort:          sdk.SortOrderAsc,
 		Limit:         10,
 		Offset:        0,

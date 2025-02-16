@@ -6,6 +6,7 @@ package handler
 import (
 	"context"
 	"encoding/base64"
+	"os"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
@@ -13,6 +14,7 @@ import (
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/gosimple/slug"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/pkg/errors"
 )
 
@@ -28,12 +30,30 @@ func NewAppHandler(
 	address storage.IAddress,
 	rollup storage.IRollup,
 	tx sdk.Transactable,
-) AppHandler {
-	return AppHandler{
+) *AppHandler {
+	return &AppHandler{
 		apps:    apps,
 		address: address,
 		rollup:  rollup,
 		tx:      tx,
+	}
+}
+
+var _ Handler = (*AppHandler)(nil)
+
+func (handler *AppHandler) InitRoutes(srvr *echo.Group) {
+	keyMiddleware := middleware.KeyAuthWithConfig(middleware.KeyAuthConfig{
+		KeyLookup: "header:Authorization",
+		Validator: func(key string, c echo.Context) (bool, error) {
+			return key == os.Getenv("PRIVATE_API_AUTH_KEY"), nil
+		},
+	})
+
+	app := srvr.Group("/app")
+	{
+		app.POST("", handler.Create, keyMiddleware)
+		app.PATCH("/:id", handler.Update, keyMiddleware)
+		app.DELETE("/:id", handler.Delete, keyMiddleware)
 	}
 }
 
@@ -57,7 +77,7 @@ type createAppRequest struct {
 	NativeBridge string   `json:"native_bridge" validate:"omitempty,address"`
 }
 
-func (handler AppHandler) Create(c echo.Context) error {
+func (handler *AppHandler) Create(c echo.Context) error {
 	req, err := bindAndValidate[createAppRequest](c)
 	if err != nil {
 		return badRequestError(c, err)
@@ -70,7 +90,7 @@ func (handler AppHandler) Create(c echo.Context) error {
 	return success(c)
 }
 
-func (handler AppHandler) createApp(ctx context.Context, req *createAppRequest) error {
+func (handler *AppHandler) createApp(ctx context.Context, req *createAppRequest) error {
 	tx, err := postgres.BeginTransaction(ctx, handler.tx)
 	if err != nil {
 		return err
@@ -150,7 +170,7 @@ type updateAppRequest struct {
 	NativeBridge string   `json:"native_bridge" validate:"omitempty,address"`
 }
 
-func (handler AppHandler) Update(c echo.Context) error {
+func (handler *AppHandler) Update(c echo.Context) error {
 	req, err := bindAndValidate[updateAppRequest](c)
 	if err != nil {
 		return badRequestError(c, err)
@@ -163,7 +183,7 @@ func (handler AppHandler) Update(c echo.Context) error {
 	return success(c)
 }
 
-func (handler AppHandler) updateRollup(ctx context.Context, req *updateAppRequest) error {
+func (handler *AppHandler) updateRollup(ctx context.Context, req *updateAppRequest) error {
 	tx, err := postgres.BeginTransaction(ctx, handler.tx)
 	if err != nil {
 		return err
@@ -231,7 +251,7 @@ type deleteRollupRequest struct {
 	Id uint64 `param:"id" validate:"required,min=1"`
 }
 
-func (handler AppHandler) Delete(c echo.Context) error {
+func (handler *AppHandler) Delete(c echo.Context) error {
 	req, err := bindAndValidate[deleteRollupRequest](c)
 	if err != nil {
 		return badRequestError(c, err)
@@ -244,7 +264,7 @@ func (handler AppHandler) Delete(c echo.Context) error {
 	return success(c)
 }
 
-func (handler AppHandler) deleteRollup(ctx context.Context, id uint64) error {
+func (handler *AppHandler) deleteRollup(ctx context.Context, id uint64) error {
 	tx, err := postgres.BeginTransaction(ctx, handler.tx)
 	if err != nil {
 		return err

@@ -25,17 +25,20 @@ const (
 	StopOutput = "stop"
 )
 
-func NewModule(api node.Api, bridgeAssets map[string]string) Module {
+func NewModule(api node.Api) Module {
 	m := Module{
-		BaseModule:   modules.New("parser"),
-		api:          api,
-		bridgeAssets: bridgeAssets,
+		BaseModule: modules.New("parser"),
+		api:        api,
 	}
 	m.CreateInput(InputName)
 	m.CreateOutput(OutputName)
 	m.CreateOutput(StopOutput)
 
 	return m
+}
+
+func (p *Module) Init(ctx context.Context, bridgeAssets map[string]string) {
+	p.bridgeAssets = bridgeAssets
 }
 
 func (p *Module) Start(ctx context.Context) {

@@ -24,7 +24,7 @@ func (s *StorageTestSuite) TestLeaderboard() {
 		columnSize, columnActionsCount, columnTime, "",
 	} {
 
-		apps, err := s.storage.App.Leaderboard(ctx, storage.LeaderboardFilters{
+		apps, err := s.App.Leaderboard(ctx, storage.LeaderboardFilters{
 			SortField: column,
 			Sort:      sdk.SortOrderDesc,
 			Limit:     10,
@@ -57,7 +57,7 @@ func (s *StorageTestSuite) TestLeaderboardWithCategory() {
 		columnSize, columnActionsCount, columnTime, "",
 	} {
 
-		apps, err := s.storage.App.Leaderboard(ctx, storage.LeaderboardFilters{
+		apps, err := s.App.Leaderboard(ctx, storage.LeaderboardFilters{
 			SortField: column,
 			Sort:      sdk.SortOrderDesc,
 			Limit:     10,
@@ -87,7 +87,7 @@ func (s *StorageTestSuite) TestAppBySlug() {
 	_, err := s.storage.Connection().Exec(ctx, "REFRESH MATERIALIZED VIEW leaderboard;")
 	s.Require().NoError(err)
 
-	app, err := s.storage.App.BySlug(ctx, "app-1")
+	app, err := s.App.BySlug(ctx, "app-1")
 	s.Require().NoError(err)
 
 	s.Require().EqualValues("App 1", app.Name)
@@ -108,7 +108,7 @@ func (s *StorageTestSuite) TestAppByRollupId() {
 	_, err := s.storage.Connection().Exec(ctx, "REFRESH MATERIALIZED VIEW leaderboard;")
 	s.Require().NoError(err)
 
-	app, err := s.storage.App.ByRollupId(ctx, 1)
+	app, err := s.App.ByRollupId(ctx, 1)
 	s.Require().NoError(err)
 
 	s.Require().EqualValues("App 1", app.Name)

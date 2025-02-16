@@ -54,6 +54,26 @@ func NewAddressHandler(
 	}
 }
 
+var _ Handler = (*AddressHandler)(nil)
+
+func (handler *AddressHandler) InitRoutes(srvr *echo.Group) {
+	addressesGroup := srvr.Group("/address")
+	{
+		addressesGroup.GET("", handler.List)
+		addressesGroup.GET("/count", handler.Count)
+		addressGroup := addressesGroup.Group("/:hash")
+		{
+			addressGroup.GET("", handler.Get)
+			addressGroup.GET("/txs", handler.Transactions)
+			addressGroup.GET("/actions", handler.Actions)
+			addressGroup.GET("/rollups", handler.Rollups)
+			addressGroup.GET("/roles", handler.Roles)
+			addressGroup.GET("/fees", handler.Fees)
+			addressGroup.GET("/deposits", handler.Deposits)
+		}
+	}
+}
+
 type getAddressRequest struct {
 	Hash string `param:"hash" validate:"required,address"`
 }

@@ -26,6 +26,15 @@ func NewAssetHandler(
 	}
 }
 
+var _ Handler = (*AssetHandler)(nil)
+
+func (handler *AssetHandler) InitRoutes(srvr *echo.Group) {
+	assets := srvr.Group("/asset")
+	{
+		assets.GET("", handler.List)
+	}
+}
+
 type assetListRequest struct {
 	Limit     uint64 `query:"limit"   validate:"omitempty,min=1,max=100"`
 	Offset    uint64 `query:"offset"  validate:"omitempty,min=0"`

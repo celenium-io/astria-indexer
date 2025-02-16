@@ -1,16 +1,17 @@
 module github.com/celenium-io/astria-indexer
 
-go 1.23
+go 1.23.2
 
 require (
 	buf.build/gen/go/astria/primitives/protocolbuffers/go v1.35.1-20240911152449-eeebd3decdce.1
 	buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.35.1-20241016184443-c3b7ab6e57dc.1
+	cosmossdk.io/errors v1.0.1
 	github.com/cometbft/cometbft v0.38.15
 	github.com/cosmos/btcutil v1.0.5
 	github.com/cosmos/ibc-go/v9 v9.0.0
 	github.com/dipdup-io/workerpool v0.0.4
 	github.com/dipdup-net/go-lib v0.3.6
-	github.com/dipdup-net/indexer-sdk v0.0.5
+	github.com/dipdup-net/indexer-sdk v0.0.7
 	github.com/getsentry/sentry-go v0.30.0
 	github.com/go-playground/validator/v10 v10.15.0
 	github.com/go-testfixtures/testfixtures/v3 v3.9.0
@@ -19,6 +20,7 @@ require (
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.14.0
 	github.com/grafana/pyroscope-go v1.1.2
+	github.com/ipfans/fxlogger v0.2.0
 	github.com/json-iterator/go v1.1.12
 	github.com/labstack/echo-contrib v0.15.0
 	github.com/labstack/echo/v4 v4.11.4
@@ -34,7 +36,8 @@ require (
 	github.com/uptrace/bun v1.1.17
 	go.opentelemetry.io/otel v1.27.0
 	go.opentelemetry.io/otel/trace v1.27.0
-	go.uber.org/mock v0.4.0
+	go.uber.org/fx v1.22.0
+	go.uber.org/mock v0.5.0
 	golang.org/x/time v0.5.0
 	google.golang.org/protobuf v1.35.1
 )
@@ -44,7 +47,6 @@ require (
 	cosmossdk.io/collections v0.4.0 // indirect
 	cosmossdk.io/core v0.11.1 // indirect
 	cosmossdk.io/depinject v1.1.0 // indirect
-	cosmossdk.io/errors v1.0.1 // indirect
 	cosmossdk.io/log v1.4.1 // indirect
 	cosmossdk.io/math v1.4.0 // indirect
 	cosmossdk.io/store v1.1.1 // indirect
@@ -177,7 +179,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/moby/patternmatcher v0.5.0 // indirect
 	github.com/moby/sys/sequential v0.5.0 // indirect
-	github.com/moby/sys/user v0.1.0 // indirect
+	github.com/moby/sys/user v0.3.0 // indirect
 	github.com/moby/term v0.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
@@ -232,7 +234,9 @@ require (
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.49.0 // indirect
 	go.opentelemetry.io/otel/metric v1.27.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.27.0 // indirect
+	go.uber.org/dig v1.17.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
+	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c // indirect
 	golang.org/x/net v0.33.0 // indirect

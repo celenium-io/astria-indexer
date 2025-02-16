@@ -52,22 +52,15 @@ type Module struct {
 
 var _ modules.Module = (*Module)(nil)
 
-func NewModule(cfg config.Indexer, api node.Api, state *storage.State) Module {
-	level := types.Level(cfg.StartLevel)
-	var lastHash []byte
-	if state != nil {
-		level = state.LastHeight
-		lastHash = state.LastHash
-	}
-
+func NewModule(cfg config.Indexer, api node.Api) Module {
 	receiver := Module{
 		BaseModule:   modules.New("receiver"),
 		api:          api,
 		cfg:          cfg,
 		blocks:       make(chan types.BlockData, cfg.ThreadsCount*10),
-		needGenesis:  state == nil,
-		level:        level,
-		hash:         lastHash,
+		needGenesis:  true,
+		level:        types.Level(cfg.StartLevel),
+		hash:         []byte{},
 		taskQueue:    sdkSync.NewMap[types.Level, struct{}](),
 		mx:           new(sync.RWMutex),
 		rollbackSync: new(sync.WaitGroup),
@@ -84,6 +77,15 @@ func NewModule(cfg config.Indexer, api node.Api, state *storage.State) Module {
 	receiver.pool = workerpool.NewPool(receiver.worker, int(cfg.ThreadsCount))
 
 	return receiver
+}
+
+func (r *Module) Init(state *storage.State) {
+	r.needGenesis = state == nil
+
+	if state != nil {
+		r.level = state.LastHeight
+		r.hash = state.LastHash
+	}
 }
 
 func (r *Module) Start(ctx context.Context) {

@@ -8,7 +8,6 @@ import (
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/pkg/types"
-	"github.com/dipdup-net/go-lib/database"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 )
 
@@ -18,9 +17,9 @@ type Tx struct {
 }
 
 // NewTx -
-func NewTx(db *database.Bun) *Tx {
+func NewTx(db *postgres.Storage) *Tx {
 	return &Tx{
-		Table: postgres.NewTable[*storage.Tx](db),
+		Table: postgres.NewTable[*storage.Tx](db.Connection()),
 	}
 }
 
