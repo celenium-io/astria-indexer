@@ -8,10 +8,10 @@ import (
 	"testing"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
-	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
 	testsuite "github.com/celenium-io/astria-indexer/internal/test_suite"
 	"github.com/celenium-io/astria-indexer/pkg/indexer/config"
 	"github.com/celenium-io/astria-indexer/pkg/node/types"
+	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/goccy/go-json"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/require"
@@ -28,7 +28,7 @@ func TestParseAccounts(t *testing.T) {
 
 	data := newParsedData()
 
-	module := NewModule(postgres.Storage{}, config.Indexer{})
+	module := NewModule(&postgres.Transactable{}, config.Indexer{})
 
 	err = module.parseAccounts(g.AppState.Accounts, 1, &data)
 	require.NoError(t, err)

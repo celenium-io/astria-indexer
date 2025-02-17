@@ -43,17 +43,7 @@ var cfgDefault = ic.Indexer{
 }
 
 func (s *ModuleTestSuite) createModule() Module {
-	state := storage.State{
-		Id:         1,
-		Name:       testIndexerName,
-		LastHeight: 1000,
-		LastHash:   hashOf1000Block,
-		LastTime:   time.Time{},
-		ChainId:    "explorer-test",
-	}
-	receiverModule := NewModule(cfgDefault, s.api, &state)
-
-	return receiverModule
+	return NewModule(cfgDefault, s.api)
 }
 
 func (s *ModuleTestSuite) createModuleEmptyState(cfgOptional *ic.Indexer) Module {
@@ -62,7 +52,7 @@ func (s *ModuleTestSuite) createModuleEmptyState(cfgOptional *ic.Indexer) Module
 		cfg = *cfgOptional
 	}
 
-	receiverModule := NewModule(cfg, s.api, nil)
+	receiverModule := NewModule(cfg, s.api)
 	return receiverModule
 }
 
@@ -80,6 +70,15 @@ func (s *ModuleTestSuite) TestModule_SuccessOnStop() {
 	err := stopperModule.AttachTo(&receiverModule, StopOutput, stopper.InputName)
 	s.Require().NoError(err)
 
+	receiverModule.Init(&storage.State{
+		Id:         1,
+		Name:       testIndexerName,
+		LastHeight: 1000,
+		LastHash:   hashOf1000Block,
+		LastTime:   time.Time{},
+		ChainId:    "explorer-test",
+	})
+
 	stopperCtx, stopperCtxCancel := context.WithCancel(context.Background())
 	defer stopperCtxCancel()
 
@@ -92,11 +91,9 @@ func (s *ModuleTestSuite) TestModule_SuccessOnStop() {
 
 	receiverModule.MustOutput(StopOutput).Push(struct{}{})
 
-	for range ctx.Done() {
-		s.Require().ErrorIs(context.Canceled, ctx.Err())
-		return
-	}
+	<-ctx.Done()
 
+	s.Require().ErrorIs(context.Canceled, ctx.Err())
 }
 
 func TestSuiteModule_Run(t *testing.T) {

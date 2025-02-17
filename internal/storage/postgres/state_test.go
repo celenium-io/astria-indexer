@@ -14,7 +14,7 @@ func (s *StorageTestSuite) TestStateByName() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	state, err := s.storage.State.ByName(ctx, testDipdupName)
+	state, err := s.State.ByName(ctx, testDipdupName)
 	s.Require().NoError(err)
 
 	s.Require().EqualValues(testDipdupName, state.Name)

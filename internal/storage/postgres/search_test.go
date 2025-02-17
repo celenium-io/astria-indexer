@@ -12,7 +12,7 @@ func (s *StorageTestSuite) TestSearchBlock() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	results, err := s.storage.Search.Search(ctx, "b15d072afc508558b3e962060c701a695af5d6a041d4a25c63240bbff5064b3b")
+	results, err := s.Search.Search(ctx, "b15d072afc508558b3e962060c701a695af5d6a041d4a25c63240bbff5064b3b")
 	s.Require().NoError(err)
 	s.Require().Len(results, 1)
 
@@ -25,7 +25,7 @@ func (s *StorageTestSuite) TestSearchBlockByHeight() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	results, err := s.storage.Search.Search(ctx, "7965")
+	results, err := s.Search.Search(ctx, "7965")
 	s.Require().NoError(err)
 	s.Require().Len(results, 1)
 
@@ -38,7 +38,7 @@ func (s *StorageTestSuite) TestSearchTx() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	results, err := s.storage.Search.Search(ctx, "20b0e6310801e7b2a16c69aace7b1a1d550e5c49c80f546941bb1ac747487fe5")
+	results, err := s.Search.Search(ctx, "20b0e6310801e7b2a16c69aace7b1a1d550e5c49c80f546941bb1ac747487fe5")
 	s.Require().NoError(err)
 	s.Require().Len(results, 1)
 
@@ -51,7 +51,7 @@ func (s *StorageTestSuite) TestSearchRollup() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	results, err := s.storage.Search.Search(ctx, "19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539")
+	results, err := s.Search.Search(ctx, "19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539")
 	s.Require().NoError(err)
 	s.Require().Len(results, 1)
 
@@ -64,7 +64,7 @@ func (s *StorageTestSuite) TestSearchAddress() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	results, err := s.storage.Search.Search(ctx, "astria1e9q7egqgz8rz6aej8nr57swqgaeujhz04vd9q5")
+	results, err := s.Search.Search(ctx, "astria1e9q7egqgz8rz6aej8nr57swqgaeujhz04vd9q5")
 	s.Require().NoError(err)
 	s.Require().Len(results, 1)
 
@@ -78,7 +78,7 @@ func (s *StorageTestSuite) TestSearchValidator() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	results, err := s.storage.Search.Search(ctx, "node0")
+	results, err := s.Search.Search(ctx, "node0")
 	s.Require().NoError(err)
 	s.Require().Len(results, 1)
 
@@ -92,7 +92,7 @@ func (s *StorageTestSuite) TestSearchValidatorByAddress() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	results, err := s.storage.Search.Search(ctx, "astria16rgmx2s86kk2r69rhjnvs9y44ujfhadc7yav9a")
+	results, err := s.Search.Search(ctx, "astria16rgmx2s86kk2r69rhjnvs9y44ujfhadc7yav9a")
 	s.Require().NoError(err)
 	s.Require().Len(results, 2)
 
@@ -111,7 +111,7 @@ func (s *StorageTestSuite) TestSearchBridge() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	results, err := s.storage.Search.Search(ctx, "nri")
+	results, err := s.Search.Search(ctx, "nri")
 	s.Require().NoError(err)
 	s.Require().Len(results, 1)
 
@@ -125,7 +125,7 @@ func (s *StorageTestSuite) TestSearchRollupByHash() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	results, err := s.storage.Search.Search(ctx, "GbqKuz5LVqMJ32dWxHuX4pjjpy2IRJ02oPrbHKc2ZTk=")
+	results, err := s.Search.Search(ctx, "GbqKuz5LVqMJ32dWxHuX4pjjpy2IRJ02oPrbHKc2ZTk=")
 	s.Require().NoError(err)
 	s.Require().Len(results, 1)
 
@@ -138,7 +138,7 @@ func (s *StorageTestSuite) TestSearchApp() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	results, err := s.storage.Search.Search(ctx, "p 1")
+	results, err := s.Search.Search(ctx, "p 1")
 	s.Require().NoError(err)
 	s.Require().Len(results, 1)
 

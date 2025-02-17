@@ -8,7 +8,6 @@ import (
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/pkg/types"
-	"github.com/dipdup-net/go-lib/database"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 )
 
@@ -18,9 +17,9 @@ type BlockSignature struct {
 }
 
 // NewBlockSignature -
-func NewBlockSignature(db *database.Bun) *BlockSignature {
+func NewBlockSignature(db *postgres.Storage) *BlockSignature {
 	return &BlockSignature{
-		Table: postgres.NewTable[*storage.BlockSignature](db),
+		Table: postgres.NewTable[*storage.BlockSignature](db.Connection()),
 	}
 }
 

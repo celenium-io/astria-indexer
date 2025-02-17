@@ -20,7 +20,7 @@ func (s *StorageTestSuite) TestTxByHash() {
 	hash, err := hex.DecodeString("20b0e6310801e7b2a16c69aace7b1a1d550e5c49c80f546941bb1ac747487fe5")
 	s.Require().NoError(err)
 
-	tx, err := s.storage.Tx.ByHash(ctx, hash)
+	tx, err := s.Tx.ByHash(ctx, hash)
 	s.Require().NoError(err)
 
 	s.Require().EqualValues(7316, tx.Height)
@@ -39,7 +39,7 @@ func (s *StorageTestSuite) TestTxByHeight() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	txs, err := s.storage.Tx.ByHeight(ctx, 7316, 10, 0)
+	txs, err := s.Tx.ByHeight(ctx, 7316, 10, 0)
 	s.Require().NoError(err)
 	s.Require().Len(txs, 1)
 
@@ -64,7 +64,7 @@ func (s *StorageTestSuite) TestTxFilter() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	txs, err := s.storage.Tx.Filter(ctx, storage.TxFilter{
+	txs, err := s.Tx.Filter(ctx, storage.TxFilter{
 		Limit:       10,
 		WithActions: true,
 		TimeFrom:    time.Date(2023, 11, 30, 23, 52, 23, 0, time.UTC),
@@ -97,7 +97,7 @@ func (s *StorageTestSuite) TestTxByAddress() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	txs, err := s.storage.Tx.ByAddress(ctx, 1, storage.TxFilter{
+	txs, err := s.Tx.ByAddress(ctx, 1, storage.TxFilter{
 		Limit:       10,
 		WithActions: true,
 		TimeFrom:    time.Date(2023, 11, 30, 23, 52, 23, 0, time.UTC),

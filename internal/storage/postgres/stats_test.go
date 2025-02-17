@@ -13,6 +13,7 @@ import (
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/dipdup-net/go-lib/config"
 	"github.com/dipdup-net/go-lib/database"
+	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/go-testfixtures/testfixtures/v3"
 	"github.com/stretchr/testify/suite"
 )
@@ -21,7 +22,8 @@ import (
 type StatsTestSuite struct {
 	suite.Suite
 	psqlContainer *database.PostgreSQLContainer
-	storage       Storage
+	storage       *postgres.Storage
+	Stats         storage.IStats
 }
 
 // SetupSuite -
@@ -49,6 +51,7 @@ func (s *StatsTestSuite) SetupSuite() {
 	}, "../../../database", false)
 	s.Require().NoError(err)
 	s.storage = strg
+	s.Stats = NewStats(s.storage)
 
 	db, err := sql.Open("postgres", s.psqlContainer.GetDSN())
 	s.Require().NoError(err)
@@ -77,7 +80,7 @@ func (s *StatsTestSuite) TestSeries() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	items, err := s.storage.Stats.Series(ctx, storage.TimeframeHour, storage.SeriesDataSize, storage.NewSeriesRequest(0, 0))
+	items, err := s.Stats.Series(ctx, storage.TimeframeHour, storage.SeriesDataSize, storage.NewSeriesRequest(0, 0))
 	s.Require().NoError(err)
 	s.Require().Len(items, 1)
 }
@@ -86,7 +89,7 @@ func (s *StatsTestSuite) TestSeriesWithFrom() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	items, err := s.storage.Stats.Series(ctx, storage.TimeframeHour, storage.SeriesDataSize, storage.NewSeriesRequest(1706018798, 0))
+	items, err := s.Stats.Series(ctx, storage.TimeframeHour, storage.SeriesDataSize, storage.NewSeriesRequest(1706018798, 0))
 	s.Require().NoError(err)
 	s.Require().Len(items, 0)
 }
@@ -95,7 +98,7 @@ func (s *StatsTestSuite) TestRollupSeries() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	items, err := s.storage.Stats.RollupSeries(ctx, 1, storage.TimeframeHour, storage.RollupSeriesActionsCount, storage.NewSeriesRequest(0, 0))
+	items, err := s.Stats.RollupSeries(ctx, 1, storage.TimeframeHour, storage.RollupSeriesActionsCount, storage.NewSeriesRequest(0, 0))
 	s.Require().NoError(err)
 	s.Require().Len(items, 1)
 }
@@ -104,7 +107,7 @@ func (s *StatsTestSuite) TestRollupSeriesWithFrom() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	items, err := s.storage.Stats.RollupSeries(ctx, 1, storage.TimeframeHour, storage.RollupSeriesActionsCount, storage.NewSeriesRequest(1706018798, 0))
+	items, err := s.Stats.RollupSeries(ctx, 1, storage.TimeframeHour, storage.RollupSeriesActionsCount, storage.NewSeriesRequest(1706018798, 0))
 	s.Require().NoError(err)
 	s.Require().Len(items, 0)
 }
@@ -113,7 +116,7 @@ func (s *StatsTestSuite) TestSummary() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	summary, err := s.storage.Stats.Summary(ctx)
+	summary, err := s.Stats.Summary(ctx)
 	s.Require().NoError(err)
 
 	s.Require().EqualValues(0.0038194444444444443, summary.BPS)
@@ -135,7 +138,7 @@ func (s *StatsTestSuite) TestSummaryTimeframe() {
 		storage.TimeframeWeek,
 		storage.TimeframeMonth,
 	} {
-		_, err := s.storage.Stats.SummaryTimeframe(ctx, tf)
+		_, err := s.Stats.SummaryTimeframe(ctx, tf)
 		s.Require().NoError(err)
 	}
 }
@@ -144,7 +147,7 @@ func (s *StatsTestSuite) TestFeeSummary() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	summary, err := s.storage.Stats.FeeSummary(ctx)
+	summary, err := s.Stats.FeeSummary(ctx)
 	s.Require().NoError(err)
 	s.Require().Len(summary, 2)
 }
@@ -153,7 +156,7 @@ func (s *StatsTestSuite) TestTokenTransferDistribution() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	summary, err := s.storage.Stats.TokenTransferDistribution(ctx, 10)
+	summary, err := s.Stats.TokenTransferDistribution(ctx, 10)
 	s.Require().NoError(err)
 	s.Require().Len(summary, 2)
 }
@@ -175,7 +178,7 @@ func (s *StatsTestSuite) TestActiveAddressCount() {
 	s.Require().NoError(tx.Flush(ctx))
 	s.Require().NoError(tx.Close(ctx))
 
-	value, err := s.storage.Stats.ActiveAddressesCount(ctx)
+	value, err := s.Stats.ActiveAddressesCount(ctx)
 	s.Require().NoError(err)
 	s.Require().EqualValues(1, value)
 }

@@ -17,7 +17,7 @@ func (s *StorageTestSuite) TestAddressByHash() {
 
 	hash := "astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p"
 
-	address, err := s.storage.Address.ByHash(ctx, hash)
+	address, err := s.Address.ByHash(ctx, hash)
 	s.Require().NoError(err)
 
 	s.Require().EqualValues(0, address.Height)
@@ -33,7 +33,7 @@ func (s *StorageTestSuite) TestAddressListWithBalances() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	addresses, err := s.storage.Address.ListWithBalance(ctx, storage.AddressListFilter{
+	addresses, err := s.Address.ListWithBalance(ctx, storage.AddressListFilter{
 		Sort:  sdk.SortOrderAsc,
 		Limit: 1,
 	})
@@ -55,7 +55,7 @@ func (s *StorageTestSuite) TestAddressListWithBalancesWithAsset() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	addresses, err := s.storage.Address.ListWithBalance(ctx, storage.AddressListFilter{
+	addresses, err := s.Address.ListWithBalance(ctx, storage.AddressListFilter{
 		Sort:  sdk.SortOrderAsc,
 		Limit: 1,
 		Asset: "asset-1",

@@ -26,7 +26,7 @@ type StatsTestSuite struct {
 	stats   *mock.MockIStats
 	rollups *mock.MockIRollup
 	echo    *echo.Echo
-	handler StatsHandler
+	handler *StatsHandler
 	ctrl    *gomock.Controller
 }
 

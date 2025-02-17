@@ -12,6 +12,7 @@ import (
 	"github.com/celenium-io/astria-indexer/internal/astria"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-net/go-lib/database"
+	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 )
 
 // Search -
@@ -20,9 +21,9 @@ type Search struct {
 }
 
 // NewSearch -
-func NewSearch(db *database.Bun) *Search {
+func NewSearch(db *postgres.Storage) *Search {
 	return &Search{
-		db: db,
+		db: db.Connection(),
 	}
 }
 

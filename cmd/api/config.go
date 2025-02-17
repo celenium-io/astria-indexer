@@ -27,3 +27,11 @@ type ApiConfig struct {
 	SentryDsn      string  `validate:"omitempty"              yaml:"sentry_dsn"`
 	Websocket      bool    `validate:"omitempty"              yaml:"websocket"`
 }
+
+func indexerName(cfg *Config) string {
+	return cfg.Indexer.Name
+}
+
+func databaseConfig(cfg *Config) config.Database {
+	return cfg.Database
+}

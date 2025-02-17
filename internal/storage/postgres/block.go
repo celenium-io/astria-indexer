@@ -8,7 +8,6 @@ import (
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/pkg/types"
-	"github.com/dipdup-net/go-lib/database"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/uptrace/bun"
@@ -20,9 +19,9 @@ type Blocks struct {
 }
 
 // NewBlocks -
-func NewBlocks(db *database.Bun) *Blocks {
+func NewBlocks(db *postgres.Storage) *Blocks {
 	return &Blocks{
-		Table: postgres.NewTable[*storage.Block](db),
+		Table: postgres.NewTable[*storage.Block](db.Connection()),
 	}
 }
 

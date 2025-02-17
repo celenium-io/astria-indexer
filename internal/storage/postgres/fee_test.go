@@ -14,7 +14,7 @@ func (s *StorageTestSuite) TestFeeByTxId() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	fees, err := s.storage.Fee.ByTxId(ctx, 1, 10, 0)
+	fees, err := s.Fee.ByTxId(ctx, 1, 10, 0)
 	s.Require().NoError(err)
 	s.Require().Len(fees, 1)
 
@@ -33,7 +33,7 @@ func (s *StorageTestSuite) TestFeeByPayerId() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	fees, err := s.storage.Fee.ByPayerId(ctx, 1, 10, 0, storage.SortOrderDesc)
+	fees, err := s.Fee.ByPayerId(ctx, 1, 10, 0, storage.SortOrderDesc)
 	s.Require().NoError(err)
 	s.Require().Len(fees, 1)
 
@@ -52,7 +52,7 @@ func (s *StorageTestSuite) TestFullTxFee() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	fees, err := s.storage.Fee.FullTxFee(ctx, 1)
+	fees, err := s.Fee.FullTxFee(ctx, 1)
 	s.Require().NoError(err)
 	s.Require().Len(fees, 1)
 

@@ -21,6 +21,13 @@ func NewConstantHandler(constants storage.IConstant) *ConstantHandler {
 	}
 }
 
+var _ Handler = (*ConstantHandler)(nil)
+
+func (handler *ConstantHandler) InitRoutes(srvr *echo.Group) {
+	srvr.GET("/constants", handler.Get)
+	srvr.GET("/enums", handler.Enums)
+}
+
 // Get godoc
 //
 //	@Summary		Get network constants

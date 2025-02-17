@@ -15,7 +15,7 @@ func (s *StorageTestSuite) TestConstantGet() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	c, err := s.storage.Constants.Get(ctx, "block", "block_max_bytes")
+	c, err := s.Constants.Get(ctx, "block", "block_max_bytes")
 	s.Require().NoError(err)
 
 	s.Require().EqualValues("block", c.Module)
@@ -27,7 +27,7 @@ func (s *StorageTestSuite) TestConstantByModule() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	consts, err := s.storage.Constants.ByModule(ctx, "block")
+	consts, err := s.Constants.ByModule(ctx, "block")
 	s.Require().NoError(err)
 	s.Require().Len(consts, 2)
 
@@ -44,13 +44,13 @@ func (s *StorageTestSuite) TestConstantAll() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	consts, err := s.storage.Constants.All(ctx)
+	consts, err := s.Constants.All(ctx)
 	s.Require().NoError(err)
 	s.Require().Len(consts, 9)
 }
 
 func (s *StorageTestSuite) TestConstantIsNoRows() {
-	s.Require().True(s.storage.Constants.IsNoRows(sql.ErrNoRows))
-	s.Require().True(s.storage.Constants.IsNoRows(errors.Wrap(sql.ErrNoRows, "some text")))
-	s.Require().False(s.storage.Constants.IsNoRows(errors.New("test")))
+	s.Require().True(s.Constants.IsNoRows(sql.ErrNoRows))
+	s.Require().True(s.Constants.IsNoRows(errors.Wrap(sql.ErrNoRows, "some text")))
+	s.Require().False(s.Constants.IsNoRows(errors.New("test")))
 }

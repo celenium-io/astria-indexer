@@ -15,7 +15,7 @@ func (s *StorageTestSuite) TestBlockByHeight() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	block, err := s.storage.Blocks.ByHeight(ctx, 7965, false)
+	block, err := s.Blocks.ByHeight(ctx, 7965, false)
 	s.Require().NoError(err)
 
 	s.Require().EqualValues(7965, block.Height)
@@ -35,7 +35,7 @@ func (s *StorageTestSuite) TestBlockByHeightWithStats() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	block, err := s.storage.Blocks.ByHeight(ctx, 7965, true)
+	block, err := s.Blocks.ByHeight(ctx, 7965, true)
 	s.Require().NoError(err)
 
 	s.Require().EqualValues(7965, block.Height)
@@ -59,7 +59,7 @@ func (s *StorageTestSuite) TestBlockByHash() {
 	hash, err := hex.DecodeString("b15d072afc508558b3e962060c701a695af5d6a041d4a25c63240bbff5064b3b")
 	s.Require().NoError(err)
 
-	block, err := s.storage.Blocks.ByHash(ctx, hash)
+	block, err := s.Blocks.ByHash(ctx, hash)
 	s.Require().NoError(err)
 
 	s.Require().EqualValues(7965, block.Height)
@@ -77,7 +77,7 @@ func (s *StorageTestSuite) TestBlockLast() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	block, err := s.storage.Blocks.Last(ctx)
+	block, err := s.Blocks.Last(ctx)
 	s.Require().NoError(err)
 
 	s.Require().EqualValues(7965, block.Height)
@@ -95,7 +95,7 @@ func (s *StorageTestSuite) TestBlockListWithStats() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	blocks, err := s.storage.Blocks.ListWithStats(ctx, 1, 0, storage.SortOrderDesc)
+	blocks, err := s.Blocks.ListWithStats(ctx, 1, 0, storage.SortOrderDesc)
 	s.Require().NoError(err)
 	s.Require().Len(blocks, 1)
 
@@ -117,7 +117,7 @@ func (s *StorageTestSuite) TestBlockByProposer() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	blocks, err := s.storage.Blocks.ByProposer(ctx, 2, 1, 0, storage.SortOrderDesc)
+	blocks, err := s.Blocks.ByProposer(ctx, 2, 1, 0, storage.SortOrderDesc)
 	s.Require().NoError(err)
 	s.Require().Len(blocks, 1)
 
@@ -137,7 +137,7 @@ func (s *StorageTestSuite) TestByIdWithRelations() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	block, err := s.storage.Blocks.ByIdWithRelations(ctx, 7966)
+	block, err := s.Blocks.ByIdWithRelations(ctx, 7966)
 	s.Require().NoError(err)
 	s.Require().EqualValues(7965, block.Height)
 	s.Require().EqualValues(2, block.ProposerId)

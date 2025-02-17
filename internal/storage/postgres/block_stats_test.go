@@ -12,7 +12,7 @@ func (s *StorageTestSuite) TestBlockStatsByHeight() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	stats, err := s.storage.BlockStats.ByHeight(ctx, 7965)
+	stats, err := s.BlockStats.ByHeight(ctx, 7965)
 	s.Require().NoError(err)
 
 	s.Require().EqualValues(7965, stats.Height)

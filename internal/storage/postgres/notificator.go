@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/dipdup-net/go-lib/config"
+	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/lib/pq"
 	"github.com/uptrace/bun"
 )
@@ -24,7 +25,7 @@ type Notificator struct {
 	l  *pq.Listener
 }
 
-func NewNotificator(cfg config.Database, db *bun.DB) *Notificator {
+func NewNotificator(cfg config.Database, db *postgres.Storage) *Notificator {
 	connStr := fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s?sslmode=disable",
 		cfg.User,
@@ -40,7 +41,7 @@ func NewNotificator(cfg config.Database, db *bun.DB) *Notificator {
 			maxReconnectInterval,
 			nil,
 		),
-		db: db,
+		db: db.Connection().DB(),
 	}
 }
 

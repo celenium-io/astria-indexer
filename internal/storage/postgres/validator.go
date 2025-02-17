@@ -7,7 +7,6 @@ import (
 	"context"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
-	"github.com/dipdup-net/go-lib/database"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 )
@@ -18,9 +17,9 @@ type Validator struct {
 }
 
 // NewValidator -
-func NewValidator(db *database.Bun) *Validator {
+func NewValidator(db *postgres.Storage) *Validator {
 	return &Validator{
-		Table: postgres.NewTable[*storage.Validator](db),
+		Table: postgres.NewTable[*storage.Validator](db.Connection()),
 	}
 }
 

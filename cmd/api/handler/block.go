@@ -43,6 +43,25 @@ func NewBlockHandler(
 	}
 }
 
+var _ Handler = (*BlockHandler)(nil)
+
+func (handler *BlockHandler) InitRoutes(srvr *echo.Group) {
+	blockGroup := srvr.Group("/block")
+	{
+		blockGroup.GET("", handler.List)
+		blockGroup.GET("/count", handler.Count)
+		heightGroup := blockGroup.Group("/:height")
+		{
+			heightGroup.GET("", handler.Get)
+			heightGroup.GET("/actions", handler.GetActions)
+			heightGroup.GET("/txs", handler.GetTransactions)
+			heightGroup.GET("/stats", handler.GetStats)
+			heightGroup.GET("/rollup_actions", handler.GetRollupActions)
+			heightGroup.GET("/rollup_actions/count", handler.GetRollupsActionsCount)
+		}
+	}
+}
+
 type getBlockByHeightRequest struct {
 	Height types.Level `param:"height" validate:"min=0"`
 }

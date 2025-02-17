@@ -49,6 +49,26 @@ func NewRollupHandler(
 	}
 }
 
+var _ Handler = (*RollupHandler)(nil)
+
+func (handler *RollupHandler) InitRoutes(srvr *echo.Group) {
+	rollupsGroup := srvr.Group("/rollup")
+	{
+		rollupsGroup.GET("", handler.List)
+		rollupsGroup.GET("/count", handler.Count)
+
+		rollupGroup := rollupsGroup.Group("/:hash")
+		{
+			rollupGroup.GET("", handler.Get)
+			rollupGroup.GET("/actions", handler.Actions)
+			rollupGroup.GET("/all_actions", handler.AllActions)
+			rollupGroup.GET("/addresses", handler.Addresses)
+			rollupGroup.GET("/bridges", handler.Bridges)
+			rollupGroup.GET("/deposits", handler.Deposits)
+		}
+	}
+}
+
 type getRollupRequest struct {
 	Hash string `param:"hash" validate:"required,base64url"`
 }

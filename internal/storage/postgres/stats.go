@@ -9,6 +9,7 @@ import (
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-net/go-lib/database"
+	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/pkg/errors"
 	"github.com/uptrace/bun"
 )
@@ -17,8 +18,10 @@ type Stats struct {
 	db *database.Bun
 }
 
-func NewStats(conn *database.Bun) Stats {
-	return Stats{conn}
+func NewStats(conn *postgres.Storage) Stats {
+	return Stats{
+		db: conn.Connection(),
+	}
 }
 
 func (s Stats) Series(ctx context.Context, timeframe storage.Timeframe, name string, req storage.SeriesRequest) (response []storage.SeriesItem, err error) {

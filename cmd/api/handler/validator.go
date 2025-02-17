@@ -36,6 +36,21 @@ func NewValidatorHandler(
 	}
 }
 
+var _ Handler = (*ValidatorHandler)(nil)
+
+func (handler *ValidatorHandler) InitRoutes(srvr *echo.Group) {
+	validators := srvr.Group("/validators")
+	{
+		validators.GET("", handler.List)
+		validatorGroup := validators.Group("/:id")
+		{
+			validatorGroup.GET("", handler.Get)
+			validatorGroup.GET("/blocks", handler.Blocks)
+			validatorGroup.GET("/uptime", handler.Uptime)
+		}
+	}
+}
+
 type validatorRequest struct {
 	Id uint64 `param:"id" validate:"required,min=1"`
 }

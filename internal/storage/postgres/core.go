@@ -17,78 +17,25 @@ import (
 	"github.com/uptrace/bun/migrate"
 )
 
-// Storage -
-type Storage struct {
-	*postgres.Storage
-
-	cfg        config.Database
-	scriptsDir string
-
-	Blocks          models.IBlock
-	BlockStats      models.IBlockStats
-	Bridges         models.IBridge
-	Constants       models.IConstant
-	Tx              models.ITx
-	Transfers       models.ITransfer
-	Fee             models.IFee
-	Deposit         models.IDeposit
-	Action          models.IAction
-	Address         models.IAddress
-	Rollup          models.IRollup
-	BlockSignatures models.IBlockSignature
-	Validator       models.IValidator
-	State           models.IState
-	Search          models.ISearch
-	Stats           models.IStats
-	App             models.IApp
-	Asset           models.IAsset
-	Notificator     *Notificator
-}
-
 // Create -
-func Create(ctx context.Context, cfg config.Database, scriptsDir string, withMigrations bool) (Storage, error) {
+func Create(ctx context.Context, cfg config.Database, scriptsDir string, withMigrations bool) (*postgres.Storage, error) {
 	init := initDatabase
 	if withMigrations {
 		init = initDatabaseWithMigrations
 	}
 	strg, err := postgres.Create(ctx, cfg, init)
 	if err != nil {
-		return Storage{}, err
+		return nil, errors.Wrap(err, "create database")
 	}
 
-	s := Storage{
-		cfg:             cfg,
-		scriptsDir:      scriptsDir,
-		Storage:         strg,
-		Blocks:          NewBlocks(strg.Connection()),
-		BlockStats:      NewBlockStats(strg.Connection()),
-		Bridges:         NewBridge(strg.Connection()),
-		Constants:       NewConstant(strg.Connection()),
-		Action:          NewAction(strg.Connection()),
-		Fee:             NewFee(strg.Connection()),
-		Deposit:         NewDeposit(strg.Connection()),
-		Address:         NewAddress(strg.Connection()),
-		BlockSignatures: NewBlockSignature(strg.Connection()),
-		Rollup:          NewRollup(strg.Connection()),
-		Tx:              NewTx(strg.Connection()),
-		Transfers:       NewTransfer(strg.Connection()),
-		Validator:       NewValidator(strg.Connection()),
-		State:           NewState(strg.Connection()),
-		Search:          NewSearch(strg.Connection()),
-		App:             NewApp(strg.Connection()),
-		Stats:           NewStats(strg.Connection()),
-		Asset:           NewAsset(strg.Connection()),
-		Notificator:     NewNotificator(cfg, strg.Connection().DB()),
+	if err := createScripts(ctx, strg.Connection(), scriptsDir, "functions", false); err != nil {
+		return nil, errors.Wrap(err, "creating functions")
+	}
+	if err := createScripts(ctx, strg.Connection(), scriptsDir, "views", true); err != nil {
+		return nil, errors.Wrap(err, "creating views")
 	}
 
-	if err := s.createScripts(ctx, strg.Connection(), "functions", false); err != nil {
-		return s, errors.Wrap(err, "creating functions")
-	}
-	if err := s.createScripts(ctx, strg.Connection(), "views", true); err != nil {
-		return s, errors.Wrap(err, "creating views")
-	}
-
-	return s, nil
+	return strg, nil
 }
 
 func initDatabase(ctx context.Context, conn *database.Bun) error {
@@ -181,8 +128,4 @@ func createExtensions(ctx context.Context, conn *database.Bun) error {
 		_, err := tx.ExecContext(ctx, "CREATE EXTENSION IF NOT EXISTS pg_trgm;")
 		return err
 	})
-}
-
-func (s Storage) CreateListener() models.Listener {
-	return NewNotificator(s.cfg, s.Notificator.db)
 }

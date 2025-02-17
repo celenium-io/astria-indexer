@@ -16,7 +16,7 @@ func (s *StorageTestSuite) TestRollupActionsByHeight() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	actions, err := s.storage.Rollup.ActionsByHeight(ctx, 7316, 10, 0)
+	actions, err := s.Rollup.ActionsByHeight(ctx, 7316, 10, 0)
 	s.Require().NoError(err)
 	s.Require().Len(actions, 1)
 
@@ -32,7 +32,7 @@ func (s *StorageTestSuite) TestRollupCountActionsByHeight() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	count, err := s.storage.Rollup.CountActionsByHeight(ctx, 7316)
+	count, err := s.Rollup.CountActionsByHeight(ctx, 7316)
 	s.Require().NoError(err)
 	s.Require().EqualValues(1, count)
 }
@@ -41,7 +41,7 @@ func (s *StorageTestSuite) TestRollupActionsByTxId() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	actions, err := s.storage.Rollup.ActionsByTxId(ctx, 1, 10, 0)
+	actions, err := s.Rollup.ActionsByTxId(ctx, 1, 10, 0)
 	s.Require().NoError(err)
 	s.Require().Len(actions, 1)
 
@@ -57,7 +57,7 @@ func (s *StorageTestSuite) TestRollupCountActionsByTxId() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	count, err := s.storage.Rollup.CountActionsByTxId(ctx, 1)
+	count, err := s.Rollup.CountActionsByTxId(ctx, 1)
 	s.Require().NoError(err)
 	s.Require().EqualValues(1, count)
 }
@@ -69,7 +69,7 @@ func (s *StorageTestSuite) TestRollupByHash() {
 	hash, err := hex.DecodeString("19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539")
 	s.Require().NoError(err)
 
-	rollup, err := s.storage.Rollup.ByHash(ctx, hash)
+	rollup, err := s.Rollup.ByHash(ctx, hash)
 	s.Require().NoError(err)
 	s.Require().EqualValues(1, rollup.Id)
 	s.Require().EqualValues(7316, rollup.FirstHeight)
@@ -82,7 +82,7 @@ func (s *StorageTestSuite) TestRollupAddresses() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	addresses, err := s.storage.Rollup.Addresses(ctx, 1, 10, 0, storage.SortOrderDesc)
+	addresses, err := s.Rollup.Addresses(ctx, 1, 10, 0, storage.SortOrderDesc)
 	s.Require().NoError(err)
 	s.Require().Len(addresses, 1)
 
@@ -97,7 +97,7 @@ func (s *StorageTestSuite) TestListRollupsByAddress() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	rollups, err := s.storage.Rollup.ListRollupsByAddress(ctx, 1, 10, 0, storage.SortOrderDesc)
+	rollups, err := s.Rollup.ListRollupsByAddress(ctx, 1, 10, 0, storage.SortOrderDesc)
 	s.Require().NoError(err)
 	s.Require().Len(rollups, 1)
 
@@ -121,7 +121,7 @@ func (s *StorageTestSuite) TestListExt() {
 			"id",
 			"",
 		} {
-			rollups, err := s.storage.Rollup.ListExt(ctx, models.RollupListFilter{
+			rollups, err := s.Rollup.ListExt(ctx, models.RollupListFilter{
 				Limit:     2,
 				Offset:    0,
 				SortField: field,

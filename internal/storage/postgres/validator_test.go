@@ -14,7 +14,7 @@ func (s *StorageTestSuite) TestValidatorListByPower() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	validators, err := s.storage.Validator.ListByPower(ctx, 1, 0, storage.SortOrderDesc)
+	validators, err := s.Validator.ListByPower(ctx, 1, 0, storage.SortOrderDesc)
 	s.Require().NoError(err)
 	s.Require().Len(validators, 1)
 
