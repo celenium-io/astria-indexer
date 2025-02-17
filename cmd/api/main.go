@@ -56,10 +56,6 @@ func main() {
 				fx.As(new(storage.ListenerFactory)),
 			),
 			fx.Annotate(
-				postgres.NewNotificator,
-				fx.As(new(storage.Listener)),
-			),
-			fx.Annotate(
 				postgres.NewAction,
 				fx.As(new(storage.IAction)),
 			),
