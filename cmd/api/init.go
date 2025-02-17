@@ -91,7 +91,7 @@ func newProflier(cfg *Config) (*pyroscope.Profiler, error) {
 	return profiler.New(cfg.Profiler, "api")
 }
 
-func newServer(cfg *Config, handlers []handler.Handler) (*echo.Echo, error) {
+func newServer(cfg *Config, wsManager *websocket.Manager, handlers []handler.Handler) (*echo.Echo, error) {
 	e := echo.New()
 	e.Validator = handler.NewApiValidator()
 
@@ -187,6 +187,10 @@ func newServer(cfg *Config, handlers []handler.Handler) (*echo.Echo, error) {
 		handler.InitRoutes(v1)
 	}
 
+	if cfg.ApiConfig.Websocket {
+		wsManager.InitRoutes(v1)
+	}
+
 	if cfg.ApiConfig.Prometheus {
 		e.GET("/metrics", echoprometheus.NewHandler())
 	}
@@ -234,7 +238,7 @@ func initSentry(e *echo.Echo, dsn, environment string) error {
 	return nil
 }
 
-func newWebsocket(e *echo.Echo, dispatcher *bus.Dispatcher) *websocket.Manager {
+func newWebsocket(dispatcher *bus.Dispatcher) *websocket.Manager {
 	observer := dispatcher.Observe(storage.ChannelHead, storage.ChannelBlock)
 	wsManager := websocket.NewManager(observer)
 	return wsManager

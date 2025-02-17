@@ -42,7 +42,7 @@ func main() {
 			newProflier,
 			fx.Annotate(
 				newServer,
-				fx.ParamTags("", `group:"handlers"`),
+				fx.ParamTags("", "", `group:"handlers"`),
 			),
 			bus.NewDispatcher,
 			newEndpointCache,
