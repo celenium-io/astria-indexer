@@ -94,17 +94,19 @@ func newProflier(cfg *Config) (*pyroscope.Profiler, error) {
 func newServer(cfg *Config, wsManager *websocket.Manager, handlers []handler.Handler) (*echo.Echo, error) {
 	e := echo.New()
 	e.Validator = handler.NewApiValidator()
+	e.Server.IdleTimeout = time.Second * 30
+
+	e.Pre(middleware.RemoveTrailingSlash())
 
 	timeout := 30 * time.Second
 	if cfg.ApiConfig.RequestTimeout > 0 {
 		timeout = time.Duration(cfg.ApiConfig.RequestTimeout) * time.Second
 	}
-	e.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
+	timeoutConfig := middleware.TimeoutConfig{
 		Skipper: websocketSkipper,
 		Timeout: timeout,
-	}))
-
-	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+	}
+	loggerConfig := middleware.RequestLoggerConfig{
 		LogURI:       true,
 		LogStatus:    true,
 		LogLatency:   true,
@@ -143,44 +145,53 @@ func newServer(cfg *Config, wsManager *websocket.Manager, handlers []handler.Han
 
 			return nil
 		},
-	}))
-	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
+	}
+	gzipConfig := middleware.GzipConfig{
 		Skipper: gzipSkipper,
-	}))
-	e.Use(middleware.DecompressWithConfig(middleware.DecompressConfig{
+	}
+	decompressConfig := middleware.DecompressConfig{
 		Skipper: websocketSkipper,
-	}))
-	e.Use(middleware.BodyLimit("2M"))
-	e.Use(middleware.CSRFWithConfig(
-		middleware.CSRFConfig{
-			Skipper: func(c echo.Context) bool {
-				return websocketSkipper(c) || postSkipper(c)
-			},
+	}
+	csrfConfig := middleware.CSRFConfig{
+		Skipper: func(c echo.Context) bool {
+			return websocketSkipper(c) || postSkipper(c)
 		},
-	))
-	e.Use(middleware.CORS())
-	e.Use(middleware.Recover())
-	e.Use(middleware.Secure())
-	e.Pre(middleware.RemoveTrailingSlash())
+	}
+
+	middlewares := []echo.MiddlewareFunc{
+		middleware.TimeoutWithConfig(timeoutConfig),
+		middleware.RequestLoggerWithConfig(loggerConfig),
+		middleware.GzipWithConfig(gzipConfig),
+		middleware.DecompressWithConfig(decompressConfig),
+		middleware.BodyLimit("2M"),
+		middleware.CSRFWithConfig(csrfConfig),
+		middleware.CORS(),
+		middleware.Recover(),
+		middleware.Secure(),
+	}
 
 	if cfg.ApiConfig.Prometheus {
-		e.Use(echoprometheus.NewMiddlewareWithConfig(echoprometheus.MiddlewareConfig{
+		middlewares = append(middlewares, echoprometheus.NewMiddlewareWithConfig(echoprometheus.MiddlewareConfig{
 			Namespace: "astria_api",
 			Skipper:   websocketSkipper,
 		}))
 	}
 	if cfg.ApiConfig.RateLimit > 0 {
-		e.Use(middleware.RateLimiterWithConfig(middleware.RateLimiterConfig{
+		middlewares = append(middlewares, middleware.RateLimiterWithConfig(middleware.RateLimiterConfig{
 			Skipper: websocketSkipper,
 			Store:   middleware.NewRateLimiterMemoryStore(rate.Limit(cfg.ApiConfig.RateLimit)),
 		}))
-
 	}
 
-	if err := initSentry(e, cfg.ApiConfig.SentryDsn, cfg.Environment); err != nil {
+	sentryMiddleware, err := initSentry(cfg.ApiConfig.SentryDsn, cfg.Environment)
+	if err != nil {
 		return nil, errors.Wrap(err, "init sentry")
 	}
-	e.Server.IdleTimeout = time.Second * 30
+	if sentryMiddleware != nil {
+		middlewares = append(middlewares, sentryMiddleware)
+	}
+
+	e.Use(middlewares...)
 
 	v1 := e.Group("v1")
 	for _, handler := range handlers {
@@ -217,9 +228,9 @@ func newConstantCache(dispatcher *bus.Dispatcher) *cache.ConstantsCache {
 	return cache.NewConstantsCache(constantObserver)
 }
 
-func initSentry(e *echo.Echo, dsn, environment string) error {
+func initSentry(dsn, environment string) (echo.MiddlewareFunc, error) {
 	if dsn == "" {
-		return nil
+		return nil, nil
 	}
 
 	if err := sentry.Init(sentry.ClientOptions{
@@ -230,12 +241,10 @@ func initSentry(e *echo.Echo, dsn, environment string) error {
 		TracesSampleRate: 1.0,
 		Release:          os.Getenv("TAG"),
 	}); err != nil {
-		return errors.Wrap(err, "initialization")
+		return nil, errors.Wrap(err, "initialization")
 	}
 
-	e.Use(SentryMiddleware())
-
-	return nil
+	return SentryMiddleware(), nil
 }
 
 func newWebsocket(dispatcher *bus.Dispatcher) *websocket.Manager {

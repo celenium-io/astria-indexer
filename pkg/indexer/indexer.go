@@ -138,7 +138,6 @@ func (i *Indexer) Close() error {
 }
 
 func createReceiver(cfg *config.Config) (rpc.API, *receiver.Module, error) {
-
 	api := rpc.NewAPI(cfg.DataSources["sequencer_rpc"])
 	receiverModule := receiver.NewModule(cfg.Indexer, &api)
 	return api, &receiverModule, nil
