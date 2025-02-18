@@ -10,14 +10,10 @@ import (
 
 	primitive "buf.build/gen/go/astria/primitives/protocolbuffers/go/astria/primitive/v1"
 	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transaction/v1alpha1"
-	internalAstria "github.com/celenium-io/astria-indexer/internal/astria"
 	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/celenium-io/astria-indexer/pkg/types"
-	channelTypes "github.com/cosmos/ibc-go/v9/modules/core/04-channel/types"
-	"github.com/goccy/go-json"
-	"github.com/gogo/protobuf/proto"
 	"github.com/pkg/errors"
 	"github.com/shopspring/decimal"
 )
@@ -159,97 +155,8 @@ func parseIbcAction(body *astria.Action_Ibc, ctx *Context, action *storage.Actio
 			return nil
 		}
 
-		switch typ {
-		case "/ibc.core.channel.v1.MsgRecvPacket":
-			var msg channelTypes.MsgRecvPacket
-			if err := proto.Unmarshal(data, &msg); err != nil {
-				return err
-			}
-			var transfer IbcTransfer
-			if err := json.Unmarshal(msg.Packet.Data, &transfer); err != nil {
-				return nil
-			}
-			asset := fmt.Sprintf("%s/%s/%s", msg.Packet.GetDestPort(), msg.Packet.GetDestChannel(), transfer.Denom)
-			var addr string
-			var amount decimal.Decimal
-
-			switch {
-			case internalAstria.IsAddress(transfer.Receiver):
-				addr = transfer.Receiver
-				amount = transfer.Amount.Copy()
-			case internalAstria.IsCompatAddress(transfer.Receiver):
-				a, err := internalAstria.CompatToAstria(transfer.Receiver)
-				if err != nil {
-					return err
-				}
-				addr = a
-				amount = transfer.Amount.Copy()
-			case internalAstria.IsAddress(transfer.Sender):
-				addr = transfer.Sender
-				amount = transfer.Amount.Neg()
-			case internalAstria.IsCompatAddress(transfer.Sender):
-				a, err := internalAstria.CompatToAstria(transfer.Sender)
-				if err != nil {
-					return err
-				}
-				addr = a
-				amount = transfer.Amount.Neg()
-			}
-
-			if addr != "" {
-				address := ctx.Addresses.Set(addr, action.Height, amount, asset, 0, 0)
-				action.BalanceUpdates = append(action.BalanceUpdates, storage.BalanceUpdate{
-					Address:  address,
-					Height:   action.Height,
-					Currency: asset,
-					Update:   amount,
-				})
-			}
-		case "/ibc.core.channel.v1.MsgTimeout":
-			var msg channelTypes.MsgTimeout
-			if err := proto.Unmarshal(data, &msg); err != nil {
-				return err
-			}
-			var transfer IbcTransfer
-			if err := json.Unmarshal(msg.Packet.Data, &transfer); err != nil {
-				return nil
-			}
-			var addr string
-			var amount decimal.Decimal
-
-			switch {
-			case internalAstria.IsAddress(transfer.Receiver):
-				addr = transfer.Receiver
-				amount = transfer.Amount.Neg()
-			case internalAstria.IsCompatAddress(transfer.Receiver):
-				a, err := internalAstria.CompatToAstria(transfer.Receiver)
-				if err != nil {
-					return err
-				}
-				addr = a
-				amount = transfer.Amount.Neg()
-			case internalAstria.IsAddress(transfer.Sender):
-				addr = transfer.Sender
-				amount = transfer.Amount.Copy()
-			case internalAstria.IsCompatAddress(transfer.Sender):
-				a, err := internalAstria.CompatToAstria(transfer.Sender)
-				if err != nil {
-					return err
-				}
-				addr = a
-				amount = transfer.Amount.Copy()
-			}
-
-			if addr != "" {
-				address := ctx.Addresses.Set(addr, action.Height, amount, transfer.Denom, 0, 0)
-				action.BalanceUpdates = append(action.BalanceUpdates, storage.BalanceUpdate{
-					Address:  address,
-					Height:   action.Height,
-					Currency: transfer.Denom,
-					Update:   amount,
-				})
-			}
-		default:
+		if err := parseIbcMessages(typ, data, action, ctx); err != nil {
+			return errors.Wrap(err, "parse ibc message")
 		}
 	}
 	return nil
