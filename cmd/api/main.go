@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/celenium-io/astria-indexer/cmd/api/bus"
 	_ "github.com/celenium-io/astria-indexer/cmd/api/docs"
@@ -34,6 +35,7 @@ var rootCmd = &cobra.Command{
 func main() {
 	app := fx.New(
 		fx.WithLogger(fxlogger.WithZerolog(log.Logger)),
+		fx.StartTimeout(5*time.Minute),
 		fx.Provide(
 			loadConfig,
 			databaseConfig,
