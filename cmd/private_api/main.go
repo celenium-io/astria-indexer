@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/celenium-io/astria-indexer/cmd/private_api/handler"
 	"github.com/celenium-io/astria-indexer/internal/storage"
@@ -25,6 +26,7 @@ var rootCmd = &cobra.Command{
 func main() {
 	app := fx.New(
 		fx.WithLogger(fxlogger.WithZerolog(log.Logger)),
+		fx.StartTimeout(5*time.Minute),
 		fx.Provide(
 			loadConfig,
 

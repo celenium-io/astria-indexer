@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/dipdup-net/indexer-sdk/pkg/modules"
 	"github.com/dipdup-net/indexer-sdk/pkg/modules/stopper"
@@ -31,6 +32,7 @@ func main() {
 	app := fx.New(
 		fx.WithLogger(fxlogger.WithZerolog(log.Logger)),
 		fx.Supply(cancel),
+		fx.StartTimeout(5*time.Minute),
 		fx.Provide(
 			loadConfig,
 			newProflier,
