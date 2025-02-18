@@ -162,10 +162,7 @@ func newServer(cfg *Config, handlers []handler.Handler) (*echo.Echo, error) {
 }
 
 func newDatabase(cfg *Config) (*sdk.Storage, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	return postgres.Create(ctx, cfg.Database, cfg.Indexer.ScriptsDir, false)
+	return postgres.Create(context.Background(), cfg.Database, cfg.Indexer.ScriptsDir, false)
 }
 
 func newTransactable(db *sdk.Storage) storage.Transactable {

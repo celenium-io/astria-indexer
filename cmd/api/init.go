@@ -217,10 +217,7 @@ func newServer(cfg *Config, wsManager *websocket.Manager, handlers []handler.Han
 }
 
 func newDatabase(cfg *Config) (*sdk.Storage, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	return postgres.Create(ctx, cfg.Database, cfg.Indexer.ScriptsDir, false)
+	return postgres.Create(context.Background(), cfg.Database, cfg.Indexer.ScriptsDir, false)
 }
 
 func newConstantCache(dispatcher *bus.Dispatcher) *cache.ConstantsCache {

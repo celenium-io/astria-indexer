@@ -7,7 +7,6 @@ import (
 	"context"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/celenium-io/astria-indexer/internal/profiler"
 	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
@@ -81,8 +80,5 @@ func newProflier(cfg *config.Config) (*pyroscope.Profiler, error) {
 }
 
 func newDatabase(cfg *config.Config) (*sdk.Storage, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	return postgres.Create(ctx, cfg.Database, cfg.Indexer.ScriptsDir, false)
+	return postgres.Create(context.Background(), cfg.Database, cfg.Indexer.ScriptsDir, false)
 }
