@@ -8,7 +8,6 @@ import (
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/pkg/types"
-	"github.com/dipdup-net/go-lib/database"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 )
@@ -19,9 +18,9 @@ type Rollup struct {
 }
 
 // NewRollup -
-func NewRollup(db *database.Bun) *Rollup {
+func NewRollup(db *postgres.Storage) *Rollup {
 	return &Rollup{
-		Table: postgres.NewTable[*storage.Rollup](db),
+		Table: postgres.NewTable[*storage.Rollup](db.Connection()),
 	}
 }
 

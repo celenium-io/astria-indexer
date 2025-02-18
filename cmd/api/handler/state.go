@@ -22,6 +22,12 @@ func NewStateHandler(state storage.IState) *StateHandler {
 	}
 }
 
+var _ Handler = (*StateHandler)(nil)
+
+func (sh *StateHandler) InitRoutes(srvr *echo.Group) {
+	srvr.GET("/head", sh.Head)
+}
+
 // Head godoc
 //
 //	@Summary		Get current indexer head

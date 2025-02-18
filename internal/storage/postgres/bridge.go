@@ -7,7 +7,6 @@ import (
 	"context"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
-	"github.com/dipdup-net/go-lib/database"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 )
@@ -18,9 +17,9 @@ type Bridge struct {
 }
 
 // NewBridge -
-func NewBridge(db *database.Bun) *Bridge {
+func NewBridge(db *postgres.Storage) *Bridge {
 	return &Bridge{
-		Table: postgres.NewTable[*storage.Bridge](db),
+		Table: postgres.NewTable[*storage.Bridge](db.Connection()),
 	}
 }
 

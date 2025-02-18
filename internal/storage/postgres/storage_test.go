@@ -9,8 +9,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-net/go-lib/config"
 	"github.com/dipdup-net/go-lib/database"
+	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/go-testfixtures/testfixtures/v3"
 	"github.com/stretchr/testify/suite"
 )
@@ -19,7 +21,26 @@ import (
 type StorageTestSuite struct {
 	suite.Suite
 	psqlContainer *database.PostgreSQLContainer
-	storage       Storage
+
+	storage *postgres.Storage
+
+	Blocks          storage.IBlock
+	BlockStats      storage.IBlockStats
+	Bridges         storage.IBridge
+	Constants       storage.IConstant
+	Tx              storage.ITx
+	Transfers       storage.ITransfer
+	Fee             storage.IFee
+	Deposit         storage.IDeposit
+	Action          storage.IAction
+	Address         storage.IAddress
+	Rollup          storage.IRollup
+	BlockSignatures storage.IBlockSignature
+	Validator       storage.IValidator
+	State           storage.IState
+	Search          storage.ISearch
+	App             storage.IApp
+	Asset           storage.IAsset
 }
 
 // SetupSuite -
@@ -47,6 +68,24 @@ func (s *StorageTestSuite) SetupSuite() {
 	}, "../../../database", false)
 	s.Require().NoError(err)
 	s.storage = strg
+
+	s.Blocks = NewBlocks(s.storage)
+	s.BlockStats = NewBlockStats(s.storage)
+	s.Bridges = NewBridge(s.storage)
+	s.Constants = NewConstant(s.storage)
+	s.Tx = NewTx(s.storage)
+	s.Transfers = NewTransfer(s.storage)
+	s.Fee = NewFee(s.storage)
+	s.Deposit = NewDeposit(s.storage)
+	s.Action = NewAction(s.storage)
+	s.Address = NewAddress(s.storage)
+	s.Rollup = NewRollup(s.storage)
+	s.BlockSignatures = NewBlockSignature(s.storage)
+	s.Validator = NewValidator(s.storage)
+	s.State = NewState(s.storage)
+	s.Search = NewSearch(s.storage)
+	s.App = NewApp(s.storage)
+	s.Asset = NewAsset(s.storage)
 
 	db, err := sql.Open("postgres", s.psqlContainer.GetDSN())
 	s.Require().NoError(err)

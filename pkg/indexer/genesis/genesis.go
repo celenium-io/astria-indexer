@@ -6,10 +6,10 @@ package genesis
 import (
 	"context"
 
-	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
 	"github.com/celenium-io/astria-indexer/pkg/indexer/config"
 	"github.com/celenium-io/astria-indexer/pkg/node/types"
 	"github.com/dipdup-net/indexer-sdk/pkg/modules"
+	"github.com/dipdup-net/indexer-sdk/pkg/storage"
 )
 
 // constants
@@ -28,14 +28,14 @@ const (
 //	                     |----------------|
 type Module struct {
 	modules.BaseModule
-	storage     postgres.Storage
+	storage     storage.Transactable
 	indexerName string
 }
 
 var _ modules.Module = (*Module)(nil)
 
 // NewModule -
-func NewModule(pg postgres.Storage, cfg config.Indexer) Module {
+func NewModule(pg storage.Transactable, cfg config.Indexer) Module {
 	m := Module{
 		BaseModule:  modules.New("genesis"),
 		storage:     pg,

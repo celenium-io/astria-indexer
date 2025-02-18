@@ -15,7 +15,7 @@ func (s *StorageTestSuite) TestDepositByBridgeId() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	deposits, err := s.storage.Deposit.ByBridgeId(ctx, 1, 10, 0, storage.SortOrderDesc)
+	deposits, err := s.Deposit.ByBridgeId(ctx, 1, 10, 0, storage.SortOrderDesc)
 	s.Require().NoError(err)
 	s.Require().Len(deposits, 1)
 
@@ -40,7 +40,7 @@ func (s *StorageTestSuite) TestDepositByRollupId() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	deposits, err := s.storage.Deposit.ByRollupId(ctx, 1, 10, 0, storage.SortOrderDesc)
+	deposits, err := s.Deposit.ByRollupId(ctx, 1, 10, 0, storage.SortOrderDesc)
 	s.Require().NoError(err)
 	s.Require().Len(deposits, 1)
 

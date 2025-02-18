@@ -8,7 +8,6 @@ import (
 	"fmt"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
-	"github.com/dipdup-net/go-lib/database"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/pkg/errors"
 	"github.com/uptrace/bun"
@@ -20,9 +19,9 @@ type App struct {
 }
 
 // NewApp -
-func NewApp(db *database.Bun) *App {
+func NewApp(db *postgres.Storage) *App {
 	return &App{
-		Table: postgres.NewTable[*storage.App](db),
+		Table: postgres.NewTable[*storage.App](db.Connection()),
 	}
 }
 

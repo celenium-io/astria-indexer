@@ -13,8 +13,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (s Storage) createScripts(ctx context.Context, conn *database.Bun, subFolder string, split bool) error {
-	scriptsDir := filepath.Join(s.scriptsDir, subFolder)
+func createScripts(ctx context.Context, conn *database.Bun, dir, subFolder string, split bool) error {
+	scriptsDir := filepath.Join(dir, subFolder)
 
 	files, err := os.ReadDir(scriptsDir)
 	if err != nil {

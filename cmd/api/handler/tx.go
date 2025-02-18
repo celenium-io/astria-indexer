@@ -41,6 +41,24 @@ func NewTxHandler(
 	}
 }
 
+var _ Handler = (*TxHandler)(nil)
+
+func (handler *TxHandler) InitRoutes(srvr *echo.Group) {
+	txGroup := srvr.Group("/tx")
+	{
+		txGroup.GET("", handler.List)
+		txGroup.GET("/count", handler.Count)
+		hashGroup := txGroup.Group("/:hash")
+		{
+			hashGroup.GET("", handler.Get)
+			hashGroup.GET("/actions", handler.GetActions)
+			hashGroup.GET("/fees", handler.GetFees)
+			hashGroup.GET("/rollup_actions", handler.RollupActions)
+			hashGroup.GET("/rollup_actions/count", handler.RollupActionsCount)
+		}
+	}
+}
+
 type getTxRequest struct {
 	Hash string `param:"hash" validate:"required,hexadecimal,len=64"`
 

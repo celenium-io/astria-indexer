@@ -10,23 +10,23 @@ import (
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
-	"github.com/dipdup-net/go-lib/database"
+	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 )
 
 // Constant -
 type Constant struct {
-	db *database.Bun
+	db *postgres.Storage
 }
 
 // NewConstant -
-func NewConstant(db *database.Bun) *Constant {
+func NewConstant(db *postgres.Storage) *Constant {
 	return &Constant{
 		db: db,
 	}
 }
 
 func (constant *Constant) Get(ctx context.Context, module types.ModuleName, name string) (c storage.Constant, err error) {
-	err = constant.db.DB().NewSelect().Model(&c).
+	err = constant.db.Connection().DB().NewSelect().Model(&c).
 		Where("module = ?", module).
 		Where("name = ?", name).
 		Scan(ctx)
@@ -34,14 +34,14 @@ func (constant *Constant) Get(ctx context.Context, module types.ModuleName, name
 }
 
 func (constant *Constant) ByModule(ctx context.Context, module types.ModuleName) (c []storage.Constant, err error) {
-	err = constant.db.DB().NewSelect().Model(&c).
+	err = constant.db.Connection().DB().NewSelect().Model(&c).
 		Where("module = ?", module).
 		Scan(ctx)
 	return
 }
 
 func (constant *Constant) All(ctx context.Context) (c []storage.Constant, err error) {
-	err = constant.db.DB().NewSelect().Model(&c).Scan(ctx)
+	err = constant.db.Connection().DB().NewSelect().Model(&c).Scan(ctx)
 	return
 }
 

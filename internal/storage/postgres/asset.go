@@ -7,16 +7,16 @@ import (
 	"context"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
-	"github.com/dipdup-net/go-lib/database"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
+	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 )
 
 type Asset struct {
-	db *database.Bun
+	db *postgres.Storage
 }
 
 // NewAsset -
-func NewAsset(db *database.Bun) *Asset {
+func NewAsset(db *postgres.Storage) *Asset {
 	return &Asset{
 		db: db,
 	}
@@ -31,22 +31,22 @@ var validSortFieldsForAssetList = map[string]struct{}{
 }
 
 func (a *Asset) List(ctx context.Context, limit int, offset int, sortBy string, order sdk.SortOrder) (assets []storage.Asset, err error) {
-	transferredQuery := a.db.DB().NewSelect().
+	transferredQuery := a.db.Connection().DB().NewSelect().
 		Model((*storage.Transfer)(nil)).
 		ColumnExpr("asset, count(*) as c, sum(amount) as amount").
 		Group("asset")
 
-	feesQuery := a.db.DB().NewSelect().
+	feesQuery := a.db.Connection().DB().NewSelect().
 		Model((*storage.Fee)(nil)).
 		ColumnExpr("asset, count(*) as c, sum(amount) as amount").
 		Group("asset")
 
-	supplyQuery := a.db.DB().NewSelect().
+	supplyQuery := a.db.Connection().DB().NewSelect().
 		Model((*storage.Balance)(nil)).
 		ColumnExpr("currency, sum(total) as amount").
 		Group("currency")
 
-	query := a.db.DB().NewSelect().
+	query := a.db.Connection().DB().NewSelect().
 		With("fees", feesQuery).
 		With("transferred", transferredQuery).
 		With("supply", supplyQuery).

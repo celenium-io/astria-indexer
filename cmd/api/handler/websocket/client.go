@@ -203,7 +203,7 @@ func (c *Client) read(ctx context.Context, ws *websocket.Conn) error {
 	}
 }
 
-func (c *Client) handleSubscribeMessage(ctx context.Context, msg Message) error {
+func (c *Client) handleSubscribeMessage(_ context.Context, msg Message) error {
 	var subscribeMsg Subscribe
 	if err := json.Unmarshal(msg.Body, &subscribeMsg); err != nil {
 		return err
@@ -217,7 +217,7 @@ func (c *Client) handleSubscribeMessage(ctx context.Context, msg Message) error 
 	return nil
 }
 
-func (c *Client) handleUnsubscribeMessage(ctx context.Context, msg Message) error {
+func (c *Client) handleUnsubscribeMessage(_ context.Context, msg Message) error {
 	var unsubscribeMsg Unsubscribe
 	if err := json.Unmarshal(msg.Body, &unsubscribeMsg); err != nil {
 		return err

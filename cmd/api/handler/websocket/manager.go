@@ -75,6 +75,10 @@ func (manager *Manager) listen(ctx context.Context) {
 	}
 }
 
+func (manager *Manager) InitRoutes(srvr *echo.Group) {
+	srvr.GET("/ws", manager.Handle)
+}
+
 // Handle godoc
 //
 //	@Summary				Websocket API

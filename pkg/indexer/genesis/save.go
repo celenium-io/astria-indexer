@@ -14,7 +14,7 @@ import (
 func (module *Module) save(ctx context.Context, data parsedData) error {
 	start := time.Now()
 	module.Log.Info().Uint64("height", uint64(data.block.Height)).Msg("saving block...")
-	tx, err := postgres.BeginTransaction(ctx, module.storage.Transactable)
+	tx, err := postgres.BeginTransaction(ctx, module.storage)
 	if err != nil {
 		return err
 	}

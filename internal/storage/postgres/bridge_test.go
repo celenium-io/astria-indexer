@@ -13,7 +13,7 @@ func (s *StorageTestSuite) TestBridgeByAddress() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	bridge, err := s.storage.Bridges.ByAddress(ctx, 1)
+	bridge, err := s.Bridges.ByAddress(ctx, 1)
 	s.Require().NoError(err)
 
 	s.Require().EqualValues(7316, bridge.InitHeight)
@@ -42,7 +42,7 @@ func (s *StorageTestSuite) TestBridgeByRollup() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	bridges, err := s.storage.Bridges.ByRollup(ctx, 1, 10, 0)
+	bridges, err := s.Bridges.ByRollup(ctx, 1, 10, 0)
 	s.Require().NoError(err)
 
 	bridge := bridges[0]
@@ -72,7 +72,7 @@ func (s *StorageTestSuite) TestBridgeByRoles() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	bridges, err := s.storage.Bridges.ByRoles(ctx, 1, 10, 0)
+	bridges, err := s.Bridges.ByRoles(ctx, 1, 10, 0)
 	s.Require().NoError(err)
 	s.Require().Len(bridges, 1)
 
@@ -103,7 +103,7 @@ func (s *StorageTestSuite) TestBridgeListWithAddress() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	bridges, err := s.storage.Bridges.ListWithAddress(ctx, 1, 0)
+	bridges, err := s.Bridges.ListWithAddress(ctx, 1, 0)
 	s.Require().NoError(err)
 	s.Require().Len(bridges, 1)
 
@@ -128,7 +128,7 @@ func (s *StorageTestSuite) TestBridgeById() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	bridge, err := s.storage.Bridges.ById(ctx, 1)
+	bridge, err := s.Bridges.ById(ctx, 1)
 	s.Require().NoError(err)
 
 	s.Require().EqualValues(7316, bridge.InitHeight)

@@ -11,10 +11,11 @@ import (
 	"time"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
-	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
+	internalPg "github.com/celenium-io/astria-indexer/internal/storage/postgres"
 	indexerCfg "github.com/celenium-io/astria-indexer/pkg/indexer/config"
 	"github.com/dipdup-net/go-lib/config"
 	"github.com/dipdup-net/go-lib/database"
+	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/go-testfixtures/testfixtures/v3"
 	"github.com/stretchr/testify/suite"
 )
@@ -25,7 +26,10 @@ const testIndexerName = "dipdup_astria_indexer"
 type ModuleTestSuite struct {
 	suite.Suite
 	psqlContainer *database.PostgreSQLContainer
-	storage       postgres.Storage
+	storage       *postgres.Storage
+	notificator   storage.Notificator
+	blocks        storage.IBlock
+	state         storage.IState
 }
 
 // SetupSuite -
@@ -43,16 +47,21 @@ func (s *ModuleTestSuite) SetupSuite() {
 	s.Require().NoError(err)
 	s.psqlContainer = psqlContainer
 
-	strg, err := postgres.Create(ctx, config.Database{
+	dbCfg := config.Database{
 		Kind:     config.DBKindPostgres,
 		User:     s.psqlContainer.Config.User,
 		Database: s.psqlContainer.Config.Database,
 		Password: s.psqlContainer.Config.Password,
 		Host:     s.psqlContainer.Config.Host,
 		Port:     s.psqlContainer.MappedPort().Int(),
-	}, "../../../database", false)
+	}
+
+	strg, err := internalPg.Create(ctx, dbCfg, "../../../database", false)
 	s.Require().NoError(err)
 	s.storage = strg
+	s.notificator = internalPg.NewNotificator(dbCfg, strg)
+	s.blocks = internalPg.NewBlocks(strg)
+	s.state = internalPg.NewState(strg)
 }
 
 // TearDownSuite -
@@ -83,7 +92,7 @@ func (s *ModuleTestSuite) TestBlockLast() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer ctxCancel()
 
-	module := NewModule(s.storage.Transactable, s.storage.Notificator, indexerCfg.Indexer{Name: testIndexerName})
+	module := NewModule(s.storage.Transactable, s.notificator, indexerCfg.Indexer{Name: testIndexerName})
 	module.Start(ctx)
 
 	hash, err := hex.DecodeString("F44BC94BF7D064ADF82618F2691D2353161DE232ECB3091B7E5C89B453C79456")
@@ -100,14 +109,14 @@ func (s *ModuleTestSuite) TestBlockLast() {
 	})
 	time.Sleep(time.Second)
 
-	block, err := s.storage.Blocks.Last(ctx)
+	block, err := s.blocks.Last(ctx)
 	s.Require().NoError(err)
 	s.Require().EqualValues(10001, block.Height)
 	s.Require().EqualValues(1, block.VersionApp)
 	s.Require().EqualValues(11, block.VersionBlock)
 	s.Require().Equal(hash, block.Hash.Bytes())
 
-	state, err := s.storage.State.ByName(ctx, testIndexerName)
+	state, err := s.state.ByName(ctx, testIndexerName)
 	s.Require().NoError(err)
 	s.Require().Equal(testIndexerName, state.Name)
 	s.Require().EqualValues(10001, state.LastHeight)

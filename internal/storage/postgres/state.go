@@ -7,7 +7,6 @@ import (
 	"context"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
-	"github.com/dipdup-net/go-lib/database"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 )
 
@@ -17,9 +16,9 @@ type State struct {
 }
 
 // NewState -
-func NewState(db *database.Bun) *State {
+func NewState(db *postgres.Storage) *State {
 	return &State{
-		Table: postgres.NewTable[*storage.State](db),
+		Table: postgres.NewTable[*storage.State](db.Connection()),
 	}
 }
 
