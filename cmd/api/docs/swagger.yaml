@@ -822,7 +822,7 @@ definitions:
         example: "0.97"
         type: string
     type: object
-host: api-dusk.astrotrek.io
+host: api.astrotrek.io
 info:
   contact: {}
   description: This is docs of Astria Explorer API.
@@ -1035,6 +1035,7 @@ paths:
         - bridge_sudo_change_action
         - fee_change
         - ibc_sudo_change_action
+        - bridge_transfer
         in: query
         name: action_types
         type: string
@@ -1291,6 +1292,7 @@ paths:
         - bridge_sudo_change_action
         - fee_change
         - ibc_sudo_change_action
+        - bridge_transfer
         in: query
         name: action_types
         type: string
@@ -1947,6 +1949,7 @@ paths:
         - bridge_sudo_change_action
         - fee_change
         - ibc_sudo_change_action
+        - bridge_transfer
         in: query
         name: action_types
         type: string
@@ -2396,6 +2399,7 @@ paths:
         - bridge_sudo_change_action
         - fee_change
         - ibc_sudo_change_action
+        - bridge_transfer
         in: query
         name: action_types
         type: string

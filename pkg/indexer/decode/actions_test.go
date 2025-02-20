@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	primitivev1 "buf.build/gen/go/astria/primitives/protocolbuffers/go/astria/primitive/v1"
-	feesv1alpha1 "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/fees/v1alpha1"
-	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transaction/v1alpha1"
+	feesv1alpha1 "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/fees/v1"
+	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transaction/v1"
 	v1 "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria_vendored/penumbra/core/component/ibc/v1"
 	abci "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria_vendored/tendermint/abci"
 	crypto "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria_vendored/tendermint/crypto"
@@ -1729,6 +1729,94 @@ func TestDecodeActions(t *testing.T) {
 			Height: 1000,
 		}
 		err := parseIbcSudoChangeAction(message, &decodeContext, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+	})
+
+	t.Run("bridge transfer", func(t *testing.T) {
+		decodeContext := NewContext(map[string]string{})
+		bridge := testsuite.RandomAddress()
+		to := testsuite.RandomAddress()
+		decodeContext.AddBridgeAsset(bridge, feeAssetId)
+
+		message := &astria.Action_BridgeTransfer{
+			BridgeTransfer: &astria.BridgeTransfer{
+				FeeAsset:                feeAssetId,
+				BridgeAddress:           &primitivev1.Address{Bech32M: bridge},
+				To:                      &primitivev1.Address{Bech32M: to},
+				Amount:                  &primitivev1.Uint128{Lo: 100},
+				DestinationChainAddress: "hash",
+				RollupBlockNumber:       1000,
+				RollupWithdrawalEventId: "event_id_1",
+			},
+		}
+
+		wantAction := storage.Action{
+			Type: types.ActionTypeBridgeTransfer,
+			Data: map[string]any{
+				"fee_asset":                  feeAssetId,
+				"to":                         to,
+				"bridge_address":             bridge,
+				"destination_chain_address":  "hash",
+				"rollup_block_number":        uint64(1000),
+				"amount":                     "100",
+				"rollup_withdrawal_event_id": "event_id_1",
+			},
+			Height:         1000,
+			Addresses:      make([]*storage.AddressAction, 0),
+			BalanceUpdates: make([]storage.BalanceUpdate, 0),
+		}
+
+		addrActionFrom := &storage.AddressAction{
+			Height: 1000,
+			Address: &storage.Address{
+				Height:       1000,
+				Hash:         bridge,
+				ActionsCount: 1,
+				Balance: []*storage.Balance{
+					{
+						Currency: feeAssetId,
+						Total:    decimal.RequireFromString("-100"),
+					},
+				},
+			},
+			ActionType: types.ActionTypeBridgeTransfer,
+			Action:     &wantAction,
+		}
+		addrActionTo := &storage.AddressAction{
+			Height: 1000,
+			Address: &storage.Address{
+				Height:       1000,
+				Hash:         to,
+				ActionsCount: 1,
+				Balance: []*storage.Balance{
+					{
+						Currency: feeAssetId,
+						Total:    decimal.RequireFromString("100"),
+					},
+				},
+			},
+			ActionType: types.ActionTypeBridgeTransfer,
+			Action:     &wantAction,
+		}
+		wantAction.Addresses = append(wantAction.Addresses, addrActionFrom, addrActionTo)
+
+		wantAction.BalanceUpdates = append(wantAction.BalanceUpdates, storage.BalanceUpdate{
+			Address:  addrActionFrom.Address,
+			Currency: feeAssetId,
+			Height:   1000,
+			Update:   decimal.RequireFromString("-100"),
+		}, storage.BalanceUpdate{
+			Address:  addrActionTo.Address,
+			Currency: feeAssetId,
+			Height:   1000,
+			Update:   decimal.RequireFromString("100"),
+		})
+
+		action := storage.Action{
+			Height: 1000,
+		}
+		err := parseBridgeTransfer(message, 1000, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})

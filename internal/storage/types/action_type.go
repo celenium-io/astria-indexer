@@ -19,7 +19,8 @@ package types
 		bridge_unlock,
 		bridge_sudo_change_action,
 		fee_change,
-		ibc_sudo_change_action
+		ibc_sudo_change_action,
+		bridge_transfer
 	)
 */
 //go:generate go-enum --marshal --sql --values --names

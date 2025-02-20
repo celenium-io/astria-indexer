@@ -227,4 +227,15 @@ func (module *Module) parseConstants(appState nodeTypes.AppState, consensus pkgT
 		Name:   "ibc_sudo_change_multiplier",
 		Value:  appState.Fees.IbcSudoChange.Multiplier.String(),
 	})
+
+	data.constants = append(data.constants, storage.Constant{
+		Module: storageTypes.ModuleNameGeneric,
+		Name:   "bridge_transfer_base",
+		Value:  appState.Fees.BridgeTransfer.Base.String(),
+	})
+	data.constants = append(data.constants, storage.Constant{
+		Module: storageTypes.ModuleNameGeneric,
+		Name:   "bridge_transfer_multiplier",
+		Value:  appState.Fees.BridgeTransfer.Multiplier.String(),
+	})
 }

@@ -80,5 +80,5 @@ func newProflier(cfg *config.Config) (*pyroscope.Profiler, error) {
 }
 
 func newDatabase(cfg *config.Config) (*sdk.Storage, error) {
-	return postgres.Create(context.Background(), cfg.Database, cfg.Indexer.ScriptsDir, false)
+	return postgres.Create(context.Background(), cfg.Database, cfg.Indexer.ScriptsDir, true)
 }

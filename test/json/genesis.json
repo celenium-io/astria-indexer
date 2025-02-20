@@ -86,6 +86,9 @@
             },
             "ics20_withdrawal_base_fee": {
                 "lo": 24
+            },
+            "bridge_transfer": {
+                "lo": 24
             }
         },
         "allowed_fee_assets": [],

@@ -107,6 +107,13 @@ func TestActionTypeMask(t *testing.T) {
 		require.Equal(t, arr, mask.Strings())
 	})
 
+	t.Run("bridge transfer", func(t *testing.T) {
+		arr := []string{string(ActionTypeBridgeTransfer)}
+
+		mask := NewActionTypeMask(arr...)
+		require.Equal(t, arr, mask.Strings())
+	})
+
 	t.Run("unknown", func(t *testing.T) {
 		arr := []string{"unknown"}
 
