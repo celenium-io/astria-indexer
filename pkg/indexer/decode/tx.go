@@ -1,10 +1,13 @@
+// SPDX-FileCopyrightText: 2025 PK Lab AG <contact@pklab.io>
+// SPDX-License-Identifier: MIT
+
 // SPDX-FileCopyrightText: 2024 PK Lab AG <contact@pklab.io>
 // SPDX-License-Identifier: MIT
 
 package decode
 
 import (
-	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transaction/v1alpha1"
+	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transaction/v1"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/celenium-io/astria-indexer/pkg/types"

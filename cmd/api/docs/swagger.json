@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "api-dusk.astrotrek.io",
+    "host": "api.astrotrek.io",
     "paths": {
         "/app": {
             "get": {
@@ -333,7 +333,8 @@
                             "bridge_unlock",
                             "bridge_sudo_change_action",
                             "fee_change",
-                            "ibc_sudo_change_action"
+                            "ibc_sudo_change_action",
+                            "bridge_transfer"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -699,7 +700,8 @@
                             "bridge_unlock",
                             "bridge_sudo_change_action",
                             "fee_change",
-                            "ibc_sudo_change_action"
+                            "ibc_sudo_change_action",
+                            "bridge_transfer"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -1662,7 +1664,8 @@
                             "bridge_unlock",
                             "bridge_sudo_change_action",
                             "fee_change",
-                            "ibc_sudo_change_action"
+                            "ibc_sudo_change_action",
+                            "bridge_transfer"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -2288,7 +2291,8 @@
                             "bridge_unlock",
                             "bridge_sudo_change_action",
                             "fee_change",
-                            "ibc_sudo_change_action"
+                            "ibc_sudo_change_action",
+                            "bridge_transfer"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",

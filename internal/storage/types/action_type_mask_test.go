@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025 PK Lab AG <contact@pklab.io>
+// SPDX-License-Identifier: MIT
+
 // SPDX-FileCopyrightText: 2024 PK Lab AG <contact@pklab.io>
 // SPDX-License-Identifier: MIT
 
@@ -102,6 +105,13 @@ func TestActionTypeMask(t *testing.T) {
 
 	t.Run("ibc sudo change", func(t *testing.T) {
 		arr := []string{string(ActionTypeIbcSudoChangeAction)}
+
+		mask := NewActionTypeMask(arr...)
+		require.Equal(t, arr, mask.Strings())
+	})
+
+	t.Run("bridge transfer", func(t *testing.T) {
+		arr := []string{string(ActionTypeBridgeTransfer)}
 
 		mask := NewActionTypeMask(arr...)
 		require.Equal(t, arr, mask.Strings())

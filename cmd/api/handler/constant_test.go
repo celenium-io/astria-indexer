@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025 PK Lab AG <contact@pklab.io>
+// SPDX-License-Identifier: MIT
+
 // SPDX-FileCopyrightText: 2024 PK Lab AG <contact@pklab.io>
 // SPDX-License-Identifier: MIT
 
@@ -58,7 +61,7 @@ func (s *ConstantTestSuite) TestEnums() {
 	var enums responses.Enums
 	err := json.NewDecoder(rec.Body).Decode(&enums)
 	s.Require().NoError(err)
-	s.Require().Len(enums.ActionType, 14)
+	s.Require().Len(enums.ActionType, 15)
 	s.Require().Len(enums.Status, 2)
 }
 

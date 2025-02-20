@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025 PK Lab AG <contact@pklab.io>
+// SPDX-License-Identifier: MIT
+
 // SPDX-FileCopyrightText: 2024 PK Lab AG <contact@pklab.io>
 // SPDX-License-Identifier: MIT
 
@@ -59,6 +62,7 @@ type Fees struct {
 	BridgeLock           Fee `json:"bridge_lock"`
 	BridgeUnlock         Fee `json:"bridge_unlock"`
 	BridgeSudoChange     Fee `json:"bridge_sudo_change"`
+	BridgeTransfer       Fee `json:"bridge_transfer"`
 
 	IbcRelay          Fee `json:"ibc_relay"`
 	ValidatorUpdate   Fee `json:"validator_update"`

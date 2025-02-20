@@ -3,8 +3,8 @@ module github.com/celenium-io/astria-indexer
 go 1.23.5
 
 require (
-	buf.build/gen/go/astria/primitives/protocolbuffers/go v1.35.1-20240911152449-eeebd3decdce.1
-	buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.35.1-20241016184443-c3b7ab6e57dc.1
+	buf.build/gen/go/astria/primitives/protocolbuffers/go v1.36.5-20240911152449-eeebd3decdce.1
+	buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.5-20250211170247-cc9150a96f73.1
 	cosmossdk.io/errors v1.0.1
 	github.com/cometbft/cometbft v0.38.17
 	github.com/cosmos/btcutil v1.0.5
@@ -40,7 +40,7 @@ require (
 	go.uber.org/fx v1.22.0
 	go.uber.org/mock v0.5.0
 	golang.org/x/time v0.5.0
-	google.golang.org/protobuf v1.36.4
+	google.golang.org/protobuf v1.36.5
 )
 
 require (
