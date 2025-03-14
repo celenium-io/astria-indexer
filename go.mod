@@ -4,7 +4,7 @@ go 1.23.5
 
 require (
 	buf.build/gen/go/astria/primitives/protocolbuffers/go v1.36.5-20240911152449-eeebd3decdce.1
-	buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.5-20250211170247-cc9150a96f73.1
+	buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.5-20250305185440-67be222cd557.1
 	cosmossdk.io/errors v1.0.1
 	github.com/cometbft/cometbft v0.38.17
 	github.com/cosmos/btcutil v1.0.5

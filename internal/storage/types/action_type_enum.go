@@ -47,6 +47,8 @@ const (
 	ActionTypeIbcSudoChangeAction ActionType = "ibc_sudo_change_action"
 	// ActionTypeBridgeTransfer is a ActionType of type bridge_transfer.
 	ActionTypeBridgeTransfer ActionType = "bridge_transfer"
+	// ActionTypeRecoverIbcClient is a ActionType of type recover_ibc_client.
+	ActionTypeRecoverIbcClient ActionType = "recover_ibc_client"
 )
 
 var ErrInvalidActionType = fmt.Errorf("not a valid ActionType, try [%s]", strings.Join(_ActionTypeNames, ", "))
@@ -67,6 +69,7 @@ var _ActionTypeNames = []string{
 	string(ActionTypeFeeChange),
 	string(ActionTypeIbcSudoChangeAction),
 	string(ActionTypeBridgeTransfer),
+	string(ActionTypeRecoverIbcClient),
 }
 
 // ActionTypeNames returns a list of possible string values of ActionType.
@@ -94,6 +97,7 @@ func ActionTypeValues() []ActionType {
 		ActionTypeFeeChange,
 		ActionTypeIbcSudoChangeAction,
 		ActionTypeBridgeTransfer,
+		ActionTypeRecoverIbcClient,
 	}
 }
 
@@ -125,6 +129,7 @@ var _ActionTypeValue = map[string]ActionType{
 	"fee_change":                ActionTypeFeeChange,
 	"ibc_sudo_change_action":    ActionTypeIbcSudoChangeAction,
 	"bridge_transfer":           ActionTypeBridgeTransfer,
+	"recover_ibc_client":        ActionTypeRecoverIbcClient,
 }
 
 // ParseActionType attempts to convert a string to a ActionType.

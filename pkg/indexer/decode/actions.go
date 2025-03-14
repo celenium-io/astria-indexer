@@ -101,6 +101,11 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 		case *astria.Action_BridgeTransfer:
 			tx.ActionTypes.Set(storageTypes.ActionTypeBridgeTransferBits)
 			err = parseBridgeTransfer(val, height, ctx, &actions[i])
+
+		case *astria.Action_RecoverIbcClient:
+			tx.ActionTypes.Set(storageTypes.ActionTypeRecoverIbcClientBits)
+			err = parseRecoverIbcClient(val, height, ctx, &actions[i])
+
 		default:
 			return nil, errors.Errorf(
 				"unknown action type | position = %d | block = %d: %##v",
@@ -929,6 +934,17 @@ func parseBridgeTransfer(body *astria.Action_BridgeTransfer, height types.Level,
 				Update:   decAmount,
 			},
 		)
+	}
+	return nil
+}
+
+func parseRecoverIbcClient(body *astria.Action_RecoverIbcClient, height types.Level, ctx *Context, action *storage.Action) error {
+	action.Type = storageTypes.ActionTypeRecoverIbcClient
+	action.Data = make(map[string]any)
+
+	if body.RecoverIbcClient != nil {
+		action.Data["client_id"] = body.RecoverIbcClient.GetClientId()
+		action.Data["replacement_client_id"] = body.RecoverIbcClient.GetReplacementClientId()
 	}
 	return nil
 }

@@ -1823,4 +1823,31 @@ func TestDecodeActions(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
+
+	t.Run("recover ibc client", func(t *testing.T) {
+		decodeContext := NewContext(map[string]string{})
+
+		message := &astria.Action_RecoverIbcClient{
+			RecoverIbcClient: &astria.RecoverIbcClient{
+				ClientId:            "old_client_id",
+				ReplacementClientId: "new_client_id",
+			},
+		}
+
+		wantAction := storage.Action{
+			Type: types.ActionTypeRecoverIbcClient,
+			Data: map[string]any{
+				"client_id":             "old_client_id",
+				"replacement_client_id": "new_client_id",
+			},
+			Height: 1000,
+		}
+
+		action := storage.Action{
+			Height: 1000,
+		}
+		err := parseRecoverIbcClient(message, 1000, &decodeContext, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+	})
 }

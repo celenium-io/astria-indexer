@@ -6,6 +6,8 @@ buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.35.1-20241016184443-
 buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.35.1-20241016184443-c3b7ab6e57dc.1/go.mod h1:XtXAwi+0M8MZWFDcda/0ShK1PKcFsLmdQOA6VKZdKVg=
 buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.5-20250211170247-cc9150a96f73.1 h1:zinklY1DYGxWpbM+IiXrtD/xDZdZwcoZUU3y/tqiea0=
 buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.5-20250211170247-cc9150a96f73.1/go.mod h1:kUAF1bkQM31JxAvOGhAEhl/0+p0AlPiAgHRbg6sbfck=
+buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.5-20250305185440-67be222cd557.1 h1:rklx88gB2VhdY1QgOd5ZTNuEEzNhmno/bFFLX1E3UK8=
+buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.5-20250305185440-67be222cd557.1/go.mod h1:kUAF1bkQM31JxAvOGhAEhl/0+p0AlPiAgHRbg6sbfck=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.115.0 h1:CnFSK6Xo3lDYRoBKEcAtia6VSC837/ZkJuRduSFnr14=
