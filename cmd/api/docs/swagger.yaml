@@ -1036,6 +1036,7 @@ paths:
         - fee_change
         - ibc_sudo_change_action
         - bridge_transfer
+        - recover_ibc_client
         in: query
         name: action_types
         type: string
@@ -1293,6 +1294,7 @@ paths:
         - fee_change
         - ibc_sudo_change_action
         - bridge_transfer
+        - recover_ibc_client
         in: query
         name: action_types
         type: string
@@ -1950,6 +1952,7 @@ paths:
         - fee_change
         - ibc_sudo_change_action
         - bridge_transfer
+        - recover_ibc_client
         in: query
         name: action_types
         type: string
@@ -2400,6 +2403,7 @@ paths:
         - fee_change
         - ibc_sudo_change_action
         - bridge_transfer
+        - recover_ibc_client
         in: query
         name: action_types
         type: string

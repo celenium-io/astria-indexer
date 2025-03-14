@@ -344,7 +344,8 @@ const docTemplate = `{
                             "bridge_sudo_change_action",
                             "fee_change",
                             "ibc_sudo_change_action",
-                            "bridge_transfer"
+                            "bridge_transfer",
+                            "recover_ibc_client"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -711,7 +712,8 @@ const docTemplate = `{
                             "bridge_sudo_change_action",
                             "fee_change",
                             "ibc_sudo_change_action",
-                            "bridge_transfer"
+                            "bridge_transfer",
+                            "recover_ibc_client"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -1675,7 +1677,8 @@ const docTemplate = `{
                             "bridge_sudo_change_action",
                             "fee_change",
                             "ibc_sudo_change_action",
-                            "bridge_transfer"
+                            "bridge_transfer",
+                            "recover_ibc_client"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -2302,7 +2305,8 @@ const docTemplate = `{
                             "bridge_sudo_change_action",
                             "fee_change",
                             "ibc_sudo_change_action",
-                            "bridge_transfer"
+                            "bridge_transfer",
+                            "recover_ibc_client"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",

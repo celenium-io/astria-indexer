@@ -22,6 +22,7 @@ const (
 	ActionTypeFeeChangeBits
 	ActionTypeIbcSudoChangeBits
 	ActionTypeBridgeTransferBits
+	ActionTypeRecoverIbcClientBits
 )
 
 var (
@@ -41,6 +42,7 @@ var (
 		ActionTypeFeeChange:              ActionTypeFeeChangeBits,
 		ActionTypeIbcSudoChangeAction:    ActionTypeIbcSudoChangeBits,
 		ActionTypeBridgeTransfer:         ActionTypeBridgeTransferBits,
+		ActionTypeRecoverIbcClient:       ActionTypeRecoverIbcClientBits,
 	}
 )
 
@@ -82,6 +84,8 @@ func NewActionTypeMask(vals ...string) ActionTypeMask {
 			mask.Set(ActionTypeIbcSudoChangeBits)
 		case string(ActionTypeBridgeTransfer):
 			mask.Set(ActionTypeBridgeTransferBits)
+		case string(ActionTypeRecoverIbcClient):
+			mask.Set(ActionTypeRecoverIbcClientBits)
 		}
 	}
 
@@ -98,7 +102,7 @@ func (mask ActionTypeMask) Strings() []string {
 	}
 
 	vals := make([]string, 0)
-	for val := ActionTypeTransferBits; val <= ActionTypeBridgeTransferBits; val <<= 1 {
+	for val := ActionTypeTransferBits; val <= ActionTypeRecoverIbcClientBits; val <<= 1 {
 		if !mask.Has(val) {
 			continue
 		}
@@ -133,6 +137,8 @@ func (mask ActionTypeMask) Strings() []string {
 			vals = append(vals, string(ActionTypeIbcSudoChangeAction))
 		case ActionTypeBridgeTransferBits:
 			vals = append(vals, string(ActionTypeBridgeTransfer))
+		case ActionTypeRecoverIbcClientBits:
+			vals = append(vals, string(ActionTypeRecoverIbcClient))
 		}
 	}
 

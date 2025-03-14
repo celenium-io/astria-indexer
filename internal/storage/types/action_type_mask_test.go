@@ -117,6 +117,13 @@ func TestActionTypeMask(t *testing.T) {
 		require.Equal(t, arr, mask.Strings())
 	})
 
+	t.Run("recover ibc client", func(t *testing.T) {
+		arr := []string{string(ActionTypeRecoverIbcClient)}
+
+		mask := NewActionTypeMask(arr...)
+		require.Equal(t, arr, mask.Strings())
+	})
+
 	t.Run("unknown", func(t *testing.T) {
 		arr := []string{"unknown"}
 
