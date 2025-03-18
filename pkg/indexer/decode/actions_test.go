@@ -1361,6 +1361,40 @@ func TestDecodeActions(t *testing.T) {
 		require.Equal(t, wantAction, action)
 	})
 
+	t.Run("fee change: recover ibc client", func(t *testing.T) {
+		decodeContext := NewContext(map[string]string{})
+
+		message := &astria.Action_FeeChange{
+			FeeChange: &astria.FeeChange{
+				FeeComponents: &astria.FeeChange_RecoverIbcClient{
+					RecoverIbcClient: &feesv1alpha1.RecoverIbcClientFeeComponents{
+						Base: &primitivev1.Uint128{
+							Hi: 0,
+							Lo: 10,
+						},
+						Multiplier: &primitivev1.Uint128{
+							Hi: 0,
+							Lo: 10,
+						},
+					},
+				},
+			},
+		}
+
+		wantAction := storage.Action{
+			Type: types.ActionTypeFeeChange,
+			Data: map[string]any{
+				"recover_ibc_client_base":       "10",
+				"recover_ibc_client_multiplier": "10",
+			},
+		}
+
+		action := storage.Action{}
+		err := parseFeeChange(message, &decodeContext, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+	})
+
 	t.Run("bridge sudo change", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{})
 		bridge := testsuite.RandomAddress()
