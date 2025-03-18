@@ -834,6 +834,9 @@ func parseFeeChange(body *astria.Action_FeeChange, ctx *Context, action *storage
 
 		case *astria.FeeChange_BridgeTransfer:
 			processFeeComponent(storageTypes.ActionTypeBridgeTransfer.String(), t.BridgeTransfer.GetMultiplier(), t.BridgeTransfer.GetBase(), action.Data, ctx)
+
+		case *astria.FeeChange_RecoverIbcClient:
+			processFeeComponent(storageTypes.ActionTypeRecoverIbcClient.String(), t.RecoverIbcClient.GetMultiplier(), t.RecoverIbcClient.GetBase(), action.Data, ctx)
 		}
 	}
 	return nil
