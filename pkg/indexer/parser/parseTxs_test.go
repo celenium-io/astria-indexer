@@ -7,7 +7,6 @@
 package parser
 
 import (
-	"context"
 	"testing"
 
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
@@ -26,7 +25,7 @@ func TestParseTxs_EmptyTxsResults(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	api := mock.NewMockApi(ctrl)
-	resultTxs, err := parseTxs(context.Background(), block, &decodeCtx, api)
+	resultTxs, err := parseTxs(t.Context(), block, &decodeCtx, api)
 
 	assert.NoError(t, err)
 	assert.Empty(t, resultTxs)
@@ -75,7 +74,7 @@ func TestParseTxs_SuccessTx(t *testing.T) {
 	defer ctrl.Finish()
 	api := mock.NewMockApi(ctrl)
 
-	resultTxs, err := parseTxs(context.Background(), block, &ctx, api)
+	resultTxs, err := parseTxs(t.Context(), block, &ctx, api)
 
 	assert.NoError(t, err)
 	assert.Len(t, resultTxs, 1)
@@ -101,7 +100,7 @@ func TestParseTxs_FailedTx(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	api := mock.NewMockApi(ctrl)
-	resultTxs, err := parseTxs(context.Background(), block, &ctx, api)
+	resultTxs, err := parseTxs(t.Context(), block, &ctx, api)
 
 	assert.NoError(t, err)
 	assert.Len(t, resultTxs, 1)
@@ -127,7 +126,7 @@ func TestParseTxs_FailedTxWithNonstandardErrorCode(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	api := mock.NewMockApi(ctrl)
-	resultTxs, err := parseTxs(context.Background(), block, &ctx, api)
+	resultTxs, err := parseTxs(t.Context(), block, &ctx, api)
 
 	assert.NoError(t, err)
 	assert.Len(t, resultTxs, 1)

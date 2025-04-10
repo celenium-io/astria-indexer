@@ -1,6 +1,6 @@
 module github.com/celenium-io/astria-indexer
 
-go 1.23.5
+go 1.24.1
 
 require (
 	buf.build/gen/go/astria/primitives/protocolbuffers/go v1.36.6-20250410153152-4e41f6ebb18a.1

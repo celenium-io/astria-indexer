@@ -80,7 +80,7 @@ func Test_parseTxFee(t *testing.T) {
 		defer ctrl.Finish()
 		api := mock.NewMockApi(ctrl)
 
-		ctx, cancel := context.WithCancel(context.Background())
+		ctx, cancel := context.WithCancel(t.Context())
 		defer cancel()
 
 		decodeCtx := decode.NewContext(map[string]string{})
