@@ -8,6 +8,7 @@ package decode
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -105,6 +106,10 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 		case *astria.Action_RecoverIbcClient:
 			tx.ActionTypes.Set(storageTypes.ActionTypeRecoverIbcClientBits)
 			err = parseRecoverIbcClient(val, height, ctx, &actions[i])
+
+		case *astria.Action_PriceFeed:
+			tx.ActionTypes.Set(storageTypes.ActionTypePriceFeedBits)
+			err = parsePriceFeed(val, &actions[i])
 
 		default:
 			return nil, errors.Errorf(
@@ -837,6 +842,9 @@ func parseFeeChange(body *astria.Action_FeeChange, ctx *Context, action *storage
 
 		case *astria.FeeChange_RecoverIbcClient:
 			processFeeComponent(storageTypes.ActionTypeRecoverIbcClient.String(), t.RecoverIbcClient.GetMultiplier(), t.RecoverIbcClient.GetBase(), action.Data, ctx)
+
+		case *astria.FeeChange_PriceFeed:
+			processFeeComponent(storageTypes.ActionTypePriceFeed.String(), t.PriceFeed.GetMultiplier(), t.PriceFeed.GetBase(), action.Data, ctx)
 		}
 	}
 	return nil
@@ -948,6 +956,67 @@ func parseRecoverIbcClient(body *astria.Action_RecoverIbcClient, height types.Le
 	if body.RecoverIbcClient != nil {
 		action.Data["client_id"] = body.RecoverIbcClient.GetClientId()
 		action.Data["replacement_client_id"] = body.RecoverIbcClient.GetReplacementClientId()
+	}
+	return nil
+}
+
+func parsePriceFeed(body *astria.Action_PriceFeed, action *storage.Action) error {
+	action.Type = storageTypes.ActionTypePriceFeed
+	action.Data = make(map[string]any)
+
+	if body.PriceFeed != nil {
+		switch value := body.PriceFeed.GetValue().(type) {
+		case *astria.PriceFeed_MarketMap:
+
+			switch mm := value.MarketMap.GetValue().(type) {
+			case *astria.MarketMapChange_Markets:
+
+				switch markets := mm.Markets.GetAction().(type) {
+				case *astria.ChangeMarkets_Create:
+					data, err := json.Marshal(markets.Create.GetMarkets())
+					if err != nil {
+						return errors.Wrap(err, "create markets")
+					}
+					action.Data["create"] = json.RawMessage(data)
+				case *astria.ChangeMarkets_Remove:
+					data, err := json.Marshal(markets.Remove.GetMarkets())
+					if err != nil {
+						return errors.Wrap(err, "remove markets")
+					}
+					action.Data["remove"] = json.RawMessage(data)
+				case *astria.ChangeMarkets_Update:
+					data, err := json.Marshal(markets.Update.GetMarkets())
+					if err != nil {
+						return errors.Wrap(err, "update markets")
+					}
+					action.Data["update"] = json.RawMessage(data)
+				}
+
+			case *astria.MarketMapChange_Params:
+				data, err := json.Marshal(mm.Params.GetParams())
+				if err != nil {
+					return errors.Wrap(err, "change market params")
+				}
+				action.Data["params"] = json.RawMessage(data)
+			}
+
+		case *astria.PriceFeed_Oracle:
+
+			switch oracle := value.Oracle.GetValue().(type) {
+			case *astria.CurrencyPairsChange_Addition:
+				data, err := json.Marshal(oracle.Addition.GetPairs())
+				if err != nil {
+					return errors.Wrap(err, "currency pairs change addition")
+				}
+				action.Data["addition"] = json.RawMessage(data)
+			case *astria.CurrencyPairsChange_Removal:
+				data, err := json.Marshal(oracle.Removal.GetPairs())
+				if err != nil {
+					return errors.Wrap(err, "currency pairs change removal")
+				}
+				action.Data["removal"] = json.RawMessage(data)
+			}
+		}
 	}
 	return nil
 }

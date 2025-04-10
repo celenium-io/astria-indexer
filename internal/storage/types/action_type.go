@@ -24,7 +24,8 @@ package types
 		fee_change,
 		ibc_sudo_change_action,
 		bridge_transfer,
-		recover_ibc_client
+		recover_ibc_client,
+		price_feed
 	)
 */
 //go:generate go-enum --marshal --sql --values --names
