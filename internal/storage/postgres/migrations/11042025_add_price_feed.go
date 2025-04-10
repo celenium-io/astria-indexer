@@ -11,13 +11,17 @@ import (
 )
 
 func init() {
-	Migrations.MustRegister(upAddBridgeTransfer, downAddBridgeTransfer)
+	Migrations.MustRegister(upAddPriceFeed, downPriceFeed)
 }
 
-func upAddBridgeTransfer(ctx context.Context, db *bun.DB) error {
+func upAddPriceFeed(ctx context.Context, db *bun.DB) error {
 	_, err := db.ExecContext(ctx, `ALTER TYPE action_type ADD VALUE ? AFTER ?`, types.ActionTypeRecoverIbcClient.String(), types.ActionTypeBridgeTransfer.String())
+	if err != nil {
+		return err
+	}
+	_, err = db.ExecContext(ctx, `ALTER TYPE action_type ADD VALUE ? AFTER ?`, types.ActionTypePriceFeed.String(), types.ActionTypeRecoverIbcClient.String())
 	return err
 }
-func downAddBridgeTransfer(ctx context.Context, db *bun.DB) error {
+func downPriceFeed(ctx context.Context, db *bun.DB) error {
 	return nil
 }
