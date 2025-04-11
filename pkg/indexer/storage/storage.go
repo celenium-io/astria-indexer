@@ -170,6 +170,10 @@ func (module *Module) processBlockInTransaction(ctx context.Context, tx storage.
 		return state, err
 	}
 
+	if err := tx.SavePrices(ctx, block.Prices...); err != nil {
+		return state, errors.Wrap(err, "can't save prices")
+	}
+
 	addrToId, totalAccounts, err := saveAddresses(ctx, tx, block.Addresses)
 	if err != nil {
 		return state, err

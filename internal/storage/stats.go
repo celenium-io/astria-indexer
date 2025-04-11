@@ -126,6 +126,15 @@ type TokenTransferDistributionItem struct {
 	TransfersCount int64  `bun:"transfers_count"`
 }
 
+type Candle struct {
+	Time         time.Time       `bun:"time"`
+	Open         decimal.Decimal `bun:"open"`
+	Close        decimal.Decimal `bun:"close"`
+	High         decimal.Decimal `bun:"high"`
+	Low          decimal.Decimal `bun:"low"`
+	CurrencyPair string          `bun:"currency_pair"`
+}
+
 //go:generate mockgen -source=$GOFILE -destination=mock/$GOFILE -package=mock -typed
 type IStats interface {
 	Summary(ctx context.Context) (NetworkSummary, error)

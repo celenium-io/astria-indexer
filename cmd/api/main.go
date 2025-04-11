@@ -132,6 +132,10 @@ func main() {
 				postgres.NewValidator,
 				fx.As(new(storage.IValidator)),
 			),
+			fx.Annotate(
+				postgres.NewPrice,
+				fx.As(new(storage.IPrice)),
+			),
 
 			AsHandler(handler.NewAddressHandler),
 			AsHandler(handler.NewAppHandler),

@@ -11,7 +11,6 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/gorilla/websocket"
@@ -83,12 +82,12 @@ func (c *testHeadClient) Close() error {
 }
 
 func BenchmarkProcessingMessage(b *testing.B) {
-	channel := NewChannel[storage.Block, *responses.Block](
+	channel := NewChannel(
 		blockProcessor,
 		BlockFilter{},
 	)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(b.Context())
 
 	for id := uint64(0); id < clientsTestCount; id++ {
 		client := newTestHeadClient(id)

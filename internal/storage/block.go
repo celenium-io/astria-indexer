@@ -66,6 +66,7 @@ type Block struct {
 	Txs      []*Tx       `bun:"rel:has-many"`
 	Stats    *BlockStats `bun:"rel:has-one,join:height=height"`
 	Proposer *Validator  `bun:"rel:belongs-to"`
+	Prices   []Price     `bun:"rel:has-many,join:time=time"`
 }
 
 // TableName -
