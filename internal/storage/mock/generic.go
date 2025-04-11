@@ -1827,6 +1827,49 @@ func (c *MockTransactionSaveFeesCall) DoAndReturn(f func(context.Context, ...*st
 	return c
 }
 
+// SavePrices mocks base method.
+func (m *MockTransaction) SavePrices(ctx context.Context, prices ...storage.Price) error {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx}
+	for _, a := range prices {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "SavePrices", varargs...)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SavePrices indicates an expected call of SavePrices.
+func (mr *MockTransactionMockRecorder) SavePrices(ctx any, prices ...any) *MockTransactionSavePricesCall {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx}, prices...)
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SavePrices", reflect.TypeOf((*MockTransaction)(nil).SavePrices), varargs...)
+	return &MockTransactionSavePricesCall{Call: call}
+}
+
+// MockTransactionSavePricesCall wrap *gomock.Call
+type MockTransactionSavePricesCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockTransactionSavePricesCall) Return(arg0 error) *MockTransactionSavePricesCall {
+	c.Call = c.Call.Return(arg0)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockTransactionSavePricesCall) Do(f func(context.Context, ...storage.Price) error) *MockTransactionSavePricesCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockTransactionSavePricesCall) DoAndReturn(f func(context.Context, ...storage.Price) error) *MockTransactionSavePricesCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // SaveRollupActions mocks base method.
 func (m *MockTransaction) SaveRollupActions(ctx context.Context, actions ...*storage.RollupAction) error {
 	m.ctrl.T.Helper()

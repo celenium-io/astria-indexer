@@ -31,6 +31,7 @@ type Context struct {
 	Fees             map[int64]*storage.Fee
 	Transfers        []*storage.Transfer
 	Deposits         map[int64]*storage.Deposit
+	Prices           []storage.Price
 	HasWriteAckError bool
 	Proposer         string
 
@@ -49,6 +50,7 @@ func NewContext(bridgeAssets map[string]string) Context {
 		Fees:          make(map[int64]*storage.Fee),
 		Transfers:     make([]*storage.Transfer, 0),
 		Deposits:      make(map[int64]*storage.Deposit),
+		Prices:        make([]storage.Price, 0),
 
 		bridgeAssets: bridgeAssets,
 	}
@@ -102,4 +104,8 @@ func (ctx *Context) AddTransfer(transfer *storage.Transfer) {
 
 func (ctx *Context) AddDeposit(idx int64, deposit *storage.Deposit) {
 	ctx.Deposits[idx] = deposit
+}
+
+func (ctx *Context) AddPrice(price storage.Price) {
+	ctx.Prices = append(ctx.Prices, price)
 }

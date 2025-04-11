@@ -133,3 +133,21 @@ func NewTokenTransferDistributionItem(summary storage.TokenTransferDistributionI
 		TransfersCount: summary.TransfersCount,
 	}
 }
+
+type Candle struct {
+	Open  string    `example:"0.17632" format:"string" json:"open"`
+	Close string    `example:"0.17632" format:"string" json:"close"`
+	High  string    `example:"0.17632" format:"string" json:"high"`
+	Low   string    `example:"0.17632" format:"string" json:"low"`
+	Time  time.Time `example:"2023-07-04T03:10:57+00:00" format:"date-time" json:"time" swaggertype:"string"`
+}
+
+func NewCandle(candle storage.Candle) Candle {
+	return Candle{
+		Open:  candle.Open.String(),
+		Close: candle.Close.String(),
+		High:  candle.High.String(),
+		Low:   candle.Low.String(),
+		Time:  candle.Time,
+	}
+}

@@ -273,6 +273,15 @@ func (tx Transaction) SaveBridges(ctx context.Context, bridges ...*models.Bridge
 	return count, nil
 }
 
+func (tx Transaction) SavePrices(ctx context.Context, prices ...models.Price) error {
+	if len(prices) == 0 {
+		return nil
+	}
+
+	_, err := tx.Tx().NewInsert().Model(&prices).Exec(ctx)
+	return err
+}
+
 func (tx Transaction) LastBlock(ctx context.Context) (block models.Block, err error) {
 	err = tx.Tx().NewSelect().Model(&block).Order("id desc").Limit(1).Scan(ctx)
 	return
