@@ -9,6 +9,7 @@ package decode
 import (
 	"encoding/base64"
 	"testing"
+	"time"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/stretchr/testify/require"
@@ -102,7 +103,7 @@ func Test_parseIbcMessages(t *testing.T) {
 			action := storage.Action{
 				Data: make(map[string]any),
 			}
-			ctx := NewContext(nil)
+			ctx := NewContext(nil, time.Now())
 
 			b, err := base64.StdEncoding.DecodeString(tt.data)
 			require.NoError(t, err)

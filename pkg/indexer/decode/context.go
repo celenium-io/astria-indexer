@@ -8,6 +8,7 @@ package decode
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
@@ -36,9 +37,10 @@ type Context struct {
 	Proposer         string
 
 	bridgeAssets map[string]string
+	blockTime    time.Time
 }
 
-func NewContext(bridgeAssets map[string]string) Context {
+func NewContext(bridgeAssets map[string]string, blockTime time.Time) Context {
 	return Context{
 		Addresses:     NewAddress(),
 		Rollups:       NewRollups(),
@@ -53,6 +55,7 @@ func NewContext(bridgeAssets map[string]string) Context {
 		Prices:        make([]storage.Price, 0),
 
 		bridgeAssets: bridgeAssets,
+		blockTime:    blockTime,
 	}
 }
 
@@ -107,5 +110,6 @@ func (ctx *Context) AddDeposit(idx int64, deposit *storage.Deposit) {
 }
 
 func (ctx *Context) AddPrice(price storage.Price) {
+	price.Time = ctx.blockTime
 	ctx.Prices = append(ctx.Prices, price)
 }
