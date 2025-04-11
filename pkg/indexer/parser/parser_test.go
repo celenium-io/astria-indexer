@@ -73,6 +73,7 @@ func getExpectedBlock() storage.Block {
 		Constants:       make([]*storage.Constant, 0),
 		Bridges:         make([]*storage.Bridge, 0),
 		Transfers:       make([]*storage.Transfer, 0),
+		Prices:          make([]storage.Price, 0),
 	}
 }
 
