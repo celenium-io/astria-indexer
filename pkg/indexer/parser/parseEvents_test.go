@@ -9,6 +9,7 @@ package parser
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/celenium-io/astria-indexer/pkg/indexer/decode"
 	"github.com/celenium-io/astria-indexer/pkg/node/mock"
@@ -44,7 +45,7 @@ func Test_parseTxDeposit(t *testing.T) {
 			},
 		}
 
-		ctx := decode.NewContext(map[string]string{})
+		ctx := decode.NewContext(map[string]string{}, time.Now())
 		err := parseTxDeposit(attrs, 100, &ctx)
 		require.NoError(t, err)
 		require.Len(t, ctx.Deposits, 1)
@@ -80,10 +81,10 @@ func Test_parseTxFee(t *testing.T) {
 		defer ctrl.Finish()
 		api := mock.NewMockApi(ctrl)
 
-		ctx, cancel := context.WithCancel(context.Background())
+		ctx, cancel := context.WithCancel(t.Context())
 		defer cancel()
 
-		decodeCtx := decode.NewContext(map[string]string{})
+		decodeCtx := decode.NewContext(map[string]string{}, time.Now())
 		err := parseTxFees(ctx, attrs, &decodeCtx, api)
 		require.NoError(t, err)
 		require.Len(t, decodeCtx.Fees, 1)
@@ -114,7 +115,7 @@ func Test_parseWriteAck(t *testing.T) {
 			},
 		}
 
-		decodeCtx := decode.NewContext(map[string]string{})
+		decodeCtx := decode.NewContext(map[string]string{}, time.Now())
 		err := parseWriteAck(attrs, &decodeCtx)
 		require.NoError(t, err)
 		require.True(t, decodeCtx.HasWriteAckError)
@@ -137,7 +138,7 @@ func Test_parseWriteAck(t *testing.T) {
 			},
 		}
 
-		decodeCtx := decode.NewContext(map[string]string{})
+		decodeCtx := decode.NewContext(map[string]string{}, time.Now())
 		err := parseWriteAck(attrs, &decodeCtx)
 		require.NoError(t, err)
 		require.False(t, decodeCtx.HasWriteAckError)

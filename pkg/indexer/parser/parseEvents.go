@@ -34,6 +34,8 @@ func parseEvents(ctx context.Context, events []types.Event, height types.Level, 
 			err = parseTxDeposit(events[i].Attributes, height, decodeCtx)
 		case "write_acknowledgement":
 			err = parseWriteAck(events[i].Attributes, decodeCtx)
+		case "price_update":
+			err = parsePriceUpdate(events[i].Attributes, decodeCtx)
 		default:
 			continue
 		}
@@ -169,5 +171,26 @@ func parseWriteAck(attrs []types.EventAttribute, decodeCtx *decode.Context) erro
 		default:
 		}
 	}
+	return nil
+}
+
+func parsePriceUpdate(attrs []types.EventAttribute, decodeCtx *decode.Context) error {
+	var price storage.Price
+
+	for i := range attrs {
+		switch attrs[i].Key {
+		case "currency_pair":
+			price.CurrencyPair = strings.ReplaceAll(attrs[i].Value, "/", "_")
+		case "price":
+			p, err := decimal.NewFromString(attrs[i].Value)
+			if err != nil {
+				return errors.Wrapf(err, "price parsing error %s", attrs[i].Value)
+			}
+			price.Price = p
+		default:
+		}
+	}
+
+	decodeCtx.AddPrice(price)
 	return nil
 }

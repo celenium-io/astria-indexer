@@ -20,4 +20,6 @@ const (
 	ViewTransferStatsByDay   = "transfer_stats_by_day"
 	ViewTransferStatsByMonth = "transfer_stats_by_month"
 	ViewLeaderboard          = "leaderboard"
+	ViewPriceByHour          = "price_by_hour"
+	ViewPriceByDay           = "price_by_day"
 )
