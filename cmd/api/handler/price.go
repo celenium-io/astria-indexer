@@ -15,8 +15,8 @@ type PriceHandler struct {
 	prices storage.IPrice
 }
 
-func NewPriceHandler(prices storage.IPrice) PriceHandler {
-	return PriceHandler{
+func NewPriceHandler(prices storage.IPrice) *PriceHandler {
+	return &PriceHandler{
 		prices: prices,
 	}
 }

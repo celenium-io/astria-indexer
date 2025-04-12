@@ -26,7 +26,7 @@ type PriceTestSuite struct {
 	suite.Suite
 	prices  *mock.MockIPrice
 	echo    *echo.Echo
-	handler PriceHandler
+	handler *PriceHandler
 	ctrl    *gomock.Controller
 }
 
