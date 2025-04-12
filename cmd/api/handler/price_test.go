@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025 PK Lab AG <contact@pklab.io>
+// SPDX-License-Identifier: MIT
+
 package handler
 
 import (
@@ -5,6 +8,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 	"time"
 
@@ -108,4 +112,36 @@ func (s *PriceTestSuite) TestSeries() {
 	s.Require().NotEmpty(prices[0].Time)
 	s.Require().Equal("51", prices[1].Open)
 	s.Require().NotEmpty(prices[1].Time)
+}
+
+func (s *PriceTestSuite) TestList() {
+	q := make(url.Values)
+	q.Set("limit", "1")
+	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/price")
+
+	s.prices.EXPECT().
+		All(gomock.Any(), 1, 0).
+		Return([]storage.Price{
+			{
+				CurrencyPair: "BTC-USDT",
+				Price:        decimal.RequireFromString("50.00"),
+				Time:         time.Now(),
+			},
+		}, nil).
+		Times(1)
+
+	s.Require().NoError(s.handler.List(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var price []responses.Price
+	err := json.NewDecoder(rec.Body).Decode(&price)
+	s.Require().NoError(err)
+	s.Require().Len(price, 1)
+
+	s.Require().Equal("BTC-USDT", price[0].CurrencyPair)
+	s.Require().Equal("50", price[0].Price)
+	s.Require().NotEmpty(price[0].Time)
 }
