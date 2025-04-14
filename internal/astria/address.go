@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	prefix       = "astria"
-	prefixCompat = "astriacompat"
+	Prefix       = "astria"
+	PrefixCompat = "astriacompat"
 )
 
 func IsAddress(s string) bool {
@@ -26,7 +26,7 @@ func IsAddress(s string) bool {
 	if err != nil {
 		return false
 	}
-	return p == prefix
+	return p == Prefix
 }
 
 func IsCompatAddress(s string) bool {
@@ -37,16 +37,16 @@ func IsCompatAddress(s string) bool {
 	if err != nil {
 		return false
 	}
-	return p == prefixCompat
+	return p == PrefixCompat
 }
 
 func EncodeAddress(b []byte) (string, error) {
-	return bech32m.EncodeFromBase256(prefix, b)
+	return bech32m.EncodeFromBase256(Prefix, b)
 }
 
-func DecodeAddress(s string) ([]byte, error) {
-	_, b, err := bech32m.DecodeToBase256(s)
-	return b, err
+func DecodeAddress(s string) (string, []byte, error) {
+	p, b, err := bech32m.DecodeToBase256(s)
+	return p, b, err
 }
 
 func CompatToAstria(s string) (string, error) {
