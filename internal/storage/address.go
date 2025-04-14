@@ -5,8 +5,8 @@ package storage
 
 import (
 	"context"
-
 	"github.com/celenium-io/astria-indexer/pkg/types"
+	celestials "github.com/celenium-io/celestial-module/pkg/storage"
 
 	"github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/uptrace/bun"
@@ -40,7 +40,8 @@ type Address struct {
 	IsBridge      bool        `bun:"is_bridge"                    comment:"Indicate whether the account is a bridge or not"`
 	IsIbcRelayer  *bool       `bun:"is_ibc_relayer,default:false" comment:"Indicate whether the account is a IBC realyer or not"`
 
-	Balance []*Balance `bun:"rel:has-many,join:id=id"`
+	Balance    []*Balance            `bun:"rel:has-many,join:id=id"`
+	Celestials *celestials.Celestial `bun:"rel:has-one,join:id=address_id"`
 }
 
 // TableName -

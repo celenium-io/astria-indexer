@@ -74,6 +74,16 @@ func createTypes(ctx context.Context, conn *database.Bun) error {
 		); err != nil {
 			return err
 		}
+
+		if _, err := tx.ExecContext(
+			ctx,
+			createTypeQuery,
+			"celestials_status",
+			bun.Safe("celestials_status"),
+			bun.In(types.CelestialsStatusValues()),
+		); err != nil {
+			return err
+		}
 		return nil
 	})
 }
