@@ -6,6 +6,10 @@ buf.build/gen/go/astria/sequencerblock-apis/protocolbuffers/go v1.36.6-202504182
 buf.build/gen/go/astria/sequencerblock-apis/protocolbuffers/go v1.36.6-20250418224031-3bbc472dfc9b.1/go.mod h1:OBNFm9dHNbLy8bzZt8or7romdG69nsL5xGqkHiUW3wc=
 buf.build/gen/go/astria/vendored/protocolbuffers/go v1.36.6-20250418162348-cb98d7f0591d.1 h1:eAG41GXW4p7UGvua67YgkuPs+Heb864Ey65pBYl8sLk=
 buf.build/gen/go/astria/vendored/protocolbuffers/go v1.36.6-20250418162348-cb98d7f0591d.1/go.mod h1:jVLJ4hKiYBPwf+gayj5gHwKAT7r4jjTj5TWzG5+/cfs=
+buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.6-20250410153152-5d921a166650.1 h1:YJWsj66mWl//2vNsxY+DAMQ3OjZGZuPhewHLpGawAjE=
+buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.6-20250410153152-5d921a166650.1/go.mod h1:MrnXhg1lPHmlDcQrWQaXRdGD2lzi04gT/nsPGd2sfGU=
+buf.build/gen/go/astria/vendored/protocolbuffers/go v1.36.6-20250410153152-2541531a44ee.1 h1:W/iYuUOpnlrU5VfmzrnOlqEqPld27jJf1PZH1OapZl4=
+buf.build/gen/go/astria/vendored/protocolbuffers/go v1.36.6-20250410153152-2541531a44ee.1/go.mod h1:jVLJ4hKiYBPwf+gayj5gHwKAT7r4jjTj5TWzG5+/cfs=
 cel.dev/expr v0.19.0 h1:lXuo+nDhpyJSpWxpPVi5cPUwzKb+dsdOiw6IreM5yt0=
 cel.dev/expr v0.19.0/go.mod h1:MrpN08Q+lEBs+bGYdLxxHkZoUSsCp0nSKTs0nTymJgw=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
