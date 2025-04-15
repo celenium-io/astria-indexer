@@ -1,15 +1,11 @@
-buf.build/gen/go/astria/primitives/protocolbuffers/go v1.36.5-20240911152449-eeebd3decdce.1 h1:u/+bxYTPNFvhSZN1lCirgi8qlkw6Df+FNAksJcLCxkA=
-buf.build/gen/go/astria/primitives/protocolbuffers/go v1.36.5-20240911152449-eeebd3decdce.1/go.mod h1:1Yy42OW1qdHTCWq9sfiJD8ZJCRqEL6xc2fBppEyNF0k=
-buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.5-20250305185440-67be222cd557.1 h1:rklx88gB2VhdY1QgOd5ZTNuEEzNhmno/bFFLX1E3UK8=
-buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.5-20250305185440-67be222cd557.1/go.mod h1:kUAF1bkQM31JxAvOGhAEhl/0+p0AlPiAgHRbg6sbfck=
-cel.dev/expr v0.19.0 h1:lXuo+nDhpyJSpWxpPVi5cPUwzKb+dsdOiw6IreM5yt0=
-cel.dev/expr v0.19.0/go.mod h1:MrpN08Q+lEBs+bGYdLxxHkZoUSsCp0nSKTs0nTymJgw=
 buf.build/gen/go/astria/primitives/protocolbuffers/go v1.36.6-20250410153152-4e41f6ebb18a.1 h1:LN3MNru1VwNVZFkWf+WTphdlIUznD4eFXg8F3b4U/5A=
 buf.build/gen/go/astria/primitives/protocolbuffers/go v1.36.6-20250410153152-4e41f6ebb18a.1/go.mod h1:wMIS5d6G3o0qmGC5WWOVXByfPSgeSqzZ/oMKG8zLw1g=
 buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.6-20250410153152-5d921a166650.1 h1:YJWsj66mWl//2vNsxY+DAMQ3OjZGZuPhewHLpGawAjE=
 buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.6-20250410153152-5d921a166650.1/go.mod h1:MrnXhg1lPHmlDcQrWQaXRdGD2lzi04gT/nsPGd2sfGU=
 buf.build/gen/go/astria/vendored/protocolbuffers/go v1.36.6-20250410153152-2541531a44ee.1 h1:W/iYuUOpnlrU5VfmzrnOlqEqPld27jJf1PZH1OapZl4=
 buf.build/gen/go/astria/vendored/protocolbuffers/go v1.36.6-20250410153152-2541531a44ee.1/go.mod h1:jVLJ4hKiYBPwf+gayj5gHwKAT7r4jjTj5TWzG5+/cfs=
+cel.dev/expr v0.19.0 h1:lXuo+nDhpyJSpWxpPVi5cPUwzKb+dsdOiw6IreM5yt0=
+cel.dev/expr v0.19.0/go.mod h1:MrpN08Q+lEBs+bGYdLxxHkZoUSsCp0nSKTs0nTymJgw=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.38.0/go.mod h1:990N+gfupTy94rShfmMCWGDn0LpTmnzTp2qbd1dvSRU=
@@ -681,8 +677,6 @@ github.com/KyleBanks/depth v1.2.1/go.mod h1:jzSb9d0L43HxTQfT+oSA1EEp2q+ne2uh6Xge
 github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
 github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
-github.com/Microsoft/hcsshim v0.11.7 h1:vl/nj3Bar/CvJSYo7gIQPyRWc9f3c6IeSNavBTSZNZQ=
-github.com/Microsoft/hcsshim v0.11.7/go.mod h1:MV8xMfmECjl5HdO7U/3/hFVnkmSBjAjmA09d4bExKcU=
 github.com/PuerkitoBio/purell v1.1.1 h1:WEQqlqaGbrPkxLJWfBwQmfEAE1Z7ONdDLqrN38tNFfI=
 github.com/PuerkitoBio/purell v1.1.1/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
 github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 h1:d+Bc7a5rLufV/sSk/8dngufqelfh6jnri85riMAaF/M=
@@ -801,8 +795,6 @@ github.com/cometbft/cometbft v0.38.17 h1:FkrQNbAjiFqXydeAO81FUzriL4Bz0abYxN/eOHr
 github.com/cometbft/cometbft v0.38.17/go.mod h1:5l0SkgeLRXi6bBfQuevXjKqML1jjfJJlvI1Ulp02/o4=
 github.com/cometbft/cometbft-db v0.14.1 h1:SxoamPghqICBAIcGpleHbmoPqy+crij/++eZz3DlerQ=
 github.com/cometbft/cometbft-db v0.14.1/go.mod h1:KHP1YghilyGV/xjD5DP3+2hyigWx0WTp9X+0Gnx0RxQ=
-github.com/containerd/containerd v1.7.27 h1:yFyEyojddO3MIGVER2xJLWoCIn+Up4GaHFquP7hsFII=
-github.com/containerd/containerd v1.7.27/go.mod h1:xZmPnl75Vc+BLGt4MIfu6bp+fy03gdHAn9bz+FreFR0=
 github.com/containerd/log v0.1.0 h1:TCJt7ioM2cr/tfR8GPbGf9/VRAX8D2B4PjzCpfX540I=
 github.com/containerd/log v0.1.0/go.mod h1:VRRf09a7mHDIRezVKTRCrOq78v577GXq3bSa3EhrzVo=
 github.com/containerd/platforms v0.2.1 h1:zvwtM3rz2YHPQsF2CHYM8+KtB5dvhISiXh5ZpSBQv6A=
@@ -2495,8 +2487,6 @@ google.golang.org/protobuf v1.28.0/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqw
 google.golang.org/protobuf v1.28.1/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqwMG9pJV4I=
 google.golang.org/protobuf v1.29.1/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqwMG9pJV4I=
 google.golang.org/protobuf v1.30.0/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqwMG9pJV4I=
-google.golang.org/protobuf v1.36.5 h1:tPhr+woSbjfYvY6/GPufUoYizxw1cF/yFoxJ2fmpwlM=
-google.golang.org/protobuf v1.36.5/go.mod h1:9fA7Ob0pmnwhb644+1+CVWFRbNajQ6iRojtC/QF5bRE=
 google.golang.org/protobuf v1.36.6 h1:z1NpPI8ku2WgiWnf+t9wTPsn6eP1L7ksHUlkfLvd9xY=
 google.golang.org/protobuf v1.36.6/go.mod h1:jduwjTPXsFjZGTmRluh+L6NjiWu7pchiJ2/5YcXBHnY=
 gopkg.in/alecthomas/kingpin.v2 v2.2.6/go.mod h1:FMv+mEhP44yOT+4EoQTLFTRgOQ1FBLkstjWtayDeSgw=
