@@ -71,6 +71,7 @@ type Fees struct {
 	IbcRelayerChange  Fee `json:"ibc_relayer_change"`
 	SudoAddressChange Fee `json:"sudo_address_change"`
 	IbcSudoChange     Fee `json:"ibc_sudo_change"`
+	PriceFeed         Fee `json:"price_feed"`
 }
 
 type Fee struct {

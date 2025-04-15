@@ -44,6 +44,7 @@ var Models = []any{
 	&Transfer{},
 	&Deposit{},
 	&App{},
+	&Price{},
 	&celestials.Celestial{},
 	&celestials.CelestialState{},
 }
@@ -69,6 +70,7 @@ type Transaction interface {
 	SaveTransfers(ctx context.Context, transfers ...*Transfer) error
 	SaveDeposits(ctx context.Context, deposits ...*Deposit) error
 	SaveApp(ctx context.Context, app *App) error
+	SavePrices(ctx context.Context, prices ...Price) error
 	UpdateApp(ctx context.Context, app *App) error
 	DeleteApp(ctx context.Context, appId uint64) error
 	RetentionBlockSignatures(ctx context.Context, height types.Level) error

@@ -1,10 +1,11 @@
 module github.com/celenium-io/astria-indexer
 
-go 1.23.5
+go 1.24.1
 
 require (
-	buf.build/gen/go/astria/primitives/protocolbuffers/go v1.36.5-20240911152449-eeebd3decdce.1
-	buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.5-20250305185440-67be222cd557.1
+	buf.build/gen/go/astria/primitives/protocolbuffers/go v1.36.6-20250410153152-4e41f6ebb18a.1
+	buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.6-20250410153152-5d921a166650.1
+	buf.build/gen/go/astria/vendored/protocolbuffers/go v1.36.6-20250410153152-2541531a44ee.1
 	cosmossdk.io/errors v1.0.1
 	github.com/celenium-io/celestial-module v0.0.7
 	github.com/cometbft/cometbft v0.38.17
@@ -40,8 +41,8 @@ require (
 	go.opentelemetry.io/otel/trace v1.32.0
 	go.uber.org/fx v1.22.0
 	go.uber.org/mock v0.5.0
-	golang.org/x/time v0.9.0
-	google.golang.org/protobuf v1.36.5
+	golang.org/x/time v0.5.0
+	google.golang.org/protobuf v1.36.6
 )
 
 require (
@@ -75,6 +76,7 @@ require (
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.25.0 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
+	github.com/Microsoft/hcsshim v0.11.7 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -90,6 +92,7 @@ require (
 	github.com/cockroachdb/redact v1.1.5 // indirect
 	github.com/cockroachdb/tokenbucket v0.0.0-20230807174530-cc333fc44b06 // indirect
 	github.com/cometbft/cometbft-db v0.14.1 // indirect
+	github.com/containerd/containerd v1.7.27 // indirect
 	github.com/containerd/log v0.1.0 // indirect
 	github.com/containerd/platforms v0.2.1 // indirect
 	github.com/cosmos/cosmos-db v1.1.1 // indirect
@@ -200,6 +203,8 @@ require (
 	github.com/oasisprotocol/curve25519-voi v0.0.0-20230904125328-1f23a7beb09a // indirect
 	github.com/oklog/run v1.1.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
+	github.com/opencontainers/image-spec v1.1.0 // indirect
+	github.com/paulmach/orb v0.10.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
 	github.com/opus-domini/fast-shot v1.1.4 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect

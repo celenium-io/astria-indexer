@@ -9,7 +9,9 @@ package decode
 import (
 	"encoding/base64"
 	"encoding/hex"
+	"encoding/json"
 	"testing"
+	"time"
 
 	primitivev1 "buf.build/gen/go/astria/primitives/protocolbuffers/go/astria/primitive/v1"
 	feesv1alpha1 "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/fees/v1"
@@ -17,6 +19,8 @@ import (
 	v1 "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria_vendored/penumbra/core/component/ibc/v1"
 	abci "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria_vendored/tendermint/abci"
 	crypto "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria_vendored/tendermint/crypto"
+	marketmapv2 "buf.build/gen/go/astria/vendored/protocolbuffers/go/connect/marketmap/v2"
+	connectTypes "buf.build/gen/go/astria/vendored/protocolbuffers/go/connect/types/v2"
 	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
@@ -56,7 +60,7 @@ func TestDecodeActions(t *testing.T) {
 			Height: 1000,
 		}
 
-		ctx := NewContext(nil)
+		ctx := NewContext(nil, time.Now())
 		err := parseIbcAction(message, &ctx, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
@@ -101,7 +105,7 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		ctx := NewContext(nil)
+		ctx := NewContext(nil, time.Now())
 		err = parseIbcAction(message, &ctx, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction.Height, action.Height)
@@ -149,7 +153,7 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		ctx := NewContext(nil)
+		ctx := NewContext(nil, time.Now())
 		err = parseIbcAction(message, &ctx, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction.Height, action.Height)
@@ -180,7 +184,7 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		ctx := NewContext(nil)
+		ctx := NewContext(nil, time.Now())
 		err = parseIbcAction(message, &ctx, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction.Height, action.Height)
@@ -228,7 +232,7 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		ctx := NewContext(nil)
+		ctx := NewContext(nil, time.Now())
 		err = parseIbcAction(message, &ctx, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction.Height, action.Height)
@@ -238,7 +242,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("ics 20 withdrawal", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		address := testsuite.RandomAddress()
 		from := testsuite.RandomAddress()
@@ -351,7 +355,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("rollup data submission", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		from := testsuite.RandomAddress()
 		addressModel := decodeContext.Addresses.Set(from, 1000, decimal.Zero, "", 0, 1)
@@ -403,7 +407,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("sudo address change", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		newAddress := testsuite.RandomAddress()
 		message := &astria.Action_SudoAddressChange{
@@ -443,7 +447,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("transfer", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		from := testsuite.RandomAddress()
 		fromModel := &storage.Address{
@@ -530,7 +534,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("transfer to myself", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		from := testsuite.RandomAddress()
 		fromModel := &storage.Address{
@@ -585,7 +589,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("validator update", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 		message := &astria.Action_ValidatorUpdate{
 			ValidatorUpdate: &abci.ValidatorUpdate{
 				PubKey: &crypto.PublicKey{
@@ -688,7 +692,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("bridge lock", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		to := testsuite.RandomAddress()
 		dest := testsuite.RandomAddress()
@@ -783,7 +787,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("bridge lock the same address", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		to := testsuite.RandomAddress()
 		dest := testsuite.RandomAddress()
@@ -847,7 +851,7 @@ func TestDecodeActions(t *testing.T) {
 		bridge := testsuite.RandomAddress()
 		decodeContext := NewContext(map[string]string{
 			bridge: assetId,
-		})
+		}, time.Now())
 
 		to := testsuite.RandomAddress()
 
@@ -943,7 +947,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("init bridge account", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		rollupId := testsuite.RandomHash(10)
 		from := testsuite.RandomAddress()
@@ -1012,7 +1016,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("init bridge account: the same address", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		rollupId := testsuite.RandomHash(10)
 		from := testsuite.RandomAddress()
@@ -1060,7 +1064,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("ibc relayer change: addition", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		address := testsuite.RandomAddress()
 		message := &astria.Action_IbcRelayerChange{
@@ -1109,7 +1113,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("ibc relayer change: removal", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		address := testsuite.RandomAddress()
 		message := &astria.Action_IbcRelayerChange{
@@ -1158,7 +1162,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("fee change: rollup_data_submission", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		message := &astria.Action_FeeChange{
 			FeeChange: &astria.FeeChange{
@@ -1192,7 +1196,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("fee change: bridge_lock", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		message := &astria.Action_FeeChange{
 			FeeChange: &astria.FeeChange{
@@ -1226,7 +1230,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("fee change: bridge_sudo_change", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		message := &astria.Action_FeeChange{
 			FeeChange: &astria.FeeChange{
@@ -1260,7 +1264,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("fee change: ics20_withdrawal", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		message := &astria.Action_FeeChange{
 			FeeChange: &astria.FeeChange{
@@ -1294,7 +1298,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("fee change: init_bridge_account", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		message := &astria.Action_FeeChange{
 			FeeChange: &astria.FeeChange{
@@ -1328,7 +1332,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("fee change: transfer", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		message := &astria.Action_FeeChange{
 			FeeChange: &astria.FeeChange{
@@ -1362,7 +1366,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("fee change: recover ibc client", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		message := &astria.Action_FeeChange{
 			FeeChange: &astria.FeeChange{
@@ -1396,7 +1400,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("bridge sudo change", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 		bridge := testsuite.RandomAddress()
 		sudo := testsuite.RandomAddress()
 		withdrawer := testsuite.RandomAddress()
@@ -1478,7 +1482,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("bridge sudo change: bridge is suor", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 		bridge := testsuite.RandomAddress()
 		sudo := bridge
 		withdrawer := testsuite.RandomAddress()
@@ -1545,7 +1549,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("bridge sudo change: bridge is withdrawer", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 		bridge := testsuite.RandomAddress()
 		sudo := testsuite.RandomAddress()
 		withdrawer := bridge
@@ -1612,7 +1616,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("bridge sudo change: sudo is withdrawer", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 		bridge := testsuite.RandomAddress()
 		sudo := testsuite.RandomAddress()
 		withdrawer := sudo
@@ -1679,7 +1683,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("bridge sudo change: all equals", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 		bridge := testsuite.RandomAddress()
 		sudo := bridge
 		withdrawer := bridge
@@ -1731,7 +1735,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("ibc sudo change", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		newAddress := testsuite.RandomAddress()
 		message := &astria.Action_IbcSudoChange{
@@ -1771,7 +1775,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("bridge transfer", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 		bridge := testsuite.RandomAddress()
 		to := testsuite.RandomAddress()
 		decodeContext.AddBridgeAsset(bridge, feeAssetId)
@@ -1859,7 +1863,7 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("recover ibc client", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{})
+		decodeContext := NewContext(map[string]string{}, time.Now())
 
 		message := &astria.Action_RecoverIbcClient{
 			RecoverIbcClient: &astria.RecoverIbcClient{
@@ -1881,6 +1885,267 @@ func TestDecodeActions(t *testing.T) {
 			Height: 1000,
 		}
 		err := parseRecoverIbcClient(message, 1000, &decodeContext, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+	})
+
+	t.Run("price feed: market create", func(t *testing.T) {
+		message := &astria.Action_PriceFeed{
+			PriceFeed: &astria.PriceFeed{
+				Value: &astria.PriceFeed_MarketMap{
+					MarketMap: &astria.MarketMapChange{
+						Value: &astria.MarketMapChange_Markets{
+							Markets: &astria.ChangeMarkets{
+								Action: &astria.ChangeMarkets_Create{
+									Create: &astria.Markets{
+										Markets: []*marketmapv2.Market{
+											{
+												Ticker: &marketmapv2.Ticker{
+													CurrencyPair: &connectTypes.CurrencyPair{
+														Base:  "ETH",
+														Quote: "USD",
+													},
+													Decimals:         8,
+													MinProviderCount: 1,
+													Enabled:          true,
+												},
+												ProviderConfigs: []*marketmapv2.ProviderConfig{
+													{
+														Name: "binance",
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		wantAction := storage.Action{
+			Type: types.ActionTypePriceFeed,
+			Data: map[string]any{
+				"create": json.RawMessage(`[{"ticker":{"currency_pair":{"Base":"ETH","Quote":"USD"},"decimals":8,"min_provider_count":1,"enabled":true},"provider_configs":[{"name":"binance"}]}]`),
+			},
+			Height: 1000,
+		}
+
+		action := storage.Action{
+			Height: 1000,
+		}
+		err := parsePriceFeed(message, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+	})
+
+	t.Run("price feed: market remove", func(t *testing.T) {
+		message := &astria.Action_PriceFeed{
+			PriceFeed: &astria.PriceFeed{
+				Value: &astria.PriceFeed_MarketMap{
+					MarketMap: &astria.MarketMapChange{
+						Value: &astria.MarketMapChange_Markets{
+							Markets: &astria.ChangeMarkets{
+								Action: &astria.ChangeMarkets_Remove{
+									Remove: &astria.Markets{
+										Markets: []*marketmapv2.Market{
+											{
+												Ticker: &marketmapv2.Ticker{
+													CurrencyPair: &connectTypes.CurrencyPair{
+														Base:  "ETH",
+														Quote: "USD",
+													},
+													Decimals:         8,
+													MinProviderCount: 1,
+													Enabled:          true,
+												},
+												ProviderConfigs: []*marketmapv2.ProviderConfig{
+													{
+														Name: "binance",
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		wantAction := storage.Action{
+			Type: types.ActionTypePriceFeed,
+			Data: map[string]any{
+				"remove": json.RawMessage(`[{"ticker":{"currency_pair":{"Base":"ETH","Quote":"USD"},"decimals":8,"min_provider_count":1,"enabled":true},"provider_configs":[{"name":"binance"}]}]`),
+			},
+			Height: 1000,
+		}
+
+		action := storage.Action{
+			Height: 1000,
+		}
+		err := parsePriceFeed(message, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+	})
+
+	t.Run("price feed: market update", func(t *testing.T) {
+		message := &astria.Action_PriceFeed{
+			PriceFeed: &astria.PriceFeed{
+				Value: &astria.PriceFeed_MarketMap{
+					MarketMap: &astria.MarketMapChange{
+						Value: &astria.MarketMapChange_Markets{
+							Markets: &astria.ChangeMarkets{
+								Action: &astria.ChangeMarkets_Update{
+									Update: &astria.Markets{
+										Markets: []*marketmapv2.Market{
+											{
+												Ticker: &marketmapv2.Ticker{
+													CurrencyPair: &connectTypes.CurrencyPair{
+														Base:  "ETH",
+														Quote: "USD",
+													},
+													Decimals:         8,
+													MinProviderCount: 1,
+													Enabled:          true,
+												},
+												ProviderConfigs: []*marketmapv2.ProviderConfig{
+													{
+														Name: "binance",
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		wantAction := storage.Action{
+			Type: types.ActionTypePriceFeed,
+			Data: map[string]any{
+				"update": json.RawMessage(`[{"ticker":{"currency_pair":{"Base":"ETH","Quote":"USD"},"decimals":8,"min_provider_count":1,"enabled":true},"provider_configs":[{"name":"binance"}]}]`),
+			},
+			Height: 1000,
+		}
+
+		action := storage.Action{
+			Height: 1000,
+		}
+		err := parsePriceFeed(message, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+	})
+
+	t.Run("price feed: oracle addition", func(t *testing.T) {
+		message := &astria.Action_PriceFeed{
+			PriceFeed: &astria.PriceFeed{
+				Value: &astria.PriceFeed_Oracle{
+					Oracle: &astria.CurrencyPairsChange{
+						Value: &astria.CurrencyPairsChange_Addition{
+							Addition: &astria.CurrencyPairs{
+								Pairs: []*connectTypes.CurrencyPair{
+									{
+										Base:  "ETH",
+										Quote: "USD",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		wantAction := storage.Action{
+			Type: types.ActionTypePriceFeed,
+			Data: map[string]any{
+				"addition": json.RawMessage(`[{"Base":"ETH","Quote":"USD"}]`),
+			},
+			Height: 1000,
+		}
+
+		action := storage.Action{
+			Height: 1000,
+		}
+		err := parsePriceFeed(message, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+	})
+
+	t.Run("price feed: oracle removal", func(t *testing.T) {
+		message := &astria.Action_PriceFeed{
+			PriceFeed: &astria.PriceFeed{
+				Value: &astria.PriceFeed_Oracle{
+					Oracle: &astria.CurrencyPairsChange{
+						Value: &astria.CurrencyPairsChange_Removal{
+							Removal: &astria.CurrencyPairs{
+								Pairs: []*connectTypes.CurrencyPair{
+									{
+										Base:  "ETH",
+										Quote: "USD",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		wantAction := storage.Action{
+			Type: types.ActionTypePriceFeed,
+			Data: map[string]any{
+				"removal": json.RawMessage(`[{"Base":"ETH","Quote":"USD"}]`),
+			},
+			Height: 1000,
+		}
+
+		action := storage.Action{
+			Height: 1000,
+		}
+		err := parsePriceFeed(message, &action)
+		require.NoError(t, err)
+		require.Equal(t, wantAction, action)
+	})
+
+	t.Run("price feed: market change params", func(t *testing.T) {
+		message := &astria.Action_PriceFeed{
+			PriceFeed: &astria.PriceFeed{
+				Value: &astria.PriceFeed_MarketMap{
+					MarketMap: &astria.MarketMapChange{
+						Value: &astria.MarketMapChange_Params{
+							Params: &astria.UpdateMarketMapParams{
+								Params: &marketmapv2.Params{
+									Admin: "admin",
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		wantAction := storage.Action{
+			Type: types.ActionTypePriceFeed,
+			Data: map[string]any{
+				"params": json.RawMessage(`{"admin":"admin"}`),
+			},
+			Height: 1000,
+		}
+
+		action := storage.Action{
+			Height: 1000,
+		}
+		err := parsePriceFeed(message, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})

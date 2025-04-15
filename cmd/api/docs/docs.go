@@ -345,7 +345,8 @@ const docTemplate = `{
                             "fee_change",
                             "ibc_sudo_change_action",
                             "bridge_transfer",
-                            "recover_ibc_client"
+                            "recover_ibc_client",
+                            "price_feed"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -713,7 +714,8 @@ const docTemplate = `{
                             "fee_change",
                             "ibc_sudo_change_action",
                             "bridge_transfer",
-                            "recover_ibc_client"
+                            "recover_ibc_client",
+                            "price_feed"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -1331,6 +1333,164 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/price": {
+            "get": {
+                "description": "Get all currency pairs",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "price"
+                ],
+                "summary": "Get all currency pairs",
+                "operationId": "list-price",
+                "parameters": [
+                    {
+                        "maximum": 100,
+                        "type": "integer",
+                        "description": "Count of requested entities",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.Price"
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/price/:pair": {
+            "get": {
+                "description": "Get the latest price",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "price"
+                ],
+                "summary": "Get the latest price",
+                "operationId": "get-price",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Currency pair",
+                        "name": "pair",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.Price"
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/price/:pair/:timeframe": {
+            "get": {
+                "description": "Get price series",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "price"
+                ],
+                "summary": "Get price series",
+                "operationId": "get-price-series",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Currency pair",
+                        "name": "pair",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "hour",
+                            "day"
+                        ],
+                        "type": "string",
+                        "description": "Timeframe",
+                        "name": "timeframe",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.Candle"
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/rollup": {
             "get": {
                 "description": "List rollups info",
@@ -1678,7 +1838,8 @@ const docTemplate = `{
                             "fee_change",
                             "ibc_sudo_change_action",
                             "bridge_transfer",
-                            "recover_ibc_client"
+                            "recover_ibc_client",
+                            "price_feed"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -2306,7 +2467,8 @@ const docTemplate = `{
                             "fee_change",
                             "ibc_sudo_change_action",
                             "bridge_transfer",
-                            "recover_ibc_client"
+                            "recover_ibc_client",
+                            "price_feed"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -3328,6 +3490,36 @@ const docTemplate = `{
                 }
             }
         },
+        "responses.Candle": {
+            "type": "object",
+            "properties": {
+                "close": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "0.17632"
+                },
+                "high": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "0.17632"
+                },
+                "low": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "0.17632"
+                },
+                "open": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "0.17632"
+                },
+                "time": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2023-07-04T03:10:57+00:00"
+                }
+            }
+        },
         "responses.Constants": {
             "type": "object",
             "properties": {
@@ -3615,6 +3807,26 @@ const docTemplate = `{
             "type": "object",
             "additionalProperties": {
                 "type": "string"
+            }
+        },
+        "responses.Price": {
+            "type": "object",
+            "properties": {
+                "currency_pair": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "BTC/USDT"
+                },
+                "price": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "50.00"
+                },
+                "time": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2023-07-04T03:10:57+00:00"
+                }
             }
         },
         "responses.Rollup": {

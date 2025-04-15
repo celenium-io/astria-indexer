@@ -73,6 +73,7 @@ func getExpectedBlock() storage.Block {
 		Constants:       make([]*storage.Constant, 0),
 		Bridges:         make([]*storage.Bridge, 0),
 		Transfers:       make([]*storage.Transfer, 0),
+		Prices:          make([]storage.Price, 0),
 	}
 }
 
@@ -154,7 +155,7 @@ func TestParserModule_Success(t *testing.T) {
 	err := readerModule.AttachTo(&parserModule, OutputName, readerInputName)
 	assert.NoError(t, err)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	ctx, cancel := context.WithTimeout(t.Context(), time.Second*5)
 	defer cancel()
 
 	parserModule.Start(ctx)
@@ -192,7 +193,7 @@ func TestModule_OnClosedChannel(t *testing.T) {
 	err := stopperModule.AttachTo(&parserModule, StopOutput, stopInputName)
 	assert.NoError(t, err)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
+	ctx, cancel := context.WithTimeout(t.Context(), time.Second*1)
 	defer cancel()
 
 	parserModule.Start(ctx)
@@ -224,7 +225,7 @@ func TestModule_OnParseError(t *testing.T) {
 	err := stopperModule.AttachTo(&parserModule, StopOutput, stopInputName)
 	assert.NoError(t, err)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
+	ctx, cancel := context.WithTimeout(t.Context(), time.Second*1)
 	defer cancel()
 
 	parserModule.Start(ctx)

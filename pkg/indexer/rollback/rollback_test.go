@@ -33,7 +33,7 @@ func Test_rollbackBlock(t *testing.T) {
 	tx := mock.NewMockTransaction(ctrl)
 
 	t.Run("rollback block", func(t *testing.T) {
-		ctx, cancel := context.WithCancel(context.Background())
+		ctx, cancel := context.WithCancel(t.Context())
 		defer cancel()
 
 		tx.EXPECT().

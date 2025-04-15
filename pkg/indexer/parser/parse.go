@@ -31,7 +31,7 @@ func (p *Module) parse(ctx context.Context, b types.BlockData) error {
 		return errors.Wrap(err, "decoding block proposer address")
 	}
 
-	decodeCtx := decode.NewContext(p.bridgeAssets)
+	decodeCtx := decode.NewContext(p.bridgeAssets, b.Block.Time)
 	decodeCtx.Proposer = proposer
 
 	if err := parseEvents(ctx, b.FinalizeBlockEvents, b.Height, &decodeCtx, p.api); err != nil {
@@ -81,6 +81,7 @@ func (p *Module) parse(ctx context.Context, b types.BlockData) error {
 			BytesInBlock: decodeCtx.BytesInBlock,
 			DataSize:     decodeCtx.DataSize,
 		},
+		Prices: decodeCtx.Prices,
 	}
 
 	block.BlockSignatures = p.parseBlockSignatures(b.Block.LastCommit)
