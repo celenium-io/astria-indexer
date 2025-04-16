@@ -9,7 +9,7 @@ indexer:
   scripts_dir: ${INDEXER_SCRIPTS_DIR:-./database}
   
 celestials:
-  chain_id: ${CELESTIALS_CHAIN_ID:-celestia-1}
+  chain_id: ${CELESTIALS_CHAIN_ID:-astria}
 
 database:
   kind: postgres
