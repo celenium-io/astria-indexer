@@ -112,10 +112,8 @@ func addressHandler(ctx context.Context, repo storage.IAddress, address string) 
 	if err != nil {
 		return 0, errors.Wrap(err, "decoding address")
 	}
-	if prefix != astria.Prefix {
-		if prefix != astria.PrefixCompat {
-			return 0, errors.Errorf("invalid prefix: %s", prefix)
-		}
+	if prefix != astria.Prefix && prefix != astria.PrefixCompat {
+		return 0, errors.Errorf("invalid prefix: %s", prefix)
 	}
 
 	addr, err := repo.ByHash(ctx, string(hash))
