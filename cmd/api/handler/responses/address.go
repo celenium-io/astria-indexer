@@ -62,7 +62,6 @@ func NewAddress(addr storage.Address, bridge *storage.Bridge, sudoAddr, ibcSudoA
 		result.IsIbcRelayer = *addr.IsIbcRelayer
 	}
 	result.AddCelestials(addr.Celestials)
-	
 	return result
 }
 
