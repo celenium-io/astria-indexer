@@ -8,7 +8,6 @@ package postgres
 
 import (
 	"context"
-
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/uptrace/bun"
@@ -31,8 +30,10 @@ func (a *Address) ByHash(ctx context.Context, hash string) (address storage.Addr
 	err = a.DB().NewSelect().
 		Model(&address).
 		Where("hash = ?", hash).
+		Join("left join celestial on celestial.address_id = address.id and celestial.status = 'PRIMARY'").
 		Relation("Balance").
 		Scan(ctx)
+	
 	return
 }
 
@@ -52,6 +53,7 @@ func (a *Address) ListWithBalance(ctx context.Context, fltrs storage.AddressList
 	}
 
 	query = addressListFilter(query, fltrs)
+	query.Join("left join celestial on celestial.address_id = address.id and celestial.status = 'PRIMARY'")
 
 	err = query.Scan(ctx)
 	return
