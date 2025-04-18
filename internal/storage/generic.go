@@ -11,6 +11,7 @@ import (
 	"io"
 
 	"github.com/celenium-io/astria-indexer/pkg/types"
+	celestials "github.com/celenium-io/celestial-module/pkg/storage"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/lib/pq"
 )
@@ -44,6 +45,8 @@ var Models = []any{
 	&Deposit{},
 	&App{},
 	&Price{},
+	&celestials.Celestial{},
+	&celestials.CelestialState{},
 }
 
 //go:generate mockgen -source=$GOFILE -destination=mock/$GOFILE -package=mock -typed

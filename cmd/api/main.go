@@ -8,6 +8,7 @@ package main
 
 import (
 	"context"
+	celestialsStorage "github.com/celenium-io/celestial-module/pkg/storage"
 	"os"
 	"os/signal"
 	"syscall"
@@ -135,6 +136,10 @@ func main() {
 			fx.Annotate(
 				postgres.NewPrice,
 				fx.As(new(storage.IPrice)),
+			),
+			fx.Annotate(
+				newCelestials,
+				fx.As(new(celestialsStorage.ICelestial)),
 			),
 
 			AsHandler(handler.NewAddressHandler),

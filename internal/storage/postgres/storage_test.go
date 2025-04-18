@@ -13,6 +13,8 @@ import (
 	"time"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
+	celestials "github.com/celenium-io/celestial-module/pkg/storage"
+	celestialsPg "github.com/celenium-io/celestial-module/pkg/storage/postgres"
 	"github.com/dipdup-net/go-lib/config"
 	"github.com/dipdup-net/go-lib/database"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
@@ -45,6 +47,8 @@ type StorageTestSuite struct {
 	App             storage.IApp
 	Asset           storage.IAsset
 	Price           storage.IPrice
+	Celestials      celestials.ICelestial
+	CelestialState  celestials.ICelestialState
 }
 
 // SetupSuite -
@@ -91,6 +95,8 @@ func (s *StorageTestSuite) SetupSuite() {
 	s.App = NewApp(s.storage)
 	s.Asset = NewAsset(s.storage)
 	s.Price = NewPrice(s.storage)
+	s.Celestials = celestialsPg.NewCelestials(s.storage.Connection())
+	s.CelestialState = celestialsPg.NewCelestialState(s.storage.Connection())
 
 	db, err := sql.Open("postgres", s.psqlContainer.GetDSN())
 	s.Require().NoError(err)
