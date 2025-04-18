@@ -5,7 +5,6 @@ package storage
 
 import (
 	"context"
-	
 	pkgTypes "github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/uptrace/bun"

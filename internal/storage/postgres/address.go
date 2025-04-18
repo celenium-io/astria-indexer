@@ -30,7 +30,6 @@ func (a *Address) ByHash(ctx context.Context, hash string) (address storage.Addr
 		Join("left join celestial on celestial.address_id = address.id and celestial.status = 'PRIMARY'").
 		Relation("Balance").
 		Scan(ctx)
-	
 	return
 }
 
