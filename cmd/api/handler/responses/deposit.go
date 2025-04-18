@@ -20,7 +20,8 @@ type Deposit struct {
 	DestinationChainAddress string         `example:"0x8bAec8896775DDa83796eda3e7E67217b5E3C5dA"                       format:"string"    json:"destination_chain_address" swaggertype:"string"`
 	TxHash                  string         `example:"652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF" format:"binary"    json:"tx_hash,omitempty"         swaggertype:"string"`
 	Rollup                  []byte         `example:"O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc="                     format:"string"    json:"rollup,omitempty"          swaggertype:"string"`
-	Bridge                  string         `example:"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2"                    format:"string"    json:"bridge,omitempty"          swaggertype:"string"`
+
+	Bridge *ShortAddress `json:"bridge,omitempty"`
 }
 
 func NewDeposit(d storage.Deposit) Deposit {
@@ -40,7 +41,7 @@ func NewDeposit(d storage.Deposit) Deposit {
 		deposit.Rollup = d.Rollup.AstriaId
 	}
 	if d.Bridge != nil && d.Bridge.Address != nil {
-		deposit.Bridge = d.Bridge.Address.Hash
+		NewShortAddress(d.Bridge.Address)
 	}
 
 	return deposit

@@ -52,7 +52,8 @@ func (app *App) Leaderboard(ctx context.Context, fltrs storage.LeaderboardFilter
 		ColumnExpr("address.hash as bridge__hash").
 		ColumnExpr("rollup.astria_id as rollup__astria_id").
 		Join("left join address on native_bridge_id = address.id").
-		Join("left join rollup on rollup.id = rollup_id")
+		Join("left join rollup on rollup.id = rollup_id").
+		Join("left join celestial on celestial.address_id = native_bridge_id and celestial.status = 'PRIMARY'")
 	err = query.Scan(ctx, &rollups)
 	return
 }
@@ -65,6 +66,7 @@ func (app *App) BySlug(ctx context.Context, slug string) (result storage.AppWith
 		ColumnExpr("rollup.astria_id as rollup__astria_id").
 		Join("left join address on native_bridge_id = address.id").
 		Join("left join rollup on rollup.id = rollup_id").
+		Join("left join celestial on celestial.address_id = native_bridge_id and celestial.status = 'PRIMARY'").
 		Where("slug = ?", slug).
 		Limit(1).
 		Scan(ctx, &result)
@@ -78,6 +80,7 @@ func (app *App) ByRollupId(ctx context.Context, rollupId uint64) (result storage
 		ColumnExpr("address.hash as bridge__hash").
 		Where("rollup_id = ?", rollupId).
 		Join("left join address on native_bridge_id = address.id").
+		Join("left join celestial on celestial.address_id = native_bridge_id and celestial.status = 'PRIMARY'").
 		Limit(1).
 		Scan(ctx, &result)
 	return

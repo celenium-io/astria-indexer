@@ -36,6 +36,7 @@ func (f *Fee) ByTxId(ctx context.Context, id uint64, limit, offset int) (fees []
 		ColumnExpr("fee.*").
 		ColumnExpr("address.hash as payer__hash").
 		Join("left join address on address.id = fee.payer_id").
+		Join("left join celestial on celestial.address_id = fee.payer_id and celestial.status = 'PRIMARY'").
 		Scan(ctx, &fees)
 
 	return

@@ -33,6 +33,7 @@ func (tx *Tx) ByHash(ctx context.Context, hash []byte) (transaction storage.Tx, 
 		ColumnExpr("tx.*").
 		ColumnExpr("address.hash as signer__hash").
 		Join("left join address on address.id = tx.signer_id").
+		Join("left join celestial on celestial.address_id = tx.signer_id and celestial.status = 'PRIMARY'").
 		Scan(ctx, &transaction)
 	return
 }
@@ -51,12 +52,17 @@ func (tx *Tx) ByHeight(ctx context.Context, height types.Level, limit, offset in
 		ColumnExpr("tx.*").
 		ColumnExpr("address.hash as signer__hash").
 		Join("left join address on address.id = tx.signer_id").
+		Join("left join celestial on celestial.address_id = tx.signer_id and celestial.status = 'PRIMARY'").
 		Scan(ctx, &txs)
 	return
 }
 
 func (tx *Tx) Filter(ctx context.Context, fltrs storage.TxFilter) (txs []storage.Tx, err error) {
-	query := tx.DB().NewSelect().Model(&txs).Relation("Signer")
+	query := tx.DB().NewSelect().
+		Model(&txs).
+		Relation("Signer").
+		Join("left join celestial on celestial.address_id = tx.signer_id and celestial.status = 'PRIMARY'")
+
 	query = txFilter(query, fltrs)
 
 	err = query.Scan(ctx)
@@ -67,7 +73,8 @@ func (tx *Tx) ByAddress(ctx context.Context, addressId uint64, fltrs storage.TxF
 	query := tx.DB().NewSelect().
 		Model(&txs).
 		Where("signer_id = ?", addressId).
-		Relation("Signer")
+		Relation("Signer").
+		Join("left join celestial on celestial.address_id = tx.signer_id and celestial.status = 'PRIMARY'")
 
 	query = txFilter(query, fltrs)
 

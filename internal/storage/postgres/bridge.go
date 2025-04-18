@@ -39,6 +39,7 @@ func (b *Bridge) ByAddress(ctx context.Context, addressId uint64) (bridge storag
 		Join("left join address as sudo on sudo.id = bridge.sudo_id").
 		Join("left join address as withdrawer on withdrawer.id = bridge.withdrawer_id").
 		Join("left join rollup on rollup.id = bridge.rollup_id").
+		Join("left join celestial on celestial.address_id = bridge.address_id and celestial.status = 'PRIMARY'").
 		Scan(ctx, &bridge)
 	return
 }
@@ -62,6 +63,7 @@ func (b *Bridge) ByRollup(ctx context.Context, rollupId uint64, limit, offset in
 		Join("left join address as sudo on sudo.id = bridge.sudo_id").
 		Join("left join address as withdrawer on withdrawer.id = bridge.withdrawer_id").
 		Join("left join rollup on rollup.id = bridge.rollup_id").
+		Join("left join celestial on celestial.address_id = bridge.address_id and celestial.status = 'PRIMARY'").
 		Scan(ctx, &bridge)
 	return
 }
@@ -86,6 +88,7 @@ func (b *Bridge) ByRoles(ctx context.Context, addressId uint64, limit, offset in
 		Join("left join address as sudo on sudo.id = bridge.sudo_id").
 		Join("left join address as withdrawer on withdrawer.id = bridge.withdrawer_id").
 		Join("left join rollup on rollup.id = bridge.rollup_id").
+		Join("left join celestial on celestial.address_id = bridge.address_id and celestial.status = 'PRIMARY'").
 		Scan(ctx, &result)
 	return
 }
@@ -103,6 +106,7 @@ func (b *Bridge) ListWithAddress(ctx context.Context, limit, offset int) (result
 		ColumnExpr("bridge.*").
 		ColumnExpr("address.hash as address__hash").
 		Join("left join address as address on address.id = bridge.address_id").
+		Join("left join celestial on celestial.address_id = bridge.address_id and celestial.status = 'PRIMARY'").
 		Scan(ctx, &result)
 	return
 }
@@ -119,6 +123,7 @@ func (b *Bridge) ById(ctx context.Context, id uint64) (bridge storage.Bridge, er
 		ColumnExpr("rollup.astria_id as rollup__astria_id").
 		Join("left join address as address on address.id = bridge.address_id").
 		Join("left join rollup on rollup.id = bridge.rollup_id").
+		Join("left join celestial on celestial.address_id = bridge.address_id and celestial.status = 'PRIMARY'").
 		Scan(ctx, &bridge)
 
 	return

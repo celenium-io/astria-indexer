@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	celestials "github.com/celenium-io/celestial-module/pkg/storage"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -19,6 +20,7 @@ import (
 	"github.com/celenium-io/astria-indexer/internal/storage/mock"
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
 	testsuite "github.com/celenium-io/astria-indexer/internal/test_suite"
+	celestialMock "github.com/celenium-io/celestial-module/pkg/storage/mock"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/labstack/echo/v4"
 	"github.com/shopspring/decimal"
@@ -29,17 +31,18 @@ import (
 // AddressTestSuite -
 type AddressTestSuite struct {
 	suite.Suite
-	address  *mock.MockIAddress
-	txs      *mock.MockITx
-	actions  *mock.MockIAction
-	rollups  *mock.MockIRollup
-	fees     *mock.MockIFee
-	bridge   *mock.MockIBridge
-	deposits *mock.MockIDeposit
-	state    *mock.MockIState
-	echo     *echo.Echo
-	handler  *AddressHandler
-	ctrl     *gomock.Controller
+	address    *mock.MockIAddress
+	txs        *mock.MockITx
+	actions    *mock.MockIAction
+	rollups    *mock.MockIRollup
+	fees       *mock.MockIFee
+	bridge     *mock.MockIBridge
+	deposits   *mock.MockIDeposit
+	celestials *celestialMock.MockICelestial
+	state      *mock.MockIState
+	echo       *echo.Echo
+	handler    *AddressHandler
+	ctrl       *gomock.Controller
 }
 
 // SetupSuite -
@@ -54,9 +57,10 @@ func (s *AddressTestSuite) SetupSuite() {
 	s.fees = mock.NewMockIFee(s.ctrl)
 	s.bridge = mock.NewMockIBridge(s.ctrl)
 	s.deposits = mock.NewMockIDeposit(s.ctrl)
+	s.celestials = celestialMock.NewMockICelestial(s.ctrl)
 	s.state = mock.NewMockIState(s.ctrl)
 	cc := cache.NewConstantsCache(nil)
-	s.handler = NewAddressHandler(cc, s.address, s.txs, s.actions, s.rollups, s.fees, s.bridge, s.deposits, s.state, testIndexerName)
+	s.handler = NewAddressHandler(cc, s.address, s.txs, s.actions, s.rollups, s.fees, s.bridge, s.deposits, s.celestials, s.state, testIndexerName)
 }
 
 // TearDownSuite -
@@ -104,9 +108,11 @@ func (s *AddressTestSuite) TestGet() {
 	s.Require().EqualValues(10, address.Nonce)
 	s.Require().Equal(testAddressHash, address.Hash)
 	s.Require().NotNil(address.Bridge)
-	s.Require().Equal(testAddressHash, address.Bridge.Address)
+	s.Require().NotNil(address.Bridge.Address)
+	s.Require().Equal(testAddressHash, address.Bridge.Address.Hash)
 	s.Require().Equal("nria", address.Bridge.Asset)
 	s.Require().Equal("nria", address.Bridge.FeeAsset)
+	s.Require().NotNil(address.Celestials)
 }
 
 func (s *AddressTestSuite) TestGetWithEmptyBalances() {
@@ -150,7 +156,8 @@ func (s *AddressTestSuite) TestGetWithEmptyBalances() {
 	s.Require().EqualValues(0, address.Height)
 	s.Require().EqualValues(10, address.Nonce)
 	s.Require().NotNil(address.Bridge)
-	s.Require().Equal(testAddressHash, address.Bridge.Address)
+	s.Require().NotNil(address.Bridge.Address)
+	s.Require().Equal(testAddressHash, address.Bridge.Address.Hash)
 	s.Require().Equal("nria", address.Bridge.Asset)
 	s.Require().Equal("nria", address.Bridge.FeeAsset)
 	s.Require().NotNil(address.Balance)
@@ -192,6 +199,7 @@ func (s *AddressTestSuite) TestGetWithoutBridge() {
 	s.Require().EqualValues(0, address.Height)
 	s.Require().EqualValues(10, address.Nonce)
 	s.Require().Equal(testAddressHash, address.Hash)
+	s.Require().NotNil(address.Celestials)
 }
 
 func (s *AddressTestSuite) TestGetInvalidAddress() {
@@ -245,6 +253,9 @@ func (s *AddressTestSuite) TestList() {
 	s.Require().Len(address.Balance, 1)
 	s.Require().Equal("1000", address.Balance[0].Value)
 	s.Require().Equal("nria", address.Balance[0].Currency)
+	s.Require().NotNil(address.Celestials)
+	s.Require().EqualValues("name", address.Celestials.Name)
+	s.Require().EqualValues("image", address.Celestials.ImageUrl)
 }
 
 func (s *AddressTestSuite) TestTransactions() {
@@ -452,7 +463,8 @@ func (s *AddressTestSuite) TestRoles() {
 	s.Require().Len(br, 1)
 
 	bridge := br[0]
-	s.Require().Equal(testAddressHash, bridge.Address)
+	s.Require().NotNil(bridge.Address)
+	s.Require().Equal(testAddressHash, bridge.Address.Hash)
 	s.Require().Equal("nria", bridge.Asset)
 	s.Require().Equal("nria", bridge.FeeAsset)
 }
@@ -546,4 +558,49 @@ func (s *AddressTestSuite) TestDeposits() {
 	err := json.NewDecoder(rec.Body).Decode(&deposits)
 	s.Require().NoError(err)
 	s.Require().Len(deposits, 1)
+}
+
+func (s *AddressTestSuite) TestCelestials() {
+	q := make(url.Values)
+	q.Set("limit", "10")
+	q.Set("offset", "0")
+
+	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/address/:hash/celestials")
+	c.SetParamNames("hash")
+	c.SetParamValues(testAddress.Hash)
+
+	s.address.EXPECT().
+		ByHash(gomock.Any(), testAddress.Hash).
+		Return(testAddress, nil).
+		Times(1)
+
+	storageResponse := make([]celestials.Celestial, 0)
+	for i := 0; i < 10; i++ {
+		storageResponse = append(storageResponse, celestials.Celestial{
+			Id:       testsuite.RandomText(i + 10),
+			ImageUrl: testsuite.RandomText(2*i + 1),
+			Status:   celestials.StatusVERIFIED,
+		})
+	}
+
+	s.celestials.EXPECT().
+		ByAddressId(gomock.Any(), uint64(1), 10, 0).
+		Return(storageResponse, nil)
+
+	s.Require().NoError(s.handler.Celestials(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var celestials []responses.Celestial
+	err := json.NewDecoder(rec.Body).Decode(&celestials)
+	s.Require().NoError(err)
+	s.Require().Len(celestials, len(storageResponse))
+
+	for i := range celestials {
+		s.Require().EqualValues(storageResponse[i].Id, celestials[i].Name)
+		s.Require().EqualValues(storageResponse[i].ImageUrl, celestials[i].ImageUrl)
+		s.Require().EqualValues("VERIFIED", celestials[i].Status)
+	}
 }

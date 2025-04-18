@@ -11,6 +11,7 @@ import (
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
+	celestials "github.com/celenium-io/celestial-module/pkg/storage"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 )
@@ -24,6 +25,7 @@ type AddressHandler struct {
 	fees          storage.IFee
 	bridge        storage.IBridge
 	deposits      storage.IDeposit
+	celestial     celestials.ICelestial
 	state         storage.IState
 	indexerName   string
 }
@@ -37,6 +39,7 @@ func NewAddressHandler(
 	fees storage.IFee,
 	bridge storage.IBridge,
 	deposits storage.IDeposit,
+	celestial celestials.ICelestial,
 	state storage.IState,
 	indexerName string,
 ) *AddressHandler {
@@ -49,6 +52,7 @@ func NewAddressHandler(
 		fees:          fees,
 		bridge:        bridge,
 		deposits:      deposits,
+		celestial:     celestial,
 		state:         state,
 		indexerName:   indexerName,
 	}
@@ -70,6 +74,7 @@ func (handler *AddressHandler) InitRoutes(srvr *echo.Group) {
 			addressGroup.GET("/roles", handler.Roles)
 			addressGroup.GET("/fees", handler.Fees)
 			addressGroup.GET("/deposits", handler.Deposits)
+			addressGroup.GET("/celestials", handler.Celestials)
 		}
 	}
 }
@@ -576,6 +581,60 @@ func (handler *AddressHandler) Deposits(c echo.Context) error {
 	response := make([]responses.Deposit, len(deposits))
 	for i := range deposits {
 		response[i] = responses.NewDeposit(deposits[i])
+	}
+	return returnArray(c, response)
+}
+
+type getAddressCelestials struct {
+	Hash   string `param:"hash"   validate:"required,address"`
+	Limit  int    `query:"limit"  validate:"omitempty,min=1,max=100"`
+	Offset int    `query:"offset" validate:"omitempty,min=0"`
+}
+
+func (req *getAddressCelestials) SetDefault() {
+	if req.Limit == 0 {
+		req.Limit = 10
+	}
+}
+
+// Celestials godoc
+//
+//	@Summary		Get list of celestial id for address
+//	@Description	Get list of celestial id for address
+//	@Tags			address
+//	@ID				address-celestials
+//	@Param			hash	path	string	true	"Hash"							minlength(47)	maxlength(47)
+//	@Param			limit	query	integer	false	"Count of requested entities"	minimum(1)		maximum(100)
+//	@Param			offset	query	integer	false	"Offset"						minimum(1)
+//	@Produce		json
+//	@Success		200	{array}		responses.Celestial
+//	@Failure		400	{object}	Error
+//	@Failure		500	{object}	Error
+//	@Router			/address/{hash}/celestials [get]
+func (handler *AddressHandler) Celestials(c echo.Context) error {
+	req, err := bindAndValidate[getAddressCelestials](c)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+
+	address, err := handler.address.ByHash(c.Request().Context(), req.Hash)
+	if err != nil {
+		return handleError(c, err, handler.address)
+	}
+
+	celestials, err := handler.celestial.ByAddressId(
+		c.Request().Context(),
+		address.Id,
+		req.Limit,
+		req.Offset,
+	)
+	if err != nil {
+		return handleError(c, err, handler.address)
+	}
+
+	response := make([]*responses.Celestial, len(celestials))
+	for i := range celestials {
+		response[i] = responses.NewCelestial(&celestials[i])
 	}
 	return returnArray(c, response)
 }

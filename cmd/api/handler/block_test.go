@@ -15,6 +15,7 @@ import (
 	"testing"
 
 	pkgTypes "github.com/celenium-io/astria-indexer/pkg/types"
+	celestials "github.com/celenium-io/celestial-module/pkg/storage"
 	"github.com/shopspring/decimal"
 
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
@@ -42,6 +43,10 @@ var (
 				Total:    decimal.RequireFromString("1000"),
 				Id:       1,
 			},
+		},
+		Celestials: &celestials.Celestial{
+			Id:       "name",
+			ImageUrl: "image",
 		},
 	}
 	testAddressHash = testAddress.Hash
@@ -522,7 +527,8 @@ func (s *BlockTestSuite) TestGetTransactions() {
 	s.Require().EqualValues(1, tx.Position)
 	s.Require().EqualValues(1, tx.ActionsCount)
 	s.Require().EqualValues(10, tx.Nonce)
-	s.Require().EqualValues(testAddress.Hash, tx.Signer)
+	s.Require().NotNil(tx.Signer)
+	s.Require().EqualValues(testAddress.Hash, tx.Signer.Hash)
 	s.Require().Equal("codespace", tx.Codespace)
 	s.Require().Equal(types.StatusSuccess, tx.Status)
 }
