@@ -124,8 +124,15 @@ func TestActionTypeMask(t *testing.T) {
 		require.Equal(t, arr, mask.Strings())
 	})
 
-	t.Run("price feed", func(t *testing.T) {
-		arr := []string{string(ActionTypePriceFeed)}
+	t.Run("currency pairs change", func(t *testing.T) {
+		arr := []string{string(ActionTypeCurrencyPairsChange)}
+
+		mask := NewActionTypeMask(arr...)
+		require.Equal(t, arr, mask.Strings())
+	})
+
+	t.Run("markets change", func(t *testing.T) {
+		arr := []string{string(ActionTypeMarketsChange)}
 
 		mask := NewActionTypeMask(arr...)
 		require.Equal(t, arr, mask.Strings())

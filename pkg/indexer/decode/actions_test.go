@@ -17,7 +17,6 @@ import (
 	feesv1alpha1 "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/fees/v1"
 	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transaction/v1"
 	v1 "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria_vendored/penumbra/core/component/ibc/v1"
-	abci "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria_vendored/tendermint/abci"
 	crypto "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria_vendored/tendermint/crypto"
 	marketmapv2 "buf.build/gen/go/astria/vendored/protocolbuffers/go/connect/marketmap/v2"
 	connectTypes "buf.build/gen/go/astria/vendored/protocolbuffers/go/connect/types/v2"
@@ -591,12 +590,13 @@ func TestDecodeActions(t *testing.T) {
 	t.Run("validator update", func(t *testing.T) {
 		decodeContext := NewContext(map[string]string{}, time.Now())
 		message := &astria.Action_ValidatorUpdate{
-			ValidatorUpdate: &abci.ValidatorUpdate{
+			ValidatorUpdate: &astria.ValidatorUpdate{
 				PubKey: &crypto.PublicKey{
 					Sum: &crypto.PublicKey_Ed25519{
 						Ed25519: testsuite.RandomHash(32),
 					},
 				},
+				Name:  "astria",
 				Power: 10,
 			},
 		}
@@ -607,6 +607,7 @@ func TestDecodeActions(t *testing.T) {
 			Data: map[string]any{
 				"power":  int64(10),
 				"pubkey": message.ValidatorUpdate.GetPubKey().GetEd25519(),
+				"name":   message.ValidatorUpdate.GetName(),
 			},
 			Addresses: make([]*storage.AddressAction, 0),
 		}
@@ -639,6 +640,7 @@ func TestDecodeActions(t *testing.T) {
 		v, ok := decodeContext.Validators[pk]
 		require.True(t, ok)
 		require.EqualValues(t, "10", v.Power.String())
+		require.EqualValues(t, "astria", v.Name)
 	})
 
 	t.Run("fee asset change: addition", func(t *testing.T) {
@@ -1889,33 +1891,25 @@ func TestDecodeActions(t *testing.T) {
 		require.Equal(t, wantAction, action)
 	})
 
-	t.Run("price feed: market create", func(t *testing.T) {
-		message := &astria.Action_PriceFeed{
-			PriceFeed: &astria.PriceFeed{
-				Value: &astria.PriceFeed_MarketMap{
-					MarketMap: &astria.MarketMapChange{
-						Value: &astria.MarketMapChange_Markets{
-							Markets: &astria.ChangeMarkets{
-								Action: &astria.ChangeMarkets_Create{
-									Create: &astria.Markets{
-										Markets: []*marketmapv2.Market{
-											{
-												Ticker: &marketmapv2.Ticker{
-													CurrencyPair: &connectTypes.CurrencyPair{
-														Base:  "ETH",
-														Quote: "USD",
-													},
-													Decimals:         8,
-													MinProviderCount: 1,
-													Enabled:          true,
-												},
-												ProviderConfigs: []*marketmapv2.ProviderConfig{
-													{
-														Name: "binance",
-													},
-												},
-											},
-										},
+	t.Run("markets changes create", func(t *testing.T) {
+		message := &astria.Action_MarketsChange{
+			MarketsChange: &astria.MarketsChange{
+				Action: &astria.MarketsChange_Creation{
+					Creation: &astria.Markets{
+						Markets: []*marketmapv2.Market{
+							{
+								Ticker: &marketmapv2.Ticker{
+									CurrencyPair: &connectTypes.CurrencyPair{
+										Base:  "ETH",
+										Quote: "USD",
+									},
+									Decimals:         8,
+									MinProviderCount: 1,
+									Enabled:          true,
+								},
+								ProviderConfigs: []*marketmapv2.ProviderConfig{
+									{
+										Name: "binance",
 									},
 								},
 							},
@@ -1926,7 +1920,7 @@ func TestDecodeActions(t *testing.T) {
 		}
 
 		wantAction := storage.Action{
-			Type: types.ActionTypePriceFeed,
+			Type: types.ActionTypeMarketsChange,
 			Data: map[string]any{
 				"create": json.RawMessage(`[{"ticker":{"currency_pair":{"Base":"ETH","Quote":"USD"},"decimals":8,"min_provider_count":1,"enabled":true},"provider_configs":[{"name":"binance"}]}]`),
 			},
@@ -1936,38 +1930,30 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		err := parsePriceFeed(message, &action)
+		err := parseMarketsChange(message, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
 
-	t.Run("price feed: market remove", func(t *testing.T) {
-		message := &astria.Action_PriceFeed{
-			PriceFeed: &astria.PriceFeed{
-				Value: &astria.PriceFeed_MarketMap{
-					MarketMap: &astria.MarketMapChange{
-						Value: &astria.MarketMapChange_Markets{
-							Markets: &astria.ChangeMarkets{
-								Action: &astria.ChangeMarkets_Remove{
-									Remove: &astria.Markets{
-										Markets: []*marketmapv2.Market{
-											{
-												Ticker: &marketmapv2.Ticker{
-													CurrencyPair: &connectTypes.CurrencyPair{
-														Base:  "ETH",
-														Quote: "USD",
-													},
-													Decimals:         8,
-													MinProviderCount: 1,
-													Enabled:          true,
-												},
-												ProviderConfigs: []*marketmapv2.ProviderConfig{
-													{
-														Name: "binance",
-													},
-												},
-											},
-										},
+	t.Run("markets change remove", func(t *testing.T) {
+		message := &astria.Action_MarketsChange{
+			MarketsChange: &astria.MarketsChange{
+				Action: &astria.MarketsChange_Removal{
+					Removal: &astria.Markets{
+						Markets: []*marketmapv2.Market{
+							{
+								Ticker: &marketmapv2.Ticker{
+									CurrencyPair: &connectTypes.CurrencyPair{
+										Base:  "ETH",
+										Quote: "USD",
+									},
+									Decimals:         8,
+									MinProviderCount: 1,
+									Enabled:          true,
+								},
+								ProviderConfigs: []*marketmapv2.ProviderConfig{
+									{
+										Name: "binance",
 									},
 								},
 							},
@@ -1978,7 +1964,7 @@ func TestDecodeActions(t *testing.T) {
 		}
 
 		wantAction := storage.Action{
-			Type: types.ActionTypePriceFeed,
+			Type: types.ActionTypeMarketsChange,
 			Data: map[string]any{
 				"remove": json.RawMessage(`[{"ticker":{"currency_pair":{"Base":"ETH","Quote":"USD"},"decimals":8,"min_provider_count":1,"enabled":true},"provider_configs":[{"name":"binance"}]}]`),
 			},
@@ -1988,38 +1974,30 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		err := parsePriceFeed(message, &action)
+		err := parseMarketsChange(message, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
 
-	t.Run("price feed: market update", func(t *testing.T) {
-		message := &astria.Action_PriceFeed{
-			PriceFeed: &astria.PriceFeed{
-				Value: &astria.PriceFeed_MarketMap{
-					MarketMap: &astria.MarketMapChange{
-						Value: &astria.MarketMapChange_Markets{
-							Markets: &astria.ChangeMarkets{
-								Action: &astria.ChangeMarkets_Update{
-									Update: &astria.Markets{
-										Markets: []*marketmapv2.Market{
-											{
-												Ticker: &marketmapv2.Ticker{
-													CurrencyPair: &connectTypes.CurrencyPair{
-														Base:  "ETH",
-														Quote: "USD",
-													},
-													Decimals:         8,
-													MinProviderCount: 1,
-													Enabled:          true,
-												},
-												ProviderConfigs: []*marketmapv2.ProviderConfig{
-													{
-														Name: "binance",
-													},
-												},
-											},
-										},
+	t.Run("markets change update", func(t *testing.T) {
+		message := &astria.Action_MarketsChange{
+			MarketsChange: &astria.MarketsChange{
+				Action: &astria.MarketsChange_Update{
+					Update: &astria.Markets{
+						Markets: []*marketmapv2.Market{
+							{
+								Ticker: &marketmapv2.Ticker{
+									CurrencyPair: &connectTypes.CurrencyPair{
+										Base:  "ETH",
+										Quote: "USD",
+									},
+									Decimals:         8,
+									MinProviderCount: 1,
+									Enabled:          true,
+								},
+								ProviderConfigs: []*marketmapv2.ProviderConfig{
+									{
+										Name: "binance",
 									},
 								},
 							},
@@ -2030,7 +2008,7 @@ func TestDecodeActions(t *testing.T) {
 		}
 
 		wantAction := storage.Action{
-			Type: types.ActionTypePriceFeed,
+			Type: types.ActionTypeMarketsChange,
 			Data: map[string]any{
 				"update": json.RawMessage(`[{"ticker":{"currency_pair":{"Base":"ETH","Quote":"USD"},"decimals":8,"min_provider_count":1,"enabled":true},"provider_configs":[{"name":"binance"}]}]`),
 			},
@@ -2040,24 +2018,20 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		err := parsePriceFeed(message, &action)
+		err := parseMarketsChange(message, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
 
-	t.Run("price feed: oracle addition", func(t *testing.T) {
-		message := &astria.Action_PriceFeed{
-			PriceFeed: &astria.PriceFeed{
-				Value: &astria.PriceFeed_Oracle{
-					Oracle: &astria.CurrencyPairsChange{
-						Value: &astria.CurrencyPairsChange_Addition{
-							Addition: &astria.CurrencyPairs{
-								Pairs: []*connectTypes.CurrencyPair{
-									{
-										Base:  "ETH",
-										Quote: "USD",
-									},
-								},
+	t.Run("currency pairs change addition", func(t *testing.T) {
+		message := &astria.Action_CurrencyPairsChange{
+			CurrencyPairsChange: &astria.CurrencyPairsChange{
+				Value: &astria.CurrencyPairsChange_Addition{
+					Addition: &astria.CurrencyPairs{
+						Pairs: []*connectTypes.CurrencyPair{
+							{
+								Base:  "ETH",
+								Quote: "USD",
 							},
 						},
 					},
@@ -2066,7 +2040,7 @@ func TestDecodeActions(t *testing.T) {
 		}
 
 		wantAction := storage.Action{
-			Type: types.ActionTypePriceFeed,
+			Type: types.ActionTypeCurrencyPairsChange,
 			Data: map[string]any{
 				"addition": json.RawMessage(`[{"Base":"ETH","Quote":"USD"}]`),
 			},
@@ -2076,24 +2050,20 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		err := parsePriceFeed(message, &action)
+		err := parseCurrencyPairsChange(message, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
 
-	t.Run("price feed: oracle removal", func(t *testing.T) {
-		message := &astria.Action_PriceFeed{
-			PriceFeed: &astria.PriceFeed{
-				Value: &astria.PriceFeed_Oracle{
-					Oracle: &astria.CurrencyPairsChange{
-						Value: &astria.CurrencyPairsChange_Removal{
-							Removal: &astria.CurrencyPairs{
-								Pairs: []*connectTypes.CurrencyPair{
-									{
-										Base:  "ETH",
-										Quote: "USD",
-									},
-								},
+	t.Run("currency pairs change  removal", func(t *testing.T) {
+		message := &astria.Action_CurrencyPairsChange{
+			CurrencyPairsChange: &astria.CurrencyPairsChange{
+				Value: &astria.CurrencyPairsChange_Removal{
+					Removal: &astria.CurrencyPairs{
+						Pairs: []*connectTypes.CurrencyPair{
+							{
+								Base:  "ETH",
+								Quote: "USD",
 							},
 						},
 					},
@@ -2102,7 +2072,7 @@ func TestDecodeActions(t *testing.T) {
 		}
 
 		wantAction := storage.Action{
-			Type: types.ActionTypePriceFeed,
+			Type: types.ActionTypeCurrencyPairsChange,
 			Data: map[string]any{
 				"removal": json.RawMessage(`[{"Base":"ETH","Quote":"USD"}]`),
 			},
@@ -2112,40 +2082,7 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		err := parsePriceFeed(message, &action)
-		require.NoError(t, err)
-		require.Equal(t, wantAction, action)
-	})
-
-	t.Run("price feed: market change params", func(t *testing.T) {
-		message := &astria.Action_PriceFeed{
-			PriceFeed: &astria.PriceFeed{
-				Value: &astria.PriceFeed_MarketMap{
-					MarketMap: &astria.MarketMapChange{
-						Value: &astria.MarketMapChange_Params{
-							Params: &astria.UpdateMarketMapParams{
-								Params: &marketmapv2.Params{
-									Admin: "admin",
-								},
-							},
-						},
-					},
-				},
-			},
-		}
-
-		wantAction := storage.Action{
-			Type: types.ActionTypePriceFeed,
-			Data: map[string]any{
-				"params": json.RawMessage(`{"admin":"admin"}`),
-			},
-			Height: 1000,
-		}
-
-		action := storage.Action{
-			Height: 1000,
-		}
-		err := parsePriceFeed(message, &action)
+		err := parseCurrencyPairsChange(message, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})

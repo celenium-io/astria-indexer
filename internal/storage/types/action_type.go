@@ -25,7 +25,8 @@ package types
 		ibc_sudo_change_action,
 		bridge_transfer,
 		recover_ibc_client,
-		price_feed
+		currency_pairs_change,
+		markets_change
 	)
 */
 //go:generate go-enum --marshal --sql --values --names

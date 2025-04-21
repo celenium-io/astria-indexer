@@ -107,9 +107,13 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 			tx.ActionTypes.Set(storageTypes.ActionTypeRecoverIbcClientBits)
 			err = parseRecoverIbcClient(val, height, ctx, &actions[i])
 
-		case *astria.Action_PriceFeed:
-			tx.ActionTypes.Set(storageTypes.ActionTypePriceFeedBits)
-			err = parsePriceFeed(val, &actions[i])
+		case *astria.Action_CurrencyPairsChange:
+			tx.ActionTypes.Set(storageTypes.ActionTypeCurrencyPairsChangeBits)
+			err = parseCurrencyPairsChange(val, &actions[i])
+
+		case *astria.Action_MarketsChange:
+			tx.ActionTypes.Set(storageTypes.ActionTypeCurrencyPairsChangeBits)
+			err = parseMarketsChange(val, &actions[i])
 
 		default:
 			return nil, errors.Errorf(
@@ -431,6 +435,8 @@ func parseValidatorUpdateAction(body *astria.Action_ValidatorUpdate, height type
 		action.Data["power"] = power
 		pubKey := body.ValidatorUpdate.GetPubKey().GetEd25519()
 		action.Data["pubkey"] = pubKey
+		name := body.ValidatorUpdate.GetName()
+		action.Data["name"] = name
 
 		address, err := AddressFromPubKey(body.ValidatorUpdate.GetPubKey().GetEd25519())
 		if err != nil {
@@ -444,7 +450,7 @@ func parseValidatorUpdateAction(body *astria.Action_ValidatorUpdate, height type
 			Height:     action.Height,
 			ActionType: action.Type,
 		})
-		ctx.Validators.Set(pubKey, power, address, height)
+		ctx.Validators.Set(pubKey, power, address, name, height)
 	}
 	return nil
 }
@@ -843,8 +849,11 @@ func parseFeeChange(body *astria.Action_FeeChange, ctx *Context, action *storage
 		case *astria.FeeChange_RecoverIbcClient:
 			processFeeComponent(storageTypes.ActionTypeRecoverIbcClient.String(), t.RecoverIbcClient.GetMultiplier(), t.RecoverIbcClient.GetBase(), action.Data, ctx)
 
-		case *astria.FeeChange_PriceFeed:
-			processFeeComponent(storageTypes.ActionTypePriceFeed.String(), t.PriceFeed.GetMultiplier(), t.PriceFeed.GetBase(), action.Data, ctx)
+		case *astria.FeeChange_CurrencyPairsChange:
+			processFeeComponent(storageTypes.ActionTypeCurrencyPairsChange.String(), t.CurrencyPairsChange.GetMultiplier(), t.CurrencyPairsChange.GetBase(), action.Data, ctx)
+
+		case *astria.FeeChange_MarketsChange:
+			processFeeComponent(storageTypes.ActionTypeMarketsChange.String(), t.MarketsChange.GetMultiplier(), t.MarketsChange.GetBase(), action.Data, ctx)
 		}
 	}
 	return nil
@@ -960,62 +969,53 @@ func parseRecoverIbcClient(body *astria.Action_RecoverIbcClient, height types.Le
 	return nil
 }
 
-func parsePriceFeed(body *astria.Action_PriceFeed, action *storage.Action) error {
-	action.Type = storageTypes.ActionTypePriceFeed
+func parseCurrencyPairsChange(body *astria.Action_CurrencyPairsChange, action *storage.Action) error {
+	action.Type = storageTypes.ActionTypeCurrencyPairsChange
 	action.Data = make(map[string]any)
 
-	if body.PriceFeed != nil {
-		switch value := body.PriceFeed.GetValue().(type) {
-		case *astria.PriceFeed_MarketMap:
-
-			switch mm := value.MarketMap.GetValue().(type) {
-			case *astria.MarketMapChange_Markets:
-
-				switch markets := mm.Markets.GetAction().(type) {
-				case *astria.ChangeMarkets_Create:
-					data, err := json.Marshal(markets.Create.GetMarkets())
-					if err != nil {
-						return errors.Wrap(err, "create markets")
-					}
-					action.Data["create"] = json.RawMessage(data)
-				case *astria.ChangeMarkets_Remove:
-					data, err := json.Marshal(markets.Remove.GetMarkets())
-					if err != nil {
-						return errors.Wrap(err, "remove markets")
-					}
-					action.Data["remove"] = json.RawMessage(data)
-				case *astria.ChangeMarkets_Update:
-					data, err := json.Marshal(markets.Update.GetMarkets())
-					if err != nil {
-						return errors.Wrap(err, "update markets")
-					}
-					action.Data["update"] = json.RawMessage(data)
-				}
-
-			case *astria.MarketMapChange_Params:
-				data, err := json.Marshal(mm.Params.GetParams())
-				if err != nil {
-					return errors.Wrap(err, "change market params")
-				}
-				action.Data["params"] = json.RawMessage(data)
+	if body.CurrencyPairsChange != nil {
+		switch value := body.CurrencyPairsChange.GetValue().(type) {
+		case *astria.CurrencyPairsChange_Addition:
+			data, err := json.Marshal(value.Addition.GetPairs())
+			if err != nil {
+				return errors.Wrap(err, "currency pairs change addition")
 			}
-
-		case *astria.PriceFeed_Oracle:
-
-			switch oracle := value.Oracle.GetValue().(type) {
-			case *astria.CurrencyPairsChange_Addition:
-				data, err := json.Marshal(oracle.Addition.GetPairs())
-				if err != nil {
-					return errors.Wrap(err, "currency pairs change addition")
-				}
-				action.Data["addition"] = json.RawMessage(data)
-			case *astria.CurrencyPairsChange_Removal:
-				data, err := json.Marshal(oracle.Removal.GetPairs())
-				if err != nil {
-					return errors.Wrap(err, "currency pairs change removal")
-				}
-				action.Data["removal"] = json.RawMessage(data)
+			action.Data["addition"] = json.RawMessage(data)
+		case *astria.CurrencyPairsChange_Removal:
+			data, err := json.Marshal(value.Removal.GetPairs())
+			if err != nil {
+				return errors.Wrap(err, "currency pairs change removal")
 			}
+			action.Data["removal"] = json.RawMessage(data)
+		}
+	}
+	return nil
+}
+
+func parseMarketsChange(body *astria.Action_MarketsChange, action *storage.Action) error {
+	action.Type = storageTypes.ActionTypeMarketsChange
+	action.Data = make(map[string]any)
+
+	if body.MarketsChange != nil {
+		switch markets := body.MarketsChange.GetAction().(type) {
+		case *astria.MarketsChange_Creation:
+			data, err := json.Marshal(markets.Creation.GetMarkets())
+			if err != nil {
+				return errors.Wrap(err, "create markets")
+			}
+			action.Data["create"] = json.RawMessage(data)
+		case *astria.MarketsChange_Removal:
+			data, err := json.Marshal(markets.Removal.GetMarkets())
+			if err != nil {
+				return errors.Wrap(err, "remove markets")
+			}
+			action.Data["remove"] = json.RawMessage(data)
+		case *astria.MarketsChange_Update:
+			data, err := json.Marshal(markets.Update.GetMarkets())
+			if err != nil {
+				return errors.Wrap(err, "update markets")
+			}
+			action.Data["update"] = json.RawMessage(data)
 		}
 	}
 	return nil
