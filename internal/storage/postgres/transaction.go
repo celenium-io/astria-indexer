@@ -139,12 +139,23 @@ func (tx Transaction) SaveValidators(ctx context.Context, validators ...*models.
 		return nil
 	}
 
-	_, err := tx.Tx().NewInsert().Model(&validators).
-		On("CONFLICT ON CONSTRAINT validator_pubkey DO UPDATE").
-		Set("power = EXCLUDED.power").
-		Returning("id").
-		Exec(ctx)
-	return err
+	for i := range validators {
+		query := tx.Tx().NewInsert().Model(validators[i]).
+			On("CONFLICT ON CONSTRAINT validator_pubkey DO UPDATE").
+			Set("power = EXCLUDED.power")
+
+		if validators[i].Name != "" {
+			query.Set("name = ?", validators[i].Name)
+		}
+
+		_, err := query.
+			Returning("id").
+			Exec(ctx)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 type addedRollup struct {

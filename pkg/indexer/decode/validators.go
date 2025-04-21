@@ -20,12 +20,15 @@ func NewValidators() Validators {
 	return make(map[string]*storage.Validator)
 }
 
-func (v Validators) Set(pubKey []byte, power int64, address string, height types.Level) *storage.Validator {
+func (v Validators) Set(pubKey []byte, power int64, address, name string, height types.Level) *storage.Validator {
 	sPubKey := hex.EncodeToString(pubKey)
 
 	pow := decimal.NewFromInt(power)
 	if validator, ok := v[sPubKey]; ok {
 		validator.Power = pow
+		if name != "" {
+			validator.Name = name
+		}
 		return validator
 	}
 
@@ -34,6 +37,7 @@ func (v Validators) Set(pubKey []byte, power int64, address string, height types
 		Power:      pow,
 		Address:    address,
 		Height:     height,
+		Name:       name,
 		PubkeyType: "tendermint/PubKeyEd25519",
 	}
 	v[sPubKey] = validator

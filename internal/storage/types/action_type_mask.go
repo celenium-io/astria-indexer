@@ -23,7 +23,8 @@ const (
 	ActionTypeIbcSudoChangeBits
 	ActionTypeBridgeTransferBits
 	ActionTypeRecoverIbcClientBits
-	ActionTypePriceFeedBits
+	ActionTypeCurrencyPairsChangeBits
+	ActionTypeMarketsChangeBits
 )
 
 var (
@@ -44,7 +45,8 @@ var (
 		ActionTypeIbcSudoChangeAction:    ActionTypeIbcSudoChangeBits,
 		ActionTypeBridgeTransfer:         ActionTypeBridgeTransferBits,
 		ActionTypeRecoverIbcClient:       ActionTypeRecoverIbcClientBits,
-		ActionTypePriceFeed:              ActionTypePriceFeedBits,
+		ActionTypeCurrencyPairsChange:    ActionTypeCurrencyPairsChangeBits,
+		ActionTypeMarketsChange:          ActionTypeMarketsChangeBits,
 	}
 )
 
@@ -88,8 +90,10 @@ func NewActionTypeMask(vals ...string) ActionTypeMask {
 			mask.Set(ActionTypeBridgeTransferBits)
 		case string(ActionTypeRecoverIbcClient):
 			mask.Set(ActionTypeRecoverIbcClientBits)
-		case string(ActionTypePriceFeed):
-			mask.Set(ActionTypePriceFeedBits)
+		case string(ActionTypeCurrencyPairsChange):
+			mask.Set(ActionTypeCurrencyPairsChangeBits)
+		case string(ActionTypeMarketsChange):
+			mask.Set(ActionTypeMarketsChangeBits)
 		}
 	}
 
@@ -106,7 +110,7 @@ func (mask ActionTypeMask) Strings() []string {
 	}
 
 	vals := make([]string, 0)
-	for val := ActionTypeTransferBits; val <= ActionTypePriceFeedBits; val <<= 1 {
+	for val := ActionTypeTransferBits; val <= ActionTypeMarketsChangeBits; val <<= 1 {
 		if !mask.Has(val) {
 			continue
 		}
@@ -143,8 +147,10 @@ func (mask ActionTypeMask) Strings() []string {
 			vals = append(vals, string(ActionTypeBridgeTransfer))
 		case ActionTypeRecoverIbcClientBits:
 			vals = append(vals, string(ActionTypeRecoverIbcClient))
-		case ActionTypePriceFeedBits:
-			vals = append(vals, string(ActionTypePriceFeed))
+		case ActionTypeCurrencyPairsChangeBits:
+			vals = append(vals, string(ActionTypeCurrencyPairsChange))
+		case ActionTypeMarketsChangeBits:
+			vals = append(vals, string(ActionTypeMarketsChange))
 		}
 	}
 

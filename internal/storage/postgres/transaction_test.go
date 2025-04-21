@@ -261,6 +261,9 @@ func (s *TransactionTestSuite) TestSaveValidators() {
 			PubKey:     pubkey,
 			Power:      decimal.New(1, 0),
 		}
+		if i%2 == 0 {
+			validators[i].Name = fmt.Sprintf("validator_%d", i)
+		}
 	}
 
 	err = tx.SaveValidators(ctx, validators...)
