@@ -11,28 +11,24 @@ import (
 //
 //	@Description	bridge account information
 type Bridge struct {
-	Rollup     []byte `example:"O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc="  json:"rollup"               swaggertype:"string"`
-	Sudo       string `example:"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2" json:"sudo,omitempty"       swaggertype:"string"`
-	Withdrawer string `example:"astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2" json:"withdrawer,omitempty" swaggertype:"string"`
-	Asset      string `example:"nria"                                          json:"asset"                swaggertype:"string"`
-	FeeAsset   string `example:"nria"                                          json:"fee_asset"            swaggertype:"string"`
+	Rollup   []byte `example:"O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc="  json:"rollup"               swaggertype:"string"`
+	Asset    string `example:"nria"                                          json:"asset"                swaggertype:"string"`
+	FeeAsset string `example:"nria"                                          json:"fee_asset"            swaggertype:"string"`
 
-	Address *ShortAddress `json:"address,omitempty"`
+	Address    *ShortAddress `json:"address,omitempty"`
+	Sudo       *ShortAddress `json:"sudo,omitempty"`
+	Withdrawer *ShortAddress `json:"withdrawer,omitempty"`
 }
 
 func NewBridge(b storage.Bridge) Bridge {
 	bridge := Bridge{
-		Asset:    b.Asset,
-		FeeAsset: b.FeeAsset,
-		Address:  NewShortAddress(b.Address),
+		Asset:      b.Asset,
+		FeeAsset:   b.FeeAsset,
+		Address:    NewShortAddress(b.Address),
+		Sudo:       NewShortAddress(b.Sudo),
+		Withdrawer: NewShortAddress(b.Withdrawer),
 	}
-
-	if b.Sudo != nil {
-		bridge.Sudo = b.Sudo.Hash
-	}
-	if b.Withdrawer != nil {
-		bridge.Withdrawer = b.Withdrawer.Hash
-	}
+	
 	if b.Rollup != nil {
 		bridge.Rollup = b.Rollup.AstriaId
 	}
