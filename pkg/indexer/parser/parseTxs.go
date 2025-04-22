@@ -18,21 +18,9 @@ import (
 )
 
 func parseTxs(ctx context.Context, b types.BlockData, decodeCtx *decode.Context, api node.Api) ([]*storage.Tx, error) {
-	count := len(b.Block.Txs)
-	index := 0
-	if count == 0 {
-		return []*storage.Tx{}, nil
-	}
+	txs := make([]*storage.Tx, 0)
 
-	if len(b.Block.Txs) >= 2 && len(b.Block.Txs[0]) == 32 && len(b.Block.Txs[1]) == 32 {
-		count -= 2
-		index = 2
-		decodeCtx.BytesInBlock += 64
-	}
-
-	txs := make([]*storage.Tx, count)
-
-	for i := index; i < len(b.TxsResults); i++ {
+	for i := 0; i < len(b.TxsResults); i++ {
 		if err := parseEvents(ctx, b.TxsResults[i].Events, b.Height, decodeCtx, api); err != nil {
 			return nil, errors.Wrap(err, "parse events")
 		}
@@ -41,7 +29,10 @@ func parseTxs(ctx context.Context, b types.BlockData, decodeCtx *decode.Context,
 		if err != nil {
 			return nil, err
 		}
-		txs[i-index] = &t
+		if len(t.Hash) == 0 {
+			continue
+		}
+		txs = append(txs, &t)
 
 		decodeCtx.ClearTx()
 	}
@@ -53,6 +44,10 @@ func parseTx(b types.BlockData, index int, ctx *decode.Context) (storage.Tx, err
 	d, err := decode.Tx(b, index, ctx)
 	if err != nil {
 		return storage.Tx{}, errors.Wrapf(err, "while parsing Tx on index %d", index)
+	}
+
+	if d.IsDataItem {
+		return storage.Tx{}, nil
 	}
 
 	result := b.TxsResults[index]
