@@ -45,6 +45,7 @@ require (
 )
 
 require (
+	buf.build/gen/go/astria/sequencerblock-apis/protocolbuffers/go v1.36.6-20250418224031-3bbc472dfc9b.1 // indirect
 	cosmossdk.io/api v0.7.6 // indirect
 	cosmossdk.io/collections v0.4.0 // indirect
 	cosmossdk.io/core v0.11.1 // indirect

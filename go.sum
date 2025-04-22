@@ -2,6 +2,10 @@ buf.build/gen/go/astria/primitives/protocolbuffers/go v1.36.6-20250410153152-4e4
 buf.build/gen/go/astria/primitives/protocolbuffers/go v1.36.6-20250410153152-4e41f6ebb18a.1/go.mod h1:wMIS5d6G3o0qmGC5WWOVXByfPSgeSqzZ/oMKG8zLw1g=
 buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.6-20250418224031-4bdba75ef449.1 h1:J5YzAGKHLC4iirGRCxhc//4Do51rvk0hu30XfaiMIQs=
 buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.6-20250418224031-4bdba75ef449.1/go.mod h1:k+ilL78c+6nrmvRtxtUhG2CtNgYooPXkw+vD+ohBB8g=
+buf.build/gen/go/astria/sequencerblock-apis/protocolbuffers/go v1.36.6-20250418224031-3bbc472dfc9b.1 h1:DUCaakbu8ZKA+n2rFh4ODtsT5KIHmhvZh5T+D0B/EnU=
+buf.build/gen/go/astria/sequencerblock-apis/protocolbuffers/go v1.36.6-20250418224031-3bbc472dfc9b.1/go.mod h1:OBNFm9dHNbLy8bzZt8or7romdG69nsL5xGqkHiUW3wc=
+buf.build/gen/go/astria/vendored/protocolbuffers/go v1.36.6-20250410153152-2541531a44ee.1 h1:W/iYuUOpnlrU5VfmzrnOlqEqPld27jJf1PZH1OapZl4=
+buf.build/gen/go/astria/vendored/protocolbuffers/go v1.36.6-20250410153152-2541531a44ee.1/go.mod h1:jVLJ4hKiYBPwf+gayj5gHwKAT7r4jjTj5TWzG5+/cfs=
 buf.build/gen/go/astria/vendored/protocolbuffers/go v1.36.6-20250418162348-cb98d7f0591d.1 h1:eAG41GXW4p7UGvua67YgkuPs+Heb864Ey65pBYl8sLk=
 buf.build/gen/go/astria/vendored/protocolbuffers/go v1.36.6-20250418162348-cb98d7f0591d.1/go.mod h1:jVLJ4hKiYBPwf+gayj5gHwKAT7r4jjTj5TWzG5+/cfs=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=

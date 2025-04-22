@@ -8,6 +8,7 @@ package decode
 
 import (
 	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transaction/v1"
+	sequencerblockv1 "buf.build/gen/go/astria/sequencerblock-apis/protocolbuffers/go/astria/sequencerblock/v1"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/celenium-io/astria-indexer/pkg/types"
@@ -22,6 +23,7 @@ type DecodedTx struct {
 	Actions     []storage.Action
 	Signer      *storage.Address
 	ActionTypes storageTypes.Bits
+	IsDataItem  bool
 }
 
 func Tx(b types.BlockData, index int, ctx *Context) (d DecodedTx, err error) {
@@ -31,11 +33,21 @@ func Tx(b types.BlockData, index int, ctx *Context) (d DecodedTx, err error) {
 
 	d.Tx = new(astria.Transaction)
 	if err := proto.Unmarshal(raw, d.Tx); err != nil {
+		dataItem := new(sequencerblockv1.DataItem)
+		if err := proto.Unmarshal(raw, dataItem); err == nil {
+			d.IsDataItem = true
+			return d, nil
+		}
 		return d, errors.Wrap(err, "tx decoding")
 	}
 
 	body := d.Tx.GetBody()
 	if body == nil {
+		dataItem := new(sequencerblockv1.DataItem)
+		if err := proto.Unmarshal(raw, dataItem); err == nil {
+			d.IsDataItem = true
+			return d, nil
+		}
 		return d, errors.Wrap(err, "nil decoded tx")
 	}
 
