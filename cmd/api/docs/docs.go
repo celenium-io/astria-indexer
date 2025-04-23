@@ -3854,20 +3854,15 @@ const docTemplate = `{
         "responses.Price": {
             "type": "object",
             "properties": {
-                "currency_pair": {
-                    "type": "string",
-                    "format": "string",
-                    "example": "BTC/USDT"
-                },
-                "price": {
-                    "type": "string",
-                    "format": "string",
-                    "example": "50.00"
-                },
                 "time": {
                     "type": "string",
                     "format": "date-time",
                     "example": "2023-07-04T03:10:57+00:00"
+                },
+                "value": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "50.00"
                 }
             }
         },
