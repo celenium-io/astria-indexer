@@ -113,7 +113,7 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 			err = parseCurrencyPairsChange(val, &actions[i])
 
 		case *astria.Action_MarketsChange:
-			tx.ActionTypes.Set(storageTypes.ActionTypeCurrencyPairsChangeBits)
+			tx.ActionTypes.Set(storageTypes.ActionTypeMarketsChangeBits)
 			err = parseMarketsChange(val, ctx, &actions[i])
 
 		default:
