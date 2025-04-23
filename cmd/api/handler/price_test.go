@@ -25,6 +25,7 @@ import (
 type PriceTestSuite struct {
 	suite.Suite
 	prices  *mock.MockIPrice
+	markets *mock.MockIMarket
 	echo    *echo.Echo
 	handler *PriceHandler
 	ctrl    *gomock.Controller
@@ -36,7 +37,8 @@ func (s *PriceTestSuite) SetupSuite() {
 	s.echo.Validator = NewApiValidator()
 	s.ctrl = gomock.NewController(s.T())
 	s.prices = mock.NewMockIPrice(s.ctrl)
-	s.handler = NewPriceHandler(s.prices)
+	s.markets = mock.NewMockIMarket(s.ctrl)
+	s.handler = NewPriceHandler(s.prices, s.markets)
 }
 
 // TearDownSuite -
@@ -57,24 +59,32 @@ func (s *PriceTestSuite) TestLast() {
 	c.SetParamNames("pair")
 	c.SetParamValues("BTC-USDT")
 
-	s.prices.EXPECT().
-		Last(gomock.Any(), "BTC-USDT").
-		Return(storage.Price{
-			CurrencyPair: "BTC-USDT",
-			Price:        decimal.RequireFromString("50.00"),
-			Time:         time.Now(),
+	s.markets.EXPECT().
+		Get(gomock.Any(), "BTC-USDT").
+		Return(storage.Market{
+			Price: &storage.Price{
+				Price: decimal.RequireFromString("50.00"),
+				Time:  time.Now(),
+			},
+			Pair:             "BTC-USDT",
+			Decimals:         8,
+			Base:             "BTC",
+			Quote:            "USDT",
+			Enabled:          true,
+			MinProviderCount: 1,
 		}, nil).
 		Times(1)
 
 	s.Require().NoError(s.handler.Last(c))
 	s.Require().Equal(http.StatusOK, rec.Code)
 
-	var price responses.Price
-	err := json.NewDecoder(rec.Body).Decode(&price)
+	var market responses.Market
+	err := json.NewDecoder(rec.Body).Decode(&market)
 	s.Require().NoError(err)
-	s.Require().Equal("BTC-USDT", price.CurrencyPair)
-	s.Require().Equal("50", price.Price)
-	s.Require().NotEmpty(price.Time)
+	s.Require().NotNil(market.Price)
+	s.Require().Equal("BTC-USDT", market.Pair)
+	s.Require().Equal("0.0000005", market.Price.Price)
+	s.Require().NotEmpty(market.Price.Time)
 }
 
 func (s *PriceTestSuite) TestSeries() {
@@ -84,6 +94,11 @@ func (s *PriceTestSuite) TestSeries() {
 	c.SetPath("/price/:pair/:timeframe")
 	c.SetParamNames("pair", "timeframe")
 	c.SetParamValues("BTC-USDT", "hour")
+
+	s.markets.EXPECT().
+		Decimals(gomock.Any(), "BTC-USDT").
+		Return(8, nil).
+		Times(1)
 
 	s.prices.EXPECT().
 		Series(gomock.Any(), "BTC-USDT", storage.TimeframeHour).
@@ -108,9 +123,9 @@ func (s *PriceTestSuite) TestSeries() {
 	err := json.NewDecoder(rec.Body).Decode(&prices)
 	s.Require().NoError(err)
 	s.Require().Len(prices, 2)
-	s.Require().Equal("50", prices[0].Open)
+	s.Require().Equal("0.0000005", prices[0].Open)
 	s.Require().NotEmpty(prices[0].Time)
-	s.Require().Equal("51", prices[1].Open)
+	s.Require().Equal("0.00000051", prices[1].Open)
 	s.Require().NotEmpty(prices[1].Time)
 }
 
@@ -122,13 +137,20 @@ func (s *PriceTestSuite) TestList() {
 	c := s.echo.NewContext(req, rec)
 	c.SetPath("/price")
 
-	s.prices.EXPECT().
-		All(gomock.Any(), 1, 0).
-		Return([]storage.Price{
+	s.markets.EXPECT().
+		List(gomock.Any(), 1, 0).
+		Return([]storage.Market{
 			{
-				CurrencyPair: "BTC-USDT",
-				Price:        decimal.RequireFromString("50.00"),
-				Time:         time.Now(),
+				Pair: "BTC-USDT",
+				Price: &storage.Price{
+					Price: decimal.RequireFromString("50.00"),
+					Time:  time.Now(),
+				},
+				Decimals:         8,
+				Base:             "BTC",
+				Quote:            "USDT",
+				Enabled:          true,
+				MinProviderCount: 1,
 			},
 		}, nil).
 		Times(1)
@@ -136,12 +158,14 @@ func (s *PriceTestSuite) TestList() {
 	s.Require().NoError(s.handler.List(c))
 	s.Require().Equal(http.StatusOK, rec.Code)
 
-	var price []responses.Price
-	err := json.NewDecoder(rec.Body).Decode(&price)
+	var markets []responses.Market
+	err := json.NewDecoder(rec.Body).Decode(&markets)
 	s.Require().NoError(err)
-	s.Require().Len(price, 1)
+	s.Require().Len(markets, 1)
 
-	s.Require().Equal("BTC-USDT", price[0].CurrencyPair)
-	s.Require().Equal("50", price[0].Price)
-	s.Require().NotEmpty(price[0].Time)
+	s.Require().Equal("BTC-USDT", markets[0].Pair)
+	s.Require().NotNil(markets[0].Price)
+	s.Require().Equal("BTC-USDT", markets[0].Pair)
+	s.Require().Equal("0.0000005", markets[0].Price.Price)
+	s.Require().NotEmpty(markets[0].Price.Time)
 }

@@ -81,7 +81,8 @@ func (p *Module) parse(ctx context.Context, b types.BlockData) error {
 			BytesInBlock: decodeCtx.BytesInBlock,
 			DataSize:     decodeCtx.DataSize,
 		},
-		Prices: decodeCtx.Prices,
+		Prices:        decodeCtx.Prices,
+		MarketUpdates: decodeCtx.Markets,
 	}
 
 	block.BlockSignatures = p.parseBlockSignatures(b.Block.LastCommit)

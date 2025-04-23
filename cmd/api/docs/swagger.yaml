@@ -452,6 +452,35 @@ definitions:
         format: binary
         type: string
     type: object
+  responses.Market:
+    properties:
+      base:
+        example: BTC
+        format: string
+        type: string
+      decimals:
+        example: 8
+        format: integer
+        type: integer
+      enabled:
+        example: true
+        format: boolean
+        type: boolean
+      min_provider_count:
+        example: 1
+        format: integer
+        type: integer
+      pair:
+        example: BTC/USDT
+        format: string
+        type: string
+      price:
+        $ref: '#/definitions/responses.Price'
+      quote:
+        example: USDT
+        format: string
+        type: string
+    type: object
   responses.NetworkSummary:
     properties:
       block_time:
@@ -1075,7 +1104,8 @@ paths:
         - ibc_sudo_change_action
         - bridge_transfer
         - recover_ibc_client
-        - price_feed
+        - currency_pairs_change
+        - markets_change
         in: query
         name: action_types
         type: string
@@ -1334,7 +1364,8 @@ paths:
         - ibc_sudo_change_action
         - bridge_transfer
         - recover_ibc_client
-        - price_feed
+        - currency_pairs_change
+        - markets_change
         in: query
         name: action_types
         type: string
@@ -1775,7 +1806,7 @@ paths:
   /v1/price:
     get:
       description: Get all currency pairs
-      operationId: list-price
+      operationId: list-markets
       parameters:
       - description: Count of requested entities
         in: query
@@ -1793,7 +1824,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/responses.Price'
+              $ref: '#/definitions/responses.Market'
             type: array
         "204":
           description: No Content
@@ -1810,8 +1841,8 @@ paths:
       - price
   /v1/price/:pair:
     get:
-      description: Get the latest price
-      operationId: get-price
+      description: Get the latest price and market info
+      operationId: get-market
       parameters:
       - description: Currency pair
         in: path
@@ -1824,7 +1855,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/responses.Price'
+            $ref: '#/definitions/responses.Market'
         "204":
           description: No Content
         "400":
@@ -1835,7 +1866,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.Error'
-      summary: Get the latest price
+      summary: Get the latest price and market info
       tags:
       - price
   /v1/price/:pair/:timeframe:
@@ -2099,7 +2130,8 @@ paths:
         - ibc_sudo_change_action
         - bridge_transfer
         - recover_ibc_client
-        - price_feed
+        - currency_pairs_change
+        - markets_change
         in: query
         name: action_types
         type: string
@@ -2551,7 +2583,8 @@ paths:
         - ibc_sudo_change_action
         - bridge_transfer
         - recover_ibc_client
-        - price_feed
+        - currency_pairs_change
+        - markets_change
         in: query
         name: action_types
         type: string

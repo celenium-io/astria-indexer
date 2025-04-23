@@ -32,6 +32,7 @@ type Context struct {
 	Fees             map[int64]*storage.Fee
 	Transfers        []*storage.Transfer
 	Deposits         map[int64]*storage.Deposit
+	Markets          []storage.MarketUpdate
 	Prices           []storage.Price
 	HasWriteAckError bool
 	Proposer         string
@@ -53,6 +54,7 @@ func NewContext(bridgeAssets map[string]string, blockTime time.Time) Context {
 		Transfers:     make([]*storage.Transfer, 0),
 		Deposits:      make(map[int64]*storage.Deposit),
 		Prices:        make([]storage.Price, 0),
+		Markets:       make([]storage.MarketUpdate, 0),
 
 		bridgeAssets: bridgeAssets,
 		blockTime:    blockTime,
@@ -112,4 +114,11 @@ func (ctx *Context) AddDeposit(idx int64, deposit *storage.Deposit) {
 func (ctx *Context) AddPrice(price storage.Price) {
 	price.Time = ctx.blockTime
 	ctx.Prices = append(ctx.Prices, price)
+}
+
+func (ctx *Context) AddMarket(market storage.Market, marketType storage.MarketUpdateType) {
+	ctx.Markets = append(ctx.Markets, storage.MarketUpdate{
+		Market: market,
+		Type:   marketType,
+	})
 }

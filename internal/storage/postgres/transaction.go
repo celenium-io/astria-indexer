@@ -134,6 +134,37 @@ func (tx Transaction) SaveTransfers(ctx context.Context, transfers ...*models.Tr
 	return err
 }
 
+func (tx Transaction) SaveMarkets(ctx context.Context, markets ...models.MarketUpdate) error {
+	if len(markets) == 0 {
+		return nil
+	}
+
+	for i := range markets {
+		switch markets[i].Type {
+		case models.MarketUpdateTypeCreate:
+			if _, err := tx.Tx().NewInsert().Model(&markets[i].Market).Exec(ctx); err != nil {
+				return err
+			}
+		case models.MarketUpdateTypeRemove:
+			if _, err := tx.Tx().NewDelete().Model(&markets[i].Market).WherePK().Exec(ctx); err != nil {
+				return err
+			}
+		case models.MarketUpdateTypeUpdate:
+			if _, err := tx.Tx().NewUpdate().
+				Model(&markets[i].Market).
+				Set("decimals = ?", markets[i].Decimals).
+				Set("enabled = ?", markets[i].Enabled).
+				Set("min_provider_count = ?", markets[i].MinProviderCount).
+				WherePK().
+				Exec(ctx); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 func (tx Transaction) SaveValidators(ctx context.Context, validators ...*models.Validator) error {
 	if len(validators) == 0 {
 		return nil

@@ -14,6 +14,7 @@ import (
 
 	primitive "buf.build/gen/go/astria/primitives/protocolbuffers/go/astria/primitive/v1"
 	astria "buf.build/gen/go/astria/protocol-apis/protocolbuffers/go/astria/protocol/transaction/v1"
+	v21 "buf.build/gen/go/astria/vendored/protocolbuffers/go/connect/marketmap/v2"
 	"github.com/celenium-io/astria-indexer/internal/currency"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
@@ -105,7 +106,7 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 
 		case *astria.Action_RecoverIbcClient:
 			tx.ActionTypes.Set(storageTypes.ActionTypeRecoverIbcClientBits)
-			err = parseRecoverIbcClient(val, height, ctx, &actions[i])
+			err = parseRecoverIbcClient(val, &actions[i])
 
 		case *astria.Action_CurrencyPairsChange:
 			tx.ActionTypes.Set(storageTypes.ActionTypeCurrencyPairsChangeBits)
@@ -113,7 +114,7 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 
 		case *astria.Action_MarketsChange:
 			tx.ActionTypes.Set(storageTypes.ActionTypeCurrencyPairsChangeBits)
-			err = parseMarketsChange(val, &actions[i])
+			err = parseMarketsChange(val, ctx, &actions[i])
 
 		default:
 			return nil, errors.Errorf(
@@ -958,7 +959,7 @@ func parseBridgeTransfer(body *astria.Action_BridgeTransfer, height types.Level,
 	return nil
 }
 
-func parseRecoverIbcClient(body *astria.Action_RecoverIbcClient, height types.Level, ctx *Context, action *storage.Action) error {
+func parseRecoverIbcClient(body *astria.Action_RecoverIbcClient, action *storage.Action) error {
 	action.Type = storageTypes.ActionTypeRecoverIbcClient
 	action.Data = make(map[string]any)
 
@@ -992,31 +993,48 @@ func parseCurrencyPairsChange(body *astria.Action_CurrencyPairsChange, action *s
 	return nil
 }
 
-func parseMarketsChange(body *astria.Action_MarketsChange, action *storage.Action) error {
+func parseMarketsChange(body *astria.Action_MarketsChange, ctx *Context, action *storage.Action) error {
 	action.Type = storageTypes.ActionTypeMarketsChange
 	action.Data = make(map[string]any)
 
 	if body.MarketsChange != nil {
 		switch markets := body.MarketsChange.GetAction().(type) {
 		case *astria.MarketsChange_Creation:
-			data, err := json.Marshal(markets.Creation.GetMarkets())
-			if err != nil {
-				return errors.Wrap(err, "create markets")
-			}
-			action.Data["create"] = json.RawMessage(data)
+			return handleMarkets(markets.Creation.GetMarkets(), ctx, action, storage.MarketUpdateTypeCreate)
+
 		case *astria.MarketsChange_Removal:
-			data, err := json.Marshal(markets.Removal.GetMarkets())
-			if err != nil {
-				return errors.Wrap(err, "remove markets")
-			}
-			action.Data["remove"] = json.RawMessage(data)
+			return handleMarkets(markets.Removal.GetMarkets(), ctx, action, storage.MarketUpdateTypeRemove)
+
 		case *astria.MarketsChange_Update:
-			data, err := json.Marshal(markets.Update.GetMarkets())
-			if err != nil {
-				return errors.Wrap(err, "update markets")
-			}
-			action.Data["update"] = json.RawMessage(data)
+			return handleMarkets(markets.Update.GetMarkets(), ctx, action, storage.MarketUpdateTypeUpdate)
 		}
+	}
+	return nil
+}
+
+func handleMarkets(markets []*v21.Market, ctx *Context, action *storage.Action, typ storage.MarketUpdateType) error {
+	data, err := json.Marshal(markets)
+	if err != nil {
+		return errors.Wrapf(err, "%s markets", typ)
+	}
+	action.Data[string(typ)] = json.RawMessage(data)
+
+	for i := range markets {
+		ticker := markets[i].GetTicker()
+		if ticker == nil {
+			continue
+		}
+		if pair := ticker.GetCurrencyPair(); pair != nil {
+			ctx.AddMarket(storage.Market{
+				Pair:             fmt.Sprintf("%s_%s", pair.GetBase(), pair.GetQuote()),
+				Decimals:         int(ticker.GetDecimals()),
+				Enabled:          ticker.GetEnabled(),
+				MinProviderCount: int(ticker.GetMinProviderCount()),
+				Base:             pair.GetBase(),
+				Quote:            pair.GetQuote(),
+			}, typ)
+		}
+
 	}
 	return nil
 }
