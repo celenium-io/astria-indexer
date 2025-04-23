@@ -45,6 +45,7 @@ type StorageTestSuite struct {
 	App             storage.IApp
 	Asset           storage.IAsset
 	Price           storage.IPrice
+	Market          storage.IMarket
 }
 
 // SetupSuite -
@@ -91,6 +92,7 @@ func (s *StorageTestSuite) SetupSuite() {
 	s.App = NewApp(s.storage)
 	s.Asset = NewAsset(s.storage)
 	s.Price = NewPrice(s.storage)
+	s.Market = NewMarket(s.storage)
 
 	db, err := sql.Open("postgres", s.psqlContainer.GetDSN())
 	s.Require().NoError(err)

@@ -10,3 +10,9 @@
 - time: '2023-10-30T23:52:23.265Z'
   price: 2000
   currency_pair: ETH_USDT
+- time: '2023-10-30T23:52:23.265Z'
+  price: 0.00000001
+  currency_pair: TIA_BTC
+- time: '2023-10-30T23:52:23.265Z'
+  price: 2.5
+  currency_pair: TIA_USD

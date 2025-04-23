@@ -136,6 +136,10 @@ func main() {
 				postgres.NewPrice,
 				fx.As(new(storage.IPrice)),
 			),
+			fx.Annotate(
+				postgres.NewMarket,
+				fx.As(new(storage.IMarket)),
+			),
 
 			AsHandler(handler.NewAddressHandler),
 			AsHandler(handler.NewAppHandler),

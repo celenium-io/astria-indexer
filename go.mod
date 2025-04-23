@@ -5,6 +5,7 @@ go 1.24.1
 require (
 	buf.build/gen/go/astria/primitives/protocolbuffers/go v1.36.6-20250410153152-4e41f6ebb18a.1
 	buf.build/gen/go/astria/protocol-apis/protocolbuffers/go v1.36.6-20250418224031-4bdba75ef449.1
+	buf.build/gen/go/astria/sequencerblock-apis/protocolbuffers/go v1.36.6-20250418224031-3bbc472dfc9b.1
 	buf.build/gen/go/astria/vendored/protocolbuffers/go v1.36.6-20250418162348-cb98d7f0591d.1
 	cosmossdk.io/errors v1.0.1
 	github.com/cometbft/cometbft v0.38.17
@@ -45,7 +46,6 @@ require (
 )
 
 require (
-	buf.build/gen/go/astria/sequencerblock-apis/protocolbuffers/go v1.36.6-20250418224031-3bbc472dfc9b.1 // indirect
 	cosmossdk.io/api v0.7.6 // indirect
 	cosmossdk.io/collections v0.4.0 // indirect
 	cosmossdk.io/core v0.11.1 // indirect

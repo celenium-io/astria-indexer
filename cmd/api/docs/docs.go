@@ -346,7 +346,8 @@ const docTemplate = `{
                             "ibc_sudo_change_action",
                             "bridge_transfer",
                             "recover_ibc_client",
-                            "price_feed"
+                            "currency_pairs_change",
+                            "markets_change"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -715,7 +716,8 @@ const docTemplate = `{
                             "ibc_sudo_change_action",
                             "bridge_transfer",
                             "recover_ibc_client",
-                            "price_feed"
+                            "currency_pairs_change",
+                            "markets_change"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -1343,7 +1345,7 @@ const docTemplate = `{
                     "price"
                 ],
                 "summary": "Get all currency pairs",
-                "operationId": "list-price",
+                "operationId": "list-markets",
                 "parameters": [
                     {
                         "maximum": 100,
@@ -1365,7 +1367,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/responses.Price"
+                                "$ref": "#/definitions/responses.Market"
                             }
                         }
                     },
@@ -1389,15 +1391,15 @@ const docTemplate = `{
         },
         "/v1/price/:pair": {
             "get": {
-                "description": "Get the latest price",
+                "description": "Get the latest price and market info",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "price"
                 ],
-                "summary": "Get the latest price",
-                "operationId": "get-price",
+                "summary": "Get the latest price and market info",
+                "operationId": "get-market",
                 "parameters": [
                     {
                         "type": "string",
@@ -1411,7 +1413,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/responses.Price"
+                            "$ref": "#/definitions/responses.Market"
                         }
                     },
                     "204": {
@@ -1839,7 +1841,8 @@ const docTemplate = `{
                             "ibc_sudo_change_action",
                             "bridge_transfer",
                             "recover_ibc_client",
-                            "price_feed"
+                            "currency_pairs_change",
+                            "markets_change"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -2468,7 +2471,8 @@ const docTemplate = `{
                             "ibc_sudo_change_action",
                             "bridge_transfer",
                             "recover_ibc_client",
-                            "price_feed"
+                            "currency_pairs_change",
+                            "markets_change"
                         ],
                         "type": "string",
                         "description": "Comma-separated action types list",
@@ -3675,6 +3679,44 @@ const docTemplate = `{
                     "type": "string",
                     "format": "binary",
                     "example": "652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF"
+                }
+            }
+        },
+        "responses.Market": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "BTC"
+                },
+                "decimals": {
+                    "type": "integer",
+                    "format": "integer",
+                    "example": 8
+                },
+                "enabled": {
+                    "type": "boolean",
+                    "format": "boolean",
+                    "example": true
+                },
+                "min_provider_count": {
+                    "type": "integer",
+                    "format": "integer",
+                    "example": 1
+                },
+                "pair": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "BTC/USDT"
+                },
+                "price": {
+                    "$ref": "#/definitions/responses.Price"
+                },
+                "quote": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "USDT"
                 }
             }
         },

@@ -74,6 +74,7 @@ func getExpectedBlock() storage.Block {
 		Bridges:         make([]*storage.Bridge, 0),
 		Transfers:       make([]*storage.Transfer, 0),
 		Prices:          make([]storage.Price, 0),
+		MarketUpdates:   make([]storage.MarketUpdate, 0),
 	}
 }
 

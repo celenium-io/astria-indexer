@@ -1,0 +1,12 @@
+- pair: TIA_USD
+  base: TIA
+  quote: USD
+  decimals: 6
+  min_provider_count: 1
+  enabled: true
+- pair: TIA_BTC
+  base: TIA
+  quote: BTC
+  decimals: 8
+  min_provider_count: 1
+  enabled: true

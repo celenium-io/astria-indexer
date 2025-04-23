@@ -62,6 +62,7 @@ type Block struct {
 	Constants       []*Constant               `bun:"-"` // internal field for updating constants
 	Bridges         []*Bridge                 `bun:"-"` // internal field for saving bridges
 	Transfers       []*Transfer               `bun:"-"` // internal field for saving transfers
+	MarketUpdates   []MarketUpdate            `bun:"-"` // internal field for saving market updates
 
 	Txs      []*Tx       `bun:"rel:has-many"`
 	Stats    *BlockStats `bun:"rel:has-one,join:height=height"`

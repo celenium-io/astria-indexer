@@ -1865,8 +1865,6 @@ func TestDecodeActions(t *testing.T) {
 	})
 
 	t.Run("recover ibc client", func(t *testing.T) {
-		decodeContext := NewContext(map[string]string{}, time.Now())
-
 		message := &astria.Action_RecoverIbcClient{
 			RecoverIbcClient: &astria.RecoverIbcClient{
 				ClientId:            "old_client_id",
@@ -1886,12 +1884,14 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		err := parseRecoverIbcClient(message, 1000, &decodeContext, &action)
+		err := parseRecoverIbcClient(message, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
 	})
 
 	t.Run("markets changes create", func(t *testing.T) {
+		decodeContext := NewContext(map[string]string{}, time.Now())
+
 		message := &astria.Action_MarketsChange{
 			MarketsChange: &astria.MarketsChange{
 				Action: &astria.MarketsChange_Creation{
@@ -1930,12 +1930,17 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		err := parseMarketsChange(message, &action)
+		err := parseMarketsChange(message, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
+		require.Len(t, decodeContext.Markets, 1)
+		require.EqualValues(t, "ETH_USD", decodeContext.Markets[0].Pair)
+		require.Equal(t, storage.MarketUpdateTypeCreate, decodeContext.Markets[0].Type)
 	})
 
 	t.Run("markets change remove", func(t *testing.T) {
+		decodeContext := NewContext(map[string]string{}, time.Now())
+
 		message := &astria.Action_MarketsChange{
 			MarketsChange: &astria.MarketsChange{
 				Action: &astria.MarketsChange_Removal{
@@ -1974,12 +1979,17 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		err := parseMarketsChange(message, &action)
+		err := parseMarketsChange(message, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
+		require.Len(t, decodeContext.Markets, 1)
+		require.EqualValues(t, "ETH_USD", decodeContext.Markets[0].Pair)
+		require.Equal(t, storage.MarketUpdateTypeRemove, decodeContext.Markets[0].Type)
 	})
 
 	t.Run("markets change update", func(t *testing.T) {
+		decodeContext := NewContext(map[string]string{}, time.Now())
+
 		message := &astria.Action_MarketsChange{
 			MarketsChange: &astria.MarketsChange{
 				Action: &astria.MarketsChange_Update{
@@ -2018,9 +2028,12 @@ func TestDecodeActions(t *testing.T) {
 		action := storage.Action{
 			Height: 1000,
 		}
-		err := parseMarketsChange(message, &action)
+		err := parseMarketsChange(message, &decodeContext, &action)
 		require.NoError(t, err)
 		require.Equal(t, wantAction, action)
+		require.Len(t, decodeContext.Markets, 1)
+		require.EqualValues(t, "ETH_USD", decodeContext.Markets[0].Pair)
+		require.Equal(t, storage.MarketUpdateTypeUpdate, decodeContext.Markets[0].Type)
 	})
 
 	t.Run("currency pairs change addition", func(t *testing.T) {

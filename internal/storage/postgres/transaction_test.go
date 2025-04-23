@@ -41,6 +41,7 @@ type TransactionTestSuite struct {
 	Blocks         storage.IBlock
 	Constants      storage.IConstant
 	Validator      storage.IValidator
+	Markets        storage.IMarket
 }
 
 // SetupSuite -
@@ -74,6 +75,7 @@ func (s *TransactionTestSuite) SetupSuite() {
 	s.Constants = NewConstant(s.storage)
 	s.Validator = NewValidator(s.storage)
 	s.Blocks = NewBlocks(s.storage)
+	s.Markets = NewMarket(s.storage)
 }
 
 // TearDownSuite -
@@ -984,4 +986,58 @@ func (s *TransactionTestSuite) TestGetBridgeIdByAddressId() {
 
 	s.Require().NoError(tx.Flush(ctx))
 	s.Require().NoError(tx.Close(ctx))
+}
+
+func (s *TransactionTestSuite) TestSaveMarkets() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	create := storage.MarketUpdate{
+		Market: storage.Market{
+			Pair:             "ETH_USD",
+			Base:             "ETH",
+			Quote:            "USD",
+			Decimals:         18,
+			MinProviderCount: 1,
+			Enabled:          true,
+		},
+		Type: storage.MarketUpdateTypeCreate,
+	}
+
+	update := storage.MarketUpdate{
+		Market: storage.Market{
+			Pair:             "TIA_USD",
+			Base:             "TIA",
+			Quote:            "USD",
+			Decimals:         6,
+			MinProviderCount: 2,
+			Enabled:          false,
+		},
+		Type: storage.MarketUpdateTypeUpdate,
+	}
+
+	delete := storage.MarketUpdate{
+		Market: storage.Market{
+			Pair:             "TIA_BTC",
+			Base:             "TIA",
+			Quote:            "BTC",
+			Decimals:         8,
+			MinProviderCount: 1,
+			Enabled:          false,
+		},
+		Type: storage.MarketUpdateTypeRemove,
+	}
+
+	err = tx.SaveMarkets(ctx, create, update, delete)
+	s.Require().NoError(err)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
+
+	markets, err := s.Markets.List(ctx, 10, 0)
+	s.Require().NoError(err)
+	s.Require().Len(markets, 2)
 }

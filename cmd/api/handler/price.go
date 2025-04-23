@@ -13,11 +13,13 @@ import (
 
 type PriceHandler struct {
 	prices storage.IPrice
+	market storage.IMarket
 }
 
-func NewPriceHandler(prices storage.IPrice) *PriceHandler {
+func NewPriceHandler(prices storage.IPrice, market storage.IMarket) *PriceHandler {
 	return &PriceHandler{
 		prices: prices,
+		market: market,
 	}
 }
 
@@ -52,11 +54,11 @@ func (p *priceListRequest) SetDefault() {
 //	@Summary		Get all currency pairs
 //	@Description	Get all currency pairs
 //	@Tags			price
-//	@ID				list-price
+//	@ID				list-markets
 //	@Param			limit	query	integer	false	"Count of requested entities"	mininum(1)	maximum(100)
 //	@Param			offset	query	integer	false	"Offset"						mininum(1)
 //	@Produce		json
-//	@Success		200	{array}	responses.Price
+//	@Success		200	{array}	responses.Market
 //	@Success		204
 //	@Failure		400	{object}	Error
 //	@Failure		500	{object}	Error
@@ -67,13 +69,13 @@ func (handler *PriceHandler) List(c echo.Context) error {
 		return badRequestError(c, err)
 	}
 
-	prices, err := handler.prices.All(c.Request().Context(), req.Limit, req.Offset)
+	markets, err := handler.market.List(c.Request().Context(), req.Limit, req.Offset)
 	if err != nil {
 		return handleError(c, err, handler.prices)
 	}
-	response := make([]responses.Price, len(prices))
-	for i := range prices {
-		response[i] = responses.NewPrice(prices[i])
+	response := make([]responses.Market, len(markets))
+	for i := range markets {
+		response[i] = responses.NewMarket(markets[i])
 	}
 	return returnArray(c, response)
 }
@@ -84,13 +86,13 @@ type priceLastRequest struct {
 
 // Last godoc
 //
-//	@Summary		Get the latest price
-//	@Description	Get the latest price
+//	@Summary		Get the latest price and market info
+//	@Description	Get the latest price and market info
 //	@Tags			price
-//	@ID				get-price
+//	@ID				get-market
 //	@Param			pair		path	string	true	"Currency pair"
 //	@Produce		json
-//	@Success		200	{object}	responses.Price
+//	@Success		200	{object}	responses.Market
 //	@Success		204
 //	@Failure		400	{object}	Error
 //	@Failure		500	{object}	Error
@@ -101,11 +103,11 @@ func (handler *PriceHandler) Last(c echo.Context) error {
 		return badRequestError(c, err)
 	}
 
-	price, err := handler.prices.Last(c.Request().Context(), req.Pair)
+	market, err := handler.market.Get(c.Request().Context(), req.Pair)
 	if err != nil {
 		return handleError(c, err, handler.prices)
 	}
-	return c.JSON(http.StatusOK, responses.NewPrice(price))
+	return c.JSON(http.StatusOK, responses.NewMarket(market))
 }
 
 type priceSeriesRequest struct {
@@ -133,13 +135,18 @@ func (handler *PriceHandler) Series(c echo.Context) error {
 		return badRequestError(c, err)
 	}
 
+	decimals, err := handler.market.Decimals(c.Request().Context(), req.Pair)
+	if err != nil {
+		return handleError(c, err, handler.prices)
+	}
+
 	prices, err := handler.prices.Series(c.Request().Context(), req.Pair, req.Timeframe)
 	if err != nil {
 		return handleError(c, err, handler.prices)
 	}
 	response := make([]responses.Candle, len(prices))
 	for i := range prices {
-		response[i] = responses.NewCandle(prices[i])
+		response[i] = responses.NewCandle(prices[i], decimals)
 	}
 	return returnArray(c, response)
 }
