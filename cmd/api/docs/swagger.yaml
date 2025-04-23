@@ -585,17 +585,13 @@ definitions:
     type: object
   responses.Price:
     properties:
-      currency_pair:
-        example: BTC/USDT
-        format: string
-        type: string
-      price:
-        example: "50.00"
-        format: string
-        type: string
       time:
         example: "2023-07-04T03:10:57+00:00"
         format: date-time
+        type: string
+      value:
+        example: "50.00"
+        format: string
         type: string
     type: object
   responses.Rollup:
