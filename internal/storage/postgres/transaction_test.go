@@ -1041,3 +1041,48 @@ func (s *TransactionTestSuite) TestSaveMarkets() {
 	s.Require().NoError(err)
 	s.Require().Len(markets, 2)
 }
+
+func (s *TransactionTestSuite) TestSaveMarketProviders() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	create := storage.MarketProviderUpdate{
+		MarketProvider: storage.MarketProvider{
+			Pair:           "ETH_USD",
+			Provider:       "binance",
+			OffChainTicker: "ETH/USD",
+		},
+		Type: storage.MarketUpdateTypeCreate,
+	}
+
+	update := storage.MarketProviderUpdate{
+		MarketProvider: storage.MarketProvider{
+			Pair:           "TIA_USD",
+			Provider:       "coingecko",
+			OffChainTicker: "TIA_USD",
+		},
+		Type: storage.MarketUpdateTypeUpdate,
+	}
+
+	delete := storage.MarketProviderUpdate{
+		MarketProvider: storage.MarketProvider{
+			Pair:           "TIA_BTC",
+			Provider:       "binance",
+			OffChainTicker: "TIA/BTC",
+		},
+		Type: storage.MarketUpdateTypeRemove,
+	}
+
+	err = tx.SaveMarketProviders(ctx, create, update, delete)
+	s.Require().NoError(err)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
+
+	markets, err := s.Markets.List(ctx, 10, 0)
+	s.Require().NoError(err)
+	s.Require().Len(markets, 2)
+}

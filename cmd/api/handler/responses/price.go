@@ -23,13 +23,14 @@ func NewPrice(price storage.Price) Price {
 }
 
 type Market struct {
-	Pair             string `example:"BTC/USDT"     format:"string"  json:"pair"               swaggertype:"string"`
-	Base             string `example:"BTC"          format:"string"  json:"base"               swaggertype:"string"`
-	Quote            string `example:"USDT"         format:"string"  json:"quote"              swaggertype:"string"`
-	Decimals         int    `example:"8"            format:"integer" json:"decimals"           swaggertype:"integer"`
-	Enabled          bool   `example:"true"         format:"boolean" json:"enabled"            swaggertype:"boolean"`
-	MinProviderCount int    `example:"1"            format:"integer" json:"min_provider_count" swaggertype:"integer"`
-	Price            *Price `json:"price,omitempty"`
+	Pair             string     `example:"BTC/USDT"         format:"string"            json:"pair"               swaggertype:"string"`
+	Base             string     `example:"BTC"              format:"string"            json:"base"               swaggertype:"string"`
+	Quote            string     `example:"USDT"             format:"string"            json:"quote"              swaggertype:"string"`
+	Decimals         int        `example:"8"                format:"integer"           json:"decimals"           swaggertype:"integer"`
+	Enabled          bool       `example:"true"             format:"boolean"           json:"enabled"            swaggertype:"boolean"`
+	MinProviderCount int        `example:"1"                format:"integer"           json:"min_provider_count" swaggertype:"integer"`
+	Price            *Price     `json:"price,omitempty"`
+	Providers        []Provider `json:"providers,omitempty" swaggertype:"array,object"`
 }
 
 func NewMarket(market storage.Market) Market {
@@ -40,6 +41,7 @@ func NewMarket(market storage.Market) Market {
 		Decimals:         market.Decimals,
 		Enabled:          market.Enabled,
 		MinProviderCount: market.MinProviderCount,
+		Providers:        make([]Provider, len(market.Providers)),
 	}
 
 	if market.Price != nil {
@@ -49,10 +51,26 @@ func NewMarket(market storage.Market) Market {
 		}
 	}
 
+	for i := range market.Providers {
+		result.Providers[i] = NewProvider(market.Providers[i])
+	}
+
 	return result
 }
 
 func decimalPrice(price decimal.Decimal, decimals int) string {
 	dec := decimal.NewFromInt(10).Pow(decimal.NewFromInt(int64(-decimals)))
 	return price.Mul(dec).String()
+}
+
+type Provider struct {
+	Provider       string `example:"binance"  format:"string" json:"provider"         swaggertype:"string"`
+	OffChainTicker string `example:"BTC/USDT" format:"string" json:"off_chain_ticker" swaggertype:"string"`
+}
+
+func NewProvider(provider *storage.MarketProvider) Provider {
+	return Provider{
+		Provider:       provider.Provider,
+		OffChainTicker: provider.OffChainTicker,
+	}
 }

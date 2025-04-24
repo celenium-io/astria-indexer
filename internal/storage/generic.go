@@ -45,6 +45,7 @@ var Models = []any{
 	&App{},
 	&Price{},
 	&Market{},
+	&MarketProvider{},
 }
 
 //go:generate mockgen -source=$GOFILE -destination=mock/$GOFILE -package=mock -typed
@@ -70,6 +71,7 @@ type Transaction interface {
 	SaveApp(ctx context.Context, app *App) error
 	SavePrices(ctx context.Context, prices ...Price) error
 	SaveMarkets(ctx context.Context, markets ...MarketUpdate) error
+	SaveMarketProviders(ctx context.Context, providers ...MarketProviderUpdate) error
 	UpdateApp(ctx context.Context, app *App) error
 	DeleteApp(ctx context.Context, appId uint64) error
 	RetentionBlockSignatures(ctx context.Context, height types.Level) error

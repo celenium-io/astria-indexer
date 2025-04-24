@@ -1,0 +1,6 @@
+- pair: TIA_USD
+  provider: coingecko
+  off_chain_ticker: TIA/USD
+- pair: TIA_BTC
+  provider: binance
+  off_chain_ticker: TIA/BTC

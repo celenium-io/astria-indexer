@@ -173,6 +173,9 @@ func (module *Module) processBlockInTransaction(ctx context.Context, tx storage.
 	if err := tx.SaveMarkets(ctx, block.MarketUpdates...); err != nil {
 		return state, errors.Wrap(err, "can't save market updates")
 	}
+	if err := tx.SaveMarketProviders(ctx, block.MarketProviders...); err != nil {
+		return state, errors.Wrap(err, "can't save market provider updates")
+	}
 
 	if err := tx.SavePrices(ctx, block.Prices...); err != nil {
 		return state, errors.Wrap(err, "can't save prices")

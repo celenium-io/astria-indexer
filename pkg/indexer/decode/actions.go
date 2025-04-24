@@ -1025,16 +1025,23 @@ func handleMarkets(markets []*v21.Market, ctx *Context, action *storage.Action, 
 			continue
 		}
 		if pair := ticker.GetCurrencyPair(); pair != nil {
+			pairId := fmt.Sprintf("%s_%s", pair.GetBase(), pair.GetQuote())
 			ctx.AddMarket(storage.Market{
-				Pair:             fmt.Sprintf("%s_%s", pair.GetBase(), pair.GetQuote()),
+				Pair:             pairId,
 				Decimals:         int(ticker.GetDecimals()),
 				Enabled:          ticker.GetEnabled(),
 				MinProviderCount: int(ticker.GetMinProviderCount()),
 				Base:             pair.GetBase(),
 				Quote:            pair.GetQuote(),
 			}, typ)
-		}
 
+			providers := markets[i].GetProviderConfigs()
+			for j := range providers {
+				name := providers[j].GetName()
+				offChainTicker := providers[j].GetOffChainTicker()
+				ctx.AddMarketProvider(pairId, name, offChainTicker, typ)
+			}
+		}
 	}
 	return nil
 }
