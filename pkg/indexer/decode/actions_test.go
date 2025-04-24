@@ -1909,7 +1909,8 @@ func TestDecodeActions(t *testing.T) {
 								},
 								ProviderConfigs: []*marketmapv2.ProviderConfig{
 									{
-										Name: "binance",
+										Name:           "binance",
+										OffChainTicker: "ETH/USD",
 									},
 								},
 							},
@@ -1922,7 +1923,7 @@ func TestDecodeActions(t *testing.T) {
 		wantAction := storage.Action{
 			Type: types.ActionTypeMarketsChange,
 			Data: map[string]any{
-				"create": json.RawMessage(`[{"ticker":{"currency_pair":{"Base":"ETH","Quote":"USD"},"decimals":8,"min_provider_count":1,"enabled":true},"provider_configs":[{"name":"binance"}]}]`),
+				"create": json.RawMessage(`[{"ticker":{"currency_pair":{"Base":"ETH","Quote":"USD"},"decimals":8,"min_provider_count":1,"enabled":true},"provider_configs":[{"name":"binance","off_chain_ticker":"ETH/USD"}]}]`),
 			},
 			Height: 1000,
 		}
@@ -1936,6 +1937,11 @@ func TestDecodeActions(t *testing.T) {
 		require.Len(t, decodeContext.Markets, 1)
 		require.EqualValues(t, "ETH_USD", decodeContext.Markets[0].Pair)
 		require.Equal(t, storage.MarketUpdateTypeCreate, decodeContext.Markets[0].Type)
+		require.Len(t, decodeContext.MarketProviders, 1)
+		require.EqualValues(t, "ETH/USD", decodeContext.MarketProviders[0].OffChainTicker)
+		require.Equal(t, "binance", decodeContext.MarketProviders[0].Provider)
+		require.EqualValues(t, "ETH_USD", decodeContext.MarketProviders[0].Pair)
+		require.Equal(t, storage.MarketUpdateTypeCreate, decodeContext.MarketProviders[0].Type)
 	})
 
 	t.Run("markets change remove", func(t *testing.T) {
@@ -1958,7 +1964,8 @@ func TestDecodeActions(t *testing.T) {
 								},
 								ProviderConfigs: []*marketmapv2.ProviderConfig{
 									{
-										Name: "binance",
+										Name:           "binance",
+										OffChainTicker: "ETH/USD",
 									},
 								},
 							},
@@ -1971,7 +1978,7 @@ func TestDecodeActions(t *testing.T) {
 		wantAction := storage.Action{
 			Type: types.ActionTypeMarketsChange,
 			Data: map[string]any{
-				"remove": json.RawMessage(`[{"ticker":{"currency_pair":{"Base":"ETH","Quote":"USD"},"decimals":8,"min_provider_count":1,"enabled":true},"provider_configs":[{"name":"binance"}]}]`),
+				"remove": json.RawMessage(`[{"ticker":{"currency_pair":{"Base":"ETH","Quote":"USD"},"decimals":8,"min_provider_count":1,"enabled":true},"provider_configs":[{"name":"binance","off_chain_ticker":"ETH/USD"}]}]`),
 			},
 			Height: 1000,
 		}
@@ -1985,6 +1992,11 @@ func TestDecodeActions(t *testing.T) {
 		require.Len(t, decodeContext.Markets, 1)
 		require.EqualValues(t, "ETH_USD", decodeContext.Markets[0].Pair)
 		require.Equal(t, storage.MarketUpdateTypeRemove, decodeContext.Markets[0].Type)
+		require.Len(t, decodeContext.MarketProviders, 1)
+		require.EqualValues(t, "ETH/USD", decodeContext.MarketProviders[0].OffChainTicker)
+		require.Equal(t, "binance", decodeContext.MarketProviders[0].Provider)
+		require.EqualValues(t, "ETH_USD", decodeContext.MarketProviders[0].Pair)
+		require.Equal(t, storage.MarketUpdateTypeRemove, decodeContext.MarketProviders[0].Type)
 	})
 
 	t.Run("markets change update", func(t *testing.T) {
@@ -2007,7 +2019,8 @@ func TestDecodeActions(t *testing.T) {
 								},
 								ProviderConfigs: []*marketmapv2.ProviderConfig{
 									{
-										Name: "binance",
+										Name:           "binance",
+										OffChainTicker: "ETH/USD",
 									},
 								},
 							},
@@ -2020,7 +2033,7 @@ func TestDecodeActions(t *testing.T) {
 		wantAction := storage.Action{
 			Type: types.ActionTypeMarketsChange,
 			Data: map[string]any{
-				"update": json.RawMessage(`[{"ticker":{"currency_pair":{"Base":"ETH","Quote":"USD"},"decimals":8,"min_provider_count":1,"enabled":true},"provider_configs":[{"name":"binance"}]}]`),
+				"update": json.RawMessage(`[{"ticker":{"currency_pair":{"Base":"ETH","Quote":"USD"},"decimals":8,"min_provider_count":1,"enabled":true},"provider_configs":[{"name":"binance","off_chain_ticker":"ETH/USD"}]}]`),
 			},
 			Height: 1000,
 		}
@@ -2034,6 +2047,11 @@ func TestDecodeActions(t *testing.T) {
 		require.Len(t, decodeContext.Markets, 1)
 		require.EqualValues(t, "ETH_USD", decodeContext.Markets[0].Pair)
 		require.Equal(t, storage.MarketUpdateTypeUpdate, decodeContext.Markets[0].Type)
+		require.Len(t, decodeContext.MarketProviders, 1)
+		require.EqualValues(t, "ETH/USD", decodeContext.MarketProviders[0].OffChainTicker)
+		require.Equal(t, "binance", decodeContext.MarketProviders[0].Provider)
+		require.EqualValues(t, "ETH_USD", decodeContext.MarketProviders[0].Pair)
+		require.Equal(t, storage.MarketUpdateTypeUpdate, decodeContext.MarketProviders[0].Type)
 	})
 
 	t.Run("currency pairs change addition", func(t *testing.T) {

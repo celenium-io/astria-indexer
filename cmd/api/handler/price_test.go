@@ -72,6 +72,12 @@ func (s *PriceTestSuite) TestLast() {
 			Quote:            "USDT",
 			Enabled:          true,
 			MinProviderCount: 1,
+			Providers: []*storage.MarketProvider{
+				{
+					Provider:       "binance",
+					OffChainTicker: "BTC/USDT",
+				},
+			},
 		}, nil).
 		Times(1)
 
@@ -85,6 +91,9 @@ func (s *PriceTestSuite) TestLast() {
 	s.Require().Equal("BTC-USDT", market.Pair)
 	s.Require().Equal("0.0000005", market.Price.Price)
 	s.Require().NotEmpty(market.Price.Time)
+	s.Require().Len(market.Providers, 1)
+	s.Require().Equal("binance", market.Providers[0].Provider)
+	s.Require().Equal("BTC/USDT", market.Providers[0].OffChainTicker)
 }
 
 func (s *PriceTestSuite) TestSeries() {

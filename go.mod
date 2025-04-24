@@ -26,7 +26,7 @@ require (
 	github.com/ipfans/fxlogger v0.2.0
 	github.com/json-iterator/go v1.1.12
 	github.com/labstack/echo-contrib v0.15.0
-	github.com/labstack/echo/v4 v4.11.4
+	github.com/labstack/echo/v4 v4.13.3
 	github.com/lib/pq v1.10.9
 	github.com/pactus-project/pactus v1.3.0
 	github.com/pkg/errors v0.9.1
@@ -41,7 +41,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.32.0
 	go.uber.org/fx v1.22.0
 	go.uber.org/mock v0.5.0
-	golang.org/x/time v0.5.0
+	golang.org/x/time v0.8.0
 	google.golang.org/protobuf v1.36.6
 )
 
@@ -132,7 +132,6 @@ require (
 	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/gogo/googleapis v1.4.1 // indirect
-	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/glog v1.2.4 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.4 // indirect

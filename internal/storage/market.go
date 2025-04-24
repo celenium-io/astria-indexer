@@ -25,7 +25,8 @@ type Market struct {
 	Base             string `bun:"base"               comment:"Base asset"`
 	Quote            string `bun:"quote"              comment:"Quote asset"`
 
-	Price *Price `bun:"rel:has-one,join:pair=currency_pair"`
+	Price     *Price            `bun:"rel:has-one,join:pair=currency_pair"`
+	Providers []*MarketProvider `bun:"rel:has-many,join:pair=pair"`
 }
 
 func (Market) TableName() string {

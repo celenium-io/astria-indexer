@@ -50,6 +50,9 @@ func (s *StorageTestSuite) TestMarketGet() {
 	s.Require().True(market.Enabled)
 	s.Require().NotNil(market.Price)
 	s.Require().EqualValues("0.00000001", market.Price.Price.String())
+	s.Require().Len(market.Providers, 1)
+	s.Require().EqualValues("binance", market.Providers[0].Provider)
+	s.Require().EqualValues("TIA/BTC", market.Providers[0].OffChainTicker)
 }
 
 func (s *StorageTestSuite) TestMarketDecimals() {

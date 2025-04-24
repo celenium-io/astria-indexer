@@ -33,6 +33,7 @@ type Context struct {
 	Transfers        []*storage.Transfer
 	Deposits         map[int64]*storage.Deposit
 	Markets          []storage.MarketUpdate
+	MarketProviders  []storage.MarketProviderUpdate
 	Prices           []storage.Price
 	HasWriteAckError bool
 	Proposer         string
@@ -43,18 +44,19 @@ type Context struct {
 
 func NewContext(bridgeAssets map[string]string, blockTime time.Time) Context {
 	return Context{
-		Addresses:     NewAddress(),
-		Rollups:       NewRollups(),
-		RollupAddress: make(map[string]*storage.RollupAddress),
-		SupplyChange:  decimal.Zero,
-		Validators:    NewValidators(),
-		Constants:     make(map[string]*storage.Constant),
-		Bridges:       make(map[string]*storage.Bridge),
-		Fees:          make(map[int64]*storage.Fee),
-		Transfers:     make([]*storage.Transfer, 0),
-		Deposits:      make(map[int64]*storage.Deposit),
-		Prices:        make([]storage.Price, 0),
-		Markets:       make([]storage.MarketUpdate, 0),
+		Addresses:       NewAddress(),
+		Rollups:         NewRollups(),
+		RollupAddress:   make(map[string]*storage.RollupAddress),
+		SupplyChange:    decimal.Zero,
+		Validators:      NewValidators(),
+		Constants:       make(map[string]*storage.Constant),
+		Bridges:         make(map[string]*storage.Bridge),
+		Fees:            make(map[int64]*storage.Fee),
+		Transfers:       make([]*storage.Transfer, 0),
+		Deposits:        make(map[int64]*storage.Deposit),
+		Prices:          make([]storage.Price, 0),
+		Markets:         make([]storage.MarketUpdate, 0),
+		MarketProviders: make([]storage.MarketProviderUpdate, 0),
 
 		bridgeAssets: bridgeAssets,
 		blockTime:    blockTime,
@@ -120,5 +122,16 @@ func (ctx *Context) AddMarket(market storage.Market, marketType storage.MarketUp
 	ctx.Markets = append(ctx.Markets, storage.MarketUpdate{
 		Market: market,
 		Type:   marketType,
+	})
+}
+
+func (ctx *Context) AddMarketProvider(pair, provider, offChainTicker string, typ storage.MarketUpdateType) {
+	ctx.MarketProviders = append(ctx.MarketProviders, storage.MarketProviderUpdate{
+		MarketProvider: storage.MarketProvider{
+			Pair:           pair,
+			Provider:       provider,
+			OffChainTicker: offChainTicker,
+		},
+		Type: typ,
 	})
 }

@@ -54,12 +54,20 @@ func (m *Market) Get(ctx context.Context, pair string) (market storage.Market, e
 		Model((*storage.Market)(nil)).
 		Where("pair = ?", pair)
 
-	err = m.db.DB().NewSelect().
+	if err = m.db.DB().NewSelect().
 		With("prices", priceQuery).
 		TableExpr("(?) as market", query).
 		ColumnExpr("market.*, p.price as price__price, p.time as price__time").
 		Join("left join prices p on p.currency_pair = market.pair").
-		Scan(ctx, &market)
+		Scan(ctx, &market); err != nil {
+		return
+	}
+
+	err = m.db.DB().NewSelect().
+		Model(&market.Providers).
+		Column("provider", "off_chain_ticker").
+		Where("pair = ?", pair).
+		Scan(ctx)
 	return
 }
 
