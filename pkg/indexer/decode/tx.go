@@ -70,11 +70,13 @@ func Tx(b types.BlockData, index int, ctx *Context) (d DecodedTx, err error) {
 }
 
 func isDataItem(b types.BlockData, index int, raw []byte, ctx *Context) (bool, error) {
-	if b.Block.Version.App >= 3 {
-		dataItem := new(sequencerblockv1.DataItem)
-		err := proto.Unmarshal(raw, dataItem)
-		return err == nil, err
-	} else {
-		return len(raw) == 32 && index < 2, nil
+	if b.Block.Version.App < 3 {
+		if len(raw) == 32 && index < 2 {
+			return true, nil
+		}
 	}
+
+	dataItem := new(sequencerblockv1.DataItem)
+	err := proto.Unmarshal(raw, dataItem)
+	return err == nil, err
 }

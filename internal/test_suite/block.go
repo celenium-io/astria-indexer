@@ -23,6 +23,10 @@ func CreateTestBlockV0(tx types.ResponseDeliverTx) (types.BlockData, time.Time) 
 	return createTestBlock(tx, 0, txsV0, true)
 }
 
+func CreateTestBlockV0ToV3(tx types.ResponseDeliverTx) (types.BlockData, time.Time) {
+	return createTestBlock(tx, 0, txsV3, true)
+}
+
 var txsV3 = []string{
 	"CiDjsMRCmPwcFJr79MiZb7kkJ65B5GSbk0yklZkbeFK4VQ==",
 	"EiDjsMRCmPwcFJr79MiZb7kkJ65B5GSbk0yklZkbeFK4VQ==",
