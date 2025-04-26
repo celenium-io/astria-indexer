@@ -109,7 +109,7 @@ func setAddressHandler(repo storage.IAddress) module.AddressHandler {
 }
 
 func addressHandler(ctx context.Context, repo storage.IAddress, address string) (uint64, error) {
-	prefix, hash, err := astria.DecodeAddress(address)
+	prefix, _, err := astria.DecodeAddress(address)
 	if err != nil {
 		return 0, errors.Wrap(err, "decoding address")
 	}
@@ -117,7 +117,7 @@ func addressHandler(ctx context.Context, repo storage.IAddress, address string) 
 		return 0, errors.Errorf("invalid prefix: %s", prefix)
 	}
 
-	addr, err := repo.ByHash(ctx, string(hash))
+	addr, err := repo.ByHash(ctx, address)
 	if err != nil {
 		return 0, errors.Errorf("can't find address %s in database", address)
 	}

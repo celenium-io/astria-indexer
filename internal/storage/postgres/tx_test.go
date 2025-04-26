@@ -33,6 +33,11 @@ func (s *StorageTestSuite) TestTxByHash() {
 	s.Require().EqualValues(hash, tx.Hash)
 	s.Require().NotNil(tx.Signer)
 	s.Require().Equal("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", tx.Signer.Hash)
+	s.Require().NotNil(tx.Signer.Celestials)
+	s.Require().EqualValues("name 2", tx.Signer.Celestials.Id)
+	s.Require().EqualValues("some_url", tx.Signer.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, tx.Signer.Celestials.Status)
+	s.Require().EqualValues(2, tx.Signer.Celestials.ChangeId)
 }
 
 func (s *StorageTestSuite) TestTxByHeight() {
@@ -58,6 +63,11 @@ func (s *StorageTestSuite) TestTxByHeight() {
 
 	s.Require().NotNil(tx.Signer)
 	s.Require().Equal("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", tx.Signer.Hash)
+	s.Require().NotNil(tx.Signer.Celestials)
+	s.Require().EqualValues("name 2", tx.Signer.Celestials.Id)
+	s.Require().EqualValues("some_url", tx.Signer.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, tx.Signer.Celestials.Status)
+	s.Require().EqualValues(2, tx.Signer.Celestials.ChangeId)
 }
 
 func (s *StorageTestSuite) TestTxFilter() {
@@ -89,6 +99,11 @@ func (s *StorageTestSuite) TestTxFilter() {
 
 	s.Require().NotNil(tx.Signer)
 	s.Require().Equal("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", tx.Signer.Hash)
+	s.Require().NotNil(tx.Signer.Celestials)
+	s.Require().EqualValues("name 2", tx.Signer.Celestials.Id)
+	s.Require().EqualValues("some_url", tx.Signer.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, tx.Signer.Celestials.Status)
+	s.Require().EqualValues(2, tx.Signer.Celestials.ChangeId)
 
 	s.Require().Len(tx.Actions, 1)
 }
@@ -121,5 +136,11 @@ func (s *StorageTestSuite) TestTxByAddress() {
 	s.Require().EqualValues(hash, tx.Hash)
 
 	s.Require().NotNil(tx.Signer)
+	s.Require().NotNil(tx.Signer.Celestials)
+	s.Require().EqualValues("name 2", tx.Signer.Celestials.Id)
+	s.Require().EqualValues("some_url", tx.Signer.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, tx.Signer.Celestials.Status)
+	s.Require().EqualValues(2, tx.Signer.Celestials.ChangeId)
+
 	s.Require().Len(tx.Actions, 1)
 }

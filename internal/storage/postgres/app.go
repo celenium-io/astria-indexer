@@ -46,42 +46,44 @@ func (app *App) Leaderboard(ctx context.Context, fltrs storage.LeaderboardFilter
 
 	query = sortScope(query, fmt.Sprintf("%s.%s", storage.ViewLeaderboard, fltrs.SortField), fltrs.Sort)
 	query = limitScope(query, fltrs.Limit)
+	query = joinCelestials(query, "bridge__", "native_bridge_id")
 
 	query = query.
 		ColumnExpr("leaderboard.*").
 		ColumnExpr("address.hash as bridge__hash").
 		ColumnExpr("rollup.astria_id as rollup__astria_id").
 		Join("left join address on native_bridge_id = address.id").
-		Join("left join rollup on rollup.id = rollup_id").
-		Join("left join celestial on celestial.address_id = native_bridge_id and celestial.status = 'PRIMARY'")
+		Join("left join rollup on rollup.id = rollup_id")
 	err = query.Scan(ctx, &rollups)
 	return
 }
 
 func (app *App) BySlug(ctx context.Context, slug string) (result storage.AppWithStats, err error) {
-	err = app.DB().NewSelect().
+	query := app.DB().NewSelect().
 		Table(storage.ViewLeaderboard).
 		ColumnExpr("leaderboard.*").
 		ColumnExpr("address.hash as bridge__hash").
 		ColumnExpr("rollup.astria_id as rollup__astria_id").
 		Join("left join address on native_bridge_id = address.id").
 		Join("left join rollup on rollup.id = rollup_id").
-		Join("left join celestial on celestial.address_id = native_bridge_id and celestial.status = 'PRIMARY'").
 		Where("slug = ?", slug).
-		Limit(1).
-		Scan(ctx, &result)
+		Limit(1)
+
+	query = joinCelestials(query, "bridge__", "native_bridge_id")
+	err = query.Scan(ctx, &result)
 	return
 }
 
 func (app *App) ByRollupId(ctx context.Context, rollupId uint64) (result storage.AppWithStats, err error) {
-	err = app.DB().NewSelect().
+	query := app.DB().NewSelect().
 		Table(storage.ViewLeaderboard).
 		ColumnExpr("leaderboard.*").
 		ColumnExpr("address.hash as bridge__hash").
 		Where("rollup_id = ?", rollupId).
 		Join("left join address on native_bridge_id = address.id").
-		Join("left join celestial on celestial.address_id = native_bridge_id and celestial.status = 'PRIMARY'").
-		Limit(1).
-		Scan(ctx, &result)
+		Limit(1)
+
+	query = joinCelestials(query, "bridge__", "native_bridge_id")
+	err = query.Scan(ctx, &result)
 	return
 }

@@ -43,6 +43,12 @@ func (s *StorageTestSuite) TestLeaderboard() {
 		s.Require().EqualValues("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", app.Bridge.Hash)
 		s.Require().NotNil(app.Rollup)
 		s.Require().EqualValues("19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539", hex.EncodeToString(app.Rollup.AstriaId))
+
+		s.Require().NotNil(app.Bridge.Celestials)
+		s.Require().EqualValues("name 2", app.Bridge.Celestials.Id)
+		s.Require().EqualValues("some_url", app.Bridge.Celestials.ImageUrl)
+		s.Require().EqualValues(types.CelestialsStatusVERIFIED, app.Bridge.Celestials.Status)
+		s.Require().EqualValues(2, app.Bridge.Celestials.ChangeId)
 	}
 }
 
@@ -77,6 +83,12 @@ func (s *StorageTestSuite) TestLeaderboardWithCategory() {
 		s.Require().EqualValues("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", app.Bridge.Hash)
 		s.Require().NotNil(app.Rollup)
 		s.Require().EqualValues("19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539", hex.EncodeToString(app.Rollup.AstriaId))
+
+		s.Require().NotNil(app.Bridge.Celestials)
+		s.Require().EqualValues("name 2", app.Bridge.Celestials.Id)
+		s.Require().EqualValues("some_url", app.Bridge.Celestials.ImageUrl)
+		s.Require().EqualValues(types.CelestialsStatusVERIFIED, app.Bridge.Celestials.Status)
+		s.Require().EqualValues(2, app.Bridge.Celestials.ChangeId)
 	}
 }
 
@@ -99,6 +111,12 @@ func (s *StorageTestSuite) TestAppBySlug() {
 	s.Require().EqualValues("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", app.Bridge.Hash)
 	s.Require().NotNil(app.Rollup)
 	s.Require().EqualValues("19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539", hex.EncodeToString(app.Rollup.AstriaId))
+
+	s.Require().NotNil(app.Bridge.Celestials)
+	s.Require().EqualValues("name 2", app.Bridge.Celestials.Id)
+	s.Require().EqualValues("some_url", app.Bridge.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, app.Bridge.Celestials.Status)
+	s.Require().EqualValues(2, app.Bridge.Celestials.ChangeId)
 }
 
 func (s *StorageTestSuite) TestAppByRollupId() {
@@ -119,4 +137,10 @@ func (s *StorageTestSuite) TestAppByRollupId() {
 	s.Require().NotNil(app.Bridge)
 	s.Require().EqualValues("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", app.Bridge.Hash)
 	s.Require().Nil(app.Rollup)
+
+	s.Require().NotNil(app.Bridge.Celestials)
+	s.Require().EqualValues("name 2", app.Bridge.Celestials.Id)
+	s.Require().EqualValues("some_url", app.Bridge.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, app.Bridge.Celestials.Status)
+	s.Require().EqualValues(2, app.Bridge.Celestials.ChangeId)
 }
