@@ -1,9 +1,6 @@
 // SPDX-FileCopyrightText: 2025 PK Lab AG <contact@pklab.io>
 // SPDX-License-Identifier: MIT
 
-// SPDX-FileCopyrightText: 2024 PK Lab AG <contact@pklab.io>
-// SPDX-License-Identifier: MIT
-
 package parser
 
 import (
@@ -43,7 +40,7 @@ func getExpectedBlock() storage.Block {
 		Height:             100,
 		Time:               testTime,
 		VersionBlock:       1,
-		VersionApp:         2,
+		VersionApp:         3,
 		Hash:               types.Hex{0x0, 0x0, 0x0, 0x2},
 		ParentHash:         types.Hex{0x0, 0x0, 0x0, 0x1},
 		LastCommitHash:     types.Hex{0x0, 0x0, 0x1, 0x1},
@@ -89,7 +86,7 @@ func getBlock() types.BlockData {
 				Header: types.Header{
 					Version: types.Consensus{
 						Block: 1,
-						App:   2,
+						App:   3,
 					},
 					ChainID: "explorer-test",
 					Height:  1000,
