@@ -1,9 +1,6 @@
 // SPDX-FileCopyrightText: 2025 PK Lab AG <contact@pklab.io>
 // SPDX-License-Identifier: MIT
 
-// SPDX-FileCopyrightText: 2024 PK Lab AG <contact@pklab.io>
-// SPDX-License-Identifier: MIT
-
 package decode
 
 import (
@@ -33,22 +30,22 @@ func Tx(b types.BlockData, index int, ctx *Context) (d DecodedTx, err error) {
 
 	d.Tx = new(astria.Transaction)
 	if err := proto.Unmarshal(raw, d.Tx); err != nil {
-		dataItem := new(sequencerblockv1.DataItem)
-		if err := proto.Unmarshal(raw, dataItem); err == nil {
-			d.IsDataItem = true
-			return d, nil
+		idi, err := isDataItem(b, index, raw, ctx)
+		if err != nil {
+			return d, errors.Wrap(err, "tx decoding")
 		}
-		return d, errors.Wrap(err, "tx decoding")
+		d.IsDataItem = idi
+		return d, nil
 	}
 
 	body := d.Tx.GetBody()
 	if body == nil {
-		dataItem := new(sequencerblockv1.DataItem)
-		if err := proto.Unmarshal(raw, dataItem); err == nil {
-			d.IsDataItem = true
-			return d, nil
+		idi, err := isDataItem(b, index, raw, ctx)
+		if err != nil {
+			return d, errors.Wrap(err, "tx decoding")
 		}
-		return d, errors.Wrap(err, "nil decoded tx")
+		d.IsDataItem = idi
+		return d, nil
 	}
 
 	d.UnsignedTx = new(astria.TransactionBody)
@@ -70,4 +67,16 @@ func Tx(b types.BlockData, index int, ctx *Context) (d DecodedTx, err error) {
 	ctx.ActionTypes.Set(d.ActionTypes)
 
 	return
+}
+
+func isDataItem(b types.BlockData, index int, raw []byte, ctx *Context) (bool, error) {
+	if b.Block.Version.App < 3 {
+		if len(raw) == 32 && index < 2 {
+			return true, nil
+		}
+	}
+
+	dataItem := new(sequencerblockv1.DataItem)
+	err := proto.Unmarshal(raw, dataItem)
+	return err == nil, err
 }

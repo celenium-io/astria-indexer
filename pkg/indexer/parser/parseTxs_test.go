@@ -1,9 +1,6 @@
 // SPDX-FileCopyrightText: 2025 PK Lab AG <contact@pklab.io>
 // SPDX-License-Identifier: MIT
 
-// SPDX-FileCopyrightText: 2024 PK Lab AG <contact@pklab.io>
-// SPDX-License-Identifier: MIT
-
 package parser
 
 import (
@@ -69,7 +66,7 @@ func TestParseTxs_SuccessTx(t *testing.T) {
 		},
 		Codespace: "codespace",
 	}
-	block, now := testsuite.CreateTestBlock(txRes, true)
+	block, now := testsuite.CreateTestBlockV3(txRes)
 	ctx := decode.NewContext(map[string]string{}, time.Now())
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -87,6 +84,58 @@ func TestParseTxs_SuccessTx(t *testing.T) {
 	assert.Equal(t, "codespace", f.Codespace)
 }
 
+func TestParseTxsV0_SuccessTx(t *testing.T) {
+	txRes := types.ResponseDeliverTx{
+		Code:      0,
+		Data:      []byte{},
+		Log:       "[]",
+		Info:      "info",
+		Events:    []types.Event{},
+		Codespace: "codespace",
+	}
+	block, now := testsuite.CreateTestBlockV0(txRes)
+	ctx := decode.NewContext(map[string]string{}, time.Now())
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	api := mock.NewMockApi(ctrl)
+
+	resultTxs, err := parseTxs(t.Context(), block, &ctx, api)
+
+	assert.NoError(t, err)
+	assert.Len(t, resultTxs, 1)
+
+	f := resultTxs[0]
+	assert.Equal(t, now, f.Time)
+	assert.Equal(t, storageTypes.StatusSuccess, f.Status)
+	assert.Equal(t, "", f.Error)
+}
+
+func TestParseTxsV0ToV3_SuccessTx(t *testing.T) {
+	txRes := types.ResponseDeliverTx{
+		Code:      0,
+		Data:      []byte{},
+		Log:       "[]",
+		Info:      "info",
+		Events:    []types.Event{},
+		Codespace: "codespace",
+	}
+	block, now := testsuite.CreateTestBlockV0ToV3(txRes)
+	ctx := decode.NewContext(map[string]string{}, time.Now())
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	api := mock.NewMockApi(ctrl)
+
+	resultTxs, err := parseTxs(t.Context(), block, &ctx, api)
+
+	assert.NoError(t, err)
+	assert.Len(t, resultTxs, 1)
+
+	f := resultTxs[0]
+	assert.Equal(t, now, f.Time)
+	assert.Equal(t, storageTypes.StatusSuccess, f.Status)
+	assert.Equal(t, "", f.Error)
+}
+
 func TestParseTxs_FailedTx(t *testing.T) {
 	txRes := types.ResponseDeliverTx{
 		Code:      1,
@@ -96,7 +145,7 @@ func TestParseTxs_FailedTx(t *testing.T) {
 		Events:    nil,
 		Codespace: "codespace",
 	}
-	block, now := testsuite.CreateTestBlock(txRes, true)
+	block, now := testsuite.CreateTestBlockV3(txRes)
 	ctx := decode.NewContext(map[string]string{}, time.Now())
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -122,7 +171,7 @@ func TestParseTxs_FailedTxWithNonstandardErrorCode(t *testing.T) {
 		Events:    nil,
 		Codespace: "codespace",
 	}
-	block, now := testsuite.CreateTestBlock(txRes, true)
+	block, now := testsuite.CreateTestBlockV3(txRes)
 	ctx := decode.NewContext(map[string]string{}, time.Now())
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
