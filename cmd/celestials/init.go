@@ -5,6 +5,9 @@ package main
 
 import (
 	"context"
+	"os"
+	"strconv"
+
 	"github.com/celenium-io/astria-indexer/internal/astria"
 	"github.com/celenium-io/astria-indexer/internal/profiler"
 	"github.com/celenium-io/astria-indexer/internal/storage"
@@ -15,8 +18,6 @@ import (
 	sdkPg "github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/grafana/pyroscope-go"
 	"github.com/pkg/errors"
-	"os"
-	"strconv"
 
 	dipdupCfg "github.com/dipdup-net/go-lib/config"
 	"github.com/rs/zerolog"
@@ -94,7 +95,7 @@ func newProfiler(cfg *Config) (*pyroscope.Profiler, error) {
 }
 
 func newDatabase(cfg *Config) (*sdkPg.Storage, error) {
-	return postgres.Create(context.Background(), cfg.Database, cfg.Indexer.ScriptsDir, true)
+	return postgres.Create(context.Background(), cfg.Database, cfg.Indexer.ScriptsDir, false)
 }
 
 func newTransactable(db *sdkPg.Storage) sdk.Transactable {
