@@ -379,6 +379,17 @@ func createIndices(ctx context.Context, conn *database.Bun) error {
 			return err
 		}
 
+		// Price
+		if _, err := tx.NewCreateIndex().
+			IfNotExists().
+			Model((*storage.Price)(nil)).
+			Index("price_height_idx").
+			Column("height").
+			Using("BRIN").
+			Exec(ctx); err != nil {
+			return err
+		}
+
 		return nil
 	})
 }

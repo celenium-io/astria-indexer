@@ -1129,6 +1129,44 @@ func (c *MockTransactionRollbackFeesCall) DoAndReturn(f func(context.Context, ty
 	return c
 }
 
+// RollbackPrices mocks base method.
+func (m *MockTransaction) RollbackPrices(ctx context.Context, height types.Level) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RollbackPrices", ctx, height)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RollbackPrices indicates an expected call of RollbackPrices.
+func (mr *MockTransactionMockRecorder) RollbackPrices(ctx, height any) *MockTransactionRollbackPricesCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RollbackPrices", reflect.TypeOf((*MockTransaction)(nil).RollbackPrices), ctx, height)
+	return &MockTransactionRollbackPricesCall{Call: call}
+}
+
+// MockTransactionRollbackPricesCall wrap *gomock.Call
+type MockTransactionRollbackPricesCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockTransactionRollbackPricesCall) Return(err error) *MockTransactionRollbackPricesCall {
+	c.Call = c.Call.Return(err)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockTransactionRollbackPricesCall) Do(f func(context.Context, types.Level) error) *MockTransactionRollbackPricesCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockTransactionRollbackPricesCall) DoAndReturn(f func(context.Context, types.Level) error) *MockTransactionRollbackPricesCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // RollbackRollupActions mocks base method.
 func (m *MockTransaction) RollbackRollupActions(ctx context.Context, height types.Level) ([]storage.RollupAction, error) {
 	m.ctrl.T.Helper()

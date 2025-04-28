@@ -1191,15 +1191,15 @@ const docTemplate = `{
         },
         "/v1/block/{height}/txs": {
             "get": {
-                "description": "Get transactions are contained in the block",
+                "description": "Get prices whuch was published in the block",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "block"
                 ],
-                "summary": "Get transactions are contained in the block",
-                "operationId": "get-block-transactions",
+                "summary": "Get prices whuch was published in the block",
+                "operationId": "get-block-prices",
                 "parameters": [
                     {
                         "minimum": 1,
@@ -1229,7 +1229,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/responses.Tx"
+                                "$ref": "#/definitions/responses.Price"
                             }
                         }
                     },

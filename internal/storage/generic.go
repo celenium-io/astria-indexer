@@ -90,6 +90,7 @@ type Transaction interface {
 	RollbackFees(ctx context.Context, height types.Level) (err error)
 	RollbackDeposits(ctx context.Context, height types.Level) (err error)
 	RollbackTransfers(ctx context.Context, height types.Level) (err error)
+	RollbackPrices(ctx context.Context, height types.Level) (err error)
 	UpdateAddresses(ctx context.Context, address ...*Address) error
 	UpdateConstants(ctx context.Context, constants ...*Constant) error
 	UpdateRollups(ctx context.Context, rollups ...*Rollup) error

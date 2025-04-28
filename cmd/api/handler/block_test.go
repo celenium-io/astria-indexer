@@ -139,6 +139,7 @@ type BlockTestSuite struct {
 	actions    *mock.MockIAction
 	rollups    *mock.MockIRollup
 	state      *mock.MockIState
+	price      *mock.MockIPrice
 	echo       *echo.Echo
 	handler    *BlockHandler
 	ctrl       *gomock.Controller
@@ -154,8 +155,9 @@ func (s *BlockTestSuite) SetupSuite() {
 	s.txs = mock.NewMockITx(s.ctrl)
 	s.rollups = mock.NewMockIRollup(s.ctrl)
 	s.actions = mock.NewMockIAction(s.ctrl)
+	s.price = mock.NewMockIPrice(s.ctrl)
 	s.state = mock.NewMockIState(s.ctrl)
-	s.handler = NewBlockHandler(s.blocks, s.blockStats, s.txs, s.actions, s.rollups, s.state, testIndexerName)
+	s.handler = NewBlockHandler(s.blocks, s.blockStats, s.txs, s.actions, s.rollups, s.price, s.state, testIndexerName)
 }
 
 // TearDownSuite -
@@ -525,4 +527,40 @@ func (s *BlockTestSuite) TestGetTransactions() {
 	s.Require().EqualValues(testAddress.Hash, tx.Signer)
 	s.Require().Equal("codespace", tx.Codespace)
 	s.Require().Equal(types.StatusSuccess, tx.Status)
+}
+
+func (s *BlockTestSuite) TestGetPrices() {
+	q := make(url.Values)
+	q.Set("limit", "10")
+	q.Set("offset", "0")
+
+	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/block/:height/prices")
+	c.SetParamNames("height")
+	c.SetParamValues("100")
+
+	s.price.EXPECT().
+		ByHeight(gomock.Any(), pkgTypes.Level(100), 10, 0).
+		Return([]storage.Price{
+			{
+				CurrencyPair: "TIA_USD",
+				Price:        decimal.RequireFromString("100.01"),
+				Height:       100,
+				Time:         testTime,
+			},
+		}, nil)
+
+	s.Require().NoError(s.handler.GetPrices(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var prices []responses.Price
+	err := json.NewDecoder(rec.Body).Decode(&prices)
+	s.Require().NoError(err)
+	s.Require().Len(prices, 1)
+
+	price := prices[0]
+	s.Require().EqualValues("100.01", price.Price)
+	s.Require().Equal(testTime, price.Time)
 }

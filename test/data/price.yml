@@ -1,18 +1,24 @@
 - time: '2023-11-30T23:52:23.265Z'
   price: 50000
   currency_pair: BTC_USDT
+  height: 7965
 - time: '2023-11-30T23:52:23.265Z'
   price: 3000
   currency_pair: ETH_USDT
+  height: 7965
 - time: '2023-10-30T23:52:23.265Z'
   price: 40000
   currency_pair: BTC_USDT
+  height: 7965
 - time: '2023-10-30T23:52:23.265Z'
   price: 2000
   currency_pair: ETH_USDT
+  height: 7965
 - time: '2023-10-30T23:52:23.265Z'
   price: 0.00000001
   currency_pair: TIA_BTC
+  height: 7965
 - time: '2023-10-30T23:52:23.265Z'
   price: 2.5
   currency_pair: TIA_USD
+  height: 7965

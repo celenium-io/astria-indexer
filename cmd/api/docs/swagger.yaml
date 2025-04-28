@@ -1689,8 +1689,8 @@ paths:
       - block
   /v1/block/{height}/txs:
     get:
-      description: Get transactions are contained in the block
-      operationId: get-block-transactions
+      description: Get prices whuch was published in the block
+      operationId: get-block-prices
       parameters:
       - description: Block height
         in: path
@@ -1714,7 +1714,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/responses.Tx'
+              $ref: '#/definitions/responses.Price'
             type: array
         "400":
           description: Bad Request
@@ -1724,7 +1724,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.Error'
-      summary: Get transactions are contained in the block
+      summary: Get prices whuch was published in the block
       tags:
       - block
   /v1/block/count:

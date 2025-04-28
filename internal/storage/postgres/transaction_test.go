@@ -39,6 +39,7 @@ type TransactionTestSuite struct {
 	Constants      storage.IConstant
 	Validator      storage.IValidator
 	Markets        storage.IMarket
+	Prices         storage.IPrice
 }
 
 // SetupSuite -
@@ -73,6 +74,7 @@ func (s *TransactionTestSuite) SetupSuite() {
 	s.Validator = NewValidator(s.storage)
 	s.Blocks = NewBlocks(s.storage)
 	s.Markets = NewMarket(s.storage)
+	s.Prices = NewPrice(s.storage)
 }
 
 // TearDownSuite -
@@ -825,6 +827,24 @@ func (s *TransactionTestSuite) TestRollbackTransfers() {
 
 	s.Require().NoError(tx.Flush(ctx))
 	s.Require().NoError(tx.Close(ctx))
+}
+
+func (s *TransactionTestSuite) TestRollbackPrices() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	tx, err := BeginTransaction(ctx, s.storage.Transactable)
+	s.Require().NoError(err)
+
+	err = tx.RollbackPrices(ctx, 7965)
+	s.Require().NoError(err)
+
+	s.Require().NoError(tx.Flush(ctx))
+	s.Require().NoError(tx.Close(ctx))
+
+	prices, err := s.Prices.ByHeight(ctx, 7965, 10, 0)
+	s.Require().NoError(err)
+	s.Require().Len(prices, 0)
 }
 
 func (s *TransactionTestSuite) TestRollbackRollups() {
