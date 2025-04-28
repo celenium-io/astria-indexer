@@ -20,7 +20,7 @@ func NewPrice(db *postgres.Storage) *Price {
 		Table: postgres.NewTable[*storage.Price](db.Connection()),
 	}
 }
-func (p *Price) Series(ctx context.Context, currencyPair string, timeframe storage.Timeframe) (prices []storage.Candle, err error) {
+func (p *Price) Series(ctx context.Context, currencyPair string, timeframe storage.Timeframe, filters storage.SeriesRequest) (prices []storage.Candle, err error) {
 	query := p.DB().NewSelect()
 
 	switch timeframe {
@@ -30,6 +30,13 @@ func (p *Price) Series(ctx context.Context, currencyPair string, timeframe stora
 		query = query.Table(storage.ViewPriceByDay)
 	default:
 		return nil, errors.Errorf("invalid timeframe %s", timeframe)
+	}
+
+	if !filters.From.IsZero() {
+		query = query.Where("time >= ?", filters.From)
+	}
+	if !filters.To.IsZero() {
+		query = query.Where("time < ?", filters.To)
 	}
 
 	err = query.
