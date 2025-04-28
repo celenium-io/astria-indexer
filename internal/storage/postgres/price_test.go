@@ -48,3 +48,17 @@ func (s *StorageTestSuite) TestPriceSeries() {
 	s.Require().EqualValues("3000", price.High.String())
 	s.Require().NotEmpty(price.Time)
 }
+
+func (s *StorageTestSuite) TestPriceByHeight() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	prices, err := s.Price.ByHeight(ctx, 7965, 1, 0)
+	s.Require().NoError(err)
+	s.Require().Len(prices, 1)
+
+	price := prices[0]
+	s.Require().EqualValues("50000", price.Price.String())
+	s.Require().EqualValues("BTC_USDT", price.CurrencyPair)
+	s.Require().NotEmpty(price.Time)
+}

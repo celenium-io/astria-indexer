@@ -32,7 +32,7 @@ func parseEvents(ctx context.Context, events []types.Event, height types.Level, 
 		case "write_acknowledgement":
 			err = parseWriteAck(events[i].Attributes, decodeCtx)
 		case "price_update":
-			err = parsePriceUpdate(events[i].Attributes, decodeCtx)
+			err = parsePriceUpdate(events[i].Attributes, height, decodeCtx)
 		default:
 			continue
 		}
@@ -171,8 +171,9 @@ func parseWriteAck(attrs []types.EventAttribute, decodeCtx *decode.Context) erro
 	return nil
 }
 
-func parsePriceUpdate(attrs []types.EventAttribute, decodeCtx *decode.Context) error {
+func parsePriceUpdate(attrs []types.EventAttribute, height types.Level, decodeCtx *decode.Context) error {
 	var price storage.Price
+	price.Height = height
 
 	for i := range attrs {
 		switch attrs[i].Key {

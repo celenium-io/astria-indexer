@@ -227,6 +227,10 @@ func rollbackBlock(ctx context.Context, tx storage.Transaction, height types.Lev
 		return errors.Wrap(err, "bridges")
 	}
 
+	if err := tx.RollbackPrices(ctx, height); err != nil {
+		return errors.Wrap(err, "prices")
+	}
+
 	newBlock, err := tx.LastBlock(ctx)
 	if err != nil {
 		return err

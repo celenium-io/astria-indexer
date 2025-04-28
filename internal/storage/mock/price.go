@@ -17,6 +17,7 @@ import (
 	reflect "reflect"
 
 	storage "github.com/celenium-io/astria-indexer/internal/storage"
+	types "github.com/celenium-io/astria-indexer/pkg/types"
 	storage0 "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -79,6 +80,45 @@ func (c *MockIPriceAllCall) Do(f func(context.Context, int, int) ([]storage.Pric
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
 func (c *MockIPriceAllCall) DoAndReturn(f func(context.Context, int, int) ([]storage.Price, error)) *MockIPriceAllCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
+// ByHeight mocks base method.
+func (m *MockIPrice) ByHeight(ctx context.Context, height types.Level, limit, offset int) ([]storage.Price, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ByHeight", ctx, height, limit, offset)
+	ret0, _ := ret[0].([]storage.Price)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ByHeight indicates an expected call of ByHeight.
+func (mr *MockIPriceMockRecorder) ByHeight(ctx, height, limit, offset any) *MockIPriceByHeightCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ByHeight", reflect.TypeOf((*MockIPrice)(nil).ByHeight), ctx, height, limit, offset)
+	return &MockIPriceByHeightCall{Call: call}
+}
+
+// MockIPriceByHeightCall wrap *gomock.Call
+type MockIPriceByHeightCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockIPriceByHeightCall) Return(arg0 []storage.Price, arg1 error) *MockIPriceByHeightCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockIPriceByHeightCall) Do(f func(context.Context, types.Level, int, int) ([]storage.Price, error)) *MockIPriceByHeightCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockIPriceByHeightCall) DoAndReturn(f func(context.Context, types.Level, int, int) ([]storage.Price, error)) *MockIPriceByHeightCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }

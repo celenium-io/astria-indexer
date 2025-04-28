@@ -272,6 +272,11 @@ func Test_rollbackBlock(t *testing.T) {
 			Return(0, nil).
 			Times(1)
 
+		tx.EXPECT().
+			RollbackPrices(ctx, height).
+			Return(nil).
+			Times(1)
+
 		lastBlock := storage.Block{
 			Height:         height - 1,
 			Time:           blockTime.Add(-time.Minute),

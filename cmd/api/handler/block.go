@@ -19,6 +19,7 @@ type BlockHandler struct {
 	txs         storage.ITx
 	actions     storage.IAction
 	rollups     storage.IRollup
+	price       storage.IPrice
 	state       storage.IState
 	indexerName string
 }
@@ -29,6 +30,7 @@ func NewBlockHandler(
 	txs storage.ITx,
 	actions storage.IAction,
 	rollups storage.IRollup,
+	price storage.IPrice,
 	state storage.IState,
 	indexerName string,
 ) *BlockHandler {
@@ -38,6 +40,7 @@ func NewBlockHandler(
 		txs:         txs,
 		actions:     actions,
 		rollups:     rollups,
+		price:       price,
 		state:       state,
 		indexerName: indexerName,
 	}
@@ -58,6 +61,7 @@ func (handler *BlockHandler) InitRoutes(srvr *echo.Group) {
 			heightGroup.GET("/stats", handler.GetStats)
 			heightGroup.GET("/rollup_actions", handler.GetRollupActions)
 			heightGroup.GET("/rollup_actions/count", handler.GetRollupsActionsCount)
+			heightGroup.GET("/prices", handler.GetRollupsActionsCount)
 		}
 	}
 }
@@ -332,6 +336,39 @@ func (handler *BlockHandler) GetTransactions(c echo.Context) error {
 	response := make([]responses.Tx, len(txs))
 	for i := range response {
 		response[i] = responses.NewTx(txs[i])
+	}
+
+	return c.JSON(http.StatusOK, response)
+}
+
+// GetPrices godoc
+//
+//	@Summary		Get prices whuch was published in the block
+//	@Description	Get prices whuch was published in the block
+//	@Tags			block
+//	@ID				get-block-prices
+//	@Param			height				path	integer			true	"Block height"					minimum(1)
+//	@Param			limit				query	integer			false	"Count of requested entities"	mininum(1)	maximum(100)
+//	@Param			offset				query	integer			false	"Offset"						mininum(1)
+//	@Produce		json
+//	@Success		200	{array}		responses.Price
+//	@Failure		400	{object}	Error
+//	@Failure		500	{object}	Error
+//	@Router			/v1/block/{height}/txs [get]
+func (handler *BlockHandler) GetPrices(c echo.Context) error {
+	req, err := bindAndValidate[listByHeight](c)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+	req.SetDefault()
+
+	prices, err := handler.price.ByHeight(c.Request().Context(), req.Height, req.Limit, req.Offset)
+	if err != nil {
+		return handleError(c, err, handler.block)
+	}
+	response := make([]responses.Price, len(prices))
+	for i := range response {
+		response[i] = responses.NewPrice(prices[i])
 	}
 
 	return c.JSON(http.StatusOK, response)

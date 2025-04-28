@@ -7,6 +7,7 @@ import (
 	"context"
 	"time"
 
+	pkgTypes "github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/shopspring/decimal"
 	"github.com/uptrace/bun"
@@ -19,6 +20,7 @@ type IPrice interface {
 	Series(ctx context.Context, currencyPair string, timeframe Timeframe, fltrs SeriesRequest) ([]Candle, error)
 	Last(ctx context.Context, currencyPair string) (Price, error)
 	All(ctx context.Context, limit, offset int) ([]Price, error)
+	ByHeight(ctx context.Context, height pkgTypes.Level, limit, offset int) ([]Price, error)
 }
 
 type Price struct {
@@ -27,6 +29,7 @@ type Price struct {
 	CurrencyPair string          `bun:"currency_pair,pk,notnull" comment:"Currency pair"`
 	Time         time.Time       `bun:"time,pk,notnull"          comment:"The time of price event"`
 	Price        decimal.Decimal `bun:"price,type:numeric"       comment:"Price of the asset"`
+	Height       pkgTypes.Level  `bun:"height"                   comment:"Block height"`
 }
 
 // TableName -

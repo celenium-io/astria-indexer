@@ -7,6 +7,7 @@ import (
 	"context"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
+	pkgTypes "github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/pkg/errors"
 )
@@ -69,5 +70,17 @@ func (p *Price) All(ctx context.Context, limit, offset int) (prices []storage.Pr
 
 	err = query.Scan(ctx)
 
+	return
+}
+
+func (p *Price) ByHeight(ctx context.Context, height pkgTypes.Level, limit, offset int) (prices []storage.Price, err error) {
+	query := p.DB().NewSelect().
+		Model(&prices).
+		Where("height = ?", height)
+
+	query = limitScope(query, limit)
+	query = offsetScope(query, offset)
+
+	err = query.Scan(ctx)
 	return
 }
