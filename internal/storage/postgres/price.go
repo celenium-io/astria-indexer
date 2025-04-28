@@ -75,12 +75,16 @@ func (p *Price) All(ctx context.Context, limit, offset int) (prices []storage.Pr
 
 func (p *Price) ByHeight(ctx context.Context, height pkgTypes.Level, limit, offset int) (prices []storage.Price, err error) {
 	query := p.DB().NewSelect().
-		Model(&prices).
+		Model((*storage.Price)(nil)).
 		Where("height = ?", height)
 
 	query = limitScope(query, limit)
 	query = offsetScope(query, offset)
 
-	err = query.Scan(ctx)
+	err = p.DB().NewSelect().
+		TableExpr("(?) as price", query).
+		ColumnExpr("price.currency_pair as currency_pair, price.time as time, (price.price/pow(10, market.decimals)) as price").
+		Join("left join market on market.pair = price.currency_pair").
+		Scan(ctx, &prices)
 	return
 }

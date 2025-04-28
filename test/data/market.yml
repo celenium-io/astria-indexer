@@ -10,3 +10,9 @@
   decimals: 8
   min_provider_count: 1
   enabled: true
+- pair: BTC_USDT
+  base: BTC
+  quote: USDT
+  decimals: 8
+  min_provider_count: 1
+  enabled: true

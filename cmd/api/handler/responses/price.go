@@ -11,14 +11,16 @@ import (
 )
 
 type Price struct {
-	Price string    `example:"50.00"                     format:"string"    json:"value" swaggertype:"string"`
-	Time  time.Time `example:"2023-07-04T03:10:57+00:00" format:"date-time" json:"time"  swaggertype:"string"`
+	Price string    `example:"50.00"                     format:"string"    json:"value"          swaggertype:"string"`
+	Time  time.Time `example:"2023-07-04T03:10:57+00:00" format:"date-time" json:"time"           swaggertype:"string"`
+	Pair  string    `example:"BTC/USDT"                  format:"string"    json:"pair,omitempty" swaggertype:"string"`
 }
 
 func NewPrice(price storage.Price) Price {
 	return Price{
 		Price: price.Price.String(),
 		Time:  price.Time,
+		Pair:  price.CurrencyPair,
 	}
 }
 
@@ -45,10 +47,8 @@ func NewMarket(market storage.Market) Market {
 	}
 
 	if market.Price != nil {
-		result.Price = &Price{
-			Price: decimalPrice(market.Price.Price, market.Decimals),
-			Time:  market.Price.Time,
-		}
+		p := NewPrice(*market.Price)
+		result.Price = &p
 	}
 
 	for i := range market.Providers {

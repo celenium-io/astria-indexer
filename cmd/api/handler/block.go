@@ -354,7 +354,7 @@ func (handler *BlockHandler) GetTransactions(c echo.Context) error {
 //	@Success		200	{array}		responses.Price
 //	@Failure		400	{object}	Error
 //	@Failure		500	{object}	Error
-//	@Router			/v1/block/{height}/txs [get]
+//	@Router			/v1/block/{height}/prices [get]
 func (handler *BlockHandler) GetPrices(c echo.Context) error {
 	req, err := bindAndValidate[listByHeight](c)
 	if err != nil {
