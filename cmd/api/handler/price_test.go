@@ -97,7 +97,10 @@ func (s *PriceTestSuite) TestLast() {
 }
 
 func (s *PriceTestSuite) TestSeries() {
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	q := make(url.Values)
+	q.Set("to", "100")
+
+	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
 	rec := httptest.NewRecorder()
 	c := s.echo.NewContext(req, rec)
 	c.SetPath("/price/:pair/:timeframe")
@@ -110,7 +113,7 @@ func (s *PriceTestSuite) TestSeries() {
 		Times(1)
 
 	s.prices.EXPECT().
-		Series(gomock.Any(), "BTC-USDT", storage.TimeframeHour).
+		Series(gomock.Any(), "BTC-USDT", storage.TimeframeHour, storage.NewSeriesRequest(0, 100)).
 		Return([]storage.Candle{
 			{
 				CurrencyPair: "BTC-USDT",

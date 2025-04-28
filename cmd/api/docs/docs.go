@@ -1463,6 +1463,18 @@ const docTemplate = `{
                         "name": "timeframe",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Time from in unix timestamp",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Time to in unix timestamp",
+                        "name": "to",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -3712,6 +3724,12 @@ const docTemplate = `{
                 },
                 "price": {
                     "$ref": "#/definitions/responses.Price"
+                },
+                "providers": {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
                 },
                 "quote": {
                     "type": "string",

@@ -40,7 +40,7 @@ func (s *StorageTestSuite) TestPriceSeries() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	prices, err := s.Price.Series(ctx, "ETH_USDT", storage.TimeframeHour)
+	prices, err := s.Price.Series(ctx, "ETH_USDT", storage.TimeframeHour, storage.NewSeriesRequest(1_600_000_000, 1_750_000_000))
 	s.Require().NoError(err)
 	s.Require().Len(prices, 2)
 

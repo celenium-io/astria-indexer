@@ -476,6 +476,10 @@ definitions:
         type: string
       price:
         $ref: '#/definitions/responses.Price'
+      providers:
+        items:
+          type: object
+        type: array
       quote:
         example: USDT
         format: string
@@ -1883,6 +1887,14 @@ paths:
         name: timeframe
         required: true
         type: string
+      - description: Time from in unix timestamp
+        in: query
+        name: from
+        type: integer
+      - description: Time to in unix timestamp
+        in: query
+        name: to
+        type: integer
       produces:
       - application/json
       responses:

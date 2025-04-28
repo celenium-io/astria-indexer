@@ -355,18 +355,18 @@ func (c *MockIPriceSaveCall) DoAndReturn(f func(context.Context, *storage.Price)
 }
 
 // Series mocks base method.
-func (m *MockIPrice) Series(ctx context.Context, currencyPair string, timeframe storage.Timeframe) ([]storage.Candle, error) {
+func (m *MockIPrice) Series(ctx context.Context, currencyPair string, timeframe storage.Timeframe, fltrs storage.SeriesRequest) ([]storage.Candle, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Series", ctx, currencyPair, timeframe)
+	ret := m.ctrl.Call(m, "Series", ctx, currencyPair, timeframe, fltrs)
 	ret0, _ := ret[0].([]storage.Candle)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Series indicates an expected call of Series.
-func (mr *MockIPriceMockRecorder) Series(ctx, currencyPair, timeframe any) *MockIPriceSeriesCall {
+func (mr *MockIPriceMockRecorder) Series(ctx, currencyPair, timeframe, fltrs any) *MockIPriceSeriesCall {
 	mr.mock.ctrl.T.Helper()
-	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Series", reflect.TypeOf((*MockIPrice)(nil).Series), ctx, currencyPair, timeframe)
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Series", reflect.TypeOf((*MockIPrice)(nil).Series), ctx, currencyPair, timeframe, fltrs)
 	return &MockIPriceSeriesCall{Call: call}
 }
 
@@ -382,13 +382,13 @@ func (c *MockIPriceSeriesCall) Return(arg0 []storage.Candle, arg1 error) *MockIP
 }
 
 // Do rewrite *gomock.Call.Do
-func (c *MockIPriceSeriesCall) Do(f func(context.Context, string, storage.Timeframe) ([]storage.Candle, error)) *MockIPriceSeriesCall {
+func (c *MockIPriceSeriesCall) Do(f func(context.Context, string, storage.Timeframe, storage.SeriesRequest) ([]storage.Candle, error)) *MockIPriceSeriesCall {
 	c.Call = c.Call.Do(f)
 	return c
 }
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *MockIPriceSeriesCall) DoAndReturn(f func(context.Context, string, storage.Timeframe) ([]storage.Candle, error)) *MockIPriceSeriesCall {
+func (c *MockIPriceSeriesCall) DoAndReturn(f func(context.Context, string, storage.Timeframe, storage.SeriesRequest) ([]storage.Candle, error)) *MockIPriceSeriesCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }
