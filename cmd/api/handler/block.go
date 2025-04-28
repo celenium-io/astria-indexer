@@ -61,7 +61,7 @@ func (handler *BlockHandler) InitRoutes(srvr *echo.Group) {
 			heightGroup.GET("/stats", handler.GetStats)
 			heightGroup.GET("/rollup_actions", handler.GetRollupActions)
 			heightGroup.GET("/rollup_actions/count", handler.GetRollupsActionsCount)
-			heightGroup.GET("/prices", handler.GetRollupsActionsCount)
+			heightGroup.GET("/prices", handler.GetPrices)
 		}
 	}
 }
