@@ -37,7 +37,7 @@ func (m *Market) List(ctx context.Context, limit, offset int) (markets []storage
 	err = m.db.DB().NewSelect().
 		With("prices", priceQuery).
 		TableExpr("(?) as market", query).
-		ColumnExpr("market.*, p.price as price__price, p.time as price__time").
+		ColumnExpr("market.*, (p.price/pow(10, market.decimals)) as price__price, p.time as price__time").
 		Join("left join prices p on p.currency_pair = market.pair").
 		Scan(ctx, &markets)
 	return
@@ -57,7 +57,7 @@ func (m *Market) Get(ctx context.Context, pair string) (market storage.Market, e
 	if err = m.db.DB().NewSelect().
 		With("prices", priceQuery).
 		TableExpr("(?) as market", query).
-		ColumnExpr("market.*, p.price as price__price, p.time as price__time").
+		ColumnExpr("market.*, (p.price/pow(10, market.decimals)) as price__price, p.time as price__time").
 		Join("left join prices p on p.currency_pair = market.pair").
 		Scan(ctx, &market); err != nil {
 		return

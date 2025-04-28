@@ -14,16 +14,16 @@ func (s *StorageTestSuite) TestMarketList() {
 
 	markets, err := s.Market.List(ctx, 10, 0)
 	s.Require().NoError(err)
-	s.Require().Len(markets, 2)
+	s.Require().Len(markets, 3)
 
-	s.Require().EqualValues("TIA_BTC", markets[1].Pair)
-	s.Require().EqualValues("TIA", markets[1].Base)
-	s.Require().EqualValues("BTC", markets[1].Quote)
-	s.Require().EqualValues(8, markets[1].Decimals)
-	s.Require().EqualValues(1, markets[1].MinProviderCount)
-	s.Require().True(markets[1].Enabled)
-	s.Require().NotNil(markets[1].Price)
-	s.Require().EqualValues("0.00000001", markets[1].Price.Price.String())
+	s.Require().EqualValues("TIA_BTC", markets[2].Pair)
+	s.Require().EqualValues("TIA", markets[2].Base)
+	s.Require().EqualValues("BTC", markets[2].Quote)
+	s.Require().EqualValues(8, markets[2].Decimals)
+	s.Require().EqualValues(1, markets[2].MinProviderCount)
+	s.Require().True(markets[2].Enabled)
+	s.Require().NotNil(markets[2].Price)
+	s.Require().EqualValues("0.00000001", markets[2].Price.Price.String())
 
 	s.Require().EqualValues("TIA_USD", markets[0].Pair)
 	s.Require().EqualValues("TIA", markets[0].Base)
@@ -32,7 +32,7 @@ func (s *StorageTestSuite) TestMarketList() {
 	s.Require().EqualValues(1, markets[0].MinProviderCount)
 	s.Require().True(markets[0].Enabled)
 	s.Require().NotNil(markets[0].Price)
-	s.Require().EqualValues("2.5", markets[0].Price.Price.String())
+	s.Require().EqualValues("0.000025", markets[0].Price.Price.String())
 }
 
 func (s *StorageTestSuite) TestMarketGet() {

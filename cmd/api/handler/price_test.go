@@ -63,7 +63,7 @@ func (s *PriceTestSuite) TestLast() {
 		Get(gomock.Any(), "BTC-USDT").
 		Return(storage.Market{
 			Price: &storage.Price{
-				Price: decimal.RequireFromString("50.00"),
+				Price: decimal.RequireFromString("0.0000005"),
 				Time:  time.Now(),
 			},
 			Pair:             "BTC-USDT",
@@ -117,12 +117,12 @@ func (s *PriceTestSuite) TestSeries() {
 		Return([]storage.Candle{
 			{
 				CurrencyPair: "BTC-USDT",
-				Open:         decimal.RequireFromString("50.00"),
+				Open:         decimal.RequireFromString("50"),
 				Time:         time.Now().Add(-time.Hour),
 			},
 			{
 				CurrencyPair: "BTC-USDT",
-				Open:         decimal.RequireFromString("51.00"),
+				Open:         decimal.RequireFromString("51"),
 				Time:         time.Now(),
 			},
 		}, nil).
@@ -155,7 +155,7 @@ func (s *PriceTestSuite) TestList() {
 			{
 				Pair: "BTC-USDT",
 				Price: &storage.Price{
-					Price: decimal.RequireFromString("50.00"),
+					Price: decimal.RequireFromString("0.0000005"),
 					Time:  time.Now(),
 				},
 				Decimals:         8,

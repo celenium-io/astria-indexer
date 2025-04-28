@@ -58,7 +58,7 @@ func (s *StorageTestSuite) TestPriceByHeight() {
 	s.Require().Len(prices, 1)
 
 	price := prices[0]
-	s.Require().EqualValues("50000", price.Price.String())
+	s.Require().EqualValues("0.0005", price.Price.String())
 	s.Require().EqualValues("BTC_USDT", price.CurrencyPair)
 	s.Require().NotEmpty(price.Time)
 }

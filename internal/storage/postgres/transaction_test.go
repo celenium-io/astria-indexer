@@ -1056,7 +1056,7 @@ func (s *TransactionTestSuite) TestSaveMarkets() {
 
 	markets, err := s.Markets.List(ctx, 10, 0)
 	s.Require().NoError(err)
-	s.Require().Len(markets, 2)
+	s.Require().Len(markets, 3)
 }
 
 func (s *TransactionTestSuite) TestSaveMarketProviders() {
@@ -1101,5 +1101,5 @@ func (s *TransactionTestSuite) TestSaveMarketProviders() {
 
 	markets, err := s.Markets.List(ctx, 10, 0)
 	s.Require().NoError(err)
-	s.Require().Len(markets, 2)
+	s.Require().Len(markets, 3)
 }
