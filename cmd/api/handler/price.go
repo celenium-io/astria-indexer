@@ -111,8 +111,8 @@ func (handler *PriceHandler) Last(c echo.Context) error {
 }
 
 type priceSeriesRequest struct {
-	Pair      string            `example:"BTC-USDT"   param:"pair"      swaggertype:"string" validate:"required"`
-	Timeframe storage.Timeframe `example:"day"        param:"timeframe" swaggertype:"string" validate:"required,oneof=hour day"`
+	Pair      string            `example:"BTC-USDT"   param:"pair"      swaggertype:"string"  validate:"required"`
+	Timeframe storage.Timeframe `example:"day"        param:"timeframe" swaggertype:"string"  validate:"required,oneof=hour day"`
 	From      int64             `example:"1692892095" query:"from"      swaggertype:"integer" validate:"omitempty,min=1"`
 	To        int64             `example:"1692892095" query:"to"        swaggertype:"integer" validate:"omitempty,min=1"`
 }
