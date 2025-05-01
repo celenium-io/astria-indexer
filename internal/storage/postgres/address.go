@@ -25,16 +25,20 @@ func NewAddress(db *postgres.Storage) *Address {
 
 // ByHash -
 func (a *Address) ByHash(ctx context.Context, hash string) (address storage.Address, err error) {
-	err = a.DB().NewSelect().
+	query := a.DB().NewSelect().
+		ColumnExpr("address.*").
 		Model(&address).
 		Where("hash = ?", hash).
-		Relation("Balance").
-		Scan(ctx)
+		Relation("Balance")
+
+	query = joinCelestials(query, "", "address.id")
+	err = query.Scan(ctx)
 	return
 }
 
 func (a *Address) ListWithBalance(ctx context.Context, fltrs storage.AddressListFilter) (address []storage.Address, err error) {
 	query := a.DB().NewSelect().
+		ColumnExpr("address.*").
 		Model(&address).
 		Offset(fltrs.Offset)
 
@@ -47,9 +51,8 @@ func (a *Address) ListWithBalance(ctx context.Context, fltrs storage.AddressList
 			return sq.Where("currency = 'nria'")
 		})
 	}
-
+	query = joinCelestials(query, "", "address.id")
 	query = addressListFilter(query, fltrs)
-
 	err = query.Scan(ctx)
 	return
 }

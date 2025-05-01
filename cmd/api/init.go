@@ -17,6 +17,7 @@ import (
 	"github.com/celenium-io/astria-indexer/internal/profiler"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
+	celestialsPg "github.com/celenium-io/celestial-module/pkg/storage/postgres"
 	"github.com/dipdup-net/go-lib/config"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 	"github.com/getsentry/sentry-go"
@@ -218,6 +219,12 @@ func newServer(cfg *Config, wsManager *websocket.Manager, handlers []handler.Han
 
 func newDatabase(cfg *Config) (*sdk.Storage, error) {
 	return postgres.Create(context.Background(), cfg.Database, cfg.Indexer.ScriptsDir, false)
+}
+
+func newCelestials(db *sdk.Storage) *celestialsPg.Celestials {
+	return &celestialsPg.Celestials{
+		Bun: db.Connection(),
+	}
 }
 
 func newConstantCache(dispatcher *bus.Dispatcher) *cache.ConstantsCache {

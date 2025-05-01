@@ -7,6 +7,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage"
 )
 
@@ -27,6 +28,12 @@ func (s *StorageTestSuite) TestFeeByTxId() {
 	s.Require().EqualValues("nria", fee.Asset)
 	s.Require().NotNil(fee.Payer)
 	s.Require().NotEmpty(fee.Payer.Hash)
+
+	s.Require().NotNil(fee.Payer.Celestials)
+	s.Require().EqualValues("name 2", fee.Payer.Celestials.Id)
+	s.Require().EqualValues("some_url", fee.Payer.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, fee.Payer.Celestials.Status)
+	s.Require().EqualValues(2, fee.Payer.Celestials.ChangeId)
 }
 
 func (s *StorageTestSuite) TestFeeByPayerId() {

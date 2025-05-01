@@ -345,7 +345,8 @@ func (s *RollupTestSuite) TestBridges() {
 	s.Require().Len(bridges, 1)
 
 	bridge := bridges[0]
-	s.Require().Equal(testAddressHash, bridge.Address)
+	s.Require().NotNil(bridge.Address)
+	s.Require().Equal(testAddressHash, bridge.Address.Hash)
 	s.Require().Equal("nria", bridge.Asset)
 	s.Require().Equal("nria", bridge.FeeAsset)
 }

@@ -4,6 +4,8 @@
 package postgres
 
 import (
+	"fmt"
+
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 	"github.com/uptrace/bun"
@@ -73,4 +75,24 @@ func txFilter(query *bun.SelectQuery, fltrs storage.TxFilter) *bun.SelectQuery {
 		query = query.Relation("Actions")
 	}
 	return query
+}
+
+func joinCelestials(query *bun.SelectQuery, prefix string, where string) *bun.SelectQuery {
+	tableName := bun.Safe(fmt.Sprintf("%scelestials", prefix))
+	return query.
+		ColumnExpr("?4.id as ?, ?4.image_url as ?, ?4.change_id as ?, ?4.status as ?",
+			makeCelestialsColumnName(prefix, "id"),
+			makeCelestialsColumnName(prefix, "image_url"),
+			makeCelestialsColumnName(prefix, "change_id"),
+			makeCelestialsColumnName(prefix, "status"),
+			tableName,
+		).
+		Join(`left join lateral (
+		select * from celestial where celestial.address_id = ?
+		order by celestial.change_id desc limit 1
+	) ? on true`, bun.Safe(where), tableName)
+}
+
+func makeCelestialsColumnName(prefix, name string) bun.Safe {
+	return bun.Safe(fmt.Sprintf("%scelestials__%s", prefix, name))
 }

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/internal/storage/types"
 	sdk "github.com/dipdup-net/indexer-sdk/pkg/storage"
 )
 
@@ -27,6 +28,11 @@ func (s *StorageTestSuite) TestAddressByHash() {
 	s.Require().EqualValues(2, address.SignedTxCount)
 	s.Require().EqualValues(hash, address.Hash)
 	s.Require().Len(address.Balance, 2)
+	s.Require().NotNil(address.Celestials)
+	s.Require().EqualValues("name 2", address.Celestials.Id)
+	s.Require().EqualValues("some_url", address.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, address.Celestials.Status)
+	s.Require().EqualValues(2, address.Celestials.ChangeId)
 }
 
 func (s *StorageTestSuite) TestAddressListWithBalances() {
@@ -47,8 +53,11 @@ func (s *StorageTestSuite) TestAddressListWithBalances() {
 	s.Require().EqualValues(1, address.ActionsCount)
 	s.Require().EqualValues(2, address.SignedTxCount)
 	s.Require().Len(address.Balance, 1)
-
-	s.Require().EqualValues("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", address.Hash)
+	s.Require().NotNil(address.Celestials)
+	s.Require().EqualValues("name 2", address.Celestials.Id)
+	s.Require().EqualValues("some_url", address.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, address.Celestials.Status)
+	s.Require().EqualValues(2, address.Celestials.ChangeId)
 }
 
 func (s *StorageTestSuite) TestAddressListWithBalancesWithAsset() {
@@ -76,4 +85,10 @@ func (s *StorageTestSuite) TestAddressListWithBalancesWithAsset() {
 	s.Require().EqualValues("asset-1", balance.Currency)
 
 	s.Require().EqualValues("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", address.Hash)
+
+	s.Require().NotNil(address.Celestials)
+	s.Require().EqualValues("name 2", address.Celestials.Id)
+	s.Require().EqualValues("some_url", address.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, address.Celestials.Status)
+	s.Require().EqualValues(2, address.Celestials.ChangeId)
 }

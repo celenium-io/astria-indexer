@@ -31,12 +31,14 @@ func (f *Fee) ByTxId(ctx context.Context, id uint64, limit, offset int) (fees []
 	query = limitScope(query, limit)
 	query = offsetScope(query, offset)
 
-	err = f.DB().NewSelect().
+	q := f.DB().NewSelect().
 		TableExpr("(?) as fee", query).
 		ColumnExpr("fee.*").
 		ColumnExpr("address.hash as payer__hash").
-		Join("left join address on address.id = fee.payer_id").
-		Scan(ctx, &fees)
+		Join("left join address on address.id = fee.payer_id")
+
+	q = joinCelestials(q, "payer__", "fee.payer_id")
+	err = q.Scan(ctx, &fees)
 
 	return
 }

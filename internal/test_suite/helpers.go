@@ -6,6 +6,7 @@ package testsuite
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"math/big"
 
 	"github.com/celenium-io/astria-indexer/internal/astria"
 )
@@ -41,4 +42,18 @@ func RandomAddress() string {
 	_, _ = rand.Read(hash)
 	val, _ := astria.EncodeAddress(hash)
 	return val
+}
+
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+// RandomText - generates random string with fixed size
+//
+//	data := RandomText(10)
+func RandomText(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		ids, _ := rand.Int(rand.Reader, big.NewInt(int64(len(letterRunes))))
+		b[i] = letterRunes[ids.Int64()]
+	}
+	return string(b)
 }

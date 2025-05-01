@@ -28,7 +28,7 @@ func (b *Bridge) ByAddress(ctx context.Context, addressId uint64) (bridge storag
 		Model((*storage.Bridge)(nil)).
 		Where("address_id = ?", addressId)
 
-	err = b.DB().NewSelect().
+	q := b.DB().NewSelect().
 		TableExpr("(?) as bridge", query).
 		ColumnExpr("bridge.*").
 		ColumnExpr("address.hash as address__hash").
@@ -38,8 +38,13 @@ func (b *Bridge) ByAddress(ctx context.Context, addressId uint64) (bridge storag
 		Join("left join address as address on address.id = bridge.address_id").
 		Join("left join address as sudo on sudo.id = bridge.sudo_id").
 		Join("left join address as withdrawer on withdrawer.id = bridge.withdrawer_id").
-		Join("left join rollup on rollup.id = bridge.rollup_id").
-		Scan(ctx, &bridge)
+		Join("left join rollup on rollup.id = bridge.rollup_id")
+
+	q = joinCelestials(q, "address__", "bridge.address_id")
+	q = joinCelestials(q, "sudo__", "bridge.sudo_id")
+	q = joinCelestials(q, "withdrawer__", "bridge.withdrawer_id")
+
+	err = q.Scan(ctx, &bridge)
 	return
 }
 
@@ -51,7 +56,7 @@ func (b *Bridge) ByRollup(ctx context.Context, rollupId uint64, limit, offset in
 
 	query = limitScope(query, limit)
 
-	err = b.DB().NewSelect().
+	q := b.DB().NewSelect().
 		TableExpr("(?) as bridge", query).
 		ColumnExpr("bridge.*").
 		ColumnExpr("address.hash as address__hash").
@@ -61,8 +66,13 @@ func (b *Bridge) ByRollup(ctx context.Context, rollupId uint64, limit, offset in
 		Join("left join address as address on address.id = bridge.address_id").
 		Join("left join address as sudo on sudo.id = bridge.sudo_id").
 		Join("left join address as withdrawer on withdrawer.id = bridge.withdrawer_id").
-		Join("left join rollup on rollup.id = bridge.rollup_id").
-		Scan(ctx, &bridge)
+		Join("left join rollup on rollup.id = bridge.rollup_id")
+
+	q = joinCelestials(q, "address__", "bridge.address_id")
+	q = joinCelestials(q, "sudo__", "bridge.sudo_id")
+	q = joinCelestials(q, "withdrawer__", "bridge.withdrawer_id")
+
+	err = q.Scan(ctx, &bridge)
 	return
 }
 
@@ -75,7 +85,7 @@ func (b *Bridge) ByRoles(ctx context.Context, addressId uint64, limit, offset in
 
 	query = limitScope(query, limit)
 
-	err = b.DB().NewSelect().
+	q := b.DB().NewSelect().
 		TableExpr("(?) as bridge", query).
 		ColumnExpr("bridge.*").
 		ColumnExpr("address.hash as address__hash").
@@ -85,8 +95,13 @@ func (b *Bridge) ByRoles(ctx context.Context, addressId uint64, limit, offset in
 		Join("left join address as address on address.id = bridge.address_id").
 		Join("left join address as sudo on sudo.id = bridge.sudo_id").
 		Join("left join address as withdrawer on withdrawer.id = bridge.withdrawer_id").
-		Join("left join rollup on rollup.id = bridge.rollup_id").
-		Scan(ctx, &result)
+		Join("left join rollup on rollup.id = bridge.rollup_id")
+
+	q = joinCelestials(q, "address__", "bridge.address_id")
+	q = joinCelestials(q, "sudo__", "bridge.sudo_id")
+	q = joinCelestials(q, "withdrawer__", "bridge.withdrawer_id")
+
+	err = q.Scan(ctx, &result)
 	return
 }
 
@@ -98,12 +113,14 @@ func (b *Bridge) ListWithAddress(ctx context.Context, limit, offset int) (result
 	query = limitScope(query, limit)
 	query = sortScope(query, "id", sdk.SortOrderAsc)
 
-	err = b.DB().NewSelect().
+	q := b.DB().NewSelect().
 		TableExpr("(?) as bridge", query).
 		ColumnExpr("bridge.*").
 		ColumnExpr("address.hash as address__hash").
-		Join("left join address as address on address.id = bridge.address_id").
-		Scan(ctx, &result)
+		Join("left join address as address on address.id = bridge.address_id")
+
+	q = joinCelestials(q, "address__", "bridge.address_id")
+	err = q.Scan(ctx, &result)
 	return
 }
 
@@ -112,14 +129,16 @@ func (b *Bridge) ById(ctx context.Context, id uint64) (bridge storage.Bridge, er
 		Model((*storage.Bridge)(nil)).
 		Where("id = ?", id)
 
-	err = b.DB().NewSelect().
+	q := b.DB().NewSelect().
 		TableExpr("(?) as bridge", query).
 		ColumnExpr("bridge.*").
 		ColumnExpr("address.hash as address__hash").
 		ColumnExpr("rollup.astria_id as rollup__astria_id").
 		Join("left join address as address on address.id = bridge.address_id").
-		Join("left join rollup on rollup.id = bridge.rollup_id").
-		Scan(ctx, &bridge)
+		Join("left join rollup on rollup.id = bridge.rollup_id")
+
+	q = joinCelestials(q, "address__", "bridge.address_id")
+	err = q.Scan(ctx, &bridge)
 
 	return
 }

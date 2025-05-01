@@ -84,7 +84,8 @@ func (s *TxTestSuite) TestGet() {
 	s.Require().EqualValues(1, tx.Position)
 	s.Require().EqualValues(1, tx.ActionsCount)
 	s.Require().EqualValues(10, tx.Nonce)
-	s.Require().EqualValues(testAddress.Hash, tx.Signer)
+	s.Require().NotNil(tx.Signer)
+	s.Require().EqualValues(testAddress.Hash, tx.Signer.Hash)
 	s.Require().Equal("codespace", tx.Codespace)
 	s.Require().Equal(types.StatusSuccess, tx.Status)
 }
@@ -132,7 +133,8 @@ func (s *TxTestSuite) TestGetWithFee() {
 	s.Require().EqualValues(1, tx.Position)
 	s.Require().EqualValues(1, tx.ActionsCount)
 	s.Require().EqualValues(10, tx.Nonce)
-	s.Require().EqualValues(testAddress.Hash, tx.Signer)
+	s.Require().NotNil(tx.Signer)
+	s.Require().EqualValues(testAddress.Hash, tx.Signer.Hash)
 	s.Require().Equal("codespace", tx.Codespace)
 	s.Require().Equal(types.StatusSuccess, tx.Status)
 
@@ -202,7 +204,8 @@ func (s *TxTestSuite) TestList() {
 	s.Require().EqualValues(1, tx.Position)
 	s.Require().EqualValues(1, tx.ActionsCount)
 	s.Require().EqualValues(10, tx.Nonce)
-	s.Require().EqualValues(testAddress.Hash, tx.Signer)
+	s.Require().NotNil(tx.Signer)
+	s.Require().EqualValues(testAddress.Hash, tx.Signer.Hash)
 	s.Require().Equal("codespace", tx.Codespace)
 	s.Require().Equal(types.StatusSuccess, tx.Status)
 }
@@ -297,7 +300,8 @@ func (s *TxTestSuite) TestListTime() {
 	s.Require().EqualValues(1, tx.Position)
 	s.Require().EqualValues(1, tx.ActionsCount)
 	s.Require().EqualValues(10, tx.Nonce)
-	s.Require().EqualValues(testAddress.Hash, tx.Signer)
+	s.Require().NotNil(tx.Signer)
+	s.Require().EqualValues(testAddress.Hash, tx.Signer.Hash)
 	s.Require().Equal("codespace", tx.Codespace)
 	s.Require().Equal(types.StatusSuccess, tx.Status)
 }
@@ -348,7 +352,8 @@ func (s *TxTestSuite) TestListWithActions() {
 	s.Require().EqualValues(1, tx.Position)
 	s.Require().EqualValues(1, tx.ActionsCount)
 	s.Require().EqualValues(10, tx.Nonce)
-	s.Require().EqualValues(testAddress.Hash, tx.Signer)
+	s.Require().NotNil(tx.Signer)
+	s.Require().EqualValues(testAddress.Hash, tx.Signer.Hash)
 	s.Require().Equal("codespace", tx.Codespace)
 	s.Require().Equal(types.StatusSuccess, tx.Status)
 }

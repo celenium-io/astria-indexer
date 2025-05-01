@@ -10,6 +10,8 @@ import (
 	"syscall"
 	"time"
 
+	celestialsStorage "github.com/celenium-io/celestial-module/pkg/storage"
+
 	"github.com/celenium-io/astria-indexer/cmd/api/bus"
 	_ "github.com/celenium-io/astria-indexer/cmd/api/docs"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler"
@@ -136,6 +138,10 @@ func main() {
 			fx.Annotate(
 				postgres.NewMarket,
 				fx.As(new(storage.IMarket)),
+			),
+			fx.Annotate(
+				newCelestials,
+				fx.As(new(celestialsStorage.ICelestial)),
 			),
 
 			AsHandler(handler.NewAddressHandler),

@@ -28,12 +28,14 @@ func (tx *Tx) ByHash(ctx context.Context, hash []byte) (transaction storage.Tx, 
 		Where("hash = ?", hash).
 		Limit(1)
 
-	err = tx.DB().NewSelect().
+	q := tx.DB().NewSelect().
 		TableExpr("(?) as tx", query).
 		ColumnExpr("tx.*").
 		ColumnExpr("address.hash as signer__hash").
-		Join("left join address on address.id = tx.signer_id").
-		Scan(ctx, &transaction)
+		Join("left join address on address.id = tx.signer_id")
+
+	q = joinCelestials(q, "signer__", "tx.signer_id")
+	err = q.Scan(ctx, &transaction)
 	return
 }
 
@@ -46,19 +48,26 @@ func (tx *Tx) ByHeight(ctx context.Context, height types.Level, limit, offset in
 		query = query.Offset(offset)
 	}
 
-	err = tx.DB().NewSelect().
+	q := tx.DB().NewSelect().
 		TableExpr("(?) as tx", query).
 		ColumnExpr("tx.*").
 		ColumnExpr("address.hash as signer__hash").
-		Join("left join address on address.id = tx.signer_id").
-		Scan(ctx, &txs)
+		Join("left join address on address.id = tx.signer_id")
+
+	q = joinCelestials(q, "signer__", "tx.signer_id")
+	err = q.Scan(ctx, &txs)
 	return
 }
 
 func (tx *Tx) Filter(ctx context.Context, fltrs storage.TxFilter) (txs []storage.Tx, err error) {
-	query := tx.DB().NewSelect().Model(&txs).Relation("Signer")
-	query = txFilter(query, fltrs)
+	query := tx.DB().NewSelect().
+		Model(&txs).
+		ColumnExpr("tx.*").
+		ColumnExpr("address.hash as signer__hash").
+		Join("left join address on address.id = tx.signer_id")
 
+	query = txFilter(query, fltrs)
+	query = joinCelestials(query, "signer__", "tx.signer_id")
 	err = query.Scan(ctx)
 	return
 }
@@ -67,10 +76,12 @@ func (tx *Tx) ByAddress(ctx context.Context, addressId uint64, fltrs storage.TxF
 	query := tx.DB().NewSelect().
 		Model(&txs).
 		Where("signer_id = ?", addressId).
-		Relation("Signer")
+		ColumnExpr("tx.*").
+		ColumnExpr("address.hash as signer__hash").
+		Join("left join address on address.id = tx.signer_id")
 
 	query = txFilter(query, fltrs)
-
+	query = joinCelestials(query, "signer__", "tx.signer_id")
 	err = query.Scan(ctx)
 	return txs, err
 }

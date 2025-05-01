@@ -46,6 +46,7 @@ func (app *App) Leaderboard(ctx context.Context, fltrs storage.LeaderboardFilter
 
 	query = sortScope(query, fmt.Sprintf("%s.%s", storage.ViewLeaderboard, fltrs.SortField), fltrs.Sort)
 	query = limitScope(query, fltrs.Limit)
+	query = joinCelestials(query, "bridge__", "native_bridge_id")
 
 	query = query.
 		ColumnExpr("leaderboard.*").
@@ -58,7 +59,7 @@ func (app *App) Leaderboard(ctx context.Context, fltrs storage.LeaderboardFilter
 }
 
 func (app *App) BySlug(ctx context.Context, slug string) (result storage.AppWithStats, err error) {
-	err = app.DB().NewSelect().
+	query := app.DB().NewSelect().
 		Table(storage.ViewLeaderboard).
 		ColumnExpr("leaderboard.*").
 		ColumnExpr("address.hash as bridge__hash").
@@ -66,19 +67,23 @@ func (app *App) BySlug(ctx context.Context, slug string) (result storage.AppWith
 		Join("left join address on native_bridge_id = address.id").
 		Join("left join rollup on rollup.id = rollup_id").
 		Where("slug = ?", slug).
-		Limit(1).
-		Scan(ctx, &result)
+		Limit(1)
+
+	query = joinCelestials(query, "bridge__", "native_bridge_id")
+	err = query.Scan(ctx, &result)
 	return
 }
 
 func (app *App) ByRollupId(ctx context.Context, rollupId uint64) (result storage.AppWithStats, err error) {
-	err = app.DB().NewSelect().
+	query := app.DB().NewSelect().
 		Table(storage.ViewLeaderboard).
 		ColumnExpr("leaderboard.*").
 		ColumnExpr("address.hash as bridge__hash").
 		Where("rollup_id = ?", rollupId).
 		Join("left join address on native_bridge_id = address.id").
-		Limit(1).
-		Scan(ctx, &result)
+		Limit(1)
+
+	query = joinCelestials(query, "bridge__", "native_bridge_id")
+	err = query.Scan(ctx, &result)
 	return
 }

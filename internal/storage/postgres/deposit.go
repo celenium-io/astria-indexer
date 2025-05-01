@@ -11,7 +11,7 @@ import (
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 )
 
-// Fee -
+// Deposit -
 type Deposit struct {
 	*postgres.Table[*storage.Deposit]
 }
@@ -50,7 +50,7 @@ func (d *Deposit) ByRollupId(ctx context.Context, rollupId uint64, limit, offset
 	query = offsetScope(query, offset)
 	query = sortScope(query, "time", sort)
 
-	err = d.DB().NewSelect().
+	q := d.DB().NewSelect().
 		TableExpr("(?) as deposit", query).
 		ColumnExpr("deposit.*").
 		ColumnExpr("tx.hash as tx__hash").
@@ -58,8 +58,10 @@ func (d *Deposit) ByRollupId(ctx context.Context, rollupId uint64, limit, offset
 		ColumnExpr("address.hash as bridge__address__hash").
 		Join("left join tx on tx.id = tx_id").
 		Join("left join bridge on bridge_id = bridge.id").
-		Join("left join address on address_id = address.id").
-		Scan(ctx, &deposits)
+		Join("left join address on address_id = address.id")
+
+	q = joinCelestials(q, "bridge__address__", "deposit.bridge_id")
+	err = q.Scan(ctx, &deposits)
 
 	return
 }

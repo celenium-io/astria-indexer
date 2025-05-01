@@ -7,6 +7,8 @@ import (
 	"context"
 	"encoding/hex"
 	"time"
+
+	"github.com/celenium-io/astria-indexer/internal/storage/types"
 )
 
 func (s *StorageTestSuite) TestBridgeByAddress() {
@@ -26,12 +28,27 @@ func (s *StorageTestSuite) TestBridgeByAddress() {
 
 	s.Require().NotNil(bridge.Address)
 	s.Require().Equal("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", bridge.Address.Hash)
+	s.Require().NotNil(bridge.Address.Celestials)
+	s.Require().EqualValues("name 2", bridge.Address.Celestials.Id)
+	s.Require().EqualValues("some_url", bridge.Address.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, bridge.Address.Celestials.Status)
+	s.Require().EqualValues(2, bridge.Address.Celestials.ChangeId)
 
 	s.Require().NotNil(bridge.Sudo)
 	s.Require().Equal("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", bridge.Sudo.Hash)
+	s.Require().NotNil(bridge.Sudo.Celestials)
+	s.Require().EqualValues("name 2", bridge.Sudo.Celestials.Id)
+	s.Require().EqualValues("some_url", bridge.Sudo.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, bridge.Sudo.Celestials.Status)
+	s.Require().EqualValues(2, bridge.Sudo.Celestials.ChangeId)
 
 	s.Require().NotNil(bridge.Withdrawer)
 	s.Require().Equal("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", bridge.Withdrawer.Hash)
+	s.Require().NotNil(bridge.Withdrawer.Celestials)
+	s.Require().EqualValues("name 2", bridge.Withdrawer.Celestials.Id)
+	s.Require().EqualValues("some_url", bridge.Withdrawer.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, bridge.Withdrawer.Celestials.Status)
+	s.Require().EqualValues(2, bridge.Withdrawer.Celestials.ChangeId)
 
 	s.Require().NotNil(bridge.Rollup)
 	hash, _ := hex.DecodeString("19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539")
@@ -56,12 +73,27 @@ func (s *StorageTestSuite) TestBridgeByRollup() {
 
 	s.Require().NotNil(bridge.Address)
 	s.Require().Equal("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", bridge.Address.Hash)
+	s.Require().NotNil(bridge.Address.Celestials)
+	s.Require().EqualValues("name 2", bridge.Address.Celestials.Id)
+	s.Require().EqualValues("some_url", bridge.Address.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, bridge.Address.Celestials.Status)
+	s.Require().EqualValues(2, bridge.Address.Celestials.ChangeId)
 
 	s.Require().NotNil(bridge.Sudo)
 	s.Require().Equal("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", bridge.Sudo.Hash)
+	s.Require().NotNil(bridge.Sudo.Celestials)
+	s.Require().EqualValues("name 2", bridge.Sudo.Celestials.Id)
+	s.Require().EqualValues("some_url", bridge.Sudo.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, bridge.Sudo.Celestials.Status)
+	s.Require().EqualValues(2, bridge.Sudo.Celestials.ChangeId)
 
 	s.Require().NotNil(bridge.Withdrawer)
 	s.Require().Equal("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", bridge.Withdrawer.Hash)
+	s.Require().NotNil(bridge.Withdrawer.Celestials)
+	s.Require().EqualValues("name 2", bridge.Withdrawer.Celestials.Id)
+	s.Require().EqualValues("some_url", bridge.Withdrawer.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, bridge.Withdrawer.Celestials.Status)
+	s.Require().EqualValues(2, bridge.Withdrawer.Celestials.ChangeId)
 
 	s.Require().NotNil(bridge.Rollup)
 	hash, _ := hex.DecodeString("19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539")
@@ -87,12 +119,27 @@ func (s *StorageTestSuite) TestBridgeByRoles() {
 
 	s.Require().NotNil(bridge.Address)
 	s.Require().Equal("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", bridge.Address.Hash)
+	s.Require().NotNil(bridge.Address.Celestials)
+	s.Require().EqualValues("name 2", bridge.Address.Celestials.Id)
+	s.Require().EqualValues("some_url", bridge.Address.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, bridge.Address.Celestials.Status)
+	s.Require().EqualValues(2, bridge.Address.Celestials.ChangeId)
 
 	s.Require().NotNil(bridge.Sudo)
 	s.Require().Equal("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", bridge.Sudo.Hash)
+	s.Require().NotNil(bridge.Sudo.Celestials)
+	s.Require().EqualValues("name 2", bridge.Sudo.Celestials.Id)
+	s.Require().EqualValues("some_url", bridge.Sudo.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, bridge.Sudo.Celestials.Status)
+	s.Require().EqualValues(2, bridge.Sudo.Celestials.ChangeId)
 
 	s.Require().NotNil(bridge.Withdrawer)
 	s.Require().Equal("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", bridge.Withdrawer.Hash)
+	s.Require().NotNil(bridge.Withdrawer.Celestials)
+	s.Require().EqualValues("name 2", bridge.Withdrawer.Celestials.Id)
+	s.Require().EqualValues("some_url", bridge.Withdrawer.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, bridge.Withdrawer.Celestials.Status)
+	s.Require().EqualValues(2, bridge.Withdrawer.Celestials.ChangeId)
 
 	s.Require().NotNil(bridge.Rollup)
 	hash, _ := hex.DecodeString("19ba8abb3e4b56a309df6756c47b97e298e3a72d88449d36a0fadb1ca7366539")
@@ -118,6 +165,11 @@ func (s *StorageTestSuite) TestBridgeListWithAddress() {
 
 	s.Require().NotNil(bridge.Address)
 	s.Require().Equal("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", bridge.Address.Hash)
+	s.Require().NotNil(bridge.Address.Celestials)
+	s.Require().EqualValues("name 2", bridge.Address.Celestials.Id)
+	s.Require().EqualValues("some_url", bridge.Address.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, bridge.Address.Celestials.Status)
+	s.Require().EqualValues(2, bridge.Address.Celestials.ChangeId)
 
 	s.Require().Nil(bridge.Sudo)
 	s.Require().Nil(bridge.Withdrawer)
@@ -141,6 +193,11 @@ func (s *StorageTestSuite) TestBridgeById() {
 
 	s.Require().NotNil(bridge.Address)
 	s.Require().Equal("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", bridge.Address.Hash)
+	s.Require().NotNil(bridge.Address.Celestials)
+	s.Require().EqualValues("name 2", bridge.Address.Celestials.Id)
+	s.Require().EqualValues("some_url", bridge.Address.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, bridge.Address.Celestials.Status)
+	s.Require().EqualValues(2, bridge.Address.Celestials.ChangeId)
 
 	s.Require().Nil(bridge.Sudo)
 	s.Require().Nil(bridge.Withdrawer)

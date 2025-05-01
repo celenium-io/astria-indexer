@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"time"
 
+	"github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage"
 )
 
@@ -59,6 +60,11 @@ func (s *StorageTestSuite) TestDepositByRollupId() {
 	s.Require().NotNil(deposit.Bridge)
 	s.Require().NotNil(deposit.Bridge.Address)
 	s.Require().EqualValues("astria1lm45urgugesyhaymn68xww0m6g49zreqa32w7p", deposit.Bridge.Address.Hash)
+	s.Require().NotNil(deposit.Bridge.Address.Celestials)
+	s.Require().EqualValues("name 2", deposit.Bridge.Address.Celestials.Id)
+	s.Require().EqualValues("some_url", deposit.Bridge.Address.Celestials.ImageUrl)
+	s.Require().EqualValues(types.CelestialsStatusVERIFIED, deposit.Bridge.Address.Celestials.Status)
+	s.Require().EqualValues(2, deposit.Bridge.Address.Celestials.ChangeId)
 
 	s.Require().Nil(deposit.Action)
 	s.Require().Nil(deposit.Rollup)
