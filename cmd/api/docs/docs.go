@@ -18,6 +18,68 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/address/{hash}/celestials": {
+            "get": {
+                "description": "Get list of celestial id for address",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Get list of celestial id for address",
+                "operationId": "address-celestials",
+                "parameters": [
+                    {
+                        "maxLength": 47,
+                        "minLength": 47,
+                        "type": "string",
+                        "description": "Hash",
+                        "name": "hash",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Count of requested entities",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.Celestial"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/app": {
             "get": {
                 "description": "List applications info",
@@ -131,6 +193,36 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/handler.Error"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/action/{id}": {
+            "get": {
+                "description": "Get action by internal id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "actions"
+                ],
+                "summary": "Get action by internal id",
+                "operationId": "get-action",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.Action"
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
                     },
                     "500": {
                         "description": "Internal Server Error",
@@ -1050,6 +1142,65 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/block/{height}/prices": {
+            "get": {
+                "description": "Get prices whuch was published in the block",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "block"
+                ],
+                "summary": "Get prices whuch was published in the block",
+                "operationId": "get-block-prices",
+                "parameters": [
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Block height",
+                        "name": "height",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "type": "integer",
+                        "description": "Count of requested entities",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.Price"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/block/{height}/rollup_actions": {
             "get": {
                 "description": "Get rollup actions in the block",
@@ -1191,15 +1342,15 @@ const docTemplate = `{
         },
         "/v1/block/{height}/txs": {
             "get": {
-                "description": "Get prices whuch was published in the block",
+                "description": "Get transactions are contained in the block",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "block"
                 ],
-                "summary": "Get prices whuch was published in the block",
-                "operationId": "get-block-prices",
+                "summary": "Get transactions are contained in the block",
+                "operationId": "get-block-transactions",
                 "parameters": [
                     {
                         "minimum": 1,
@@ -1229,7 +1380,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/responses.Price"
+                                "$ref": "#/definitions/responses.Tx"
                             }
                         }
                     },
@@ -3158,6 +3309,9 @@ const docTemplate = `{
                 "bridge": {
                     "$ref": "#/definitions/responses.Bridge"
                 },
+                "celestials": {
+                    "$ref": "#/definitions/responses.Celestial"
+                },
                 "first_height": {
                     "type": "integer",
                     "example": 100
@@ -3276,9 +3430,7 @@ const docTemplate = `{
                     "example": "Rollup name"
                 },
                 "native_bridge": {
-                    "type": "string",
-                    "format": "string",
-                    "example": "astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2"
+                    "$ref": "#/definitions/responses.ShortAddress"
                 },
                 "provider": {
                     "type": "string",
@@ -3481,8 +3633,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "address": {
-                    "type": "string",
-                    "example": "astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2"
+                    "$ref": "#/definitions/responses.ShortAddress"
                 },
                 "asset": {
                     "type": "string",
@@ -3497,12 +3648,10 @@ const docTemplate = `{
                     "example": "O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc="
                 },
                 "sudo": {
-                    "type": "string",
-                    "example": "astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2"
+                    "$ref": "#/definitions/responses.ShortAddress"
                 },
                 "withdrawer": {
-                    "type": "string",
-                    "example": "astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2"
+                    "$ref": "#/definitions/responses.ShortAddress"
                 }
             }
         },
@@ -3536,6 +3685,28 @@ const docTemplate = `{
                 }
             }
         },
+        "responses.Celestial": {
+            "description": "Linked celestial id",
+            "type": "object",
+            "properties": {
+                "image_url": {
+                    "type": "string",
+                    "example": "https://ipfs.io/ipfs/QmUi269vE25fagqhyMCCTNSoiW6x4LHCwwQb3keSrEXAmC"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "name"
+                },
+                "primary": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "status": {
+                    "type": "string",
+                    "example": "VERIFIED"
+                }
+            }
+        },
         "responses.Constants": {
             "type": "object",
             "properties": {
@@ -3561,9 +3732,7 @@ const docTemplate = `{
                     "example": "nria"
                 },
                 "bridge": {
-                    "type": "string",
-                    "format": "string",
-                    "example": "astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2"
+                    "$ref": "#/definitions/responses.ShortAddress"
                 },
                 "destination_chain_address": {
                     "type": "string",
@@ -3678,9 +3847,7 @@ const docTemplate = `{
                     "example": 100
                 },
                 "payer": {
-                    "type": "string",
-                    "format": "string",
-                    "example": "astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2"
+                    "$ref": "#/definitions/responses.ShortAddress"
                 },
                 "time": {
                     "type": "string",
@@ -3872,6 +4039,11 @@ const docTemplate = `{
         "responses.Price": {
             "type": "object",
             "properties": {
+                "pair": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "BTC/USDT"
+                },
                 "time": {
                     "type": "string",
                     "format": "date-time",
@@ -4010,6 +4182,18 @@ const docTemplate = `{
                     "type": "string",
                     "format": "string",
                     "example": "0.17632"
+                }
+            }
+        },
+        "responses.ShortAddress": {
+            "type": "object",
+            "properties": {
+                "celestials": {
+                    "$ref": "#/definitions/responses.Celestial"
+                },
+                "hash": {
+                    "type": "string",
+                    "example": "astria1f0dw5muma062mwfz7g46229adaycpjevnyw9fc"
                 }
             }
         },
@@ -4199,9 +4383,7 @@ const docTemplate = `{
                     "example": "652452A670018D629CC116E510BA88C1CABE061336661B1F3D206D248BD558AF"
                 },
                 "signer": {
-                    "type": "string",
-                    "format": "string",
-                    "example": "115F94D8C98FFD73FE65182611140F0EDC7C3C94"
+                    "$ref": "#/definitions/responses.ShortAddress"
                 },
                 "status": {
                     "type": "string",

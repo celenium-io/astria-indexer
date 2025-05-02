@@ -48,6 +48,8 @@ definitions:
         type: array
       bridge:
         $ref: '#/definitions/responses.Bridge'
+      celestials:
+        $ref: '#/definitions/responses.Celestial'
       first_height:
         example: 100
         type: integer
@@ -139,9 +141,7 @@ definitions:
         format: string
         type: string
       native_bridge:
-        example: astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2
-        format: string
-        type: string
+        $ref: '#/definitions/responses.ShortAddress'
       provider:
         example: name
         format: string
@@ -293,8 +293,7 @@ definitions:
     description: bridge account information
     properties:
       address:
-        example: astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2
-        type: string
+        $ref: '#/definitions/responses.ShortAddress'
       asset:
         example: nria
         type: string
@@ -305,11 +304,9 @@ definitions:
         example: O0Ia+lPYYMf3iFfxBaWXCSdlhphc6d4ZoBXINov6Tjc=
         type: string
       sudo:
-        example: astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2
-        type: string
+        $ref: '#/definitions/responses.ShortAddress'
       withdrawer:
-        example: astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2
-        type: string
+        $ref: '#/definitions/responses.ShortAddress'
     type: object
   responses.Candle:
     properties:
@@ -334,6 +331,22 @@ definitions:
         format: date-time
         type: string
     type: object
+  responses.Celestial:
+    description: Linked celestial id
+    properties:
+      image_url:
+        example: https://ipfs.io/ipfs/QmUi269vE25fagqhyMCCTNSoiW6x4LHCwwQb3keSrEXAmC
+        type: string
+      name:
+        example: name
+        type: string
+      primary:
+        example: true
+        type: boolean
+      status:
+        example: VERIFIED
+        type: string
+    type: object
   responses.Constants:
     properties:
       module:
@@ -352,9 +365,7 @@ definitions:
         format: string
         type: string
       bridge:
-        example: astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2
-        format: string
-        type: string
+        $ref: '#/definitions/responses.ShortAddress'
       destination_chain_address:
         example: 0x8bAec8896775DDa83796eda3e7E67217b5E3C5dA
         format: string
@@ -440,9 +451,7 @@ definitions:
         format: int64
         type: integer
       payer:
-        example: astria1phym4uktjn6gjle226009ge7u82w0dgtszs8x2
-        format: string
-        type: string
+        $ref: '#/definitions/responses.ShortAddress'
       time:
         example: "2023-07-04T03:10:57+00:00"
         format: date-time
@@ -589,6 +598,10 @@ definitions:
     type: object
   responses.Price:
     properties:
+      pair:
+        example: BTC/USDT
+        format: string
+        type: string
       time:
         example: "2023-07-04T03:10:57+00:00"
         format: date-time
@@ -691,6 +704,14 @@ definitions:
       value:
         example: "0.17632"
         format: string
+        type: string
+    type: object
+  responses.ShortAddress:
+    properties:
+      celestials:
+        $ref: '#/definitions/responses.Celestial'
+      hash:
+        example: astria1f0dw5muma062mwfz7g46229adaycpjevnyw9fc
         type: string
     type: object
   responses.ShortValidator:
@@ -835,9 +856,7 @@ definitions:
         format: string
         type: string
       signer:
-        example: 115F94D8C98FFD73FE65182611140F0EDC7C3C94
-        format: string
-        type: string
+        $ref: '#/definitions/responses.ShortAddress'
       status:
         example: success
         format: string
@@ -896,6 +915,49 @@ info:
   title: Swagger Astria Explorer API
   version: "1.0"
 paths:
+  /address/{hash}/celestials:
+    get:
+      description: Get list of celestial id for address
+      operationId: address-celestials
+      parameters:
+      - description: Hash
+        in: path
+        maxLength: 47
+        minLength: 47
+        name: hash
+        required: true
+        type: string
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        minimum: 1
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Celestial'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get list of celestial id for address
+      tags:
+      - address
   /app:
     get:
       description: List applications info
@@ -979,6 +1041,26 @@ paths:
       summary: Get application info
       tags:
       - applications
+  /v1/action/{id}:
+    get:
+      description: Get action by internal id
+      operationId: get-action
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Action'
+        "204":
+          description: No Content
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get action by internal id
+      tags:
+      - actions
   /v1/address:
     get:
       description: List address info
@@ -1593,6 +1675,46 @@ paths:
       summary: Get actions from begin and end of block
       tags:
       - block
+  /v1/block/{height}/prices:
+    get:
+      description: Get prices whuch was published in the block
+      operationId: get-block-prices
+      parameters:
+      - description: Block height
+        in: path
+        minimum: 1
+        name: height
+        required: true
+        type: integer
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Price'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get prices whuch was published in the block
+      tags:
+      - block
   /v1/block/{height}/rollup_actions:
     get:
       description: Get rollup actions in the block
@@ -1689,8 +1811,8 @@ paths:
       - block
   /v1/block/{height}/txs:
     get:
-      description: Get prices whuch was published in the block
-      operationId: get-block-prices
+      description: Get transactions are contained in the block
+      operationId: get-block-transactions
       parameters:
       - description: Block height
         in: path
@@ -1714,7 +1836,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/responses.Price'
+              $ref: '#/definitions/responses.Tx'
             type: array
         "400":
           description: Bad Request
@@ -1724,7 +1846,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.Error'
-      summary: Get prices whuch was published in the block
+      summary: Get transactions are contained in the block
       tags:
       - block
   /v1/block/count:

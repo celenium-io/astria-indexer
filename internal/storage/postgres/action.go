@@ -25,6 +25,22 @@ func NewAction(db *postgres.Storage) *Action {
 	}
 }
 
+func (a *Action) ById(ctx context.Context, id uint64) (action storage.ActionWithTx, err error) {
+	query := a.DB().NewSelect().
+		Model((*storage.Action)(nil)).
+		Where("id = ?", id)
+
+	err = a.DB().NewSelect().
+		TableExpr("(?) as action", query).
+		ColumnExpr("action.*").
+		ColumnExpr("fee.asset as fee__asset, fee.amount as fee__amount").
+		ColumnExpr("tx.hash as tx__hash").
+		Join("left join tx on tx.id = action.tx_id").
+		Join("left join fee on fee.action_id = action.id").
+		Scan(ctx, &action)
+	return
+}
+
 func (a *Action) ByBlock(ctx context.Context, height types.Level, limit, offset int) (actions []storage.ActionWithTx, err error) {
 	query := a.DB().NewSelect().
 		Model((*storage.Action)(nil)).

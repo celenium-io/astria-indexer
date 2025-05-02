@@ -18,6 +18,7 @@ import (
 type IAction interface {
 	storage.Table[*Action]
 
+	ById(ctx context.Context, id uint64) (ActionWithTx, error)
 	ByTxId(ctx context.Context, txId uint64, limit, offset int) ([]Action, error)
 	ByBlock(ctx context.Context, height pkgTypes.Level, limit, offset int) ([]ActionWithTx, error)
 	ByAddress(ctx context.Context, addressId uint64, filters AddressActionsFilter) ([]AddressAction, error)
