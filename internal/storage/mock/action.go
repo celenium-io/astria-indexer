@@ -123,6 +123,45 @@ func (c *MockIActionByBlockCall) DoAndReturn(f func(context.Context, types.Level
 	return c
 }
 
+// ById mocks base method.
+func (m *MockIAction) ById(ctx context.Context, id uint64) (storage.ActionWithTx, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ById", ctx, id)
+	ret0, _ := ret[0].(storage.ActionWithTx)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ById indicates an expected call of ById.
+func (mr *MockIActionMockRecorder) ById(ctx, id any) *MockIActionByIdCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ById", reflect.TypeOf((*MockIAction)(nil).ById), ctx, id)
+	return &MockIActionByIdCall{Call: call}
+}
+
+// MockIActionByIdCall wrap *gomock.Call
+type MockIActionByIdCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockIActionByIdCall) Return(arg0 storage.ActionWithTx, arg1 error) *MockIActionByIdCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockIActionByIdCall) Do(f func(context.Context, uint64) (storage.ActionWithTx, error)) *MockIActionByIdCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockIActionByIdCall) DoAndReturn(f func(context.Context, uint64) (storage.ActionWithTx, error)) *MockIActionByIdCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // ByRollup mocks base method.
 func (m *MockIAction) ByRollup(ctx context.Context, rollupId uint64, limit, offset int, sort storage0.SortOrder) ([]storage.RollupAction, error) {
 	m.ctrl.T.Helper()

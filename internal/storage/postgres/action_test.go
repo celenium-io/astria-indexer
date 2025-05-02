@@ -32,6 +32,24 @@ func (s *StorageTestSuite) TestActionByBlock() {
 	s.Require().NotEmpty(action.Tx.Hash)
 }
 
+func (s *StorageTestSuite) TestActionById() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	action, err := s.Action.ById(ctx, 1)
+	s.Require().NoError(err)
+
+	s.Require().EqualValues(7316, action.Height)
+	s.Require().EqualValues(1, action.Id)
+	s.Require().EqualValues(0, action.Position)
+	s.Require().EqualValues(1, action.TxId)
+	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Type)
+	s.Require().NotNil(action.Data)
+	s.Require().NotNil(action.Fee)
+	s.Require().NotNil(action.Tx)
+	s.Require().NotNil(action.Tx.Hash)
+}
+
 func (s *StorageTestSuite) TestActionByTxId() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()

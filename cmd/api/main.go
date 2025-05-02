@@ -156,6 +156,7 @@ func main() {
 			AsHandler(handler.NewTxHandler),
 			AsHandler(handler.NewValidatorHandler),
 			AsHandler(handler.NewPriceHandler),
+			AsHandler(handler.NewActionHandler),
 		),
 		fx.Invoke(func(*App) {}),
 	)
