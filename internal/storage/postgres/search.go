@@ -11,6 +11,7 @@ import (
 
 	"github.com/celenium-io/astria-indexer/internal/astria"
 	"github.com/celenium-io/astria-indexer/internal/storage"
+	celestials "github.com/celenium-io/celestial-module/pkg/storage"
 	"github.com/dipdup-net/go-lib/database"
 	"github.com/dipdup-net/indexer-sdk/pkg/storage/postgres"
 )
@@ -44,9 +45,15 @@ func (s *Search) Search(ctx context.Context, query string) (results []storage.Se
 		ColumnExpr("id, name as value, 'app' as type").
 		Where("name ILIKE ?", text)
 
+	celestialsQuery := s.db.DB().NewSelect().
+		Model((*celestials.Celestial)(nil)).
+		ColumnExpr("address_id as id, id as value, 'celestial' as type").
+		Where("id ILIKE ?", text)
+
 	searchQuery = searchQuery.
 		UnionAll(bridgeQuery).
-		UnionAll(appQuery)
+		UnionAll(appQuery).
+		UnionAll(celestialsQuery)
 
 	if height, err := strconv.ParseInt(query, 10, 64); err == nil {
 		heightQuery := s.db.DB().NewSelect().
