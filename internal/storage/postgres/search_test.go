@@ -147,3 +147,17 @@ func (s *StorageTestSuite) TestSearchApp() {
 	s.Require().EqualValues("app", result.Type)
 	s.Require().EqualValues(1, result.Id)
 }
+
+func (s *StorageTestSuite) TestSearchCelestials() {
+	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer ctxCancel()
+
+	results, err := s.Search.Search(ctx, "name 4")
+	s.Require().NoError(err)
+	s.Require().Len(results, 1)
+
+	result := results[0]
+	s.Require().EqualValues("name 4", result.Value)
+	s.Require().EqualValues("celestial", result.Type)
+	s.Require().EqualValues(4, result.Id)
+}

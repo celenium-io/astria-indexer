@@ -8,6 +8,7 @@ import (
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
+	celestials "github.com/celenium-io/celestial-module/pkg/storage"
 	"github.com/labstack/echo/v4"
 )
 
@@ -20,6 +21,7 @@ type SearchHandler struct {
 	rollups       storage.IRollup
 	bridges       storage.IBridge
 	validators    storage.IValidator
+	celestials    celestials.ICelestial
 	app           storage.IApp
 }
 
@@ -32,6 +34,7 @@ func NewSearchHandler(
 	rollups storage.IRollup,
 	bridges storage.IBridge,
 	validators storage.IValidator,
+	celestials celestials.ICelestial,
 	app storage.IApp,
 ) *SearchHandler {
 	return &SearchHandler{
@@ -43,6 +46,7 @@ func NewSearchHandler(
 		rollups:       rollups,
 		bridges:       bridges,
 		validators:    validators,
+		celestials:    celestials,
 		app:           app,
 	}
 }
@@ -128,6 +132,22 @@ func (s *SearchHandler) Search(c echo.Context) error {
 				return handleError(c, err, s.address)
 			}
 			body = responses.NewApp(*app)
+		case "celestial":
+			address, err := s.address.GetByID(c.Request().Context(), results[i].Id)
+			if err != nil {
+				return handleError(c, err, s.address)
+			}
+			sudoAddress, _ := s.constantCache.Get(types.ModuleNameGeneric, "authority_sudo_address")
+			ibcSudoAddress, _ := s.constantCache.Get(types.ModuleNameGeneric, "ibc_sudo_address")
+
+			celestials, err := s.celestials.ById(c.Request().Context(), results[i].Value)
+			if err != nil {
+				return handleError(c, err, s.address)
+			}
+			address.Celestials = &celestials
+
+			body = responses.NewAddress(*address, nil, sudoAddress, ibcSudoAddress)
+			results[i].Type = "address"
 		}
 
 		response[i] = responses.NewSearchResult(results[i].Value, results[i].Type, body)

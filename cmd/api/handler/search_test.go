@@ -15,6 +15,7 @@ import (
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/mock"
+	celestialMock "github.com/celenium-io/celestial-module/pkg/storage/mock"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"
@@ -30,6 +31,7 @@ type SearchTestSuite struct {
 	rollups    *mock.MockIRollup
 	validators *mock.MockIValidator
 	bridges    *mock.MockIBridge
+	celestials *celestialMock.MockICelestial
 	app        *mock.MockIApp
 	echo       *echo.Echo
 	handler    *SearchHandler
@@ -48,9 +50,10 @@ func (s *SearchTestSuite) SetupSuite() {
 	s.rollups = mock.NewMockIRollup(s.ctrl)
 	s.validators = mock.NewMockIValidator(s.ctrl)
 	s.bridges = mock.NewMockIBridge(s.ctrl)
+	s.celestials = celestialMock.NewMockICelestial(s.ctrl)
 	s.app = mock.NewMockIApp(s.ctrl)
 	cc := cache.NewConstantsCache(nil)
-	s.handler = NewSearchHandler(cc, s.search, s.address, s.blocks, s.txs, s.rollups, s.bridges, s.validators, s.app)
+	s.handler = NewSearchHandler(cc, s.search, s.address, s.blocks, s.txs, s.rollups, s.bridges, s.validators, s.celestials, s.app)
 }
 
 // TearDownSuite -
@@ -342,5 +345,49 @@ func (s *SearchTestSuite) TestSearchApp() {
 	result := results[0]
 	s.Require().Equal("app", result.Type)
 	s.Require().Equal("test app", result.Value)
+	s.Require().NotNil(result.Body)
+}
+
+func (s *SearchTestSuite) TestSearchCelestial() {
+	q := make(url.Values)
+	q.Add("query", "celestial")
+
+	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/search")
+
+	s.search.EXPECT().
+		Search(gomock.Any(), "celestial").
+		Return([]storage.SearchResult{
+			{
+				Type:  "celestial",
+				Value: "celestial 1",
+				Id:    1,
+			},
+		}, nil).
+		Times(1)
+
+	s.address.EXPECT().
+		GetByID(gomock.Any(), uint64(1)).
+		Return(&testAddress, nil).
+		Times(1)
+
+	s.celestials.EXPECT().
+		ById(gomock.Any(), "celestial 1").
+		Return(*testAddress.Celestials, nil).
+		Times(1)
+
+	s.Require().NoError(s.handler.Search(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var results []responses.SearchResult
+	err := json.NewDecoder(rec.Body).Decode(&results)
+	s.Require().NoError(err)
+	s.Require().Len(results, 1)
+
+	result := results[0]
+	s.Require().Equal("address", result.Type)
+	s.Require().Equal("celestial 1", result.Value)
 	s.Require().NotNil(result.Body)
 }
