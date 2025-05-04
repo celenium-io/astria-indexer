@@ -14,14 +14,15 @@ import (
 )
 
 type BlockHandler struct {
-	block       storage.IBlock
-	blockStats  storage.IBlockStats
-	txs         storage.ITx
-	actions     storage.IAction
-	rollups     storage.IRollup
-	price       storage.IPrice
-	state       storage.IState
-	indexerName string
+	block                  storage.IBlock
+	blockStats             storage.IBlockStats
+	txs                    storage.ITx
+	actions                storage.IAction
+	rollups                storage.IRollup
+	price                  storage.IPrice
+	state                  storage.IState
+	defaultMiddlewareCache echo.MiddlewareFunc
+	indexerName            string
 }
 
 func NewBlockHandler(
@@ -32,17 +33,19 @@ func NewBlockHandler(
 	rollups storage.IRollup,
 	price storage.IPrice,
 	state storage.IState,
+	defaultMiddlewareCache echo.MiddlewareFunc,
 	indexerName string,
 ) *BlockHandler {
 	return &BlockHandler{
-		block:       block,
-		blockStats:  blockStats,
-		txs:         txs,
-		actions:     actions,
-		rollups:     rollups,
-		price:       price,
-		state:       state,
-		indexerName: indexerName,
+		block:                  block,
+		blockStats:             blockStats,
+		txs:                    txs,
+		actions:                actions,
+		rollups:                rollups,
+		price:                  price,
+		state:                  state,
+		defaultMiddlewareCache: defaultMiddlewareCache,
+		indexerName:            indexerName,
 	}
 }
 
@@ -53,15 +56,15 @@ func (handler *BlockHandler) InitRoutes(srvr *echo.Group) {
 	{
 		blockGroup.GET("", handler.List)
 		blockGroup.GET("/count", handler.Count)
-		heightGroup := blockGroup.Group("/:height")
+		heightGroup := blockGroup.Group("/:height", handler.defaultMiddlewareCache)
 		{
-			heightGroup.GET("", handler.Get)
-			heightGroup.GET("/actions", handler.GetActions)
-			heightGroup.GET("/txs", handler.GetTransactions)
-			heightGroup.GET("/stats", handler.GetStats)
-			heightGroup.GET("/rollup_actions", handler.GetRollupActions)
-			heightGroup.GET("/rollup_actions/count", handler.GetRollupsActionsCount)
-			heightGroup.GET("/prices", handler.GetPrices)
+			heightGroup.GET("", handler.Get, handler.defaultMiddlewareCache)
+			heightGroup.GET("/actions", handler.GetActions, handler.defaultMiddlewareCache)
+			heightGroup.GET("/txs", handler.GetTransactions, handler.defaultMiddlewareCache)
+			heightGroup.GET("/stats", handler.GetStats, handler.defaultMiddlewareCache)
+			heightGroup.GET("/rollup_actions", handler.GetRollupActions, handler.defaultMiddlewareCache)
+			heightGroup.GET("/rollup_actions/count", handler.GetRollupsActionsCount, handler.defaultMiddlewareCache)
+			heightGroup.GET("/prices", handler.GetPrices, handler.defaultMiddlewareCache)
 		}
 	}
 }

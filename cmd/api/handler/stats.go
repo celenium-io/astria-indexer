@@ -13,14 +13,20 @@ import (
 )
 
 type StatsHandler struct {
-	repo    storage.IStats
-	rollups storage.IRollup
+	repo                storage.IStats
+	rollups             storage.IRollup
+	statMiddlewareCache echo.MiddlewareFunc
 }
 
-func NewStatsHandler(repo storage.IStats, rollups storage.IRollup) *StatsHandler {
+func NewStatsHandler(
+	repo storage.IStats,
+	rollups storage.IRollup,
+	statMiddlewareCache echo.MiddlewareFunc,
+) *StatsHandler {
 	return &StatsHandler{
-		repo:    repo,
-		rollups: rollups,
+		repo:                repo,
+		rollups:             rollups,
+		statMiddlewareCache: statMiddlewareCache,
 	}
 }
 
@@ -32,21 +38,21 @@ func (sh *StatsHandler) InitRoutes(srvr *echo.Group) {
 		stats.GET("/summary", sh.Summary)
 		stats.GET("/summary/:timeframe", sh.SummaryTimeframe)
 		stats.GET("/summary/active_addresses_count", sh.ActiveAddressesCount)
-		stats.GET("/series/:name/:timeframe", sh.Series)
+		stats.GET("/series/:name/:timeframe", sh.Series, sh.statMiddlewareCache)
 
 		rollup := stats.Group("/rollup")
 		{
-			rollup.GET("/series/:hash/:name/:timeframe", sh.RollupSeries)
+			rollup.GET("/series/:hash/:name/:timeframe", sh.RollupSeries, sh.statMiddlewareCache)
 		}
 
 		fee := stats.Group("/fee")
 		{
-			fee.GET("/summary", sh.FeeSummary)
+			fee.GET("/summary", sh.FeeSummary, sh.statMiddlewareCache)
 		}
 
 		token := stats.Group("/token")
 		{
-			token.GET("/transfer_distribution", sh.TokenTransferDistribution)
+			token.GET("/transfer_distribution", sh.TokenTransferDistribution, sh.statMiddlewareCache)
 		}
 	}
 }

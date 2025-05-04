@@ -256,12 +256,3 @@ func newWebsocket(dispatcher *bus.Dispatcher) *websocket.Manager {
 	wsManager := websocket.NewManager(observer)
 	return wsManager
 }
-
-func newEndpointCache(e *echo.Echo, dispatcher *bus.Dispatcher) *cache.Cache {
-	observer := dispatcher.Observe(storage.ChannelHead)
-	endpointCache := cache.NewCache(cache.Config{
-		MaxEntitiesCount: 1000,
-	}, observer)
-	e.Use(cache.Middleware(endpointCache, cacheSkipper))
-	return endpointCache
-}

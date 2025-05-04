@@ -15,12 +15,13 @@ import (
 )
 
 type TxHandler struct {
-	tx          storage.ITx
-	actions     storage.IAction
-	rollups     storage.IRollup
-	fees        storage.IFee
-	state       storage.IState
-	indexerName string
+	tx                     storage.ITx
+	actions                storage.IAction
+	rollups                storage.IRollup
+	fees                   storage.IFee
+	state                  storage.IState
+	defaultMiddlewareCache echo.MiddlewareFunc
+	indexerName            string
 }
 
 func NewTxHandler(
@@ -29,15 +30,17 @@ func NewTxHandler(
 	rollups storage.IRollup,
 	fees storage.IFee,
 	state storage.IState,
+	defaultMiddlewareCache echo.MiddlewareFunc,
 	indexerName string,
 ) *TxHandler {
 	return &TxHandler{
-		tx:          tx,
-		actions:     actions,
-		rollups:     rollups,
-		fees:        fees,
-		state:       state,
-		indexerName: indexerName,
+		tx:                     tx,
+		actions:                actions,
+		rollups:                rollups,
+		fees:                   fees,
+		state:                  state,
+		defaultMiddlewareCache: defaultMiddlewareCache,
+		indexerName:            indexerName,
 	}
 }
 
@@ -48,13 +51,13 @@ func (handler *TxHandler) InitRoutes(srvr *echo.Group) {
 	{
 		txGroup.GET("", handler.List)
 		txGroup.GET("/count", handler.Count)
-		hashGroup := txGroup.Group("/:hash")
+		hashGroup := txGroup.Group("/:hash", handler.defaultMiddlewareCache)
 		{
-			hashGroup.GET("", handler.Get)
-			hashGroup.GET("/actions", handler.GetActions)
-			hashGroup.GET("/fees", handler.GetFees)
-			hashGroup.GET("/rollup_actions", handler.RollupActions)
-			hashGroup.GET("/rollup_actions/count", handler.RollupActionsCount)
+			hashGroup.GET("", handler.Get, handler.defaultMiddlewareCache)
+			hashGroup.GET("/actions", handler.GetActions, handler.defaultMiddlewareCache)
+			hashGroup.GET("/fees", handler.GetFees, handler.defaultMiddlewareCache)
+			hashGroup.GET("/rollup_actions", handler.RollupActions, handler.defaultMiddlewareCache)
+			hashGroup.GET("/rollup_actions/count", handler.RollupActionsCount, handler.defaultMiddlewareCache)
 		}
 	}
 }

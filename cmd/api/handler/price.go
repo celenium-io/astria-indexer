@@ -12,14 +12,20 @@ import (
 )
 
 type PriceHandler struct {
-	prices storage.IPrice
-	market storage.IMarket
+	prices              storage.IPrice
+	market              storage.IMarket
+	statMiddlewareCache echo.MiddlewareFunc
 }
 
-func NewPriceHandler(prices storage.IPrice, market storage.IMarket) *PriceHandler {
+func NewPriceHandler(
+	prices storage.IPrice,
+	market storage.IMarket,
+	statMiddlewareCache echo.MiddlewareFunc,
+) *PriceHandler {
 	return &PriceHandler{
-		prices: prices,
-		market: market,
+		prices:              prices,
+		market:              market,
+		statMiddlewareCache: statMiddlewareCache,
 	}
 }
 
@@ -33,7 +39,7 @@ func (handler *PriceHandler) InitRoutes(srvr *echo.Group) {
 		pair := price.Group("/:pair")
 		{
 			pair.GET("", handler.Last)
-			pair.GET("/:timeframe", handler.Series)
+			pair.GET("/:timeframe", handler.Series, handler.statMiddlewareCache)
 		}
 	}
 }

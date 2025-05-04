@@ -12,12 +12,17 @@ import (
 )
 
 type ConstantHandler struct {
-	constants storage.IConstant
+	constants              storage.IConstant
+	defaultMiddlewareCache echo.MiddlewareFunc
 }
 
-func NewConstantHandler(constants storage.IConstant) *ConstantHandler {
+func NewConstantHandler(
+	constants storage.IConstant,
+	defaultMiddlewareCache echo.MiddlewareFunc,
+) *ConstantHandler {
 	return &ConstantHandler{
-		constants: constants,
+		constants:              constants,
+		defaultMiddlewareCache: defaultMiddlewareCache,
 	}
 }
 
@@ -25,7 +30,7 @@ var _ Handler = (*ConstantHandler)(nil)
 
 func (handler *ConstantHandler) InitRoutes(srvr *echo.Group) {
 	srvr.GET("/constants", handler.Get)
-	srvr.GET("/enums", handler.Enums)
+	srvr.GET("/enums", handler.Enums, handler.defaultMiddlewareCache)
 }
 
 // Get godoc

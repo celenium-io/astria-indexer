@@ -12,19 +12,24 @@ import (
 )
 
 type ActionHandler struct {
-	actions storage.IAction
+	actions                storage.IAction
+	defaultMiddlewareCache echo.MiddlewareFunc
 }
 
-func NewActionHandler(actions storage.IAction) *ActionHandler {
+func NewActionHandler(
+	actions storage.IAction,
+	defaultMiddlewareCache echo.MiddlewareFunc,
+) *ActionHandler {
 	return &ActionHandler{
-		actions: actions,
+		actions:                actions,
+		defaultMiddlewareCache: defaultMiddlewareCache,
 	}
 }
 
 var _ Handler = (*ActionHandler)(nil)
 
 func (handler *ActionHandler) InitRoutes(srvr *echo.Group) {
-	srvr.GET("/action/:id", handler.Get)
+	srvr.GET("/action/:id", handler.Get, handler.defaultMiddlewareCache)
 }
 
 type getActionRequest struct {

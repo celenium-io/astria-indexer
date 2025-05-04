@@ -42,14 +42,28 @@ func main() {
 			loadConfig,
 			databaseConfig,
 			indexerName,
-
+			fx.Annotate(
+				cacheUrl,
+				fx.ResultTags(`name:"url"`),
+			),
 			newProflier,
 			fx.Annotate(
 				newServer,
 				fx.ParamTags("", "", `group:"handlers"`),
 			),
 			bus.NewDispatcher,
-			newEndpointCache,
+			fx.Annotate(
+				initCache,
+				fx.ParamTags(`name:"url"`),
+			),
+			fx.Annotate(
+				newDefaultMiddlewareCache,
+				fx.ResultTags(`name:"defaultMiddlewareCache"`),
+			),
+			fx.Annotate(
+				newStatMiddlewareCache,
+				fx.ResultTags(`name:"statMiddlewareCache"`),
+			),
 			newConstantCache,
 			newWebsocket,
 			newApp,
@@ -147,16 +161,16 @@ func main() {
 			AsHandler(handler.NewAddressHandler),
 			AsHandler(handler.NewAppHandler),
 			AsHandler(handler.NewAssetHandler),
-			AsHandler(handler.NewBlockHandler),
-			AsHandler(handler.NewConstantHandler),
 			AsHandler(handler.NewRollupHandler),
 			AsHandler(handler.NewSearchHandler),
 			AsHandler(handler.NewStateHandler),
-			AsHandler(handler.NewStatsHandler),
-			AsHandler(handler.NewTxHandler),
 			AsHandler(handler.NewValidatorHandler),
-			AsHandler(handler.NewPriceHandler),
-			AsHandler(handler.NewActionHandler),
+			AsHandlerWithParams(handler.NewBlockHandler, ``, ``, ``, ``, ``, ``, ``, `name:"defaultMiddlewareCache"`, ``),
+			AsHandlerWithParams(handler.NewConstantHandler, ``, `name:"defaultMiddlewareCache"`),
+			AsHandlerWithParams(handler.NewStatsHandler, ``, ``, `name:"statMiddlewareCache"`),
+			AsHandlerWithParams(handler.NewTxHandler, ``, ``, ``, ``, ``, `name:"defaultMiddlewareCache"`, ``),
+			AsHandlerWithParams(handler.NewPriceHandler, ``, ``, `name:"statMiddlewareCache"`),
+			AsHandlerWithParams(handler.NewActionHandler, ``, `name:"defaultMiddlewareCache"`),
 		),
 		fx.Invoke(func(*App) {}),
 	)
@@ -182,5 +196,14 @@ func AsHandler(f any) any {
 		f,
 		fx.As(new(handler.Handler)),
 		fx.ResultTags(`group:"handlers"`),
+	)
+}
+
+func AsHandlerWithParams(f any, paramTags ...string) any {
+	return fx.Annotate(
+		f,
+		fx.As(new(handler.Handler)),
+		fx.ResultTags(`group:"handlers"`),
+		fx.ParamTags(paramTags...),
 	)
 }
