@@ -26,10 +26,15 @@ type ApiConfig struct {
 	BlobReceiver   string  `validate:"required"               yaml:"blob_receiver"`
 	SentryDsn      string  `validate:"omitempty"              yaml:"sentry_dsn"`
 	Websocket      bool    `validate:"omitempty"              yaml:"websocket"`
+	Cache          string  `validate:"omitempty,url"          yaml:"cache"`
 }
 
 func indexerName(cfg *Config) string {
 	return cfg.Indexer.Name
+}
+
+func cacheUrl(cfg *Config) string {
+	return cfg.ApiConfig.Cache
 }
 
 func databaseConfig(cfg *Config) config.Database {

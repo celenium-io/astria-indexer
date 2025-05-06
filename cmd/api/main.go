@@ -5,22 +5,22 @@ package main
 
 import (
 	"context"
+	"go.uber.org/fx"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	celestialsStorage "github.com/celenium-io/celestial-module/pkg/storage"
-
 	"github.com/celenium-io/astria-indexer/cmd/api/bus"
+	"github.com/celenium-io/astria-indexer/cmd/api/cache"
 	_ "github.com/celenium-io/astria-indexer/cmd/api/docs"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
+	celestialsStorage "github.com/celenium-io/celestial-module/pkg/storage"
 	"github.com/ipfans/fxlogger"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"go.uber.org/fx"
 )
 
 var rootCmd = &cobra.Command{
@@ -42,14 +42,20 @@ func main() {
 			loadConfig,
 			databaseConfig,
 			indexerName,
-
+			fx.Annotate(
+				cacheUrl,
+				fx.ResultTags(`name:"cache_url"`),
+			),
 			newProflier,
 			fx.Annotate(
 				newServer,
 				fx.ParamTags("", "", `group:"handlers"`),
 			),
 			bus.NewDispatcher,
-			newEndpointCache,
+			fx.Annotate(
+				cache.InitCache,
+				fx.ParamTags(`name:"cache_url"`),
+			),
 			newConstantCache,
 			newWebsocket,
 			newApp,
@@ -147,14 +153,14 @@ func main() {
 			AsHandler(handler.NewAddressHandler),
 			AsHandler(handler.NewAppHandler),
 			AsHandler(handler.NewAssetHandler),
-			AsHandler(handler.NewBlockHandler),
-			AsHandler(handler.NewConstantHandler),
 			AsHandler(handler.NewRollupHandler),
 			AsHandler(handler.NewSearchHandler),
 			AsHandler(handler.NewStateHandler),
+			AsHandler(handler.NewValidatorHandler),
+			AsHandler(handler.NewBlockHandler),
+			AsHandler(handler.NewConstantHandler),
 			AsHandler(handler.NewStatsHandler),
 			AsHandler(handler.NewTxHandler),
-			AsHandler(handler.NewValidatorHandler),
 			AsHandler(handler.NewPriceHandler),
 			AsHandler(handler.NewActionHandler),
 		),

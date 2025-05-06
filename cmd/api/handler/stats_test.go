@@ -37,7 +37,7 @@ func (s *StatsTestSuite) SetupSuite() {
 	s.ctrl = gomock.NewController(s.T())
 	s.stats = mock.NewMockIStats(s.ctrl)
 	s.rollups = mock.NewMockIRollup(s.ctrl)
-	s.handler = NewStatsHandler(s.stats, s.rollups)
+	s.handler = NewStatsHandler(s.stats, s.rollups, nil)
 }
 
 // TearDownSuite -

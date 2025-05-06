@@ -24,7 +24,7 @@ type App struct {
 	wsManager     *websocket.Manager
 	dispatcher    *bus.Dispatcher
 	constantCache *cache.ConstantsCache
-	endpointCache *cache.Cache
+	ttlCache      cache.ICache
 	prscp         *pyroscope.Profiler
 	constants     storage.IConstant
 }
@@ -37,7 +37,7 @@ func newApp(
 	wsManager *websocket.Manager,
 	dispatcher *bus.Dispatcher,
 	constantCache *cache.ConstantsCache,
-	endpointCache *cache.Cache,
+	ttlCache cache.ICache,
 	prscp *pyroscope.Profiler,
 	constants storage.IConstant,
 ) *App {
@@ -47,7 +47,7 @@ func newApp(
 		wsManager:     wsManager,
 		dispatcher:    dispatcher,
 		constantCache: constantCache,
-		endpointCache: endpointCache,
+		ttlCache:      ttlCache,
 		prscp:         prscp,
 		constants:     constants,
 	}
@@ -56,7 +56,6 @@ func newApp(
 		OnStart: func(ctx context.Context) error {
 			dispatcher.Start(ctx)
 			wsManager.Start(ctx)
-			endpointCache.Start(ctx)
 			if err := constantCache.Start(ctx, app.constants); err != nil {
 				return errors.Wrap(err, "start constant cache")
 			}
@@ -72,8 +71,8 @@ func newApp(
 					return errors.Wrap(err, "closing websocket manager")
 				}
 			}
-			if app.endpointCache != nil {
-				if err := app.endpointCache.Close(); err != nil {
+			if app.ttlCache != nil {
+				if err := app.ttlCache.Close(); err != nil {
 					return errors.Wrap(err, "closing cache")
 				}
 			}

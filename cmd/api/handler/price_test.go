@@ -38,7 +38,7 @@ func (s *PriceTestSuite) SetupSuite() {
 	s.ctrl = gomock.NewController(s.T())
 	s.prices = mock.NewMockIPrice(s.ctrl)
 	s.markets = mock.NewMockIMarket(s.ctrl)
-	s.handler = NewPriceHandler(s.prices, s.markets)
+	s.handler = NewPriceHandler(s.prices, s.markets, nil)
 }
 
 // TearDownSuite -

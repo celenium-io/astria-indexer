@@ -6,10 +6,10 @@ package handler
 import (
 	"net/http"
 
-	"github.com/celenium-io/astria-indexer/pkg/types"
-
+	"github.com/celenium-io/astria-indexer/cmd/api/cache"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/labstack/echo/v4"
 )
 
@@ -21,6 +21,7 @@ type BlockHandler struct {
 	rollups     storage.IRollup
 	price       storage.IPrice
 	state       storage.IState
+	cache       cache.ICache
 	indexerName string
 }
 
@@ -32,6 +33,7 @@ func NewBlockHandler(
 	rollups storage.IRollup,
 	price storage.IPrice,
 	state storage.IState,
+	cache cache.ICache,
 	indexerName string,
 ) *BlockHandler {
 	return &BlockHandler{
@@ -42,6 +44,7 @@ func NewBlockHandler(
 		rollups:     rollups,
 		price:       price,
 		state:       state,
+		cache:       cache,
 		indexerName: indexerName,
 	}
 }
@@ -49,19 +52,21 @@ func NewBlockHandler(
 var _ Handler = (*BlockHandler)(nil)
 
 func (handler *BlockHandler) InitRoutes(srvr *echo.Group) {
+	middlewareCache := cache.NewDefaultMiddlewareCache(handler.cache)
+
 	blockGroup := srvr.Group("/block")
 	{
 		blockGroup.GET("", handler.List)
 		blockGroup.GET("/count", handler.Count)
-		heightGroup := blockGroup.Group("/:height")
+		heightGroup := blockGroup.Group("/:height", middlewareCache)
 		{
-			heightGroup.GET("", handler.Get)
-			heightGroup.GET("/actions", handler.GetActions)
-			heightGroup.GET("/txs", handler.GetTransactions)
-			heightGroup.GET("/stats", handler.GetStats)
-			heightGroup.GET("/rollup_actions", handler.GetRollupActions)
-			heightGroup.GET("/rollup_actions/count", handler.GetRollupsActionsCount)
-			heightGroup.GET("/prices", handler.GetPrices)
+			heightGroup.GET("", handler.Get, middlewareCache)
+			heightGroup.GET("/actions", handler.GetActions, middlewareCache)
+			heightGroup.GET("/txs", handler.GetTransactions, middlewareCache)
+			heightGroup.GET("/stats", handler.GetStats, middlewareCache)
+			heightGroup.GET("/rollup_actions", handler.GetRollupActions, middlewareCache)
+			heightGroup.GET("/rollup_actions/count", handler.GetRollupsActionsCount, middlewareCache)
+			heightGroup.GET("/prices", handler.GetPrices, middlewareCache)
 		}
 	}
 }

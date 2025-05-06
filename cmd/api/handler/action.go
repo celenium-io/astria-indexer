@@ -6,6 +6,7 @@ package handler
 import (
 	"net/http"
 
+	"github.com/celenium-io/astria-indexer/cmd/api/cache"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/labstack/echo/v4"
@@ -13,18 +14,25 @@ import (
 
 type ActionHandler struct {
 	actions storage.IAction
+	cache   cache.ICache
 }
 
-func NewActionHandler(actions storage.IAction) *ActionHandler {
+func NewActionHandler(
+	actions storage.IAction,
+	cache cache.ICache,
+) *ActionHandler {
 	return &ActionHandler{
 		actions: actions,
+		cache:   cache,
 	}
 }
 
 var _ Handler = (*ActionHandler)(nil)
 
 func (handler *ActionHandler) InitRoutes(srvr *echo.Group) {
-	srvr.GET("/action/:id", handler.Get)
+	middlewareCache := cache.NewStatMiddlewareCache(handler.cache)
+
+	srvr.GET("/action/:id", handler.Get, middlewareCache)
 }
 
 type getActionRequest struct {

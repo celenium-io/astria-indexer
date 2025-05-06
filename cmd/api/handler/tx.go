@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/celenium-io/astria-indexer/cmd/api/cache"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
@@ -20,6 +21,7 @@ type TxHandler struct {
 	rollups     storage.IRollup
 	fees        storage.IFee
 	state       storage.IState
+	cache       cache.ICache
 	indexerName string
 }
 
@@ -29,6 +31,7 @@ func NewTxHandler(
 	rollups storage.IRollup,
 	fees storage.IFee,
 	state storage.IState,
+	cache cache.ICache,
 	indexerName string,
 ) *TxHandler {
 	return &TxHandler{
@@ -37,6 +40,7 @@ func NewTxHandler(
 		rollups:     rollups,
 		fees:        fees,
 		state:       state,
+		cache:       cache,
 		indexerName: indexerName,
 	}
 }
@@ -44,17 +48,19 @@ func NewTxHandler(
 var _ Handler = (*TxHandler)(nil)
 
 func (handler *TxHandler) InitRoutes(srvr *echo.Group) {
+	middlewareCache := cache.NewDefaultMiddlewareCache(handler.cache)
+
 	txGroup := srvr.Group("/tx")
 	{
 		txGroup.GET("", handler.List)
 		txGroup.GET("/count", handler.Count)
-		hashGroup := txGroup.Group("/:hash")
+		hashGroup := txGroup.Group("/:hash", middlewareCache)
 		{
-			hashGroup.GET("", handler.Get)
-			hashGroup.GET("/actions", handler.GetActions)
-			hashGroup.GET("/fees", handler.GetFees)
-			hashGroup.GET("/rollup_actions", handler.RollupActions)
-			hashGroup.GET("/rollup_actions/count", handler.RollupActionsCount)
+			hashGroup.GET("", handler.Get, middlewareCache)
+			hashGroup.GET("/actions", handler.GetActions, middlewareCache)
+			hashGroup.GET("/fees", handler.GetFees, middlewareCache)
+			hashGroup.GET("/rollup_actions", handler.RollupActions, middlewareCache)
+			hashGroup.GET("/rollup_actions/count", handler.RollupActionsCount, middlewareCache)
 		}
 	}
 }
