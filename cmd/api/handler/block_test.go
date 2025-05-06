@@ -162,7 +162,7 @@ func (s *BlockTestSuite) SetupSuite() {
 	s.actions = mock.NewMockIAction(s.ctrl)
 	s.price = mock.NewMockIPrice(s.ctrl)
 	s.state = mock.NewMockIState(s.ctrl)
-	s.handler = NewBlockHandler(s.blocks, s.blockStats, s.txs, s.actions, s.rollups, s.price, s.state, testIndexerName)
+	s.handler = NewBlockHandler(s.blocks, s.blockStats, s.txs, s.actions, s.rollups, s.price, s.state, nil, testIndexerName)
 }
 
 // TearDownSuite -

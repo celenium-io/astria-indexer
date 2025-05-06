@@ -33,7 +33,7 @@ func (s *ConstantTestSuite) SetupSuite() {
 	s.echo.Validator = NewApiValidator()
 	s.ctrl = gomock.NewController(s.T())
 	s.constants = mock.NewMockIConstant(s.ctrl)
-	s.handler = NewConstantHandler(s.constants)
+	s.handler = NewConstantHandler(s.constants, nil)
 }
 
 // TearDownSuite -

@@ -4,7 +4,6 @@
 package main
 
 import (
-	"net/http"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -32,20 +31,4 @@ func gzipSkipper(c echo.Context) bool {
 		return true
 	}
 	return websocketSkipper(c)
-}
-
-func cacheSkipper(c echo.Context) bool {
-	if c.Request().Method != http.MethodGet {
-		return true
-	}
-	if websocketSkipper(c) {
-		return true
-	}
-	if strings.Contains(c.Request().URL.Path, "metrics") {
-		return true
-	}
-	if strings.Contains(c.Request().URL.Path, "head") {
-		return true
-	}
-	return false
 }

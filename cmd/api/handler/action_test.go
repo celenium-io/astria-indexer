@@ -34,7 +34,7 @@ func (s *ActionTestSuite) SetupSuite() {
 	s.echo.Validator = NewApiValidator()
 	s.ctrl = gomock.NewController(s.T())
 	s.actions = mock.NewMockIAction(s.ctrl)
-	s.handler = NewActionHandler(s.actions)
+	s.handler = NewActionHandler(s.actions, nil)
 }
 
 // TearDownSuite -

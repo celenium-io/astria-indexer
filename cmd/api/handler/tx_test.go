@@ -49,7 +49,7 @@ func (s *TxTestSuite) SetupSuite() {
 	s.rollups = mock.NewMockIRollup(s.ctrl)
 	s.fees = mock.NewMockIFee(s.ctrl)
 	s.state = mock.NewMockIState(s.ctrl)
-	s.handler = NewTxHandler(s.tx, s.actions, s.rollups, s.fees, s.state, testIndexerName)
+	s.handler = NewTxHandler(s.tx, s.actions, s.rollups, s.fees, s.state, nil, testIndexerName)
 }
 
 func (s *TxTestSuite) TearDownSuite() {
