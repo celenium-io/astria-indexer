@@ -6,32 +6,34 @@ package handler
 import (
 	"net/http"
 
+	"github.com/celenium-io/astria-indexer/cmd/api/cache"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/labstack/echo/v4"
 )
 
 type PriceHandler struct {
-	prices              storage.IPrice
-	market              storage.IMarket
-	statMiddlewareCache echo.MiddlewareFunc
+	prices storage.IPrice
+	market storage.IMarket
+	cache  cache.ICache
 }
 
 func NewPriceHandler(
 	prices storage.IPrice,
 	market storage.IMarket,
-	statMiddlewareCache echo.MiddlewareFunc,
+	cache cache.ICache,
 ) *PriceHandler {
 	return &PriceHandler{
-		prices:              prices,
-		market:              market,
-		statMiddlewareCache: statMiddlewareCache,
+		prices: prices,
+		market: market,
+		cache:  cache,
 	}
 }
 
 var _ Handler = (*PriceHandler)(nil)
 
 func (handler *PriceHandler) InitRoutes(srvr *echo.Group) {
+	middlewareCache := cache.NewStatMiddlewareCache(handler.cache)
 
 	price := srvr.Group("/price")
 	{
@@ -39,7 +41,7 @@ func (handler *PriceHandler) InitRoutes(srvr *echo.Group) {
 		pair := price.Group("/:pair")
 		{
 			pair.GET("", handler.Last)
-			pair.GET("/:timeframe", handler.Series, handler.statMiddlewareCache)
+			pair.GET("/:timeframe", handler.Series, middlewareCache)
 		}
 	}
 }

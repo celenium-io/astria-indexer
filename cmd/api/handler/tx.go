@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/celenium-io/astria-indexer/cmd/api/cache"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/types"
@@ -15,13 +16,13 @@ import (
 )
 
 type TxHandler struct {
-	tx                     storage.ITx
-	actions                storage.IAction
-	rollups                storage.IRollup
-	fees                   storage.IFee
-	state                  storage.IState
-	defaultMiddlewareCache echo.MiddlewareFunc
-	indexerName            string
+	tx          storage.ITx
+	actions     storage.IAction
+	rollups     storage.IRollup
+	fees        storage.IFee
+	state       storage.IState
+	cache       cache.ICache
+	indexerName string
 }
 
 func NewTxHandler(
@@ -30,34 +31,36 @@ func NewTxHandler(
 	rollups storage.IRollup,
 	fees storage.IFee,
 	state storage.IState,
-	defaultMiddlewareCache echo.MiddlewareFunc,
+	cache cache.ICache,
 	indexerName string,
 ) *TxHandler {
 	return &TxHandler{
-		tx:                     tx,
-		actions:                actions,
-		rollups:                rollups,
-		fees:                   fees,
-		state:                  state,
-		defaultMiddlewareCache: defaultMiddlewareCache,
-		indexerName:            indexerName,
+		tx:          tx,
+		actions:     actions,
+		rollups:     rollups,
+		fees:        fees,
+		state:       state,
+		cache:       cache,
+		indexerName: indexerName,
 	}
 }
 
 var _ Handler = (*TxHandler)(nil)
 
 func (handler *TxHandler) InitRoutes(srvr *echo.Group) {
+	middlewareCache := cache.NewDefaultMiddlewareCache(handler.cache)
+
 	txGroup := srvr.Group("/tx")
 	{
 		txGroup.GET("", handler.List)
 		txGroup.GET("/count", handler.Count)
-		hashGroup := txGroup.Group("/:hash", handler.defaultMiddlewareCache)
+		hashGroup := txGroup.Group("/:hash", middlewareCache)
 		{
-			hashGroup.GET("", handler.Get, handler.defaultMiddlewareCache)
-			hashGroup.GET("/actions", handler.GetActions, handler.defaultMiddlewareCache)
-			hashGroup.GET("/fees", handler.GetFees, handler.defaultMiddlewareCache)
-			hashGroup.GET("/rollup_actions", handler.RollupActions, handler.defaultMiddlewareCache)
-			hashGroup.GET("/rollup_actions/count", handler.RollupActionsCount, handler.defaultMiddlewareCache)
+			hashGroup.GET("", handler.Get, middlewareCache)
+			hashGroup.GET("/actions", handler.GetActions, middlewareCache)
+			hashGroup.GET("/fees", handler.GetFees, middlewareCache)
+			hashGroup.GET("/rollup_actions", handler.RollupActions, middlewareCache)
+			hashGroup.GET("/rollup_actions/count", handler.RollupActionsCount, middlewareCache)
 		}
 	}
 }

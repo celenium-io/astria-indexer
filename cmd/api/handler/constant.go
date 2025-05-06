@@ -6,31 +6,34 @@ package handler
 import (
 	"net/http"
 
+	"github.com/celenium-io/astria-indexer/cmd/api/cache"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/labstack/echo/v4"
 )
 
 type ConstantHandler struct {
-	constants              storage.IConstant
-	defaultMiddlewareCache echo.MiddlewareFunc
+	constants storage.IConstant
+	cache     cache.ICache
 }
 
 func NewConstantHandler(
 	constants storage.IConstant,
-	defaultMiddlewareCache echo.MiddlewareFunc,
+	cache cache.ICache,
 ) *ConstantHandler {
 	return &ConstantHandler{
-		constants:              constants,
-		defaultMiddlewareCache: defaultMiddlewareCache,
+		constants: constants,
+		cache:     cache,
 	}
 }
 
 var _ Handler = (*ConstantHandler)(nil)
 
 func (handler *ConstantHandler) InitRoutes(srvr *echo.Group) {
+	middlewareCache := cache.NewDefaultMiddlewareCache(handler.cache)
+
 	srvr.GET("/constants", handler.Get)
-	srvr.GET("/enums", handler.Enums, handler.defaultMiddlewareCache)
+	srvr.GET("/enums", handler.Enums, middlewareCache)
 }
 
 // Get godoc

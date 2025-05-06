@@ -5,22 +5,22 @@ package main
 
 import (
 	"context"
+	"go.uber.org/fx"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	celestialsStorage "github.com/celenium-io/celestial-module/pkg/storage"
-
 	"github.com/celenium-io/astria-indexer/cmd/api/bus"
+	"github.com/celenium-io/astria-indexer/cmd/api/cache"
 	_ "github.com/celenium-io/astria-indexer/cmd/api/docs"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/internal/storage/postgres"
+	celestialsStorage "github.com/celenium-io/celestial-module/pkg/storage"
 	"github.com/ipfans/fxlogger"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"go.uber.org/fx"
 )
 
 var rootCmd = &cobra.Command{
@@ -44,7 +44,7 @@ func main() {
 			indexerName,
 			fx.Annotate(
 				cacheUrl,
-				fx.ResultTags(`name:"url"`),
+				fx.ResultTags(`name:"cache_url"`),
 			),
 			newProflier,
 			fx.Annotate(
@@ -53,16 +53,8 @@ func main() {
 			),
 			bus.NewDispatcher,
 			fx.Annotate(
-				initCache,
-				fx.ParamTags(`name:"url"`),
-			),
-			fx.Annotate(
-				newDefaultMiddlewareCache,
-				fx.ResultTags(`name:"defaultMiddlewareCache"`),
-			),
-			fx.Annotate(
-				newStatMiddlewareCache,
-				fx.ResultTags(`name:"statMiddlewareCache"`),
+				cache.InitCache,
+				fx.ParamTags(`name:"cache_url"`),
 			),
 			newConstantCache,
 			newWebsocket,
@@ -165,12 +157,12 @@ func main() {
 			AsHandler(handler.NewSearchHandler),
 			AsHandler(handler.NewStateHandler),
 			AsHandler(handler.NewValidatorHandler),
-			AsHandlerWithParams(handler.NewBlockHandler, ``, ``, ``, ``, ``, ``, ``, `name:"defaultMiddlewareCache"`, ``),
-			AsHandlerWithParams(handler.NewConstantHandler, ``, `name:"defaultMiddlewareCache"`),
-			AsHandlerWithParams(handler.NewStatsHandler, ``, ``, `name:"statMiddlewareCache"`),
-			AsHandlerWithParams(handler.NewTxHandler, ``, ``, ``, ``, ``, `name:"defaultMiddlewareCache"`, ``),
-			AsHandlerWithParams(handler.NewPriceHandler, ``, ``, `name:"statMiddlewareCache"`),
-			AsHandlerWithParams(handler.NewActionHandler, ``, `name:"defaultMiddlewareCache"`),
+			AsHandler(handler.NewBlockHandler),
+			AsHandler(handler.NewConstantHandler),
+			AsHandler(handler.NewStatsHandler),
+			AsHandler(handler.NewTxHandler),
+			AsHandler(handler.NewPriceHandler),
+			AsHandler(handler.NewActionHandler),
 		),
 		fx.Invoke(func(*App) {}),
 	)
@@ -196,14 +188,5 @@ func AsHandler(f any) any {
 		f,
 		fx.As(new(handler.Handler)),
 		fx.ResultTags(`group:"handlers"`),
-	)
-}
-
-func AsHandlerWithParams(f any, paramTags ...string) any {
-	return fx.Annotate(
-		f,
-		fx.As(new(handler.Handler)),
-		fx.ResultTags(`group:"handlers"`),
-		fx.ParamTags(paramTags...),
 	)
 }

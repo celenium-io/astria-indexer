@@ -6,23 +6,23 @@ package handler
 import (
 	"net/http"
 
-	"github.com/celenium-io/astria-indexer/pkg/types"
-
+	"github.com/celenium-io/astria-indexer/cmd/api/cache"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
+	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/labstack/echo/v4"
 )
 
 type BlockHandler struct {
-	block                  storage.IBlock
-	blockStats             storage.IBlockStats
-	txs                    storage.ITx
-	actions                storage.IAction
-	rollups                storage.IRollup
-	price                  storage.IPrice
-	state                  storage.IState
-	defaultMiddlewareCache echo.MiddlewareFunc
-	indexerName            string
+	block       storage.IBlock
+	blockStats  storage.IBlockStats
+	txs         storage.ITx
+	actions     storage.IAction
+	rollups     storage.IRollup
+	price       storage.IPrice
+	state       storage.IState
+	cache       cache.ICache
+	indexerName string
 }
 
 func NewBlockHandler(
@@ -33,38 +33,40 @@ func NewBlockHandler(
 	rollups storage.IRollup,
 	price storage.IPrice,
 	state storage.IState,
-	defaultMiddlewareCache echo.MiddlewareFunc,
+	cache cache.ICache,
 	indexerName string,
 ) *BlockHandler {
 	return &BlockHandler{
-		block:                  block,
-		blockStats:             blockStats,
-		txs:                    txs,
-		actions:                actions,
-		rollups:                rollups,
-		price:                  price,
-		state:                  state,
-		defaultMiddlewareCache: defaultMiddlewareCache,
-		indexerName:            indexerName,
+		block:       block,
+		blockStats:  blockStats,
+		txs:         txs,
+		actions:     actions,
+		rollups:     rollups,
+		price:       price,
+		state:       state,
+		cache:       cache,
+		indexerName: indexerName,
 	}
 }
 
 var _ Handler = (*BlockHandler)(nil)
 
 func (handler *BlockHandler) InitRoutes(srvr *echo.Group) {
+	middlewareCache := cache.NewDefaultMiddlewareCache(handler.cache)
+
 	blockGroup := srvr.Group("/block")
 	{
 		blockGroup.GET("", handler.List)
 		blockGroup.GET("/count", handler.Count)
-		heightGroup := blockGroup.Group("/:height", handler.defaultMiddlewareCache)
+		heightGroup := blockGroup.Group("/:height", middlewareCache)
 		{
-			heightGroup.GET("", handler.Get, handler.defaultMiddlewareCache)
-			heightGroup.GET("/actions", handler.GetActions, handler.defaultMiddlewareCache)
-			heightGroup.GET("/txs", handler.GetTransactions, handler.defaultMiddlewareCache)
-			heightGroup.GET("/stats", handler.GetStats, handler.defaultMiddlewareCache)
-			heightGroup.GET("/rollup_actions", handler.GetRollupActions, handler.defaultMiddlewareCache)
-			heightGroup.GET("/rollup_actions/count", handler.GetRollupsActionsCount, handler.defaultMiddlewareCache)
-			heightGroup.GET("/prices", handler.GetPrices, handler.defaultMiddlewareCache)
+			heightGroup.GET("", handler.Get, middlewareCache)
+			heightGroup.GET("/actions", handler.GetActions, middlewareCache)
+			heightGroup.GET("/txs", handler.GetTransactions, middlewareCache)
+			heightGroup.GET("/stats", handler.GetStats, middlewareCache)
+			heightGroup.GET("/rollup_actions", handler.GetRollupActions, middlewareCache)
+			heightGroup.GET("/rollup_actions/count", handler.GetRollupsActionsCount, middlewareCache)
+			heightGroup.GET("/prices", handler.GetPrices, middlewareCache)
 		}
 	}
 }

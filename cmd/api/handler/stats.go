@@ -7,52 +7,55 @@ import (
 	"encoding/base64"
 	"net/http"
 
+	"github.com/celenium-io/astria-indexer/cmd/api/cache"
 	"github.com/celenium-io/astria-indexer/cmd/api/handler/responses"
 	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/labstack/echo/v4"
 )
 
 type StatsHandler struct {
-	repo                storage.IStats
-	rollups             storage.IRollup
-	statMiddlewareCache echo.MiddlewareFunc
+	repo    storage.IStats
+	rollups storage.IRollup
+	cache   cache.ICache
 }
 
 func NewStatsHandler(
 	repo storage.IStats,
 	rollups storage.IRollup,
-	statMiddlewareCache echo.MiddlewareFunc,
+	cache cache.ICache,
 ) *StatsHandler {
 	return &StatsHandler{
-		repo:                repo,
-		rollups:             rollups,
-		statMiddlewareCache: statMiddlewareCache,
+		repo:    repo,
+		rollups: rollups,
+		cache:   cache,
 	}
 }
 
 var _ Handler = (*StatsHandler)(nil)
 
 func (sh *StatsHandler) InitRoutes(srvr *echo.Group) {
+	middlewareCache := cache.NewStatMiddlewareCache(sh.cache)
+
 	stats := srvr.Group("/stats")
 	{
 		stats.GET("/summary", sh.Summary)
 		stats.GET("/summary/:timeframe", sh.SummaryTimeframe)
 		stats.GET("/summary/active_addresses_count", sh.ActiveAddressesCount)
-		stats.GET("/series/:name/:timeframe", sh.Series, sh.statMiddlewareCache)
+		stats.GET("/series/:name/:timeframe", sh.Series, middlewareCache)
 
 		rollup := stats.Group("/rollup")
 		{
-			rollup.GET("/series/:hash/:name/:timeframe", sh.RollupSeries, sh.statMiddlewareCache)
+			rollup.GET("/series/:hash/:name/:timeframe", sh.RollupSeries, middlewareCache)
 		}
 
 		fee := stats.Group("/fee")
 		{
-			fee.GET("/summary", sh.FeeSummary, sh.statMiddlewareCache)
+			fee.GET("/summary", sh.FeeSummary, middlewareCache)
 		}
 
 		token := stats.Group("/token")
 		{
-			token.GET("/transfer_distribution", sh.TokenTransferDistribution, sh.statMiddlewareCache)
+			token.GET("/transfer_distribution", sh.TokenTransferDistribution, middlewareCache)
 		}
 	}
 }
