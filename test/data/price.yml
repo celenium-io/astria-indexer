@@ -22,3 +22,7 @@
   price: 25
   currency_pair: TIA_USD
   height: 7965
+- time: '2024-10-30T23:52:23.265Z'
+  price: 25
+  currency_pair: TIA_USD
+  height: 7966

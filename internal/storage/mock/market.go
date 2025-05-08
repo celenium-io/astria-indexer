@@ -121,6 +121,45 @@ func (c *MockIMarketGetCall) DoAndReturn(f func(context.Context, string) (storag
 	return c
 }
 
+// History mocks base method.
+func (m *MockIMarket) History(ctx context.Context, pair string, limit, offset int) ([]storage.Market, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "History", ctx, pair, limit, offset)
+	ret0, _ := ret[0].([]storage.Market)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// History indicates an expected call of History.
+func (mr *MockIMarketMockRecorder) History(ctx, pair, limit, offset any) *MockIMarketHistoryCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "History", reflect.TypeOf((*MockIMarket)(nil).History), ctx, pair, limit, offset)
+	return &MockIMarketHistoryCall{Call: call}
+}
+
+// MockIMarketHistoryCall wrap *gomock.Call
+type MockIMarketHistoryCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockIMarketHistoryCall) Return(arg0 []storage.Market, arg1 error) *MockIMarketHistoryCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockIMarketHistoryCall) Do(f func(context.Context, string, int, int) ([]storage.Market, error)) *MockIMarketHistoryCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockIMarketHistoryCall) DoAndReturn(f func(context.Context, string, int, int) ([]storage.Market, error)) *MockIMarketHistoryCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // List mocks base method.
 func (m *MockIMarket) List(ctx context.Context, limit, offset int) ([]storage.Market, error) {
 	m.ctrl.T.Helper()

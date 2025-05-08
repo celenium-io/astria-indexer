@@ -107,22 +107,17 @@ func (s *PriceTestSuite) TestSeries() {
 	c.SetParamNames("pair", "timeframe")
 	c.SetParamValues("BTC-USDT", "hour")
 
-	s.markets.EXPECT().
-		Decimals(gomock.Any(), "BTC-USDT").
-		Return(8, nil).
-		Times(1)
-
 	s.prices.EXPECT().
 		Series(gomock.Any(), "BTC-USDT", storage.TimeframeHour, storage.NewSeriesRequest(0, 100)).
 		Return([]storage.Candle{
 			{
 				CurrencyPair: "BTC-USDT",
-				Open:         decimal.RequireFromString("50"),
+				Open:         decimal.RequireFromString("0.0000005"),
 				Time:         time.Now().Add(-time.Hour),
 			},
 			{
 				CurrencyPair: "BTC-USDT",
-				Open:         decimal.RequireFromString("51"),
+				Open:         decimal.RequireFromString("0.00000051"),
 				Time:         time.Now(),
 			},
 		}, nil).
@@ -177,7 +172,54 @@ func (s *PriceTestSuite) TestList() {
 
 	s.Require().Equal("BTC-USDT", markets[0].Pair)
 	s.Require().NotNil(markets[0].Price)
-	s.Require().Equal("BTC-USDT", markets[0].Pair)
 	s.Require().Equal("0.0000005", markets[0].Price.Price)
 	s.Require().NotEmpty(markets[0].Price.Time)
+}
+
+func (s *PriceTestSuite) TestHistory() {
+	q := make(url.Values)
+	q.Set("limit", "2")
+	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
+	rec := httptest.NewRecorder()
+	c := s.echo.NewContext(req, rec)
+	c.SetPath("/price/:pair/history")
+	c.SetParamNames("pair")
+	c.SetParamValues("BTC-USDT")
+
+	s.markets.EXPECT().
+		History(gomock.Any(), "BTC-USDT", 2, 0).
+		Return([]storage.Market{
+			{
+				Pair:             "BTC-USDT",
+				Decimals:         8,
+				Base:             "BTC",
+				Quote:            "USDT",
+				Enabled:          true,
+				MinProviderCount: 1,
+			}, {
+				Pair:             "BTC-USDT",
+				Decimals:         4,
+				Base:             "BTC",
+				Quote:            "USDT",
+				Enabled:          false,
+				MinProviderCount: 1,
+			},
+		}, nil).
+		Times(1)
+
+	s.Require().NoError(s.handler.History(c))
+	s.Require().Equal(http.StatusOK, rec.Code)
+
+	var markets []responses.Market
+	err := json.NewDecoder(rec.Body).Decode(&markets)
+	s.Require().NoError(err)
+	s.Require().Len(markets, 2)
+
+	s.Require().Equal("BTC-USDT", markets[0].Pair)
+	s.Require().True(markets[0].Enabled)
+	s.Require().EqualValues(8, markets[0].Decimals)
+
+	s.Require().Equal("BTC-USDT", markets[1].Pair)
+	s.Require().False(markets[1].Enabled)
+	s.Require().EqualValues(4, markets[1].Decimals)
 }

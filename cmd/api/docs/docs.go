@@ -1585,7 +1585,68 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/price/:pair/:timeframe": {
+        "/v1/price/:pair/history": {
+            "get": {
+                "description": "Get market settings history changes",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "price"
+                ],
+                "summary": "Get market settings history changes",
+                "operationId": "get-market-history",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Currency pair",
+                        "name": "pair",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "type": "integer",
+                        "description": "Count of requested entities",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responses.Market"
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/price/:pair/series/:timeframe": {
             "get": {
                 "description": "Get price series",
                 "produces": [

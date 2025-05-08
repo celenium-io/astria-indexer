@@ -18,8 +18,6 @@ type IPrice interface {
 	storage.Table[*Price]
 
 	Series(ctx context.Context, currencyPair string, timeframe Timeframe, fltrs SeriesRequest) ([]Candle, error)
-	Last(ctx context.Context, currencyPair string) (Price, error)
-	All(ctx context.Context, limit, offset int) ([]Price, error)
 	ByHeight(ctx context.Context, height pkgTypes.Level, limit, offset int) ([]Price, error)
 }
 

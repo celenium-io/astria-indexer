@@ -1011,6 +1011,7 @@ func (s *TransactionTestSuite) TestSaveMarkets() {
 
 	tx, err := BeginTransaction(ctx, s.storage.Transactable)
 	s.Require().NoError(err)
+	ts := time.Now().UTC()
 
 	create := storage.MarketUpdate{
 		Market: storage.Market{
@@ -1020,6 +1021,7 @@ func (s *TransactionTestSuite) TestSaveMarkets() {
 			Decimals:         18,
 			MinProviderCount: 1,
 			Enabled:          true,
+			UpdatedAt:        ts,
 		},
 		Type: storage.MarketUpdateTypeCreate,
 	}
@@ -1032,6 +1034,7 @@ func (s *TransactionTestSuite) TestSaveMarkets() {
 			Decimals:         6,
 			MinProviderCount: 2,
 			Enabled:          false,
+			UpdatedAt:        ts,
 		},
 		Type: storage.MarketUpdateTypeUpdate,
 	}
@@ -1044,6 +1047,7 @@ func (s *TransactionTestSuite) TestSaveMarkets() {
 			Decimals:         8,
 			MinProviderCount: 1,
 			Enabled:          false,
+			UpdatedAt:        ts,
 		},
 		Type: storage.MarketUpdateTypeRemove,
 	}
@@ -1056,7 +1060,7 @@ func (s *TransactionTestSuite) TestSaveMarkets() {
 
 	markets, err := s.Markets.List(ctx, 10, 0)
 	s.Require().NoError(err)
-	s.Require().Len(markets, 3)
+	s.Require().Len(markets, 5)
 }
 
 func (s *TransactionTestSuite) TestSaveMarketProviders() {
@@ -1101,5 +1105,5 @@ func (s *TransactionTestSuite) TestSaveMarketProviders() {
 
 	markets, err := s.Markets.List(ctx, 10, 0)
 	s.Require().NoError(err)
-	s.Require().Len(markets, 3)
+	s.Require().Len(markets, 4)
 }

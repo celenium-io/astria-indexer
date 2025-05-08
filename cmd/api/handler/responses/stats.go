@@ -139,12 +139,12 @@ type Candle struct {
 	Time  time.Time `example:"2023-07-04T03:10:57+00:00" format:"date-time" json:"time"  swaggertype:"string"`
 }
 
-func NewCandle(candle storage.Candle, decimals int) Candle {
+func NewCandle(candle storage.Candle) Candle {
 	return Candle{
-		Open:  decimalPrice(candle.Open, decimals),
-		Close: decimalPrice(candle.Close, decimals),
-		High:  decimalPrice(candle.High, decimals),
-		Low:   decimalPrice(candle.Low, decimals),
+		Open:  candle.Open.String(),
+		Close: candle.Close.String(),
+		High:  candle.High.String(),
+		Low:   candle.Low.String(),
 		Time:  candle.Time,
 	}
 }

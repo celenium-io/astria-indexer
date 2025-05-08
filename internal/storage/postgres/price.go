@@ -47,32 +47,6 @@ func (p *Price) Series(ctx context.Context, currencyPair string, timeframe stora
 	return
 }
 
-func (p *Price) Last(ctx context.Context, currencyPair string) (price storage.Price, err error) {
-	err = p.DB().NewSelect().
-		Model(&price).
-		Where("currency_pair = ?", currencyPair).
-		Order("time DESC").
-		Limit(1).
-		Scan(ctx)
-	return
-}
-
-func (p *Price) All(ctx context.Context, limit, offset int) (prices []storage.Price, err error) {
-	query := p.DB().NewSelect().
-		ColumnExpr("max(time) as time").
-		ColumnExpr("last(price, time) as price").
-		Column("currency_pair").
-		Model(&prices).
-		Group("currency_pair")
-
-	query = limitScope(query, limit)
-	query = offsetScope(query, offset)
-
-	err = query.Scan(ctx)
-
-	return
-}
-
 func (p *Price) ByHeight(ctx context.Context, height pkgTypes.Level, limit, offset int) (prices []storage.Price, err error) {
 	query := p.DB().NewSelect().
 		Model((*storage.Price)(nil)).
@@ -83,8 +57,8 @@ func (p *Price) ByHeight(ctx context.Context, height pkgTypes.Level, limit, offs
 
 	err = p.DB().NewSelect().
 		TableExpr("(?) as price", query).
-		ColumnExpr("price.currency_pair as currency_pair, price.time as time, (price.price/pow(10, market.decimals)) as price").
-		Join("left join market on market.pair = price.currency_pair").
+		ColumnExpr("price.currency_pair as currency_pair, price.time as time, (price.price/pow(10, coalesce(pair.decimals, 0))) as price").
+		Join("left join lateral (select * from market where market.pair = price.currency_pair and market.updated_at <= price.time order by updated_at desc limit 1) pair on true").
 		Scan(ctx, &prices)
 	return
 }

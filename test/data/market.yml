@@ -4,15 +4,37 @@
   decimals: 6
   min_provider_count: 1
   enabled: true
+  updated_at: "2025-01-01T00:00:00Z"
+  removed: false
 - pair: TIA_BTC
   base: TIA
   quote: BTC
   decimals: 8
   min_provider_count: 1
   enabled: true
+  updated_at: "2025-01-01T00:00:00Z"
+  removed: false
 - pair: BTC_USDT
   base: BTC
   quote: USDT
   decimals: 8
   min_provider_count: 1
   enabled: true
+  updated_at: "2025-01-01T00:00:00Z"
+  removed: false
+- pair: TIA_USD
+  base: TIA
+  quote: USD
+  decimals: 4
+  min_provider_count: 1
+  enabled: true
+  updated_at: "2024-01-01T00:00:00Z"
+  removed: false
+- pair: ETH_USDT
+  base: ETH
+  quote: USDT
+  decimals: 4
+  min_provider_count: 1
+  enabled: true
+  updated_at: "2023-01-01T00:00:00Z"
+  removed: false

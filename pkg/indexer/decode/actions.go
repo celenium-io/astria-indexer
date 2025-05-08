@@ -1030,6 +1030,7 @@ func handleMarkets(markets []*v21.Market, ctx *Context, action *storage.Action, 
 				MinProviderCount: int(ticker.GetMinProviderCount()),
 				Base:             pair.GetBase(),
 				Quote:            pair.GetQuote(),
+				UpdatedAt:        action.Time,
 			}, typ)
 
 			providers := markets[i].GetProviderConfigs()
