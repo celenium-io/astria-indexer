@@ -42,6 +42,7 @@ func (handler *PriceHandler) InitRoutes(srvr *echo.Group) {
 		{
 			pair.GET("", handler.Last)
 			// pair.GET("/history", handler.History)
+			// pair.GET("/series/:timeframe", handler.Series, middlewareCache)
 			pair.GET("/:timeframe", handler.Series, middlewareCache)
 		}
 	}
