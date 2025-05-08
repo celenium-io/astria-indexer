@@ -1991,7 +1991,48 @@ paths:
       summary: Get the latest price and market info
       tags:
       - price
-  /v1/price/:pair/:timeframe:
+  /v1/price/:pair/history:
+    get:
+      description: Get market settings history changes
+      operationId: get-market-history
+      parameters:
+      - description: Currency pair
+        in: path
+        name: pair
+        required: true
+        type: string
+      - description: Count of requested entities
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Market'
+            type: array
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Get market settings history changes
+      tags:
+      - price
+  /v1/price/:pair/series/:timeframe:
     get:
       description: Get price series
       operationId: get-price-series

@@ -41,7 +41,8 @@ func (handler *PriceHandler) InitRoutes(srvr *echo.Group) {
 		pair := price.Group("/:pair")
 		{
 			pair.GET("", handler.Last)
-			pair.GET("/:timeframe", handler.Series, middlewareCache)
+			pair.GET("/history", handler.History)
+			pair.GET("/series/:timeframe", handler.Series, middlewareCache)
 		}
 	}
 }
@@ -140,16 +141,11 @@ type priceSeriesRequest struct {
 //	@Success		204
 //	@Failure		400	{object}	Error
 //	@Failure		500	{object}	Error
-//	@Router			/v1/price/:pair/:timeframe [get]
+//	@Router			/v1/price/:pair/series/:timeframe [get]
 func (handler *PriceHandler) Series(c echo.Context) error {
 	req, err := bindAndValidate[priceSeriesRequest](c)
 	if err != nil {
 		return badRequestError(c, err)
-	}
-
-	decimals, err := handler.market.Decimals(c.Request().Context(), req.Pair)
-	if err != nil {
-		return handleError(c, err, handler.prices)
 	}
 
 	prices, err := handler.prices.Series(c.Request().Context(), req.Pair, req.Timeframe, storage.NewSeriesRequest(req.From, req.To))
@@ -158,7 +154,52 @@ func (handler *PriceHandler) Series(c echo.Context) error {
 	}
 	response := make([]responses.Candle, len(prices))
 	for i := range prices {
-		response[i] = responses.NewCandle(prices[i], decimals)
+		response[i] = responses.NewCandle(prices[i])
+	}
+	return returnArray(c, response)
+}
+
+type marketHistory struct {
+	Pair   string `example:"BTC-USDT" param:"pair"   validate:"required"`
+	Limit  int    `example:"10"       query:"limit"  validate:"omitempty,min=1,max=100"`
+	Offset int    `example:"10"       query:"offset" validate:"omitempty,min=0"`
+}
+
+func (p *marketHistory) SetDefault() {
+	if p.Limit == 0 {
+		p.Limit = 10
+	}
+}
+
+// History godoc
+//
+//	@Summary		Get market settings history changes
+//	@Description	Get market settings history changes
+//	@Tags			price
+//	@ID				get-market-history
+//	@Param			pair	path	string	true	"Currency pair"
+//	@Param			limit	query	integer	false	"Count of requested entities"	mininum(1)	maximum(100)
+//	@Param			offset	query	integer	false	"Offset"						mininum(1)
+//	@Produce		json
+//	@Success		200	{array}	responses.Market
+//	@Success		204
+//	@Failure		400	{object}	Error
+//	@Failure		500	{object}	Error
+//	@Router			/v1/price/:pair/history [get]
+func (handler *PriceHandler) History(c echo.Context) error {
+	req, err := bindAndValidate[marketHistory](c)
+	if err != nil {
+		return badRequestError(c, err)
+	}
+	req.SetDefault()
+
+	markets, err := handler.market.History(c.Request().Context(), req.Pair, req.Limit, req.Offset)
+	if err != nil {
+		return handleError(c, err, handler.prices)
+	}
+	response := make([]responses.Market, len(markets))
+	for i := range markets {
+		response[i] = responses.NewMarket(markets[i])
 	}
 	return returnArray(c, response)
 }

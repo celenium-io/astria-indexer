@@ -47,32 +47,6 @@ func (p *Price) Series(ctx context.Context, currencyPair string, timeframe stora
 	return
 }
 
-func (p *Price) Last(ctx context.Context, currencyPair string) (price storage.Price, err error) {
-	err = p.DB().NewSelect().
-		Model(&price).
-		Where("currency_pair = ?", currencyPair).
-		Order("time DESC").
-		Limit(1).
-		Scan(ctx)
-	return
-}
-
-func (p *Price) All(ctx context.Context, limit, offset int) (prices []storage.Price, err error) {
-	query := p.DB().NewSelect().
-		ColumnExpr("max(time) as time").
-		ColumnExpr("last(price, time) as price").
-		Column("currency_pair").
-		Model(&prices).
-		Group("currency_pair")
-
-	query = limitScope(query, limit)
-	query = offsetScope(query, offset)
-
-	err = query.Scan(ctx)
-
-	return
-}
-
 func (p *Price) ByHeight(ctx context.Context, height pkgTypes.Level, limit, offset int) (prices []storage.Price, err error) {
 	query := p.DB().NewSelect().
 		Model((*storage.Price)(nil)).
