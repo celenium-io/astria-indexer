@@ -57,8 +57,8 @@ func (p *Price) ByHeight(ctx context.Context, height pkgTypes.Level, limit, offs
 
 	err = p.DB().NewSelect().
 		TableExpr("(?) as price", query).
-		ColumnExpr("price.currency_pair as currency_pair, price.time as time, (price.price/pow(10, market.decimals)) as price").
-		Join("left join market on market.pair = price.currency_pair").
+		ColumnExpr("price.currency_pair as currency_pair, price.time as time, (price.price/pow(10, coalesce(pair.decimals, 0))) as price").
+		Join("left join lateral (select * from market where market.pair = price.currency_pair and market.updated_at <= price.time order by updated_at desc limit 1) pair on true").
 		Scan(ctx, &prices)
 	return
 }

@@ -27,12 +27,12 @@ func (s *StorageTestSuite) TestPriceByHeight() {
 	ctx, ctxCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer ctxCancel()
 
-	prices, err := s.Price.ByHeight(ctx, 7965, 1, 0)
+	prices, err := s.Price.ByHeight(ctx, 7966, 1, 0)
 	s.Require().NoError(err)
 	s.Require().Len(prices, 1)
 
 	price := prices[0]
-	s.Require().EqualValues("0.0005", price.Price.String())
-	s.Require().EqualValues("BTC_USDT", price.CurrencyPair)
+	s.Require().EqualValues("0.0025", price.Price.String())
+	s.Require().EqualValues("TIA_USD", price.CurrencyPair)
 	s.Require().NotEmpty(price.Time)
 }
