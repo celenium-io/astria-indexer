@@ -1410,16 +1410,18 @@ func TestDecodeActions(t *testing.T) {
 				BridgeAddress:        &primitivev1.Address{Bech32M: bridge},
 				NewWithdrawerAddress: &primitivev1.Address{Bech32M: withdrawer},
 				NewSudoAddress:       &primitivev1.Address{Bech32M: sudo},
+				DisableDeposits:      false,
 			},
 		}
 
 		wantAction := storage.Action{
 			Type: types.ActionTypeBridgeSudoChangeAction,
 			Data: map[string]any{
-				"fee_asset":  feeAssetId,
-				"withdrawer": withdrawer,
-				"sudo":       sudo,
-				"bridge":     bridge,
+				"fee_asset":        feeAssetId,
+				"withdrawer":       withdrawer,
+				"sudo":             sudo,
+				"bridge":           bridge,
+				"disable_deposits": false,
 			},
 			Height:    1000,
 			Addresses: make([]*storage.AddressAction, 0),
@@ -1492,16 +1494,18 @@ func TestDecodeActions(t *testing.T) {
 				BridgeAddress:        &primitivev1.Address{Bech32M: bridge},
 				NewWithdrawerAddress: &primitivev1.Address{Bech32M: withdrawer},
 				NewSudoAddress:       &primitivev1.Address{Bech32M: sudo},
+				DisableDeposits:      true,
 			},
 		}
 
 		wantAction := storage.Action{
 			Type: types.ActionTypeBridgeSudoChangeAction,
 			Data: map[string]any{
-				"fee_asset":  feeAssetId,
-				"withdrawer": withdrawer,
-				"sudo":       sudo,
-				"bridge":     bridge,
+				"fee_asset":        feeAssetId,
+				"withdrawer":       withdrawer,
+				"sudo":             sudo,
+				"bridge":           bridge,
+				"disable_deposits": true,
 			},
 			Height:    1000,
 			Addresses: make([]*storage.AddressAction, 0),
@@ -1559,16 +1563,18 @@ func TestDecodeActions(t *testing.T) {
 				BridgeAddress:        &primitivev1.Address{Bech32M: bridge},
 				NewWithdrawerAddress: &primitivev1.Address{Bech32M: withdrawer},
 				NewSudoAddress:       &primitivev1.Address{Bech32M: sudo},
+				DisableDeposits:      false,
 			},
 		}
 
 		wantAction := storage.Action{
 			Type: types.ActionTypeBridgeSudoChangeAction,
 			Data: map[string]any{
-				"fee_asset":  feeAssetId,
-				"withdrawer": withdrawer,
-				"sudo":       sudo,
-				"bridge":     bridge,
+				"fee_asset":        feeAssetId,
+				"withdrawer":       withdrawer,
+				"sudo":             sudo,
+				"bridge":           bridge,
+				"disable_deposits": false,
 			},
 			Height:    1000,
 			Addresses: make([]*storage.AddressAction, 0),
@@ -1626,16 +1632,18 @@ func TestDecodeActions(t *testing.T) {
 				BridgeAddress:        &primitivev1.Address{Bech32M: bridge},
 				NewWithdrawerAddress: &primitivev1.Address{Bech32M: withdrawer},
 				NewSudoAddress:       &primitivev1.Address{Bech32M: sudo},
+				DisableDeposits:      true,
 			},
 		}
 
 		wantAction := storage.Action{
 			Type: types.ActionTypeBridgeSudoChangeAction,
 			Data: map[string]any{
-				"fee_asset":  feeAssetId,
-				"withdrawer": withdrawer,
-				"sudo":       sudo,
-				"bridge":     bridge,
+				"fee_asset":        feeAssetId,
+				"withdrawer":       withdrawer,
+				"sudo":             sudo,
+				"bridge":           bridge,
+				"disable_deposits": true,
 			},
 			Height:    1000,
 			Addresses: make([]*storage.AddressAction, 0),
@@ -1693,16 +1701,18 @@ func TestDecodeActions(t *testing.T) {
 				BridgeAddress:        &primitivev1.Address{Bech32M: bridge},
 				NewWithdrawerAddress: &primitivev1.Address{Bech32M: withdrawer},
 				NewSudoAddress:       &primitivev1.Address{Bech32M: sudo},
+				DisableDeposits:      false,
 			},
 		}
 
 		wantAction := storage.Action{
 			Type: types.ActionTypeBridgeSudoChangeAction,
 			Data: map[string]any{
-				"fee_asset":  feeAssetId,
-				"withdrawer": withdrawer,
-				"sudo":       sudo,
-				"bridge":     bridge,
+				"fee_asset":        feeAssetId,
+				"withdrawer":       withdrawer,
+				"sudo":             sudo,
+				"bridge":           bridge,
+				"disable_deposits": false,
 			},
 			Height:    1000,
 			Addresses: make([]*storage.AddressAction, 0),

@@ -59,7 +59,7 @@ func createTestBlock(tx types.ResponseDeliverTx, version uint64, txs []string, w
 		for i := 0; i < len(txs); i++ {
 			raw, _ := base64.StdEncoding.DecodeString(txs[i])
 			txResults = append(txResults, &tx)
-			headerBlock.Data.Txs = append(headerBlock.Data.Txs, raw)
+			headerBlock.Txs = append(headerBlock.Txs, raw)
 		}
 	}
 
@@ -89,7 +89,7 @@ func CreateBlockWithTxs(tx types.ResponseDeliverTx, txData []byte, count int) (t
 	var txResults = make([]*types.ResponseDeliverTx, count)
 	for i := 0; i < count; i++ {
 		txResults[i] = &tx
-		headerBlock.Data.Txs[i] = txData
+		headerBlock.Txs[i] = txData
 	}
 
 	block := types.BlockData{

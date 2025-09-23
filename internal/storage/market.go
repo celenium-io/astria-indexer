@@ -42,8 +42,8 @@ func (Market) TableName() string {
 func (m Market) String() string {
 	var sb = new(strings.Builder)
 	sb.WriteString(m.Pair)
-	sb.WriteString(fmt.Sprintf(" was updated at %s", m.UpdatedAt.String()))
-	sb.WriteString(fmt.Sprintf("\r\n\tdecimals: %d | enabled: %v | providers count: %d | removed: %v\r\n", m.Decimals, m.Enabled, m.MinProviderCount, m.Removed))
+	fmt.Fprintf(sb, " was updated at %s", m.UpdatedAt.String())
+	fmt.Fprintf(sb, "\r\n\tdecimals: %d | enabled: %v | providers count: %d | removed: %v\r\n", m.Decimals, m.Enabled, m.MinProviderCount, m.Removed)
 	return sb.String()
 }
 

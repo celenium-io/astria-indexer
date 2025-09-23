@@ -230,11 +230,11 @@ func TestModule_OnParseError(t *testing.T) {
 	parserModule.Start(ctx)
 
 	block := getBlock()
-	block.Block.Data.Txs = []cometTypes.Tx{
+	block.Block.Txs = []cometTypes.Tx{
 		// unfinished sequence of tx bytes
 		{10, 171, 1, 10, 168, 1, 10, 35, 47, 99, 111, 115, 109, 111, 115, 46, 115, 116, 97, 107, 105, 110, 103, 46, 118, 49, 98},
 	}
-	block.ResultBlockResults.TxsResults = []*types.ResponseDeliverTx{
+	block.TxsResults = []*types.ResponseDeliverTx{
 		{
 			Code:      0,
 			Data:      []byte{18, 45, 10, 43, 47, 99, 111, 115, 109, 111, 115, 46, 115, 116, 97, 107, 105, 110, 103, 46, 118, 49, 98, 101, 116, 97},

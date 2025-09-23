@@ -308,8 +308,9 @@ func (tx Transaction) SaveBridges(ctx context.Context, bridges ...*models.Bridge
 		add.Bridge = bridges[i]
 
 		query := tx.Tx().NewInsert().Model(add).
-			Column("rollup_id", "address_id", "asset", "fee_asset", "sudo_id", "withdrawer_id", "init_height").
-			On("CONFLICT (address_id) DO UPDATE")
+			Column("rollup_id", "address_id", "asset", "fee_asset", "sudo_id", "withdrawer_id", "init_height", "disable_deposits").
+			On("CONFLICT (address_id) DO UPDATE").
+			Set("disable_deposits = ?", bridges[i].DisableDeposits)
 
 		if bridges[i].SudoId > 0 {
 			query.Set("sudo_id = ?", bridges[i].SudoId)
