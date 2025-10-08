@@ -6,3 +6,4 @@
   withdrawer_id: 1
   asset: nria
   fee_asset: nria
+  disable_deposits: false

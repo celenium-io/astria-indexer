@@ -130,10 +130,10 @@ func (s *StorageTestSuite) TestActionByRollupAndBridge() {
 	s.Require().EqualValues(7316, action.Height)
 	s.Require().NotNil(action.Tx)
 	s.Require().NotNil(action.Action)
-	s.Require().EqualValues(1, action.Action.TxId)
-	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Action.Type)
-	s.Require().NotNil(action.Action.Data)
-	s.Require().NotNil(action.Action.Fee)
+	s.Require().EqualValues(1, action.TxId)
+	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Type)
+	s.Require().NotNil(action.Data)
+	s.Require().NotNil(action.Fee)
 }
 
 func (s *StorageTestSuite) TestActionByRollupAndBridgeWithoutRollupActions() {
@@ -154,8 +154,8 @@ func (s *StorageTestSuite) TestActionByRollupAndBridgeWithoutRollupActions() {
 	s.Require().EqualValues(7316, action.Height)
 	s.Require().NotNil(action.Tx)
 	s.Require().NotNil(action.Action)
-	s.Require().EqualValues(1, action.Action.TxId)
-	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Action.Type)
-	s.Require().NotNil(action.Action.Data)
-	s.Require().NotNil(action.Action.Fee)
+	s.Require().EqualValues(1, action.TxId)
+	s.Require().EqualValues(types.ActionTypeRollupDataSubmission, action.Type)
+	s.Require().NotNil(action.Data)
+	s.Require().NotNil(action.Fee)
 }

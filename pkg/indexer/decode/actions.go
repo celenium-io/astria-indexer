@@ -571,6 +571,7 @@ func parseBridgeSudoChange(body *astria.Action_BridgeSudoChange, height types.Le
 		withdrawer := body.BridgeSudoChange.GetNewWithdrawerAddress().GetBech32M()
 		feeAsset := body.BridgeSudoChange.GetFeeAsset()
 
+		action.Data["disable_deposits"] = body.BridgeSudoChange.GetDisableDeposits()
 		action.Data["bridge"] = bridgeAddress
 		bridgeAddr := ctx.Addresses.Set(bridgeAddress, height, decimal.Zero, "", 1, 0)
 		action.Addresses = append(action.Addresses, &storage.AddressAction{
@@ -582,9 +583,10 @@ func parseBridgeSudoChange(body *astria.Action_BridgeSudoChange, height types.Le
 		})
 
 		bridge := storage.Bridge{
-			Address:    bridgeAddr,
-			Sudo:       bridgeAddr,
-			Withdrawer: bridgeAddr,
+			Address:         bridgeAddr,
+			Sudo:            bridgeAddr,
+			Withdrawer:      bridgeAddr,
+			DisableDeposits: body.BridgeSudoChange.GetDisableDeposits(),
 		}
 
 		if sudo != "" {

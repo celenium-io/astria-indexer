@@ -499,6 +499,7 @@ func (s *TransactionTestSuite) TestSaveBridges() {
 		bridges[i].WithdrawerId = uint64(i + 100)
 		bridges[i].SudoId = uint64(i + 10)
 		bridges[i].RollupId = uint64(i + 50)
+		bridges[i].DisableDeposits = i%2 == 0
 	}
 
 	count, err := tx.SaveBridges(ctx, bridges...)
