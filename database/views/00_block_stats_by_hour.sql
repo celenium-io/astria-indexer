@@ -6,7 +6,6 @@ WITH (timescaledb.continuous, timescaledb.materialized_only=false) AS
 		avg(block_time) as block_time,
 		percentile_agg(block_time) as block_time_pct,
 		sum(supply_change) as supply_change,
-		sum(fee) as fee,
 		sum(bytes_in_block) as bytes_in_block,
 		sum(data_size) as data_size,
 		(sum(bytes_in_block)/3600.0) as bps,

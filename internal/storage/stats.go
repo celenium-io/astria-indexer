@@ -59,7 +59,6 @@ const (
 	SeriesTPS          = "tps"
 	SeriesBPS          = "bps"
 	SeriesRBPS         = "rbps"
-	SeriesFee          = "fee"
 	SeriesSupplyChange = "supply_change"
 	SeriesBlockTime    = "block_time"
 	SeriesTxCount      = "tx_count"

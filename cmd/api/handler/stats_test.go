@@ -56,7 +56,6 @@ func (s *StatsTestSuite) TestBlockStatsHistogram() {
 		storage.SeriesDataSize,
 		storage.SeriesBlockTime,
 		storage.SeriesBytesInBlock,
-		storage.SeriesFee,
 		storage.SeriesSupplyChange,
 		storage.SeriesTPS,
 		storage.SeriesTxCount,

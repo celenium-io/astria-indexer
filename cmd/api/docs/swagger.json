@@ -2426,7 +2426,6 @@
                             "tps",
                             "bps",
                             "rbps",
-                            "fee",
                             "supply_change",
                             "block_time",
                             "tx_count",
@@ -3953,6 +3952,11 @@
                     "type": "string",
                     "format": "string",
                     "example": "USDT"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2023-07-04T03:10:57+00:00"
                 }
             }
         },

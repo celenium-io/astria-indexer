@@ -48,8 +48,6 @@ func (s Stats) Series(ctx context.Context, timeframe storage.Timeframe, name str
 		query.ColumnExpr("ts, bps as value, bps_max as max, bps_min as min")
 	case storage.SeriesRBPS:
 		query.ColumnExpr("ts, rbps as value, rbps_max as max, rbps_min as min")
-	case storage.SeriesFee:
-		query.ColumnExpr("ts, fee as value")
 	case storage.SeriesSupplyChange:
 		query.ColumnExpr("ts, supply_change as value")
 	case storage.SeriesBlockTime:
@@ -117,7 +115,7 @@ func (s Stats) RollupSeries(ctx context.Context, rollupId uint64, timeframe stor
 
 func (s Stats) Summary(ctx context.Context) (summary storage.NetworkSummary, err error) {
 	err = s.db.DB().NewSelect().Table(storage.ViewBlockStatsByMonth).
-		ColumnExpr("sum(data_size) as data_size, sum(fee) as fee, sum(supply_change) as supply, sum(tx_count) as tx_count, sum(bytes_in_block) as bytes_in_block").
+		ColumnExpr("sum(data_size) as data_size, sum(supply_change) as supply, sum(tx_count) as tx_count, sum(bytes_in_block) as bytes_in_block").
 		ColumnExpr("avg(tps) as tps, avg(bps) as bps, avg(rbps) as rbps, avg(block_time) as block_time").
 		Scan(ctx, &summary)
 	return

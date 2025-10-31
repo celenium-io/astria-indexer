@@ -42,7 +42,7 @@ func (b *Blocks) ByHeight(ctx context.Context, height types.Level, withStats boo
 		query = query.
 			ColumnExpr("stats.id AS stats__id, stats.height AS stats__height, stats.time AS stats__time, stats.tx_count AS stats__tx_count").
 			ColumnExpr("stats.block_time AS stats__block_time, stats.bytes_in_block AS stats__bytes_in_block").
-			ColumnExpr("stats.supply_change AS stats__supply_change, stats.fee AS stats__fee").
+			ColumnExpr("stats.supply_change AS stats__supply_change").
 			Join("left join block_stats as stats ON stats.height = block.height AND stats.time = block.time")
 	}
 
@@ -75,7 +75,7 @@ func (b *Blocks) ByHash(ctx context.Context, hash []byte) (block storage.Block, 
 		ColumnExpr("validator.id as proposer__id, validator.address as proposer__address, validator.name as proposer__name").
 		ColumnExpr("stats.id AS stats__id, stats.height AS stats__height, stats.time AS stats__time, stats.tx_count AS stats__tx_count").
 		ColumnExpr("stats.block_time AS stats__block_time, stats.bytes_in_block AS stats__bytes_in_block").
-		ColumnExpr("stats.supply_change AS stats__supply_change, stats.fee AS stats__fee").
+		ColumnExpr("stats.supply_change AS stats__supply_change").
 		Join("left join validator on block.proposer_id = validator.id").
 		Join("left join block_stats as stats ON stats.height = block.height AND stats.time = block.time").
 		Scan(ctx, &block)
@@ -94,7 +94,7 @@ func (b *Blocks) ListWithStats(ctx context.Context, limit, offset uint64, order 
 		ColumnExpr("v.id AS proposer__id, v.address as proposer__address, v.name as proposer__name").
 		ColumnExpr("stats.id AS stats__id, stats.height AS stats__height, stats.time AS stats__time, stats.tx_count AS stats__tx_count").
 		ColumnExpr("stats.block_time AS stats__block_time, stats.bytes_in_block AS stats__bytes_in_block").
-		ColumnExpr("stats.supply_change AS stats__supply_change, stats.fee AS stats__fee").
+		ColumnExpr("stats.supply_change AS stats__supply_change").
 		TableExpr("(?) as block", subQuery).
 		Join("LEFT JOIN block_stats as stats ON stats.height = block.height AND stats.time = block.time").
 		Join("LEFT JOIN validator as v ON v.id = block.proposer_id")
@@ -117,7 +117,7 @@ func (b *Blocks) ByProposer(ctx context.Context, proposerId uint64, limit, offse
 		ColumnExpr("v.id AS proposer__id, v.address as proposer__address, v.name as proposer__name").
 		ColumnExpr("stats.id AS stats__id, stats.height AS stats__height, stats.time AS stats__time, stats.tx_count AS stats__tx_count").
 		ColumnExpr("stats.block_time AS stats__block_time, stats.bytes_in_block AS stats__bytes_in_block").
-		ColumnExpr("stats.supply_change AS stats__supply_change, stats.fee AS stats__fee").
+		ColumnExpr("stats.supply_change AS stats__supply_change").
 		TableExpr("(?) as block", subQuery).
 		Join("LEFT JOIN block_stats as stats ON stats.height = block.height AND stats.time = block.time").
 		Join("LEFT JOIN validator as v ON v.id = block.proposer_id")
@@ -138,7 +138,7 @@ func (b *Blocks) ByIdWithRelations(ctx context.Context, id uint64) (block storag
 		ColumnExpr("validator.id as proposer__id, validator.address as proposer__address, validator.name as proposer__name, validator.pubkey as proposer__pubkey, validator.pubkey_type as proposer__pubkey_type, validator.power as proposer__power, validator.height as proposer__height").
 		ColumnExpr("stats.id AS stats__id, stats.height AS stats__height, stats.time AS stats__time, stats.tx_count AS stats__tx_count").
 		ColumnExpr("stats.block_time AS stats__block_time, stats.bytes_in_block AS stats__bytes_in_block").
-		ColumnExpr("stats.supply_change AS stats__supply_change, stats.fee AS stats__fee").
+		ColumnExpr("stats.supply_change AS stats__supply_change").
 		Join("left join validator on block.proposer_id = validator.id").
 		Join("left join block_stats as stats ON stats.height = block.height AND stats.time = block.time").
 		Scan(ctx, &block)

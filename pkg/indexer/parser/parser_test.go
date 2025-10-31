@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/celenium-io/astria-indexer/internal/storage"
+	modelMock "github.com/celenium-io/astria-indexer/internal/storage/mock"
+	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/celenium-io/astria-indexer/pkg/node/mock"
 	"github.com/celenium-io/astria-indexer/pkg/types"
 	cometTypes "github.com/cometbft/cometbft/types"
@@ -26,7 +28,16 @@ func createModules(t *testing.T, ctrl *gomock.Controller) (modules.BaseModule, s
 	writerModule.CreateOutput(outputName)
 
 	api := mock.NewMockApi(ctrl)
-	parserModule := NewModule(api)
+	constants := modelMock.NewMockIConstant(ctrl)
+	constants.EXPECT().
+		Get(gomock.Any(), storageTypes.ModuleNameGeneric, "authority_sudo_address").
+		Return(storage.Constant{
+			Module: storageTypes.ModuleNameGeneric,
+			Name:   "authority_sudo_address",
+			Value:  "astria1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqd3h4f",
+		}, nil).
+		AnyTimes()
+	parserModule := NewModule(api, constants)
 
 	err := parserModule.AttachTo(&writerModule, outputName, InputName)
 	assert.NoError(t, err)
@@ -59,7 +70,6 @@ func getExpectedBlock() storage.Block {
 			Height:       100,
 			Time:         testTime,
 			TxCount:      0,
-			Fee:          decimal.Zero,
 			SupplyChange: decimal.Zero,
 		},
 		Addresses:       make(map[string]*storage.Address),

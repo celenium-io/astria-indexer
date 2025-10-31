@@ -11,10 +11,10 @@ import (
 
 	"github.com/celenium-io/astria-indexer/internal/astria"
 	"github.com/celenium-io/astria-indexer/internal/storage"
+	storageTypes "github.com/celenium-io/astria-indexer/internal/storage/types"
 	"github.com/celenium-io/astria-indexer/pkg/indexer/decode"
 	"github.com/celenium-io/astria-indexer/pkg/types"
 	"github.com/pkg/errors"
-	"github.com/shopspring/decimal"
 )
 
 func (p *Module) parse(ctx context.Context, b types.BlockData) error {
@@ -23,13 +23,18 @@ func (p *Module) parse(ctx context.Context, b types.BlockData) error {
 		Int64("height", b.Block.Height).
 		Msg("parsing block...")
 
+	sudoAddress, err := p.constants.Get(ctx, storageTypes.ModuleNameGeneric, "authority_sudo_address")
+	if err != nil {
+		return errors.Wrap(err, "getting sudo address")
+	}
+
 	proposer, err := astria.EncodeFromHex(b.Block.ProposerAddress.String())
 	if err != nil {
 		return errors.Wrap(err, "decoding block proposer address")
 	}
 
 	decodeCtx := decode.NewContext(p.bridgeAssets, b.Block.Time)
-	decodeCtx.Proposer = proposer
+	decodeCtx.SudoAddress = sudoAddress.Value
 
 	if err := parseEvents(ctx, b.FinalizeBlockEvents, b.Height, &decodeCtx, p.api); err != nil {
 		return errors.Wrap(err, "parse finalize events")
@@ -73,7 +78,6 @@ func (p *Module) parse(ctx context.Context, b types.BlockData) error {
 			Height:       b.Height,
 			Time:         b.Block.Time,
 			TxCount:      int64(len(txs)),
-			Fee:          decimal.Zero,
 			SupplyChange: decodeCtx.SupplyChange,
 			BytesInBlock: decodeCtx.BytesInBlock,
 			DataSize:     decodeCtx.DataSize,

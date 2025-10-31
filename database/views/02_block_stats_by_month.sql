@@ -5,7 +5,6 @@ WITH (timescaledb.continuous, timescaledb.materialized_only=false) AS
 		sum(tx_count) as tx_count,
 		mean(rollup(block_time_pct)) as block_time,
 		rollup(block_time_pct) as block_time_pct,
-		sum(fee) as fee,
 		sum(supply_change) as supply_change,
 		sum(bytes_in_block) as bytes_in_block,
 		sum(data_size) as data_size,

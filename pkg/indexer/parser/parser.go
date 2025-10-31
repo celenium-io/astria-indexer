@@ -6,6 +6,7 @@ package parser
 import (
 	"context"
 
+	"github.com/celenium-io/astria-indexer/internal/storage"
 	"github.com/celenium-io/astria-indexer/pkg/node"
 	"github.com/dipdup-net/indexer-sdk/pkg/modules"
 )
@@ -14,6 +15,7 @@ type Module struct {
 	modules.BaseModule
 
 	api          node.Api
+	constants    storage.IConstant
 	bridgeAssets map[string]string
 }
 
@@ -25,10 +27,11 @@ const (
 	StopOutput = "stop"
 )
 
-func NewModule(api node.Api) Module {
+func NewModule(api node.Api, constants storage.IConstant) Module {
 	m := Module{
 		BaseModule: modules.New("parser"),
 		api:        api,
+		constants:  constants,
 	}
 	m.CreateInput(InputName)
 	m.CreateOutput(OutputName)
