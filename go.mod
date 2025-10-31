@@ -9,7 +9,7 @@ require (
 	buf.build/gen/go/astria/vendored/protocolbuffers/go v1.36.9-00000000000000-0be0456e5dbf.1
 	cosmossdk.io/errors v1.0.1
 	github.com/celenium-io/celestial-module v0.0.7
-	github.com/cometbft/cometbft v0.38.17
+	github.com/cometbft/cometbft v0.38.19
 	github.com/cosmos/btcutil v1.0.5
 	github.com/cosmos/ibc-go/v9 v9.0.0
 	github.com/dipdup-io/workerpool v0.0.4
@@ -108,7 +108,7 @@ require (
 	github.com/creack/pty v1.1.20 // indirect
 	github.com/danieljoos/wincred v1.2.1 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
-	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 // indirect
+	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
 	github.com/desertbit/timer v1.0.1 // indirect
 	github.com/dgraph-io/badger/v4 v4.2.0 // indirect
 	github.com/dgraph-io/ristretto v0.1.1 // indirect

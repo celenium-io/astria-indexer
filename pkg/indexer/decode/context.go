@@ -33,7 +33,7 @@ type Context struct {
 	MarketProviders  []storage.MarketProviderUpdate
 	Prices           []storage.Price
 	HasWriteAckError bool
-	Proposer         string
+	SudoAddress      string
 
 	bridgeAssets map[string]string
 	blockTime    time.Time

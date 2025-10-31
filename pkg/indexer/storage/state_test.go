@@ -38,7 +38,6 @@ func Test_updateState(t *testing.T) {
 					Stats: &storage.BlockStats{
 						TxCount:      10,
 						SupplyChange: decimal.RequireFromString("100"),
-						Fee:          decimal.RequireFromString("10"),
 					},
 				},
 				totalAccounts: 10,

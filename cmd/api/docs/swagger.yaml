@@ -493,6 +493,10 @@ definitions:
         example: USDT
         format: string
         type: string
+      updated_at:
+        example: "2023-07-04T03:10:57+00:00"
+        format: date-time
+        type: string
     type: object
   responses.NetworkSummary:
     properties:
@@ -2573,7 +2577,6 @@ paths:
         - tps
         - bps
         - rbps
-        - fee
         - supply_change
         - block_time
         - tx_count

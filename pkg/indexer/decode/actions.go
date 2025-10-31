@@ -140,7 +140,7 @@ func parseActions(height types.Level, blockTime time.Time, from string, tx *Deco
 				Update:   fromAmount,
 			})
 
-			to := ctx.Addresses.Set(ctx.Proposer, height, actionFee.Amount, actionFee.Asset, 0, 0)
+			to := ctx.Addresses.Set(ctx.SudoAddress, height, actionFee.Amount, actionFee.Asset, 0, 0)
 			actions[i].BalanceUpdates = append(actions[i].BalanceUpdates, storage.BalanceUpdate{
 				Address:  to,
 				Height:   actions[i].Height,

@@ -91,7 +91,6 @@ func (module *Module) save(ctx context.Context, data parsedData) error {
 	}
 	module.Log.Info().
 		Uint64("height", data.block.Id).
-		Str("block_fee", data.block.Stats.Fee.String()).
 		Int64("ms", time.Since(start).Milliseconds()).
 		Msg("block saved")
 	return nil

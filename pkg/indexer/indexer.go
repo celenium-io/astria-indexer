@@ -48,6 +48,7 @@ func New(cfg *config.Config, pg *sdkPg.Storage, stopperModule modules.Module) (I
 	blocks := postgres.NewBlocks(pg)
 	bridges := postgres.NewBridge(pg)
 	notificator := postgres.NewNotificator(cfg.Database, pg)
+	constants := postgres.NewConstant(pg)
 
 	api, r, err := createReceiver(cfg)
 	if err != nil {
@@ -59,7 +60,7 @@ func New(cfg *config.Config, pg *sdkPg.Storage, stopperModule modules.Module) (I
 		return Indexer{}, errors.Wrap(err, "while creating rollback module")
 	}
 
-	p, err := createParser(r, &api)
+	p, err := createParser(r, &api, constants)
 	if err != nil {
 		return Indexer{}, errors.Wrap(err, "while creating parser module")
 	}
@@ -174,8 +175,8 @@ func makeBridgeAssetsMap(ctx context.Context, bridges internalStorage.IBridge) (
 	return assets, nil
 }
 
-func createParser(receiverModule modules.Module, api node.Api) (*parser.Module, error) {
-	parserModule := parser.NewModule(api)
+func createParser(receiverModule modules.Module, api node.Api, constants internalStorage.IConstant) (*parser.Module, error) {
+	parserModule := parser.NewModule(api, constants)
 
 	if err := parserModule.AttachTo(receiverModule, receiver.BlocksOutput, parser.InputName); err != nil {
 		return nil, errors.Wrap(err, "while attaching parser to receiver")

@@ -72,7 +72,6 @@ type BlockStats struct {
 func NewBlockStats(stats *storage.BlockStats) *BlockStats {
 	return &BlockStats{
 		TxCount:      stats.TxCount,
-		Fee:          stats.Fee.String(),
 		SupplyChange: stats.SupplyChange.String(),
 		BlockTime:    stats.BlockTime,
 		BytesInBlock: stats.BytesInBlock,
